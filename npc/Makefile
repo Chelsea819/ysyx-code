@@ -54,7 +54,6 @@ sim: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-	#$(VERILATOR) $(VERILATOR_CFLAGS) -top $(TOPNAME) -Mdir ./obj_dir $(SIM) $(CSRCS) --exe  -o $(TOPNAME)
 	$(EXE)
 	@$(BIN)
 
