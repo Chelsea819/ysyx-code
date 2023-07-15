@@ -10,7 +10,7 @@ NXDC_FILES = constr/top.nxdc
 INC_PATH ?=
 
 VERILATOR = verilator
-VERILATOR_CFLAGS += -MMD --build -cc \
+VERILATOR_CFLAGS += -MMD --build -cc --trace\
 				-O3 --x-assign fast --x-initial fast --noassert
 
 BUILD_DIR = ./build
@@ -59,7 +59,7 @@ run: $(BIN)
 sim:
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	@echo "Write this Makefile by your self."
-	verilator -Wall --cc -MMD --trace --build -top $(TOPNAME) -Mdir ./obj_dir $(SIM) $(TEST) --exe  -o $(TOPNAME)
+	verilator -Wall --cc -MMD --trace --build -top $(TOPNAME) -Mdir ./obj_dir $(SIM) $(CSRCS) --exe  -o $(TOPNAME)
 	$(EXE)
 
 .PHONY:wave clean sim default all run
@@ -68,6 +68,6 @@ wave:
 	gtkwave $(WAVE)
 
 clean:
-	$(RM) -r $(DIR) $i(WAVE) 
+	$(RM) -r $(DIR) $(WAVE) 
 
 include ../Makefile

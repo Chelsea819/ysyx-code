@@ -27,7 +27,7 @@ int main(int argc, char** argv, char** env) {
 	Vtop *dut = new Vtop;
 
 
-	nvboard_bind_all_pins(&dut);
+	nvboard_bind_all_pins(dut);
 	nvboard_init();
 
 	Verilated::traceEverOn(true);
