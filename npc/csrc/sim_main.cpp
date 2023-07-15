@@ -41,7 +41,7 @@ int main(int argc, char** argv, char** env) {
 		dut->a = a1;
 		dut->b = b1;
 		dut->eval();
-		printf("a = %d, b = %d, a1, b1);
+		printf("a = %d, b = %d", a1, b1);
 		m_trace->dump(sim_time);
 		sim_time++;
 		assert(dut->f == (a1 ^ b1));
