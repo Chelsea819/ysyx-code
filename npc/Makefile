@@ -55,7 +55,7 @@ sim: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	#$(EXE)
-	@$(BIN)
+	#@$(BIN)
 
 .PHONY:wave clean sim default all run
 
