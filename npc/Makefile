@@ -1,5 +1,5 @@
 
-TEST = $(wildcard ./csrc/*.cpp)
+TEST = $(wildcard ./testbench/*.cpp)
 SIM = $(wildcard ./vsrc/*.v)
 DIR = ./obj_dir
 EXE = $(DIR)/$(TOPNAME)
