@@ -44,22 +44,19 @@ LDFLAGS += -lSDL2 -lSDL2_image
 $(shell mkdir -p $(BUILD_DIR))
 
 
-$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+
+
+sim: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
+	@echo "Write this Makefile by your self."
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-
-
-run: $(BIN)
-	@$^
-
-sim:
-	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by your self."
-	$(VERILATOR) -Wall --cc -MMD --trace --build -top $(TOPNAME) -Mdir ./obj_dir $(SIM) $(CSRCS) --exe  -o $(TOPNAME)
+	#$(VERILATOR) $(VERILATOR_CFLAGS) -top $(TOPNAME) -Mdir ./obj_dir $(SIM) $(CSRCS) --exe  -o $(TOPNAME)
 	$(EXE)
+	@$(BIN)
 
 .PHONY:wave clean sim default all run
 
