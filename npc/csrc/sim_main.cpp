@@ -44,7 +44,7 @@ int main(int argc, char** argv, char** env) {
 		printf("a = %d, b = %d, a1, b1);
 		m_trace->dump(sim_time);
 		sim_time++;
-		assert(dut->f == (a ^ b));
+		assert(dut->f == (a1 ^ b1));
 		nvboard_update();
 	}
 	m_trace->close();
