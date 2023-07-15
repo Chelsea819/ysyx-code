@@ -1,7 +1,7 @@
 
 SIM = $(wildcard ./vsrc/*.v)
 DIR = ./obj_dir
-EXE = $(DIR)/$(TOPNAME)
+EXE = $(OBJ_DIR)/$(TOPNAME)
 WAVE = waveform.vcd
 
 TOPNAME = top
