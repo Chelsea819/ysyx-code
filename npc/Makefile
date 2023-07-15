@@ -1,5 +1,4 @@
 
-SIM = $(wildcard ./vsrc/*.v)
 DIR = ./obj_dir
 EXE = $(BUILD_DIR)/$(TOPNAME)
 WAVE = waveform.vcd
@@ -16,9 +15,6 @@ BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
-all:default
-
-default: $(BIN)
 
 $(shell mkdir -p $(BUILD_DIR))
 
@@ -40,11 +36,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image
 
-
 $(shell mkdir -p $(BUILD_DIR))
-
-
-
 
 sim: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
