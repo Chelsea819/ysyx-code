@@ -18,7 +18,7 @@
 #define MAX_SIM_TIME 20
 vluint64_t sim_time = 0;
 
-//static  TOP_NAME dut;
+static  TOP_NAME dut;
 void nvboard_bind_all_pins(Vtop* top);
 
 
