@@ -44,7 +44,7 @@ int main(int argc, char** argv, char** env) {
 		sim_time++;
 		assert(dut.f == (a1 ^ b1));
 		nvboard_update();
-		sleep(5)
+		sleep(5);
 	}
 	m_trace->close();
 	//delete dut;
