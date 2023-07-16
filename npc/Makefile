@@ -15,6 +15,10 @@ BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
+all:default
+
+default: $(BIN)
+
 
 $(shell mkdir -p $(BUILD_DIR))
 
@@ -36,16 +40,18 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image
 
-$(shell mkdir -p $(BUILD_DIR))
 
-sim: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
-	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by your self."
+$(BIN):$(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ \
+		--top-module $(TOPNAME)  $(VSRCS) $(CSRCS)\
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+$(shell mkdir -p $(BUILD_DIR))
+
+sim:  $(BIN)
+	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(EXE)
 
 .PHONY:wave clean sim default all run
@@ -54,6 +60,6 @@ wave:
 	gtkwave $(WAVE)
 
 clean:
-	$(RM) -r $(DIR) $(WAVE) 
+	$(RM) -r $(OBJ_DIR) $(WAVE) 
 
 include ../Makefile
