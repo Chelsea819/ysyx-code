@@ -26,25 +26,25 @@ int main(int argc, char** argv, char** env) {
 	nvboard_bind_all_pins(&dut);
 	nvboard_init();
 
-//	Verilated::traceEverOn(true);
-//	VerilatedVcdC *m_trace = new VerilatedVcdC;  
-//	dut.trace(m_trace, 5);               
-//	m_trace->open("waveform.vcd");
+	Verilated::traceEverOn(true);
+	VerilatedVcdC *m_trace = new VerilatedVcdC;  
+	dut.trace(m_trace, 5);               
+	m_trace->open("waveform.vcd");
 //	while (sim_time < MAX_SIM_TIME) {
 	while(1){
-		int a1 = rand() & 1;
-		int b1 = rand() & 1;
+//		int a1 = rand() & 1;
+//		int b1 = rand() & 1;
 		//	dut->clk ^= 1; 
-		dut.a = a1;
-		dut.b = b1;
+	//	dut.a = a1;
+	//	dut.b = b1;
 		dut.eval();
-//		m_trace->dump(sim_time);
-//		sim_time++;
-		assert(dut.f == (a1 ^ b1));
+		m_trace->dump(sim_time);
+		sim_time++;
+	//	assert(dut.f == (a1 ^ b1));
 		nvboard_update();
-//		sleep(7);
+		usleep(1);
 	}
-//	m_trace->close();
+	m_trace->close();
 	//delete dut;
 	//
 	exit(EXIT_SUCCESS);
