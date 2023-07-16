@@ -37,7 +37,7 @@ CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image
 
 
-VERILATOR-WHOLE =$(VERILATOR) $(VERILATOR_CFLAGS) \
+VERILATOR-WHOLE +=$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME)  $(VSRCS) $(CSRCS)\
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
