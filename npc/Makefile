@@ -60,6 +60,6 @@ wave:
 	gtkwave $(WAVE)
 
 clean:
-	$(RM) -r $(OBJ_DIR) $(WAVE) 
+	$(RM) -r $(OBJ_DIR) $(WAVE) $(EXE)
 
 include ../Makefile
