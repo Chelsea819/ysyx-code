@@ -27,8 +27,11 @@ enum {
 
 };
 
+//实现了一个基于正则表达式匹配的词法解析规则定义
 static struct rule {
+  //用于匹配的正则表达式
   const char *regex;
+  //匹配成功后对应的语法标记类型
   int token_type;
 } rules[] = {
 
@@ -48,12 +51,16 @@ static regex_t re[NR_REGEX] = {};
 /* Rules are used for many times.
  * Therefore we compile them only once before any usage.
  */
+//这样可以预先编译所有正则模式,提高后续匹配效率
+//检查每个正则表达式是否编译成功,避免在匹配时才发现错误
 void init_regex() {
   int i;
   char error_msg[128];
   int ret;
 
+  //遍历正则规则数组rules[],共有NR_REGEX条规则
   for (i = 0; i < NR_REGEX; i ++) {
+    /*第三个参数是匹配选项,这里是REG_EXTENDED表示支持扩展正则语法*/
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
