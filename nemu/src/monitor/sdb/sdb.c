@@ -72,6 +72,11 @@ static int cmd_q(char *args)
 
 static int cmd_help(char *args);
 
+static int cmd_info(char *args){
+  isa_reg_display();
+  return 0;
+}
+
 static struct
 {
   const char *name;
@@ -82,6 +87,7 @@ static struct
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
     {"si", "Execuate one by one.",cmd_si},
+    {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
 
     /* TODO: Add more commands */
 
