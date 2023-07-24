@@ -55,7 +55,9 @@ static int cmd_c(char *args)
 static int cmd_si(char *args){
   int flag = 1;
   int n = 0;
-  for(int i = strlen(args) - 1;i <= 0;i --){
+  int i = strlen(args) - 1;
+  printf("i = %d\n",i);
+  for(  ;i >= 0;i --){
     n += (int)args[i] * flag;
     flag = flag * 10;
   }
