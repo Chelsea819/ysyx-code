@@ -47,6 +47,7 @@ static char *rl_gets()
 
 static int cmd_c(char *args)
 {
+  /*Simulate how the CPU works.*/
   cpu_exec(-1);
   return 0;
 }
@@ -108,6 +109,7 @@ void sdb_set_batch_mode()
   is_batch_mode = true;
 }
 
+/* Receive commands from user. */
 void sdb_mainloop()
 {
   if (is_batch_mode)
