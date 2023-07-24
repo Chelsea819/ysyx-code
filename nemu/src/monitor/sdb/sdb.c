@@ -61,6 +61,7 @@ static int cmd_si(char *args){
   for(  ;i >= 0;i --){
     n += (int)args[i]  * flag;
     printf("process 1 = %d\n",(int)base);
+    printf("process string args[i] = %c\n",args[i]);
     printf("process args[i] = %d\n",(int)args[i]);
     printf("process n = %d\n",n);
     printf("process flag = %d\n",flag);
