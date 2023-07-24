@@ -52,6 +52,17 @@ static int cmd_c(char *args)
   return 0;
 }
 
+static int cmd_si(char *args){
+  int flag = 1;
+  int n = 0;
+  for(int i = strlen(args) - 1;i <= 0;i --){
+    n += (int)args[i] * flag;
+    flag = flag * 10;
+  }
+  cpu_exec(n);
+  return 0;
+}
+
 static int cmd_q(char *args)
 {
   nemu_state.state = NEMU_QUIT;
@@ -69,6 +80,7 @@ static struct
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
+    {"si [N]", "Execuate one by one.",cmd_si},
 
     /* TODO: Add more commands */
 
