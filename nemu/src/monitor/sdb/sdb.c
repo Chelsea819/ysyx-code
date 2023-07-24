@@ -56,10 +56,10 @@ static int cmd_si(char *args){
   int flag = 1;
   int n = 0;
   int i = strlen(args) - 1;
-  char base = 0;
+  char base = 1;
   printf("i = %d\n",i);
   for(  ;i >= 0;i --){
-    n += ((int)args[i] - (int)base) * flag;
+    n += ((int)args[i] - (int)base + 1) * flag;
     printf("process args[i] = %d\n",args[i]);
     printf("process n = %d\n",n);
     printf("process flag = %d\n",flag);
