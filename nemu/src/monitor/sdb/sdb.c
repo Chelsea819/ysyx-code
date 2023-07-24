@@ -59,6 +59,7 @@ static int cmd_si(char *args){
     n += (int)args[i] * flag;
     flag = flag * 10;
   }
+  printf("n = %d\n",n);
   cpu_exec(n);
   return 0;
 }
