@@ -89,8 +89,11 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_pcount(char *args){
-  unsigned int addr = convert_16(args);
-  printf("result = 0x%08x\n",addr);
+  //unsigned int addr = convert_16(args);
+  //printf("result = 0x%08x\n",addr);
+  bool *success = NULL;
+  if(args) *success = true;
+  expr(args,success);
   return 0;
 }
 

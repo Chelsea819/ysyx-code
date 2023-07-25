@@ -21,7 +21,9 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
+  TK_NOTYPE = 256, TK_EQ, TK_SUB,TK_MUL,
+  TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA, 
+  TK_NUM, TK_ADD
 
   /* TODO: Add more token types */
 
@@ -40,12 +42,19 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
+  {"\\+", TK_ADD},      // plus
   {"==", TK_EQ},        // equal
+  {"-",TK_SUB},         // sub
+  {"\\*",TK_MUL},       // mul
+  {"/",TK_DIV},         // division
+  {"(",TK_LEFT_BRA},    // bracket-left
+  {")",TK_RIGHT_BRA},   // bracket-right
+  {"[0-9]+",TK_NUM},    // num
 };
 
 #define NR_REGEX ARRLEN(rules)
 
+//collect the inner content after compling regex
 static regex_t re[NR_REGEX] = {};
 
 /* Rules are used for many times.
@@ -78,8 +87,10 @@ static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
+  //current position
   int position = 0;
   int i;
+  //Byte offset from string's start to substring' starting and end
   regmatch_t pmatch;
 
   nr_token = 0;
@@ -101,7 +112,26 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
 
+        //TK_NOTYPE = 256, TK_EQ, TK_SUB,TK_MUL,
+        //TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA, TK_NUM
+
         switch (rules[i].token_type) {
+          case TK_NOTYPE:
+            break;
+
+          case TK_SUB:
+          case TK_MUL:
+          case TK_DIV:
+          case TK_ADD:
+            tokens[nr_token ++].type = rules[i].token_type;
+            break;
+
+          case TK_NUM:  
+            tokens[nr_token].type = rules[i].token_type;
+            assert(substr_len <= 32);
+            strncpy(tokens[nr_token ++].str, substr_start, substr_len);
+            break;
+
           default: TODO();
         }
 
