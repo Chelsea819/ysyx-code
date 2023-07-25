@@ -72,6 +72,22 @@ static int cmd_q(char *args)
 
 static int cmd_help(char *args);
 
+static int cmd_pcount(char *args){
+  unsigned int addr = 0;
+  int flag = 1;
+  for(int i = strlen(args) - 1;i >= 2;i --){
+    addr += ((int)args[i] - (int)'0') * flag;
+    flag *= 16;
+  }
+
+  printf("result = 0x%x\n",addr);
+  return 0;
+}
+
+static int cmd_x(char *args){
+  return 0; 
+}
+
 static int cmd_info(char *args){
   if (*args == 'r')  isa_reg_display();
   return 0;
@@ -88,6 +104,8 @@ static struct
     {"q", "Exit NEMU", cmd_q},
     {"si", "Execuate one by one.",cmd_si},
     {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
+    {"p","Get the result of EXPR.",cmd_pcount},
+    {"x","Scan the memory.",cmd_x},
 
     /* TODO: Add more commands */
 
