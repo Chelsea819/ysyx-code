@@ -73,7 +73,7 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_info(char *args){
-  if (*args == 'r' || *args == ' ')  isa_reg_display();
+  if (*args == 'r')  isa_reg_display();
   return 0;
 }
 
