@@ -52,7 +52,7 @@ static int cmd_c(char *args)
   return 0;
 }
 
-static int cmd_si(char *args){
+int convert_ten(char *args){
   int flag = 1;
   int n = 0;
   int i = strlen(args) - 1;
@@ -60,6 +60,21 @@ static int cmd_si(char *args){
     n += ((int)args[i] - (int)'0') * flag;
     flag = flag * 10;
   }
+  return n;
+}
+
+unsigned int convert_16(char *args){
+  unsigned int addr = 0;
+  int flag = 1;
+  for(int i = strlen(args) - 1;i >= 2;i --){
+    addr += ((int)args[i] - (int)'0') * flag;
+    flag *= 16;
+  }
+  return addr;
+}
+
+static int cmd_si(char *args){
+  int n = convert_ten(args);
   cpu_exec(n);
   return 0;
 }
@@ -73,18 +88,18 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_pcount(char *args){
-  unsigned int addr = 0;
-  int flag = 1;
-  for(int i = strlen(args) - 1;i >= 2;i --){
-    addr += ((int)args[i] - (int)'0') * flag;
-    flag *= 16;
-  }
-
+  unsigned int addr = convert_16(args);
   printf("result = 0x%x\n",addr);
   return 0;
 }
 
 static int cmd_x(char *args){
+  char *arg1 = {0};
+  char *arg2 = {0};
+  sscanf(args,"%s[^ ]%s",arg1,arg2);
+  int len = convert_ten(arg1);
+  unsigned int addr = convert_16(arg2);
+  printf("%d %x\n",len,addr);
   return 0; 
 }
 
