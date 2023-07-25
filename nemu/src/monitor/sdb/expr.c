@@ -47,8 +47,8 @@ static struct rule {
   {"-",TK_SUB},         // sub
   {"\\*",TK_MUL},       // mul
   {"/",TK_DIV},         // division
-  //{"(",TK_LEFT_BRA},    // bracket-left
-  //{")",TK_RIGHT_BRA},   // bracket-right
+  {"\\(",TK_LEFT_BRA},    // bracket-left
+  {"\\)",TK_RIGHT_BRA},   // bracket-right
   {"[0-9]+",TK_NUM},    // num
 };
 
