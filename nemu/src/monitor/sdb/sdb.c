@@ -63,8 +63,8 @@ int convert_ten(char *args){
   return n;
 }
 
-unsigned int convert_16(char *args){
-  unsigned int addr = 0;
+vaddr_t convert_16(char *args){
+  vaddr_t addr = 0;
   int flag = 1;
   for(int i = strlen(args) - 1;i >= 2;i --){
     addr += ((int)args[i] - (int)'0') * flag;
@@ -97,8 +97,8 @@ static int cmd_x(char *args){
   char *arg1 = strtok(NULL," ");
   char *arg2 = strtok(NULL," ");
   int len = convert_ten(arg1);
-  unsigned int addr = convert_16(arg2);
-  printf("%d %x\n",len,addr);
+  vaddr_t addr = convert_16(arg2);
+  printf("%d 0x%x\n",len,addr);
   return 0; 
 }
 
