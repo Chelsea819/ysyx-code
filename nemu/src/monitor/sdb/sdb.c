@@ -94,9 +94,8 @@ static int cmd_pcount(char *args){
 }
 
 static int cmd_x(char *args){
-  char *arg1 = {0};
-  char *arg2 = {0};
-  sscanf(args,"%s[^ ]%s",arg1,arg2);
+  char *arg1 = strtok(NULL," ");
+  char *arg2 = strtok(NULL," ");
   int len = convert_ten(arg1);
   unsigned int addr = convert_16(arg2);
   printf("%d %x\n",len,addr);
