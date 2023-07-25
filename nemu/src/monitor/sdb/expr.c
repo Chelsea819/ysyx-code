@@ -123,6 +123,8 @@ static bool make_token(char *e) {
           case TK_MUL:
           case TK_DIV:
           case TK_ADD:
+          case TK_LEFT_BRA:
+          case TK_RIGHT_BRA:
             tokens[nr_token ++].type = rules[i].token_type;
             break;
 
@@ -148,6 +150,41 @@ static bool make_token(char *e) {
   return true;
 }
 
+bool check_parentheses(int p, int q){
+  if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
+    return false;
+  else {
+    for(int i = p; i < q ; i ++){
+      if(tokens[i].type == TK_RIGHT_BRA) return false;
+    }
+  }
+  return true;
+}
+
+static int eval(int p, int q){
+
+  if (p > q) {
+    /* Bad expression */
+    Assert(0, "Bad expression.\n");
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  //else {
+    /* We should do more things here. */
+    return 0;
+  //}
+}
+
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -156,7 +193,10 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  //TODO();
+  eval(0,32);
+
+
 
   return 0;
 }
