@@ -99,7 +99,6 @@ static int cmd_x(char *args){
   char *arg2 = strtok(NULL," ");
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
-  printf("%d 0x%x\n",len,addr);
   for (int i = 0;i < len;i ++){
     printf("0x%x:\t0x%x\n",addr + i,vaddr_read(addr + i, 4));
   }
