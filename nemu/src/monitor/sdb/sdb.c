@@ -90,7 +90,7 @@ static int cmd_help(char *args);
 
 static int cmd_pcount(char *args){
   unsigned int addr = convert_16(args);
-  printf("result = 0x%x\n",addr);
+  printf("result = 0x%8x\n",addr);
   return 0;
 }
 
@@ -100,7 +100,7 @@ static int cmd_x(char *args){
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
   for (int i = 0;i < len;i ++){
-    printf("0x%x:\t0x%x\n",addr + i,vaddr_read(addr + i, 4));
+    printf("0x%8x:\t0x%8x\n",addr + i,vaddr_read(addr + i, 4));
   }
   return 0; 
 }
