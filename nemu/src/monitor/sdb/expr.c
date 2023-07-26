@@ -196,17 +196,18 @@ bool check_parentheses(int p, int q){
 static uint32_t val1 = 0;
 static uint32_t val2 = 0;
 
-uint32_t convert_ten(char *args){
-  uint32_t flag = 1;
-  uint32_t n = 0;
-  int i = strlen(args) - 1;
+uint32_t convert_ten(char *args);
+//{
+//  uint32_t flag = 1;
+//  uint32_t n = 0;
+//  int i = strlen(args) - 1;
   
-  for(  ;i >= 0;i --){
-    n += ((uint32_t)args[i] - (uint32_t)'0') * flag;
-    flag = flag * 10;
-  }
-  return n;
-}
+//  for(  ;i >= 0;i --){
+//    n += ((uint32_t)args[i] - (uint32_t)'0') * flag;
+//    flag = flag * 10;
+//  }
+//  return n;
+//}
 
 uint32_t eval(int p, int q){
   //int num = 0;

@@ -53,9 +53,9 @@ static int cmd_c(char *args)
   return 0;
 }
 
-int convert_ten(char *args){
-  int flag = 1;
-  int n = 0;
+uint32_t convert_ten(char *args){
+  uint32_t flag = 1;
+  uint32_t n = 0;
   int i = strlen(args) - 1;
   for(  ;i >= 0;i --){
     n += ((int)args[i] - (int)'0') * flag;
