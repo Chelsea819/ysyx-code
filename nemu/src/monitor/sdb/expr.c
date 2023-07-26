@@ -154,6 +154,7 @@ static int op = 0;
 static int op_type = 0;
 
 static int find_main(int p,int q){
+  printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   for(int i = q - 1 ; i > p ; i -- ){
     if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
@@ -175,7 +176,6 @@ bool check_parentheses(int p, int q){
   int fake_false = 0;
   if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
     {
-      printf("no complete bracket\n");
       return false;}
   else {
     for(int i = p; i < q ; i ++){
@@ -237,6 +237,7 @@ uint32_t eval(int p, int q){
   }
   else {
     /* We should do more things here. */
+    printf("before main finding\n");
     op = find_main(p,q);
     val1 = eval(p, op - 1);
     val2 = eval(op + 1, q);
