@@ -160,9 +160,11 @@ static int find_main(int p,int q){
   for(int i = q ; i > p ; i -- ){
     if(tokens[i].type == TK_RIGHT_BRA){
       flag_bracket += 1;
+      continue;
     }
     else if(tokens[i].type == TK_LEFT_BRA){
       flag_bracket -= 1;
+      continue;
     }
     if(flag_bracket == 0){
       printf("out of the bracket i = %d\n",i);
