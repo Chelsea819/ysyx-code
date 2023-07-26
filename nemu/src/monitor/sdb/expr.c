@@ -125,7 +125,6 @@ static bool make_token(char *e) {
             || (nr_token > 0 && tokens[nr_token - 1].type >= 258 && tokens[nr_token - 1].type <= 263 ))
             {
               flag_neg += 1;
-              printf("%d\n",flag_neg);
               break;
             } 
           case TK_MUL:
@@ -141,9 +140,7 @@ static bool make_token(char *e) {
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 31);
             strncpy(tokens[nr_token].str, substr_start, substr_len);
-            printf("%s  %d\n",tokens[nr_token].str,flag_neg);
-            while(flag_neg --) {strcat(tokens[nr_token].str,"n"); }
-            printf("%s  %d\n",tokens[nr_token].str,flag_neg);
+            while(flag_neg --) strcat(tokens[nr_token].str,"n"); 
             nr_token++;
             flag_neg = 0;
             break;
