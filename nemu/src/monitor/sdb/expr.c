@@ -156,16 +156,26 @@ static int op_type = 0;
 static int find_main(int p,int q){
   printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
-  for(int i = q - 1 ; i > p ; i -- ){
-    if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
-      op_type = tokens[i].type;
-      printf("get main_find op_type = %d i = %d\n",op_type,i);
-      return i;
+  int flag_bracket = 0;
+  for(int i = q ; i > p ; i -- ){
+    if(tokens[i].type == TK_RIGHT_BRA){
+      flag_bracket += 1;
     }
-    if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
-      op_type = tokens[i].type;
-      flag = i;
+    else if(tokens[i].type == TK_LEFT_BRA){
+      flag_bracket -= 1;
     }
+    if(flag_bracket == 0){
+      if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
+        op_type = tokens[i].type;
+        printf("get main_find op_type = %d i = %d\n",op_type,i);
+        return i;
+      }
+      if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
+        op_type = tokens[i].type;
+        flag = i;
+      }
+    }
+    
   }
   return flag;
 }
@@ -241,9 +251,9 @@ uint32_t eval(int p, int q){
     printf("before main finding\n");
     op = find_main(p,q);
     val1 = eval(p, op - 1);
-    printf("val1 = %d\n",val1);
+    //printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = %d\n",val2);
+    //printf("val2 = %d\n",val2);
     printf("find_main op_type: %d\n",op_type);
 
     switch (op_type) {
