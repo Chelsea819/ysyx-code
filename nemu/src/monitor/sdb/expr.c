@@ -172,7 +172,7 @@ static int find_main(int p,int q){
 
 bool check_parentheses(int p, int q){
   printf("enter check\n");
-  int left = 1;
+  int left = 0;
   int right = 0;
   int fake_false = 0;
   if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
