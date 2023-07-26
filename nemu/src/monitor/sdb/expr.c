@@ -259,13 +259,17 @@ uint32_t eval(int p, int q){
 
 
 word_t expr(char *e, bool *success) {
+  int i = 0;
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
-
   /* TODO: Insert codes to evaluate the expression. */
   //TODO();
-
-  return eval(0, 31);
+  for(; i < 32 ; i ++){
+    if(tokens[i].type == 0){
+      break;
+    }
+  }
+  return eval(0, i);
 }
