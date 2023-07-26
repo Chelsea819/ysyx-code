@@ -221,12 +221,14 @@ uint32_t eval(int p, int q){
      * For now this token should be a number.
      * Return the value of the number.
      */
+    printf("p = q = %d\n",q);
     return convert_ten(tokens[p].str);
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
+    printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
     return eval(p + 1, q - 1);
   }
   else {
@@ -234,12 +236,13 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     val1 = eval(p, op - 1);
     val2 = eval(op + 1, q);
+    printf("find_main op_type: %d\n",op_type);
 
     switch (op_type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
-      case '/': return val1 / val2;
+      case TK_ADD: return val1 + val2;
+      case TK_SUB: return val1 - val2;
+      case TK_MUL: return val1 * val2;
+      case TK_DIV: return val1 / val2;
       default: assert(0);
     return 0;
   }
@@ -255,7 +258,6 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   //TODO();
-  //eval(0,32);
 
   return eval(0, 31);
 }
