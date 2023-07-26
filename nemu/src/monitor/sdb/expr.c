@@ -211,6 +211,7 @@ uint32_t convert_ten(char *args);
 
 uint32_t eval(int p, int q){
   //int num = 0;
+  printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     printf("p = %d , q = %d\n",p,q);
