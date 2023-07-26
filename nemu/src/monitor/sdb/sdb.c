@@ -61,13 +61,13 @@ uint32_t convert_ten(char *args){
   int i = strlen(args) - 1;
   for(  ;i >= 0;i --){
     if(args[i] == 'n'){
-      flag_neg = 1;
+      flag_neg += 1;
       continue;
     }
     n += ((int)args[i] - (int)'0') * flag;
     flag = flag * 10;
   }
-  if(flag_neg) n = n * (-1);
+  while(flag_neg --) n = n * (-1);
   return n;
 }
 
