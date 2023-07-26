@@ -167,7 +167,6 @@ static int find_main(int p,int q){
       flag = i;
     }
   }
-  printf("1\n");
   return flag;
 }
 
@@ -242,7 +241,9 @@ uint32_t eval(int p, int q){
     printf("before main finding\n");
     op = find_main(p,q);
     val1 = eval(p, op - 1);
+    printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
+    printf("val2 = %d\n",val2);
     printf("find_main op_type: %d\n",op_type);
 
     switch (op_type) {
