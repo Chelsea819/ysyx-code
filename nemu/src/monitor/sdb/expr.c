@@ -187,7 +187,7 @@ bool check_parentheses(int p, int q){
         right += 1;
         if(right > left)  Assert(0,"Bad expression--too much right brackets");
         }
-      else if(tokens[i].type == TK_RIGHT_BRA) {
+      else if(tokens[i].type == TK_LEFT_BRA) {
         left += 1;
       }
 
