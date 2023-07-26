@@ -165,6 +165,7 @@ static int find_main(int p,int q){
       flag_bracket -= 1;
     }
     if(flag_bracket == 0){
+      printf("out of the bracket i = %d\n",i);
       if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
         op_type = tokens[i].type;
         printf("get main_find op_type = %d i = %d\n",op_type,i);
@@ -177,6 +178,7 @@ static int find_main(int p,int q){
     }
     
   }
+  printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
 
@@ -251,9 +253,9 @@ uint32_t eval(int p, int q){
     printf("before main finding\n");
     op = find_main(p,q);
     val1 = eval(p, op - 1);
-    //printf("val1 = %d\n",val1);
+    printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
-    //printf("val2 = %d\n",val2);
+    printf("val2 = %d\n",val2);
     printf("find_main op_type: %d\n",op_type);
 
     switch (op_type) {
