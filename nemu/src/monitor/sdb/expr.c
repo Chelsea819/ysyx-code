@@ -95,15 +95,14 @@ static bool make_token(char *e) {
   regmatch_t pmatch;
 
   nr_token = 0;
-
+  int flag_neg = 0;
   while (e[position] != '\0') {
-    int flag_neg = 0;
+    
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
-
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
@@ -141,7 +140,7 @@ static bool make_token(char *e) {
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 31);
             strncpy(tokens[nr_token].str, substr_start, substr_len);
-            if(flag_neg) strcat(tokens[nr_token].str,"n");
+            if(flag_neg) {strcat(tokens[nr_token].str,"n"); flag_neg = 0;}
             printf("%s  %d\n",tokens[nr_token].str,flag_neg);
             nr_token++;
             break;
