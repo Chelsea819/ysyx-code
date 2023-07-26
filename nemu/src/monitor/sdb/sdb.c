@@ -100,7 +100,7 @@ static int cmd_pcount(char *args){
   //printf("result = 0x%08x\n",addr);
   bool success = false;
   if(args) success = true;
-  printf("result = %d\n",expr(args,&success));
+  printf("\033[105m result = %d \033[0m\n",expr(args,&success));
   return 0;
 }
 
@@ -110,7 +110,7 @@ static int cmd_x(char *args){
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
   for (int i = 0;i < len;i ++){
-    printf("0x%08x:\t0x%08x\n",addr + i,vaddr_read(addr + i, 4));
+    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,vaddr_read(addr + i, 4));
   }
   return 0; 
 }
