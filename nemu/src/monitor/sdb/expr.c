@@ -167,6 +167,7 @@ static int find_main(int p,int q){
       flag = i;
     }
   }
+  printf("1\n");
   return flag;
 }
 
