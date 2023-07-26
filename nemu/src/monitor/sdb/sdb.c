@@ -55,12 +55,19 @@ static int cmd_c(char *args)
 
 uint32_t convert_ten(char *args){
   uint32_t flag = 1;
+  uint32_t flag_neg = 0;
   uint32_t n = 0;
+
   int i = strlen(args) - 1;
   for(  ;i >= 0;i --){
+    if(args[i] == 'n'){
+      flag_neg = 1;
+      continue;
+    }
     n += ((int)args[i] - (int)'0') * flag;
     flag = flag * 10;
   }
+  if(flag_neg) n = n * (-1);
   return n;
 }
 

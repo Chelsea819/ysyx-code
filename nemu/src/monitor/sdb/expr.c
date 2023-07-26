@@ -21,9 +21,9 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_SUB,TK_MUL,
+  TK_NOTYPE = 256, TK_EQ, TK_ADD, TK_SUB,TK_MUL,
   TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA, 
-  TK_NUM, TK_ADD
+  TK_NUM
 
   /* TODO: Add more token types */
 
@@ -42,8 +42,8 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", TK_ADD},      // plus
   {"==", TK_EQ},        // equal
+  {"\\+", TK_ADD},      // plus
   {"-",TK_SUB},         // sub
   {"\\*",TK_MUL},       // mul
   {"/",TK_DIV},         // division
@@ -97,6 +97,7 @@ static bool make_token(char *e) {
   nr_token = 0;
 
   while (e[position] != '\0') {
+    int flag_neg = 0;
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
@@ -121,6 +122,12 @@ static bool make_token(char *e) {
             break;
 
           case TK_SUB:
+            if( (nr_token == 0) 
+            || (nr_token > 0 && tokens[nr_token - 1].type >= 258 && tokens[nr_token - 1].type <= 263 ))
+            {
+              flag_neg = 1;
+              break;
+            } 
           case TK_MUL:
           case TK_DIV:
           case TK_ADD:
@@ -129,11 +136,15 @@ static bool make_token(char *e) {
             tokens[nr_token ++].type = rules[i].token_type;
             break;
 
-          case TK_NUM:  
+          case TK_NUM: 
+          
             tokens[nr_token].type = rules[i].token_type;
-            assert(substr_len <= 32);
-            strncpy(tokens[nr_token ++].str, substr_start, substr_len);
+            assert(substr_len <= 31);
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            if(flag_neg) strcat(tokens[nr_token].str,"n");
+            nr_token++;
             break;
+
 
           default: TODO();
         }
@@ -220,6 +231,7 @@ uint32_t eval(int p, int q){
   uint32_t val2 = 0;
   int op_type1 = 0;
   int op = 0;
+  
   //int error = 0;
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
