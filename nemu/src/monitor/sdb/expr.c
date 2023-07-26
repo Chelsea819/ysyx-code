@@ -271,5 +271,5 @@ word_t expr(char *e, bool *success) {
       break;
     }
   }
-  return eval(0, i);
+  return eval(0, i - 1);
 }
