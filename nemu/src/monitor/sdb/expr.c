@@ -142,7 +142,7 @@ static bool make_token(char *e) {
             assert(substr_len <= 31);
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             if(flag_neg) strcat(tokens[nr_token].str,"n");
-            printf("%s\n",tokens[nr_token].str);
+            printf("%s  %d\n",tokens[nr_token].str,flag_neg);
             nr_token++;
             break;
 
