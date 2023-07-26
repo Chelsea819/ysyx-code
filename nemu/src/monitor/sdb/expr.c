@@ -220,11 +220,13 @@ uint32_t eval(int p, int q){
   uint32_t val2 = 0;
   int op_type1 = 0;
   int op = 0;
+  //int error = 0;
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     //printf("p = %d , q = %d\n",p,q);
     Assert(0, "Bad expression.\n");
+    //error = -1;
   }
   else if (p == q) {
     /* Single token.
@@ -251,6 +253,8 @@ uint32_t eval(int p, int q){
     val2 = eval(op + 1, q);
     //printf("val2 = %d\n",val2);
     //printf("find_main op_type: %d\n",op_type);
+
+    //if(!error) return -1; 
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
