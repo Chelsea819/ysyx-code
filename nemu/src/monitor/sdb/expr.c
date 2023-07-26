@@ -88,6 +88,7 @@ static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
   //current position
+  memset(tokens, 0, sizeof(tokens));
   int position = 0;
   int i;
   //Byte offset from string's start to substring' starting and end
