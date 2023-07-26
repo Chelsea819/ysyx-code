@@ -174,7 +174,9 @@ bool check_parentheses(int p, int q){
   int right = 0;
   int fake_false = 0;
   if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
-    return false;
+    {
+      printf("no complete bracket\n");
+      return false;}
   else {
     for(int i = p; i < q ; i ++){
       if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
