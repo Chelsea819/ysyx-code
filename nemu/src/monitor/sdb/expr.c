@@ -169,6 +169,7 @@ static int find_main(int p,int q){
 }
 
 bool check_parentheses(int p, int q){
+  printf("enter check\n");
   int left = 1;
   int right = 0;
   int fake_false = 0;
