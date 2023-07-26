@@ -150,7 +150,6 @@ static bool make_token(char *e) {
   return true;
 }
 
-static int op = 0;
 static int op_type = 0;
 
 static int find_main(int p,int q){
@@ -211,8 +210,6 @@ bool check_parentheses(int p, int q){
   if(fake_false) return false;
   return true;
 }   
-static uint32_t val1 = 0;
-static uint32_t val2 = 0;
 
 uint32_t convert_ten(char *args);
 //{
@@ -229,6 +226,10 @@ uint32_t convert_ten(char *args);
 
 uint32_t eval(int p, int q){
   //int num = 0;
+  uint32_t val1 = 0;
+  uint32_t val2 = 0;
+  int op_type1 = 0;
+  int op = 0;
   printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
@@ -254,13 +255,14 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     printf("before main finding\n");
     op = find_main(p,q);
+    op_type1 = op_type;
     val1 = eval(p, op - 1);
     printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
     printf("val2 = %d\n",val2);
     printf("find_main op_type: %d\n",op_type);
 
-    switch (op_type) {
+    switch (op_type1) {
       case TK_ADD: return val1 + val2;
       case TK_SUB: return val1 - val2;
       case TK_MUL: return val1 * val2;
