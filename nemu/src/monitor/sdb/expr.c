@@ -125,6 +125,7 @@ static bool make_token(char *e) {
             || (nr_token > 0 && tokens[nr_token - 1].type >= 258 && tokens[nr_token - 1].type <= 263 ))
             {
               flag_neg += 1;
+              printf("%d\n",flag_neg);
               break;
             } 
           case TK_MUL:
