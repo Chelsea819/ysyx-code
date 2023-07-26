@@ -213,6 +213,7 @@ uint32_t eval(int p, int q){
   //int num = 0;
   if (p > q) {
     /* Bad expression */
+    printf("p = %d , q = %d\n",p,q);
     Assert(0, "Bad expression.\n");
   }
   else if (p == q) {
