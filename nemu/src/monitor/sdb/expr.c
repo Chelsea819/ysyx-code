@@ -145,6 +145,7 @@ static bool make_token(char *e) {
             while(flag_neg --) {strcat(tokens[nr_token].str,"n"); }
             printf("%s  %d\n",tokens[nr_token].str,flag_neg);
             nr_token++;
+            flag_neg = 0;
             break;
 
 
