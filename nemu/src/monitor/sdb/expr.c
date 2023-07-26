@@ -159,6 +159,7 @@ static int find_main(int p,int q){
   for(int i = q - 1 ; i > p ; i -- ){
     if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
       op_type = tokens[i].type;
+      printf("get main_find op_type = %d\n",op_type);
       return i;
     }
     if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
