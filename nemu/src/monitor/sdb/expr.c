@@ -150,19 +150,66 @@ static bool make_token(char *e) {
   return true;
 }
 
+static int op = 0;
+static int op_type = 0;
+
+static int find_main(int p,int q){
+  int flag = 0;
+  for(int i = q - 1 ; i > p ; i -- ){
+    if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
+      op_type = tokens[i].type;
+      return i;
+    }
+    if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
+      op_type = tokens[i].type;
+      flag = i;
+    }
+  }
+  return flag;
+}
+
 bool check_parentheses(int p, int q){
+  int left = 1;
+  int right = 0;
+  int fake_false = 0;
   if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
     return false;
   else {
     for(int i = p; i < q ; i ++){
-      if(tokens[i].type == TK_RIGHT_BRA) return false;
+      if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
+        fake_false = 1;
+      }
+      if(tokens[i].type == TK_RIGHT_BRA) {
+        right += 1;
+        if(right > left)  Assert(0,"Bad expression--too much right brackets");
+        }
+      else if(tokens[i].type == TK_RIGHT_BRA) {
+        left += 1;
+      }
+
     }
+    if(left != right + 1) Assert(0,"Bad expression--too much left brackets");
   }
+  if(fake_false) return false;
   return true;
+}   
+static uint32_t val1 = 0;
+static uint32_t val2 = 0;
+
+uint32_t convert_ten(char *args){
+  uint32_t flag = 1;
+  uint32_t n = 0;
+  int i = strlen(args) - 1;
+  
+  for(  ;i >= 0;i --){
+    n += ((uint32_t)args[i] - (uint32_t)'0') * flag;
+    flag = flag * 10;
+  }
+  return n;
 }
 
-static int eval(int p, int q){
-
+uint32_t eval(int p, int q){
+  //int num = 0;
   if (p > q) {
     /* Bad expression */
     Assert(0, "Bad expression.\n");
@@ -172,6 +219,7 @@ static int eval(int p, int q){
      * For now this token should be a number.
      * Return the value of the number.
      */
+    return convert_ten(tokens[p].str);
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
@@ -179,10 +227,21 @@ static int eval(int p, int q){
      */
     return eval(p + 1, q - 1);
   }
-  //else {
+  else {
     /* We should do more things here. */
+    op = find_main(p,q);
+    val1 = eval(p, op - 1);
+    val2 = eval(op + 1, q);
+
+    switch (op_type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: assert(0);
     return 0;
-  //}
+  }
+}
 }
 
 
@@ -194,9 +253,7 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   //TODO();
-  eval(0,32);
+  //eval(0,32);
 
-
-
-  return 0;
+  return eval(0, 31);
 }
