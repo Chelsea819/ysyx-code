@@ -154,7 +154,7 @@ static bool make_token(char *e) {
 static int op_type = 0;
 
 static int find_main(int p,int q){
-  printf("enter main_find p = %d, q = %d\n",p ,q);
+  //printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   int flag_bracket = 0;
   for(int i = q ; i > p ; i -- ){
@@ -167,10 +167,10 @@ static int find_main(int p,int q){
       continue;
     }
     if(flag_bracket == 0){
-      printf("out of the bracket i = %d\n",i);
+      //printf("out of the bracket i = %d\n",i);
       if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
         op_type = tokens[i].type;
-        printf("get main_find op_type = %d i = %d\n",op_type,i);
+        //printf("get main_find op_type = %d i = %d\n",op_type,i);
         return i;
       }
       if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
@@ -180,12 +180,12 @@ static int find_main(int p,int q){
     }
     
   }
-  printf("get main_find op_type = %d flag = %d\n",op_type,flag);
+  //printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
 
 bool check_parentheses(int p, int q){
-  printf("enter check\n");
+  //printf("enter check\n");
   int left = 0;
   int right = 0;
   int fake_false = 0;
@@ -213,17 +213,6 @@ bool check_parentheses(int p, int q){
 }   
 
 uint32_t convert_ten(char *args);
-//{
-//  uint32_t flag = 1;
-//  uint32_t n = 0;
-//  int i = strlen(args) - 1;
-  
-//  for(  ;i >= 0;i --){
-//    n += ((uint32_t)args[i] - (uint32_t)'0') * flag;
-//    flag = flag * 10;
-//  }
-//  return n;
-//}
 
 uint32_t eval(int p, int q){
   //int num = 0;
@@ -231,10 +220,10 @@ uint32_t eval(int p, int q){
   uint32_t val2 = 0;
   int op_type1 = 0;
   int op = 0;
-  printf("initial p = %d ,q = %d\n",p,q);
+  //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
-    printf("p = %d , q = %d\n",p,q);
+    //printf("p = %d , q = %d\n",p,q);
     Assert(0, "Bad expression.\n");
   }
   else if (p == q) {
@@ -242,26 +231,26 @@ uint32_t eval(int p, int q){
      * For now this token should be a number.
      * Return the value of the number.
      */
-    printf("p = q = %d\n",q);
+    //printf("p = q = %d\n",q);
     return convert_ten(tokens[p].str);
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
+    //printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
     return eval(p + 1, q - 1);
   }
   else {
     /* We should do more things here. */
-    printf("before main finding\n");
+    //printf("before main finding\n");
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    printf("val1 = %d\n",val1);
+    //printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = %d\n",val2);
-    printf("find_main op_type: %d\n",op_type);
+    //printf("val2 = %d\n",val2);
+    //printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
@@ -270,8 +259,8 @@ uint32_t eval(int p, int q){
       case TK_DIV: return val1 / val2;
       default: assert(0);
     return 0;
+    }
   }
-}
 }
 
 
