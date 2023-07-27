@@ -306,7 +306,7 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     printf("before main finding\n");
     if(tokens[p].type == DEREF){
-      return vaddr_read(convert_16(tokens[p].str),4);
+      return vaddr_read(convert_16(tokens[p + 1].str),4);
     }
     op = find_main(p,q);
     op_type1 = op_type;
