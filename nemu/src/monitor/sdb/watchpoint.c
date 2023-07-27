@@ -65,7 +65,7 @@ WP* new_wp(char *args){
   get_wp->target = args;
 
   //cut
-  if(i == 0) free_ = NULL;
+  if(i == 0) { printf("free_ = NULL\n"); free_ = NULL;}
   else free_[i - 1].next = NULL;
 
   return get_wp;

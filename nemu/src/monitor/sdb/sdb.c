@@ -99,6 +99,7 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_w(char *args){
+  printf("args = %s\n",args);
   new_wp(args);
   return 0;
 }
