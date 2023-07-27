@@ -71,8 +71,8 @@ uint32_t convert_ten(char *args){
   return n;
 }
 
-vaddr_t convert_16(char *args){
-  vaddr_t addr = 0;
+uint32_t convert_16(char *args){
+  uint32_t addr = 0;
   int flag = 1;
   for(int i = strlen(args) - 1;i >= 2;i --){
     addr += ((int)args[i] - (int)'0') * flag;

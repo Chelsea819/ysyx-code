@@ -19,11 +19,12 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <memory/vaddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_ADD, TK_SUB,TK_MUL,
-  TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA, 
-  TK_NUM
+  TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA,TK_AND,
+  TK_NUM, TK_HEXA, TK_REG,TK_NEQ,DEREF
 
   /* TODO: Add more token types */
 
@@ -31,6 +32,7 @@ enum {
 
 //实现了一个基于正则表达式匹配的词法解析规则定义
 static struct rule {
+
   //用于匹配的正则表达式
   const char *regex;
   //匹配成功后对应的语法标记类型
@@ -50,6 +52,10 @@ static struct rule {
   {"\\(",TK_LEFT_BRA},    // bracket-left
   {"\\)",TK_RIGHT_BRA},   // bracket-right
   {"[0-9]+",TK_NUM},    // num
+  {"^0x",TK_HEXA},
+  {"^\\$",TK_REG},
+  {"!=",TK_NEQ},
+  {"&&",TK_AND},
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -127,22 +133,32 @@ static bool make_token(char *e) {
               flag_neg += 1;
               break;
             } 
+
           case TK_MUL:
           case TK_DIV:
           case TK_ADD:
           case TK_LEFT_BRA:
           case TK_RIGHT_BRA:
+          case TK_AND:
+          case TK_NEQ:
+          case TK_EQ:
             tokens[nr_token ++].type = rules[i].token_type;
             break;
 
           case TK_NUM: 
-          
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 31);
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             while(flag_neg --) strcat(tokens[nr_token].str,"n"); 
             nr_token++;
             flag_neg = 0;
+            break;
+
+          case TK_HEXA:
+          case TK_REG:
+            tokens[nr_token].type = rules[i].token_type;
+            assert(substr_len <= 32);
+            strncpy(tokens[nr_token++].str, substr_start, substr_len);
             break;
 
 
@@ -224,6 +240,7 @@ bool check_parentheses(int p, int q){
 }   
 
 uint32_t convert_ten(char *args);
+uint32_t convert_16(char *args);
 
 uint32_t eval(int p, int q){
   //int num = 0;
@@ -231,6 +248,7 @@ uint32_t eval(int p, int q){
   uint32_t val2 = 0;
   int op_type1 = 0;
   int op = 0;
+  bool success = false;
   
   //int error = 0;
   //printf("initial p = %d ,q = %d\n",p,q);
@@ -246,7 +264,25 @@ uint32_t eval(int p, int q){
      * Return the value of the number.
      */
     //printf("p = q = %d\n",q);
-    return convert_ten(tokens[p].str);
+    switch (tokens[p].type){
+
+    case TK_NUM: return convert_ten(tokens[p].str);
+
+    //寄存器里的值
+    case TK_REG: 
+      success = true;
+      return isa_reg_str2val(tokens[p].str, &success);
+
+    //十六进制数 
+    case TK_HEXA: return convert_16(tokens[p].str);
+
+    //解引用，内存里的值
+    //case DEREF: return vaddr_read(tokens[p].str, 4);
+    
+    default:
+      Assert(0,"Unknown content!\n");
+    }
+    
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
@@ -258,6 +294,9 @@ uint32_t eval(int p, int q){
   else {
     /* We should do more things here. */
     //printf("before main finding\n");
+    if(tokens[p].type == DEREF){
+      vaddr_read(convert_16(tokens[p].str),4);
+    }
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
@@ -266,13 +305,13 @@ uint32_t eval(int p, int q){
     //printf("val2 = %d\n",val2);
     //printf("find_main op_type: %d\n",op_type);
 
-    //if(!error) return -1; 
-
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
       case TK_SUB: return val1 - val2;
       case TK_MUL: return val1 * val2;
       case TK_DIV: return val1 / val2;
+      case TK_AND: return val1 && val2; 
+      case TK_NEQ: return val1 == val2;
       default: assert(0);
     return 0;
     }
@@ -287,10 +326,12 @@ word_t expr(char *e, bool *success) {
     return 0;
   }
   /* TODO: Insert codes to evaluate the expression. */
-  //TODO();
-  for(; i < 32 ; i ++){
-    if(tokens[i].type == 0){
-      break;
+  //TODO(); 
+
+  for (i = 0; i < 32; i ++) {
+    if(tokens[i].type == 0) break;
+    if (tokens[i].type == TK_MUL && (i == 0 || tokens[i - 1].type >= 257|| tokens[i - 1].type <= 264) ) {
+      tokens[i].type = DEREF;
     }
   }
   return eval(0, i - 1);
