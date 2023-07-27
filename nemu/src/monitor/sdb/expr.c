@@ -189,7 +189,7 @@ static bool make_token(char *e) {
 static int op_type = 0;
 
 static int find_main(int p,int q){
-  //printf("enter main_find p = %d, q = %d\n",p ,q);
+  printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   int flag_bracket = 0;
   for(int i = q ; i > p ; i -- ){
@@ -204,6 +204,7 @@ static int find_main(int p,int q){
     if(flag_bracket == 0){
       if(tokens[i].type == TK_AND) {
         op_type = tokens[i].type;
+        printf("get && and will return\n");
         return i;
       }
       if(tokens[i].type > op_type) {
