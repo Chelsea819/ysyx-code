@@ -186,13 +186,13 @@ static bool make_token(char *e) {
   return true;
 }
 
-static int op_type = 263;
+static int op_type = 262;
 
 static int find_main(int p,int q){
   printf("enter main_find p = %d, q = %d\n",p ,q);
-  int flag = 0;
+  int flag = 262;
   int flag_bracket = 0;
-  op_type = 263;
+  op_type = 0;
   for(int i = q ; i > p ; i -- ){
     if(tokens[i].type == TK_RIGHT_BRA){
       flag_bracket += 1;
