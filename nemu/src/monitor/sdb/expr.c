@@ -60,7 +60,7 @@ static struct rule {
   {"\\(",TK_LEFT_BRA},    // bracket-left
   {"\\)",TK_RIGHT_BRA},   // bracket-right
   {"[0-9]+",TK_NUM},    // num
-  {"^0x[a-z0-9]+",TK_HEXA},
+  {"0x[a-z0-9]+",TK_HEXA},
   {"^\\$+[a-z0-9]+",TK_REG},
   {"!=",TK_NEQ},
   {"&&",TK_AND},
