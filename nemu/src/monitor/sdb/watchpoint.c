@@ -37,6 +37,7 @@ WP* new_wp(char *args){
   for(int k = 0; k < 32; k++){
     printf("1\n");
     if(head == NULL) break;
+    printf("2\n");
     if(strcmp(args,head[k].target) == 0) return NULL;
   }
 
