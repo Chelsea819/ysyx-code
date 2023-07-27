@@ -337,7 +337,11 @@ word_t expr(char *e, bool *success) {
 
   for (i = 0; i < 32; i ++) {
     if(tokens[i].type == 0) break;
-    if (tokens[i].type == TK_MUL && (i == 0 || tokens[i - 1].type >= 257|| tokens[i - 1].type <= 264) ) {
+    if (tokens[i].type == TK_MUL && 
+    (i == 0 || 
+    tokens[i - 1].type >=263 ||
+    (tokens[i - 1].type >= 257 && tokens[i - 1].type <= 258))
+    ) {
       tokens[i].type = DEREF;
     }
   }
