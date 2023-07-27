@@ -192,6 +192,7 @@ static int find_main(int p,int q){
   printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   int flag_bracket = 0;
+  op_type = 263;
   for(int i = q ; i > p ; i -- ){
     if(tokens[i].type == TK_RIGHT_BRA){
       flag_bracket += 1;
@@ -261,9 +262,6 @@ uint32_t eval(int p, int q){
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
-    //printf("p = %d , q = %d\n",p,q);
-    Assert(0, "Bad expression.\n");
-    //error = -1;
   }
   else if (p == q) {
     /* Single token.
@@ -321,9 +319,10 @@ uint32_t eval(int p, int q){
       case TK_NEQ: return val1 != val2;
       case TK_EQ:  return val1 == val2;
       default: assert(0);
-    return 0;
+    
     }
   }
+  return 0;
 }
 
 
