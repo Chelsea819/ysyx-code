@@ -38,6 +38,7 @@ WP* new_wp(char *args){
   //search for the last available wp
   for(i = 0;i < NR_WP; i ++){
     if(free_[i].next == NULL){
+      printf("Succeed in finding an available wp %d\n",i);
       break;
     }
   }
@@ -47,7 +48,10 @@ WP* new_wp(char *args){
   if(!get_wp) Assert(0,"Fail in getting available wp!\n");
 
   //add new wp to head
-  if(!head) head = get_wp;
+  if(!head) {
+    head = get_wp;
+    get_wp->NO = 0;
+  }
   else {
     for(i = 0;i < NR_WP; i ++){
       if(head[i].next == NULL){
@@ -55,10 +59,10 @@ WP* new_wp(char *args){
       }
     }
     head[i].next = get_wp;
+    get_wp->NO = i;
   }
 
-  get_wp->NO = i;
-  strcpy(get_wp->target,args);
+  get_wp->target = args;
 
   //cut
   if(i == 0) free_ = NULL;
