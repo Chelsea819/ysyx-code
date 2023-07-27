@@ -63,6 +63,7 @@ WP* new_wp(char *args){
   if(!head) {
     head = get_wp;
     get_wp->NO = 0;
+    head[0].target = args;
   }
   else {
     for(index = 0;index < NR_WP; index ++){
@@ -73,7 +74,7 @@ WP* new_wp(char *args){
     head[index].next = get_wp;
     get_wp->NO = index;
   }
-  get_wp->target = args;
+  head[index + 1].target = args;
   printf("%s %s\n",get_wp->target,args);
   return get_wp;
 }
