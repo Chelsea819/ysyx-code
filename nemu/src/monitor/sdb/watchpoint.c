@@ -37,6 +37,7 @@ WP* new_wp(char *args){
   for(int k = 0; k < 32; k++){
     printf("1\n");
     if(head[k].next == NULL) break;
+    printf("1\n");
     if(strcmp(args,head[k].target) == 0) return NULL;
   }
   if(!free_) Assert(0,"No available wp\n");
@@ -73,9 +74,6 @@ WP* new_wp(char *args){
   }
 
   get_wp->target = args;
-
-  
-
   return get_wp;
 }
 //cong head qudiao
