@@ -212,7 +212,6 @@ static int find_main(int p,int q){
     if(flag_bracket == 0){
       if(tokens[i].type == TK_AND) {
         op_type = tokens[i].type;
-        printf("get && and will return\n");
         return i;
       }
       if(tokens[i].type > op_type) {
