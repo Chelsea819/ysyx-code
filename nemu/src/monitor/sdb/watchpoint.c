@@ -73,8 +73,8 @@ WP* new_wp(char *args){
     head[index].next = get_wp;
     get_wp->NO = index;
   }
-
   get_wp->target = args;
+  printf("%s %s\n",get_wp->target,args);
   return get_wp;
 }
 //cong head qudiao
