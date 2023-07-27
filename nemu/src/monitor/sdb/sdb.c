@@ -100,7 +100,7 @@ static int cmd_pcount(char *args){
   //printf("result = 0x%08x\n",addr);
   bool success = false;
   if(args) success = true;
-  printf("\033[105m result = %d \033[0m\n",expr(args,&success));
+  printf("\033[105m %s = %d \033[0m\n",args,expr(args,&success));
   return 0;
 }
 
