@@ -196,7 +196,7 @@ static bool make_token(char *e) {
 static int op_type = 262;
 
 static int find_main(int p,int q){
-  printf("enter main_find p = %d, q = %d\n",p ,q);
+  //printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   int flag_bracket = 0;
   op_type = 262;
@@ -217,11 +217,11 @@ static int find_main(int p,int q){
       if(tokens[i].type > op_type) {
         op_type = tokens[i].type;
         flag = i;
-        printf("current op_type = %d flag = %d\n",op_type,flag);
+        //printf("current op_type = %d flag = %d\n",op_type,flag);
       }
     }
   }
-  printf("get main_find op_type = %d flag = %d\n",op_type,flag);
+  //printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
 

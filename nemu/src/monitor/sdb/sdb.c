@@ -22,8 +22,11 @@
 
 static int is_batch_mode = false;
 
+typedef struct watchpoint WP;
+
 void init_regex();
 void init_wp_pool();
+WP* new_wp(char *args);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets()
@@ -95,6 +98,11 @@ static int cmd_q(char *args)
 
 static int cmd_help(char *args);
 
+static int cmd_w(char *args){
+  new_wp(args);
+  return 0;
+}
+
 static int cmd_pcount(char *args){
   //unsigned int addr = convert_16(args);
   //printf("result = 0x%08x\n",addr);
@@ -133,6 +141,7 @@ static struct
     {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
     {"p","Get the result of EXPR.",cmd_pcount},
     {"x","Scan the memory.",cmd_x},
+    {"w","Set a watchpoint.",cmd_w},
 
     /* TODO: Add more commands */
 

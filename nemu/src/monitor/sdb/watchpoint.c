@@ -19,6 +19,8 @@
 
 typedef struct watchpoint {
   int NO;
+  int data;
+  char *target;
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */
@@ -27,6 +29,70 @@ typedef struct watchpoint {
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+
+WP* new_wp(char *args){
+  int i = 0;
+  //no available wp
+  if(free_) Assert(0,"No available wp\n");
+
+  //search for the last available wp
+  for(i = 0;i < NR_WP; i ++){
+    if(free_[i].next == NULL){
+      break;
+    }
+  }
+
+  //get the last available wp
+  WP* get_wp = free_ + i;
+  if(free_) Assert(0,"Fail in getting vailable wp!\n");
+
+  //add new wp to head
+  if(head) head = get_wp;
+  else {
+    for(i = 0;i < NR_WP; i ++){
+      if(head[i].next == NULL){
+        break;
+      }
+    }
+    head[i].next = get_wp;
+  }
+
+  get_wp->NO = i;
+  strcpy(get_wp->target,args);
+
+  //cut
+  if(i == 0) free_ = NULL;
+  else free_[i - 1].next = NULL;
+
+  return get_wp;
+}
+//cong head qudiao
+void free_wp(WP *wp){
+  if(wp) Assert(0,"Free_wp received NULL!\n");
+  wp->next = NULL;
+
+  if(free_) {
+    free_ = wp;
+    return;
+  }
+  
+  int i = 0;
+  for(i = 0;i < NR_WP; i ++){
+    if(free_[i].next == NULL){
+      break;
+    }
+  }
+  free_[i].next = wp;
+  memset(free_[i].target,0,strlen(free_[i].target));
+  free_[i].NO = i;
+
+  if(i == 0) head = NULL;
+  else head[i - 1].next = NULL;
+
+  return;
+
+
+}
 
 void init_wp_pool() {
   int i;
