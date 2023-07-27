@@ -22,9 +22,17 @@
 #include <memory/vaddr.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_ADD, TK_SUB,TK_MUL,
-  TK_DIV, TK_LEFT_BRA, TK_RIGHT_BRA,TK_AND,
-  TK_NUM, TK_HEXA, TK_REG,TK_NEQ,DEREF
+  TK_NOTYPE = 256,  //space
+  TK_LEFT_BRA, TK_RIGHT_BRA, //bracket
+  TK_NUM, TK_HEXA, TK_REG,DEREF, //data
+  //3优先级 * /
+  TK_MUL,TK_DIV, 
+  //4优先级 + - 
+  TK_ADD,TK_SUB,
+  //7优先级 == !=
+  TK_EQ, TK_NEQ,
+  //11优先级&&
+  TK_AND,
 
   /* TODO: Add more token types */
 
@@ -194,19 +202,26 @@ static int find_main(int p,int q){
       continue;
     }
     if(flag_bracket == 0){
-      //printf("out of the bracket i = %d\n",i);
-      if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
+      if(tokens[i].type == TK_AND) {
         op_type = tokens[i].type;
-        //printf("get main_find op_type = %d i = %d\n",op_type,i);
         return i;
       }
-      if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
+      if(tokens[i].type > op_type) {
         op_type = tokens[i].type;
         flag = i;
       }
+      //printf("out of the bracket i = %d\n",i);
+      //if(tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ){
+      //  op_type = tokens[i].type;
+        //printf("get main_find op_type = %d i = %d\n",op_type,i);
+      //  return i;
+      //}
+      //if(tokens[i].type == TK_DIV || tokens[i].type == TK_MUL){
+      //  op_type = tokens[i].type;
+      //  flag = i;
+      }
     }
     
-  }
   //printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
