@@ -35,8 +35,8 @@ WP* new_wp(char *args){
   int index = 0;
   //no available wp
   for(int k = 0; k < 32; k++){
-    if(head[index].next == NULL) break;
-    if(strcmp(args,head[i].target) == 0) return NULL;
+    if(head[k].next == NULL) break;
+    if(strcmp(args,head[k].target) == 0) return NULL;
   }
   if(!free_) Assert(0,"No available wp\n");
 
