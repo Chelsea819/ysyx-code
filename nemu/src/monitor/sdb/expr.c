@@ -60,7 +60,7 @@ static struct rule {
   {"\\(",TK_LEFT_BRA},    // bracket-left
   {"\\)",TK_RIGHT_BRA},   // bracket-right
   {"[0-9]+",TK_NUM},    // num
-  {"^0x",TK_HEXA},
+  {"^0x[a-z0-9]+",TK_HEXA},
   {"^\\$+[a-z0-9]+",TK_REG},
   {"!=",TK_NEQ},
   {"&&",TK_AND},
@@ -153,6 +153,7 @@ static bool make_token(char *e) {
             tokens[nr_token ++].type = rules[i].token_type;
             break;
 
+          //十进制数（进行了对正负的处理）
           case TK_NUM: 
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 31);
@@ -162,7 +163,13 @@ static bool make_token(char *e) {
             flag_neg = 0;
             break;
 
+          //十六进制数
           case TK_HEXA:
+            tokens[nr_token].type = rules[i].token_type;
+            assert(substr_len <= 32);
+            strncpy(tokens[nr_token++].str, substr_start, substr_len);
+            break;
+
           case TK_REG:
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 32);
