@@ -334,5 +334,6 @@ word_t expr(char *e, bool *success) {
       tokens[i].type = DEREF;
     }
   }
+  
   return eval(0, i - 1);
 }
