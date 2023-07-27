@@ -304,17 +304,17 @@ uint32_t eval(int p, int q){
   }
   else {
     /* We should do more things here. */
-    printf("before main finding\n");
+    //printf("before main finding\n");
     if(tokens[p].type == DEREF){
       return vaddr_read(convert_16(tokens[p + 1].str),4);
     }
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    printf("val1 = %d\n",val1);
+    //printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = %d\n",val2);
-    printf("find_main op_type: %d\n",op_type);
+    //printf("val2 = %d\n",val2);
+    //printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
