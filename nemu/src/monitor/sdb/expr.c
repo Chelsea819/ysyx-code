@@ -158,7 +158,7 @@ static bool make_token(char *e) {
           case TK_REG:
             tokens[nr_token].type = rules[i].token_type;
             assert(substr_len <= 32);
-            strncpy(tokens[nr_token++].str, substr_start, substr_len);
+            strncpy(tokens[nr_token++].str, substr_start + 1, substr_len);
             break;
 
 
@@ -295,7 +295,7 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     //printf("before main finding\n");
     if(tokens[p].type == DEREF){
-      vaddr_read(convert_16(tokens[p].str),4);
+      return vaddr_read(convert_16(tokens[p].str),4);
     }
     op = find_main(p,q);
     op_type1 = op_type;
