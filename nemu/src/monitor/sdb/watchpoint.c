@@ -33,7 +33,7 @@ static WP *head = NULL, *free_ = NULL;
 WP* new_wp(char *args){
   int i = 0;
   //no available wp
-  if(free_) Assert(0,"No available wp\n");
+  if(!free_) Assert(0,"No available wp\n");
 
   //search for the last available wp
   for(i = 0;i < NR_WP; i ++){
@@ -44,10 +44,10 @@ WP* new_wp(char *args){
 
   //get the last available wp
   WP* get_wp = free_ + i;
-  if(free_) Assert(0,"Fail in getting vailable wp!\n");
+  if(!get_wp) Assert(0,"Fail in getting available wp!\n");
 
   //add new wp to head
-  if(head) head = get_wp;
+  if(!head) head = get_wp;
   else {
     for(i = 0;i < NR_WP; i ++){
       if(head[i].next == NULL){
@@ -68,10 +68,10 @@ WP* new_wp(char *args){
 }
 //cong head qudiao
 void free_wp(WP *wp){
-  if(wp) Assert(0,"Free_wp received NULL!\n");
+  if(!wp) Assert(0,"Free_wp received NULL!\n");
   wp->next = NULL;
 
-  if(free_) {
+  if(!free_) {
     free_ = wp;
     return;
   }
