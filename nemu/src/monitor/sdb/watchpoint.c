@@ -47,6 +47,10 @@ WP* new_wp(char *args){
   WP* get_wp = free_ + i;
   if(!get_wp) Assert(0,"Fail in getting available wp!\n");
 
+  //cut
+  if(i == 0) { printf("free_ = NULL\n"); free_ = NULL;}
+  else free_[i - 1].next = NULL;
+
   //add new wp to head
   if(!head) {
     head = get_wp;
@@ -64,9 +68,7 @@ WP* new_wp(char *args){
 
   get_wp->target = args;
 
-  //cut
-  if(i == 0) { printf("free_ = NULL\n"); free_ = NULL;}
-  else free_[i - 1].next = NULL;
+  
 
   return get_wp;
 }
