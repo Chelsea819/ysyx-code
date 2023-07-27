@@ -221,8 +221,7 @@ static int find_main(int p,int q){
       //  flag = i;
       }
     }
-    
-  //printf("get main_find op_type = %d flag = %d\n",op_type,flag);
+  printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
 
