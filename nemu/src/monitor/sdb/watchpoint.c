@@ -32,7 +32,11 @@ static WP *head = NULL, *free_ = NULL;
 
 WP* new_wp(char *args){
   int i = 0;
+  int index = 0;
   //no available wp
+  for(int k = 0; k < 32; k++){
+    if(strcmp(args,head[i].target) == 0) return NULL;
+  }
   if(!free_) Assert(0,"No available wp\n");
 
   //search for the last available wp
@@ -57,13 +61,13 @@ WP* new_wp(char *args){
     get_wp->NO = 0;
   }
   else {
-    for(i = 0;i < NR_WP; i ++){
-      if(head[i].next == NULL){
+    for(index = 0;index < NR_WP; index ++){
+      if(head[index].next == NULL){
         break;
       }
     }
-    head[i].next = get_wp;
-    get_wp->NO = i;
+    head[index].next = get_wp;
+    get_wp->NO = index;
   }
 
   get_wp->target = args;

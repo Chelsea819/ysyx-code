@@ -99,8 +99,9 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_w(char *args){
-  printf("args = %s\n",args);
-  new_wp(args);
+  
+  if(new_wp(args) == NULL) printf("%s already in wp_pool!\n",args); 
+
   return 0;
 }
 
