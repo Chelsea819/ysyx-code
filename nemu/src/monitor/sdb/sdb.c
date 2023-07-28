@@ -86,7 +86,6 @@ uint32_t convert_16(char *args){
   uint32_t addr = 0;
   int flag = 1;
   for(int i = strlen(args) - 1;i >= 2;i --){
-    if(args[i] == 'x' && args[i - 1] == '0' && i > 0) break;
     addr += ((int)args[i] - (int)'0') * flag;
     flag *= 16;
   }

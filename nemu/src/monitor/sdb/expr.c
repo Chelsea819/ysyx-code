@@ -286,7 +286,7 @@ uint32_t eval(int p, int q){
 
     //十六进制数 
     case TK_HEXA: 
-      
+
       return convert_16(tokens[p].str);
 
     //解引用，内存里的值
@@ -308,6 +308,7 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     //printf("before main finding\n");
     if(tokens[p].type == DEREF){
+      printf("convert_16(tokens[p + 1].str  :  0x%x\n",convert_16(tokens[p + 1].str));
       return vaddr_read(convert_16(tokens[p + 1].str),4);
     }
     op = find_main(p,q);
