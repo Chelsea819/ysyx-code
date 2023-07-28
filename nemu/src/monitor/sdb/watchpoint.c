@@ -96,7 +96,14 @@ WP* new_wp(char *args){
     printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
   }
   
-  //printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
+  //print
+  WP* index = head;
+  while(index){
+    printf("NO:%d  target:%s\n",index->NO,index->target);
+    index = index->next;
+  }
+
+  
   return get_wp;
 }
 
