@@ -48,6 +48,7 @@ WP* new_wp(char *args){
     }
     get_wp = get_wp->next;
   }
+  printf("Succeed in finding an available wp %d\n",get_wp->NO);
 
   //cut it from free_
   get_wp->past->next = NULL;
@@ -72,6 +73,15 @@ WP* new_wp(char *args){
     get_wp->past = addSpot;
     get_wp->NO = addSpot->NO + 1;
   }
+  printf("Succeed in add new wp to %d \n",get_wp->NO);
+  printf("%s %s\n",get_wp->target,args);
+
+    WP *index = head;
+    while(index){
+      printf("\n head \nNO:%d  target:%s \n",index->NO,index->target);
+      index = index->next;
+    }
+
   return get_wp;
 }
 
