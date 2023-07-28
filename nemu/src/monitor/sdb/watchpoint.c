@@ -94,7 +94,8 @@ WP* new_wp(char *args){
       printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
-  printf("head : %p\n",head);
+    printf("head : %p\n",index);
+  printf("head : %p\n",head->next);
   return get_wp;
 }
 
