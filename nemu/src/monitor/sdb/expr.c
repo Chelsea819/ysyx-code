@@ -285,7 +285,9 @@ uint32_t eval(int p, int q){
       return isa_reg_str2val(tokens[p].str, &success);
 
     //十六进制数 
-    case TK_HEXA: return convert_16(tokens[p].str);
+    case TK_HEXA: 
+      
+      return convert_16(tokens[p].str);
 
     //解引用，内存里的值
     //case DEREF: return vaddr_read(tokens[p].str, 4);
