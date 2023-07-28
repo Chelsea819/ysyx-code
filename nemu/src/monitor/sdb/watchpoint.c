@@ -73,6 +73,7 @@ WP* new_wp(char *args){
         break;
       }
     }
+    printf("Succeed in finding an available wp %d\n",i);
     head[index].next = get_wp;
     head[index].next->target = args;
     get_wp->NO = index;
