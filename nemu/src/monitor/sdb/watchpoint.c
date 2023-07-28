@@ -134,6 +134,7 @@ void free_wp(WP *wp){
       wp->past = index;
       wp->next = NULL;
       wp->NO = index->NO + 1;
+      break;
     }
     index = index->next;
   }
