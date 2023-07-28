@@ -78,6 +78,7 @@ WP* new_wp(char *args){
   printf("%s %s\n",get_wp->target,args);
   return get_wp;
 }
+
 //cong head qudiao
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
