@@ -107,6 +107,7 @@ void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
 
   //remove it from head
+  printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
   wp->past->next = wp->next;
   wp->next->past = wp->past;
   printf("Remove it from %d in head",wp->NO);
