@@ -39,7 +39,7 @@ WP* new_wp(char *args){
   while(pindex != NULL){
     printf("%s %s\n",args,pindex->target); 
     if(strcmp(pindex->target,args) == 0) {
-      printf("%s %s\n",args,pindex->target); 
+      printf("strcmp(pindex->target,args) == 0\n %s %s\n",args,pindex->target); 
       return NULL;
     }
     pindex = pindex->next;
