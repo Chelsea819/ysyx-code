@@ -74,22 +74,26 @@ WP* new_wp(char *args){
     get_wp->target = args;
     head = get_wp;
     printf("Succeed in add new wp to head \n");
+    printf("%s %s %s\n",head->target,get_wp->target,args);
   }
   else {
+    past_wp = NULL;
     while(pindex){
-      past_wp = pindex;
       if(pindex->next == NULL){
         pindex->next = get_wp;
         break;
       }
+      past_wp = pindex;
       pindex = pindex->next;
     }
     get_wp->next = NULL;
-    get_wp->NO = past_wp->NO + 1;
+    get_wp->NO = pindex->NO + 1;
     get_wp-> target = args; 
+    printf("Succeed in add new wp to %d \n",get_wp->NO);
+    printf("%s %s %s\n",pindex->next->target,get_wp->target,args);
   }
   
-  printf("%s %s\n",get_wp->target,args);
+  //printf("%s %s %s\n",pindex->next->target,get_wp->target,args);
   return get_wp;
 }
 
