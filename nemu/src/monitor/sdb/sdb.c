@@ -140,7 +140,7 @@ static int cmd_x(char *args){
 static void watchPoints_display(){
   WP *index = get_head();
   printf("Num \tTYpe \tDisp \tEnb \tAddress \t What\n");
-  while(index != NULL){
+  while(index->target != NULL){
     printf("%d \thw watchpoint \tkeep \ty \t %s\n",index->NO,index->target);
     printf(" \tbreakpoint already hit %d time\n",index->times);
   }
