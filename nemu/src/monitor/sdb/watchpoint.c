@@ -72,6 +72,7 @@ WP* new_wp(char *args){
     head = get_wp;
     get_wp->NO = 0;
     get_wp->next = NULL;
+    get_wp->past = NULL;
   }
   else{
     WP* addSpot = head;
@@ -93,7 +94,7 @@ WP* new_wp(char *args){
       printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
-
+  printf("head : %p\n",head);
   return get_wp;
 }
 

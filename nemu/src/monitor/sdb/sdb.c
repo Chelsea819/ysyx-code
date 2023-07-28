@@ -139,11 +139,12 @@ static int cmd_x(char *args){
 
 static void watchPoints_display(){
   WP *index = get_head();
+  printf("head : %p\n",index);
   printf("Num \tTYpe \tDisp \tEnb \tAddress \t What\n");
-  while(index->target != NULL){
-    printf("%d \thw watchpoint \tkeep \ty \t %s\n",index->NO,index->target);
-    printf(" \tbreakpoint already hit %d time\n",index->times);
-  }
+  // while(index->target != NULL){
+  //   printf("%d \thw watchpoint \tkeep \ty \t %s\n",index->NO,index->target);
+  //   printf(" \tbreakpoint already hit %d time\n",index->times);
+  // }
   return;
 }
 
