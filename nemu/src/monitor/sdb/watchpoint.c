@@ -35,14 +35,9 @@ WP* new_wp(char *args){
   int index = 0;
   WP* pindex = NULL;
   //no available wp
-  // for(int k = 0; k < 32; k++){
-  //    printf("1\n");
-  //    if(head == NULL) break;
-     
-  //    if(strcmp(args,head[k - 1].next->target) == 0) {printf("%s %s\n",args,head[k - 1].next->target); return NULL;}
-  //  }
   pindex = head;
   while(pindex != NULL){
+    printf("%s %s\n",args,pindex->target); 
     if(strcmp(pindex->target,args) == 0) {
       printf("%s %s\n",args,pindex->target); 
       return NULL;
