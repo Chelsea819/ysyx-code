@@ -58,18 +58,24 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-  // #ifdef CONFIG_WATCHPOINT
-  // bool success = false;
-  // uint32_t addr = 0;
+  #ifdef CONFIG_WATCHPOINT
+  bool success = false;
+  uint32_t addr = 0;
 
-  // WP *index = head;
-  // while (index != NULL)
-  // {
-  //   uint32_t addr = expr(index->target, &success);
-  //   if(addr != )
+  WP *index = head;
+  while (index != NULL)
+  {
+    uint32_t addr = expr(index->target, &success);
+    if(addr != index->data){
+      nemu_state.state = NEMU_STOP;
+      printf("\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
+      printf("\nOld value = %d\n", index->data);
+      printf("New value = %d\n\n", addr);
+      return;
+    }
 
-  // }
-
+  }
+  #endif
   // for (int i = 0; i < 32; i++)
   // {
   //   uint32_t addr = expr(head[i].target, &success);
@@ -84,8 +90,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   //   if (head[i].next == NULL)
   //     break;
   // }
-
-  // #endif
 }
 
 /* let CPU conduct current command and renew PC */
