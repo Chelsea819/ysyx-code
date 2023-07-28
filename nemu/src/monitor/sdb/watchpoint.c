@@ -65,7 +65,7 @@ WP* new_wp(char *args){
     head = get_wp;
     get_wp->NO = 0;
     head[0].target = args;
-    printf("Succeed in finding an available wp %d\n",i);
+    printf("Succeed in add new wp to head \n");
   }
   else {
     for(index = 0;index < NR_WP; index ++){
@@ -73,7 +73,7 @@ WP* new_wp(char *args){
         break;
       }
     }
-    printf("Succeed in finding an available wp %d\n",i);
+    printf("Succeed in add new wp to head %d\n",index);
     head[index].next = get_wp;
     head[index].next->target = args;
     get_wp->NO = index;
