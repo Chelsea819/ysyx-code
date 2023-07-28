@@ -53,7 +53,8 @@ WP* new_wp(char *args){
   //cut it from free_
   get_wp->past->next = NULL;
   get_wp->next = NULL;
-  get_wp->target = args;
+  get_wp->target = malloc(strlen(args)+1);
+  strcpy(get_wp->target,args);
 
   //add it to head list
   if(head == NULL){
