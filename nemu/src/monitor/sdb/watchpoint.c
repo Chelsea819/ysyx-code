@@ -40,7 +40,7 @@ WP* new_wp(char *args){
   //search if existed the same
   p_searchExist = head;
   while(p_searchExist != NULL){
-    printf("%s %s\n",args,p_searchExist->target); 
+    //printf("%s %s\n",args,p_searchExist->target); 
     if(strcmp(p_searchExist->target,args) == 0) {
       printf("strcmp(p_searchExist->target,args) == 0\n %s %s\n",args,p_searchExist->target); 
       return NULL;
