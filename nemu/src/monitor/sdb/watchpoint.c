@@ -33,13 +33,14 @@ static WP *head = NULL, *free_ = NULL;
 WP* new_wp(char *args){
   int i = 0;
   int index = 0;
+  //WP* pindex = NULL;
   //no available wp
-  //for(int k = 0; k < 32; k++){
-  //   printf("1\n");
-  //   if(head == NULL) break;
-  //   printf("%s %s\n",args,head[k].target);
-  //   if(strcmp(args,head[k].target) == 0) {printf("2\n"); return NULL;}
-  // }
+  for(int k = 0; k < 32; k++){
+     printf("1\n");
+     if(head == NULL) break;
+     printf("%s %s\n",args,head[k - 1].next->target);
+     if(strcmp(args,head[k - 1].next->target) == 0) {printf("2\n"); return NULL;}
+   }
 
   if(!free_) Assert(0,"No available wp\n");
 
@@ -72,9 +73,10 @@ WP* new_wp(char *args){
       }
     }
     head[index].next = get_wp;
+    
     get_wp->NO = index;
   }
-  head[index + 1].target = args;
+  head[index].next->target = args;
   printf("%s %s %s\n",get_wp->target,head[index + 1].target,args);
   return get_wp;
 }
