@@ -33,14 +33,22 @@ static WP *head = NULL, *free_ = NULL;
 WP* new_wp(char *args){
   int i = 0;
   int index = 0;
-  //WP* pindex = NULL;
+  WP* pindex = NULL;
   //no available wp
-  for(int k = 0; k < 32; k++){
-     printf("1\n");
-     if(head == NULL) break;
-     printf("%s %s\n",args,head[k - 1].next->target);
-     if(strcmp(args,head[k - 1].next->target) == 0) {printf("2\n"); return NULL;}
-   }
+  // for(int k = 0; k < 32; k++){
+  //    printf("1\n");
+  //    if(head == NULL) break;
+     
+  //    if(strcmp(args,head[k - 1].next->target) == 0) {printf("%s %s\n",args,head[k - 1].next->target); return NULL;}
+  //  }
+  pindex = head;
+  while(pindex != NULL){
+    if(strcmp(pindex->target,args) == 0) {
+      printf("%s %s\n",args,pindex->target); 
+      return NULL;
+    }
+    pindex = pindex->next;
+  }
 
   if(!free_) Assert(0,"No available wp\n");
 
