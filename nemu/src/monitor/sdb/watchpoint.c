@@ -105,26 +105,34 @@ WP* get_head(){
 
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
-  wp->next = NULL;
 
+  //remove it from head
+  wp->past->next = wp->next;
+  wp->next->past = wp->past;
+  printf("Remove it from %d in head",wp->NO);
+
+  memset(wp,0,sizeof(*wp));
+
+  //add it to free_
   if(!free_) {
     free_ = wp;
+    wp->next = NULL;
+    wp->NO = 0;
+    wp->past = NULL;
     return;
   }
   
-  int i = 0;
-  for(i = 0;i < NR_WP; i ++){
-    if(free_[i].next == NULL){
-      break;
+  WP *index = free_;
+  while(index != NULL){
+    if(index->next == NULL){
+      index->next = wp;
+      wp->past = index;
+      wp->next = NULL;
+      wp->NO = index->NO + 1;
     }
+    index = index->next;
   }
-  free_[i].next = wp;
-  memset(free_[i].target,0,strlen(free_[i].target));
-  free_[i].NO = i;
-
-  if(i == 0) head = NULL;
-  else head[i - 1].next = NULL;
-
+  printf("ADD it to %d in free_",wp->NO);
   return;
 
 

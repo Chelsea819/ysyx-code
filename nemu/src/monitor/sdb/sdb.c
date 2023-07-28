@@ -38,6 +38,7 @@ void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
 WP* get_head();
+void free_wp(WP *wp);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets()
@@ -156,6 +157,20 @@ static int cmd_info(char *args){
   return 0;
 }
 
+static int cmd_d(char *args){
+  WP *index = get_head();
+  while(index != NULL){
+    if(strcmp(args,index->target) == 0){
+      free_wp(index);
+      printf("Succeed in removing %s!",args);
+      return 0;;
+    }
+    index = index->next;
+  }
+  printf("No %s in watchpool!\n",args);
+  return 0;
+}
+
 static struct
 {
   const char *name;
@@ -170,6 +185,7 @@ static struct
     {"p","Get the result of EXPR.",cmd_pcount},
     {"x","Scan the memory.",cmd_x},
     {"w","Set a watchpoint.",cmd_w},
+    {"d","Delete certain watchpoint.",cmd_d},
 
     /* TODO: Add more commands */
 
