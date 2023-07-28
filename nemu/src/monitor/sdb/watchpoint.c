@@ -74,10 +74,10 @@ WP* new_wp(char *args){
       }
     }
     head[index].next = get_wp;
-    
+    head[index].next->target = args;
     get_wp->NO = index;
   }
-  head[index].next->target = args;
+  
   printf("%s %s %s\n",get_wp->target,head[index + 1].target,args);
   return get_wp;
 }
