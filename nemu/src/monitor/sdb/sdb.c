@@ -22,7 +22,15 @@
 
 static int is_batch_mode = false;
 
-typedef struct watchpoint WP;
+typedef struct watchpoint {
+  int NO;
+  int data;
+  char *target;
+  struct watchpoint *next;
+
+  /* TODO: Add more members if necessary */
+
+} WP;
 
 void init_regex();
 void init_wp_pool();
@@ -99,9 +107,9 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_w(char *args){
-  
-  if(new_wp(args)==NULL) printf("%s already in wp_pool!\n",args); 
-
+  WP* ret =new_wp(args);
+  if(ret==NULL) printf("%s already in wp_pool!\n",args); 
+  printf("RET-TARGET:%s\n",ret->target);
   return 0;
 }
 

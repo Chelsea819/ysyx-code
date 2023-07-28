@@ -41,7 +41,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("\033[105m \n before search NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    printf("\n \033[105m  before search NO:%d  target:%s \033[0m \n",index->NO,index->target);
     index = index->next;
   }
 
@@ -74,6 +74,7 @@ WP* new_wp(char *args){
     }
     p_avaiWp = p_avaiWp->next;
   }
+  printf("p_avaiWp-NO = %x\n",p_avaiWp->NO);
 
   //get the last available wp
   WP* get_wp = p_avaiWp;
@@ -124,7 +125,7 @@ WP* new_wp(char *args){
     printf("Succeed in add new wp to %d \n",get_wp->NO);
     printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
   }
-  
+  printf("get_wp-NO = %x\n",get_wp->NO);
   //print
   index = head;
   while(index){
