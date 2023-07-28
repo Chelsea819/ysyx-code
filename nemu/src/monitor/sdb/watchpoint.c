@@ -88,7 +88,7 @@ WP* new_wp(char *args){
 
     WP *index = head;
     while(index){
-      printf("\n head \nNO:%d  target:%s   %p\n",index->NO,index->target,index->target);
+      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
 
