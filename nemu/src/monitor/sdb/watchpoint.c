@@ -134,6 +134,12 @@ WP* new_wp(char *args){
     index = index->next;
   }
 
+  index = free_;
+  while(index){
+    printf("\n free_ \nNO:%d  target:%s \n",index->NO,index->target);
+    index = index->next;
+  }
+
   
   return get_wp;
 }
