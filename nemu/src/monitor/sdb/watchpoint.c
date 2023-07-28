@@ -75,7 +75,7 @@ WP* new_wp(char *args){
     get_wp->NO = index;
   }
   head[index + 1].target = args;
-  printf("%s %s\n",get_wp->target,args);
+  printf("%s %s %s\n",get_wp->target,head[index + 1].target,args);
   return get_wp;
 }
 
