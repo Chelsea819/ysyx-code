@@ -126,6 +126,7 @@ WP* new_wp(char *args){
     printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
   }
   printf("get_wp-NO = %x\n",get_wp->NO);
+  printf("p_avaiWp-NO = %x\n",p_avaiWp->NO);
   //print
   index = head;
   while(index){
