@@ -31,7 +31,7 @@ static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
 
 WP* new_wp(char *args){
-  int i = 0;
+  //int i = 0;
   //int index = 0;
   WP* pindex = NULL;
   //no available wp
@@ -51,7 +51,7 @@ WP* new_wp(char *args){
   pindex = free_;
   while(pindex != NULL){
     if(pindex->next == NULL) {
-      printf("Succeed in finding an available wp %d\n",i);
+      printf("Succeed in finding an available wp %d\n",pindex->NO);
       break;
     }
     pindex = pindex->next;
