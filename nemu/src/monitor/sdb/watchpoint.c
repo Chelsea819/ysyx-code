@@ -36,6 +36,14 @@ WP* new_wp(char *args){
   WP* p_searchExist = NULL;
   WP* p_avaiWp = NULL;
   WP* p_addToHead = NULL;
+  WP* index = NULL;
+  
+  //print
+  index = head;
+  while(index){
+    printf("\033[105m \n before search NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    index = index->next;
+  }
 
   //search if existed the same
   p_searchExist = head;
@@ -49,6 +57,13 @@ WP* new_wp(char *args){
   }
   //no available wp
   if(!free_) Assert(0,"No available wp\n");
+
+  //print
+  index = head;
+  while(index){
+    printf("\033[105m \n before search ava NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    index = index->next;
+  }
 
   //search for the last available wp
   p_avaiWp = free_;
@@ -65,9 +80,23 @@ WP* new_wp(char *args){
   WP* past_wp = p_avaiWp - 1;
   if(!get_wp) Assert(0,"Fail in getting available wp!\n");
 
+  //print
+  index = head;
+  while(index){
+    printf("\033[105m \n before cut NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    index = index->next;
+  }
+
   //cut
   if(p_avaiWp->NO == 0) { printf("free_ = NULL\n"); free_ = NULL;}
   else past_wp->next = NULL;
+
+  //print
+  index = head;
+  while(index){
+    printf("\033[105m \n before add NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    index = index->next;
+  }
 
   //add new wp to head
   p_addToHead = head;
@@ -97,7 +126,7 @@ WP* new_wp(char *args){
   }
   
   //print
-  WP* index = head;
+  index = head;
   while(index){
     printf("NO:%d  target:%s\n",index->NO,index->target);
     index = index->next;
