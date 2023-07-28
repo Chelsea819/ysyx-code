@@ -110,7 +110,7 @@ void free_wp(WP *wp){
   printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
   wp->past->next = wp->next;
   wp->next->past = wp->past;
-  printf("Remove it from %d in head",wp->NO);
+  printf("Remove it from %d in head\n",wp->NO);
 
   memset(wp,0,sizeof(*wp));
 

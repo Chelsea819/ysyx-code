@@ -161,8 +161,9 @@ static int cmd_d(char *args){
   WP *index = get_head();
   while(index != NULL){
     if(strcmp(args,index->target) == 0){
+      printf("get the args\n");
       free_wp(index);
-      printf("Succeed in removing %s!",args);
+      printf("Succeed in removing %s!\n",args);
       return 0;;
     }
     index = index->next;
