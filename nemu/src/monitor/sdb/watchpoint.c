@@ -107,11 +107,14 @@ void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
 
   //remove it from head
-  if(wp->past != NULL) wp->past->next = wp->next;
-  else head = wp->next;
-  if(wp->next != NULL) wp->next->past = wp->past;
-  //printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
-  printf("Remove it from %d in head\n",wp->NO);
+  if(wp->next == NULL && wp->past == NULL) head = NULL;
+  else{
+    if(wp->past != NULL) wp->past->next = wp->next;
+    else head = wp->next;
+    if(wp->next != NULL) wp->next->past = wp->past;
+    //printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
+    printf("Remove it from %d in head\n",wp->NO);
+    }
 
   memset(wp,0,sizeof(*wp));
 

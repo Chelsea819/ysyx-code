@@ -140,6 +140,10 @@ static int cmd_x(char *args){
 
 static void watchPoints_display(){
   WP *index = get_head();
+  if(index == NULL ) {
+    printf("no WP in watchPool\n");
+    return;
+  }
   printf("head : %p\n",index);
   printf("head->next : %p\n",index->next);
   printf("Num \tTYpe \tDisp \tEnb \tAddress \t What\n");
