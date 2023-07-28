@@ -33,41 +33,44 @@ static WP *head = NULL, *free_ = NULL;
 WP* new_wp(char *args){
   //int i = 0;
   //int index = 0;
-  WP* pindex = NULL;
-  //no available wp
-  pindex = head;
-  while(pindex != NULL){
-    printf("%s %s\n",args,pindex->target); 
-    if(strcmp(pindex->target,args) == 0) {
-      printf("strcmp(pindex->target,args) == 0\n %s %s\n",args,pindex->target); 
+  WP* p_searchExist = NULL;
+  WP* p_avaiWp = NULL;
+  WP* p_addToHead = NULL;
+
+  //search if existed the same
+  p_searchExist = head;
+  while(p_searchExist != NULL){
+    printf("%s %s\n",args,p_searchExist->target); 
+    if(strcmp(p_searchExist->target,args) == 0) {
+      printf("strcmp(p_searchExist->target,args) == 0\n %s %s\n",args,p_searchExist->target); 
       return NULL;
     }
-    pindex = pindex->next;
+    p_searchExist = p_searchExist->next;
   }
-
+  //no available wp
   if(!free_) Assert(0,"No available wp\n");
 
   //search for the last available wp
-  pindex = free_;
-  while(pindex != NULL){
-    if(pindex->next == NULL) {
-      printf("Succeed in finding an available wp %d\n",pindex->NO);
+  p_avaiWp = free_;
+  while(p_avaiWp != NULL){
+    if(p_avaiWp->next == NULL) {
+      printf("Succeed in finding an available wp %d\n",p_avaiWp->NO);
       break;
     }
-    pindex = pindex->next;
+    p_avaiWp = p_avaiWp->next;
   }
 
   //get the last available wp
-  WP* get_wp = pindex;
-  WP* past_wp = pindex - 1;
+  WP* get_wp = p_avaiWp;
+  WP* past_wp = p_avaiWp - 1;
   if(!get_wp) Assert(0,"Fail in getting available wp!\n");
 
   //cut
-  if(pindex->NO == 0) { printf("free_ = NULL\n"); free_ = NULL;}
+  if(p_avaiWp->NO == 0) { printf("free_ = NULL\n"); free_ = NULL;}
   else past_wp->next = NULL;
 
   //add new wp to head
-  pindex = head;
+  p_addToHead = head;
   if(!head) {
     get_wp->NO = 0;
     get_wp->next = NULL;
@@ -78,22 +81,22 @@ WP* new_wp(char *args){
   }
   else {
     past_wp = NULL;
-    while(pindex){
-      if(pindex->next == NULL){
-        pindex->next = get_wp;
+    while(p_addToHead){
+      if(p_addToHead->next == NULL){
+        p_addToHead->next = get_wp;
         break;
       }
-      past_wp = pindex;
-      pindex = pindex->next;
+      past_wp = p_addToHead;
+      p_addToHead = p_addToHead->next;
     }
     get_wp->next = NULL;
-    get_wp->NO = pindex->NO + 1;
+    get_wp->NO = p_addToHead->NO + 1;
     get_wp-> target = args; 
     printf("Succeed in add new wp to %d \n",get_wp->NO);
-    printf("%s %s %s\n",pindex->next->target,get_wp->target,args);
+    printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
   }
   
-  //printf("%s %s %s\n",pindex->next->target,get_wp->target,args);
+  //printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
   return get_wp;
 }
 

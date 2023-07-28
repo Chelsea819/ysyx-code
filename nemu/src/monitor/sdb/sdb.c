@@ -100,7 +100,7 @@ static int cmd_help(char *args);
 
 static int cmd_w(char *args){
   
-  if(!new_wp(args)) printf("%s already in wp_pool!\n",args); 
+  if(new_wp(args)==NULL) printf("%s already in wp_pool!\n",args); 
 
   return 0;
 }
