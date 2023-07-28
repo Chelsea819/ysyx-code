@@ -110,6 +110,7 @@ static int cmd_w(char *args){
   WP* ret =new_wp(args);
   if(ret==NULL) printf("%s already in wp_pool!\n",args); 
   printf("RET-TARGET:%s\n",ret->target);
+  printf("RET-TARGET:%p\n",args);
   return 0;
 }
 
