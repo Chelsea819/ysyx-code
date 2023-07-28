@@ -37,6 +37,17 @@ WP* new_wp(char *args){
   //set gap
   //cut
   
+  //search if existed the same
+  WP* p_searchExist = head;
+  while(p_searchExist != NULL){
+    //printf("%s %s\n",args,p_searchExist->target); 
+    if(strcmp(p_searchExist->target,args) == 0) {
+      printf("strcmp == 0\n %d %s %s\n",p_searchExist->NO,args,p_searchExist->target); 
+      return NULL;
+    }
+    p_searchExist = p_searchExist->next;
+  }
+
   //full
   if(free_==NULL)  Assert(0,"wp_pool full!\n");
 
