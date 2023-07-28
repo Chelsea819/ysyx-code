@@ -80,20 +80,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 
   }
   #endif
-  // for (int i = 0; i < 32; i++)
-  // {
-  //   uint32_t addr = expr(head[i].target, &success);
-  //   if (addr != head[i].data)
-  //   {
-  //     nemu_state.state = NEMU_STOP;
-  //     printf("\033[105m Hardware watchpoint %d: %s \033[0m\n", head[i].NO, head[i].target);
-  //     printf("\nOld value = %d\n", head[i].data);
-  //     printf("New value = %d\n\n", addr);
-  //     return;
-  //   }
-  //   if (head[i].next == NULL)
-  //     break;
-  // }
 }
 
 /* let CPU conduct current command and renew PC */

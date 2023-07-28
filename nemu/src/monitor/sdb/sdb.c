@@ -121,9 +121,12 @@ static int cmd_w(char *args){
 static int cmd_pcount(char *args){
   //unsigned int addr = convert_16(args);
   //printf("result = 0x%08x\n",addr);
-  bool success = false;
-  if(args) success = true;
-  printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,expr(args,&success),expr(args,&success));
+  char * arr = NULL;
+  printf("%s\n",arr);
+
+  // bool success = false;
+  // if(args) success = true;
+  // printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,expr(args,&success),expr(args,&success));
   return 0;
 }
 
