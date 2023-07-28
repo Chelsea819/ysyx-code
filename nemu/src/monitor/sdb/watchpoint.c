@@ -19,7 +19,7 @@
 
 typedef struct watchpoint {
   int NO;
-  int data;
+  uint32_t data;
   char *target;
   struct watchpoint *next;
   struct watchpoint *past;
@@ -33,11 +33,8 @@ static WP *head = NULL, *free_ = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){
-  //find a point  ----ok ---full
-  //set gap
-  //cut
-  
   //search if existed the same
+  bool success = false;
   WP* p_searchExist = head;
   while(p_searchExist != NULL){
     //printf("%s %s\n",args,p_searchExist->target); 
@@ -66,6 +63,7 @@ WP* new_wp(char *args){
   get_wp->next = NULL;
   get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
+  get_wp->data = expr(args,&success);
 
   //add it to head list
   if(head == NULL){
@@ -96,121 +94,6 @@ WP* new_wp(char *args){
 
   return get_wp;
 }
-
-
-// WP* new_wp(char *args){
-//   //int i = 0;
-//   //int index = 0;
-//   WP* p_searchExist = NULL;
-//   WP* p_avaiWp = NULL;
-//   WP* p_addToHead = NULL;
-//   WP* index = NULL;
-  
-//   //print
-//   index = head;
-//   while(index){
-//     printf("\n \033[105m  before search NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
-//     index = index->next;
-//   }
-
-//   //search if existed the same
-//   p_searchExist = head;
-//   while(p_searchExist != NULL){
-//     //printf("%s %s\n",args,p_searchExist->target); 
-//     if(strcmp(p_searchExist->target,args) == 0) {
-//       printf("strcmp == 0\n %d %s %s\n",p_searchExist->NO,args,p_searchExist->target); 
-//       return NULL;
-//     }
-//     p_searchExist = p_searchExist->next;
-//   }
-//   //no available wp
-//   if(!free_) Assert(0,"No available wp\n");
-
-//   //print
-//   index = head;
-//   while(index){
-//     printf("\033[105m \n before search ava NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
-//     index = index->next;
-//   }
-
-//   //search for the last available wp
-//   p_avaiWp = free_;
-//   while(p_avaiWp != NULL){
-//     if(p_avaiWp->next == NULL) {
-//       printf("Succeed in finding an available wp %d\n",p_avaiWp->NO);
-//       break;
-//     }
-//     p_avaiWp = p_avaiWp->next;
-//   }
-//   printf("p_avaiWp-NO = %x\n",p_avaiWp->NO);
-
-//   //get the last available wp
-//   WP* get_wp = p_avaiWp;
-//   WP* past_wp = p_avaiWp - 1;
-//   if(!get_wp) Assert(0,"Fail in getting available wp!\n");
-
-//   //print
-//   index = head;
-//   while(index){
-//     printf("\033[105m \n before cut NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
-//     index = index->next;
-//   }
-
-//   //cut
-//   if(p_avaiWp->NO == 0) { printf("free_ = NULL\n"); free_ = NULL;}
-//   else past_wp->next = NULL;
-
-//   //print
-//   index = head;
-//   while(index){
-//     printf("\033[105m \n before add NO:%d  target:%s  %p\033[0m \n",index->NO,index->target,index->target);
-//     index = index->next;
-//   }
-
-//   //add new wp to head
-//   p_addToHead = head;
-//   if(!head) {
-//     get_wp->NO = 0;
-//     get_wp->next = NULL;
-//     get_wp->target = args;
-//     head = get_wp;
-//     printf("Succeed in add new wp to head \n");
-//     printf("%s %s %s\n",head->target,get_wp->target,args);
-//   }
-//   else {
-//     past_wp = NULL;
-//     while(p_addToHead){
-//       if(p_addToHead->next == NULL){
-//         p_addToHead->next = get_wp;
-//         break;
-//       }
-//       past_wp = p_addToHead;
-//       p_addToHead = p_addToHead->next;
-//     }
-//     get_wp->next = NULL;
-//     get_wp->NO = p_addToHead->NO + 1;
-//     get_wp-> target = args; 
-//     printf("Succeed in add new wp to %d \n",get_wp->NO);
-//     printf("%s %s %s\n",p_addToHead->next->target,get_wp->target,args);
-//   }
-//   printf("get_wp-NO = %x\n",get_wp->NO);
-//   printf("p_avaiWp-NO = %x\n",p_avaiWp->NO);
-//   //print
-//   index = head;
-//   while(index){
-//     printf("NO:%d  target:%s  %p\n",index->NO,index->target,index->target);
-//     index = index->next;
-//   }
-
-//   index = free_;
-//   while(index){
-//     printf("\n free_ \nNO:%d  target:%s \n",index->NO,index->target);
-//     index = index->next;
-//   }
-
-  
-//   return get_wp;
-// }
 
 
 void free_wp(WP *wp){
