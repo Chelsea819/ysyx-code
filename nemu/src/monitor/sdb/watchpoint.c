@@ -71,7 +71,7 @@ WP* new_wp(char *args){
   if(head == NULL){
     head = get_wp;
     get_wp->NO = 0;
-    get_wp->past = NULL;
+    get_wp->next = NULL;
   }
   else{
     WP* addSpot = head;
