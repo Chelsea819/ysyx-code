@@ -33,10 +33,11 @@ static bool g_print_step = false;
 
 void device_update();
 
-typedef struct watchpoint
-{
+
+typedef struct watchpoint {
   int NO;
-  int data;
+  int times;
+  uint32_t data;
   char *target;
   struct watchpoint *next;
   struct watchpoint *past;
@@ -44,6 +45,8 @@ typedef struct watchpoint
   /* TODO: Add more members if necessary */
 
 } WP;
+
+WP* get_head();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
@@ -62,12 +65,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   bool success = false;
   uint32_t addr = 0;
 
-  WP *index = head;
+  WP *index = get_head();
   while (index != NULL)
   {
     uint32_t addr = expr(index->target, &success);
     if(addr != index->data){
       nemu_state.state = NEMU_STOP;
+      index->times += 1;
       printf("\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
       printf("\nOld value = %d\n", index->data);
       printf("New value = %d\n\n", addr);

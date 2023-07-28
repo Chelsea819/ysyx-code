@@ -19,6 +19,7 @@
 
 typedef struct watchpoint {
   int NO;
+  int times;
   uint32_t data;
   char *target;
   struct watchpoint *next;
@@ -61,6 +62,7 @@ WP* new_wp(char *args){
   //cut it from free_
   get_wp->past->next = NULL;
   get_wp->next = NULL;
+  get_wp->times = 0;
   get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
@@ -95,6 +97,9 @@ WP* new_wp(char *args){
   return get_wp;
 }
 
+WP* get_head(){
+  return head;
+}
 
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");

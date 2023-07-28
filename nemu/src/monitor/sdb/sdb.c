@@ -24,9 +24,11 @@ static int is_batch_mode = false;
 
 typedef struct watchpoint {
   int NO;
-  int data;
+  int times;
+  uint32_t data;
   char *target;
   struct watchpoint *next;
+  struct watchpoint *past;
 
   /* TODO: Add more members if necessary */
 
@@ -35,6 +37,7 @@ typedef struct watchpoint {
 void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
+WP* get_head();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets()
@@ -134,8 +137,19 @@ static int cmd_x(char *args){
   return 0; 
 }
 
+static void watchPoints_display(){
+  WP *index = get_head();
+  printf("Num \tTYpe \tDisp \tEnb \tAddress \t What\n");
+  while(index != NULL){
+    printf("%d \thw watchpoint \tkeep \ty \t %s\n",index->NO,index->target);
+    printf(" \tbreakpoint already hit %d time\n",index->times);
+  }
+  return;
+}
+
 static int cmd_info(char *args){
   if (*args == 'r')  isa_reg_display();
+  if (*args == 'w')  watchPoints_display();
   return 0;
 }
 
