@@ -65,6 +65,7 @@ WP* new_wp(char *args){
     head = get_wp;
     get_wp->NO = 0;
     head[0].target = args;
+    printf("Succeed in finding an available wp %d\n",i);
   }
   else {
     for(index = 0;index < NR_WP; index ++){
@@ -81,7 +82,7 @@ WP* new_wp(char *args){
   return get_wp;
 }
 
-//cong head qudiao
+
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
   wp->next = NULL;
