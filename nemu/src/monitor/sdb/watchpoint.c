@@ -65,9 +65,9 @@ WP* new_wp(char *args){
 
   //add new wp to head
   if(!head) {
-    head = get_wp;
     get_wp->NO = 0;
-    head[0].target = args;
+    get_wp->target = args;
+    head = get_wp;
     printf("Succeed in add new wp to head \n");
   }
   else {
@@ -82,7 +82,7 @@ WP* new_wp(char *args){
     get_wp->NO = index;
   }
   
-  //printf("%s %s %s\n",get_wp->target,head[index].next->target,args);
+  printf("%s %s %s\n",get_wp->target,head[index].next->target,args);
   return get_wp;
 }
 
