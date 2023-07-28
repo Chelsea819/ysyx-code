@@ -41,7 +41,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("\n \033[105m  before search NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    printf("\n \033[105m  before search NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
     index = index->next;
   }
 
@@ -61,7 +61,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("\033[105m \n before search ava NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    printf("\033[105m \n before search ava NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
     index = index->next;
   }
 
@@ -84,7 +84,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("\033[105m \n before cut NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    printf("\033[105m \n before cut NO:%d  target:%s %p\033[0m \n",index->NO,index->target,index->target);
     index = index->next;
   }
 
@@ -95,7 +95,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("\033[105m \n before add NO:%d  target:%s \033[0m \n",index->NO,index->target);
+    printf("\033[105m \n before add NO:%d  target:%s  %p\033[0m \n",index->NO,index->target,index->target);
     index = index->next;
   }
 
@@ -130,7 +130,7 @@ WP* new_wp(char *args){
   //print
   index = head;
   while(index){
-    printf("NO:%d  target:%s\n",index->NO,index->target);
+    printf("NO:%d  target:%s  %p\n",index->NO,index->target,index->target);
     index = index->next;
   }
 
