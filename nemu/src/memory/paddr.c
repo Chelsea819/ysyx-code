@@ -44,15 +44,26 @@ static void out_of_bound(paddr_t addr) {
 void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);
+  /* 如果定义了CONFIG_PMEM_MALLOC,
+  则调用malloc()分配一块CONFIG_MSIZE大小的内存区域,
+  并存入pmem变量 */
   assert(pmem);
+  //使用assert()检查分配是否成功。
 #endif
 #ifdef CONFIG_MEM_RANDOM
+  /*如果定义了CONFIG_MEM_RANDOM,
+  则将pmem作为uint32_t指针,
+  循环将每个字初始化为随机数*/
   uint32_t *p = (uint32_t *)pmem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
     p[i] = rand();
   }
 #endif
+  /*打印日志,输出初始化的内存区域的地址范围,
+  FMT_PADDR是地址格式化的宏*/
+  /*PMEM_LEFT和PMEM_RIGHT应该是
+  预定义的内存区域起始和结束地址*/
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }
 

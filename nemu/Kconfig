@@ -81,6 +81,7 @@ config CC_CLANG
   bool "clang"
 endchoice
 
+
 config CC
   string
   default "gcc" if CC_GCC
@@ -101,6 +102,7 @@ config CC_O3
   bool "O3"
 endchoice
 
+
 config CC_OPT
   string
   default "-O0" if CC_O0
@@ -117,6 +119,7 @@ config CC_LTO
 config CC_DEBUG
   bool "Enable debug information"
   default n
+
 
 config CC_ASAN
   depends on MODE_SYSTEM
@@ -159,6 +162,10 @@ config DIFFTEST
   help
     Enable differential testing with a reference design.
     Note that this will significantly reduce the performance of NEMU.
+
+config WATCH_POINT
+  bool "Enable examining watchpoints"
+  default n
 
 choice
   prompt "Reference design"

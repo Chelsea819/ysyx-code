@@ -19,7 +19,11 @@
 
 typedef struct watchpoint {
   int NO;
+  int times;
+  uint32_t data;
+  char *target;
   struct watchpoint *next;
+  struct watchpoint *past;
 
   /* TODO: Add more members if necessary */
 
@@ -27,12 +31,125 @@ typedef struct watchpoint {
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+//static int gap = 31;
+
+WP* new_wp(char *args){
+  //search if existed the same
+  bool success = false;
+  WP* p_searchExist = head;
+  while(p_searchExist != NULL){
+    //printf("%s %s\n",args,p_searchExist->target); 
+    if(strcmp(p_searchExist->target,args) == 0) {
+      printf("strcmp == 0\n %d %s %s\n",p_searchExist->NO,args,p_searchExist->target); 
+      return NULL;
+    }
+    p_searchExist = p_searchExist->next;
+  }
+
+  //full
+  if(free_==NULL)  Assert(0,"wp_pool full!\n");
+
+  //find ava point
+  WP* get_wp = free_;
+  while(get_wp != NULL){
+    if(get_wp->next == NULL){
+      break;
+    }
+    get_wp = get_wp->next;
+  }
+  printf("Succeed in finding an available wp %d\n",get_wp->NO);
+
+  //cut it from free_
+  get_wp->past->next = NULL;
+  get_wp->next = NULL;
+  get_wp->times = 0;
+  get_wp->target = malloc(strlen(args)+1);
+  strcpy(get_wp->target,args);
+  get_wp->data = expr(args,&success);
+
+  //add it to head list
+  if(head == NULL){
+    head = get_wp;
+    get_wp->NO = 0;
+    get_wp->next = NULL;
+    get_wp->past = NULL;
+  }
+  else{
+    WP* addSpot = head;
+    while(addSpot != NULL){
+      if(addSpot->next == NULL){
+        break;
+      }
+      addSpot = addSpot->next;
+    }
+    addSpot->next = get_wp;
+    get_wp->past = addSpot;
+    get_wp->NO = addSpot->NO + 1;
+  }
+  printf("Succeed in add new wp to %d \n",get_wp->NO);
+  printf("%s %s\n",get_wp->target,args);
+
+    WP *index = head;
+    while(index){
+      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+      index = index->next;
+    }
+    printf("head : %p\n",head);
+  printf("head : %p\n",head->next);
+  return get_wp;
+}
+
+WP* get_head(){
+  return head;
+}
+
+void free_wp(WP *wp){
+  if(!wp) Assert(0,"Free_wp received NULL!\n");
+
+  //remove it from head
+  if(wp->next == NULL && wp->past == NULL) head = NULL;
+  else{
+    if(wp->past != NULL) wp->past->next = wp->next;
+    else head = wp->next;
+    if(wp->next != NULL) wp->next->past = wp->past;
+    //printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
+    printf("Remove it from %d in head\n",wp->NO);
+    }
+
+  memset(wp,0,sizeof(*wp));
+
+  //add it to free_
+  if(!free_) {
+    free_ = wp;
+    wp->next = NULL;
+    wp->NO = 0;
+    wp->past = NULL;
+    return;
+  }
+  
+  WP *index = free_;
+  while(index != NULL){
+    if(index->next == NULL){
+      index->next = wp;
+      wp->past = index;
+      wp->next = NULL;
+      wp->NO = index->NO + 1;
+      break;
+    }
+    index = index->next;
+  }
+  printf("ADD it to %d in free_",wp->NO);
+  return;
+
+
+}
 
 void init_wp_pool() {
   int i;
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
+    wp_pool[i].past = (i == 0 ? NULL : &wp_pool[i - 1]);
   }
 
   head = NULL;
