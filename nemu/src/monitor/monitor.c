@@ -33,7 +33,7 @@ static void welcome() {
   printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
   Log("Exercise: Please remove me in the source code and compile NEMU again.");
-  //assert(0);
+  assert(0);
 }
 
 #ifndef CONFIG_TARGET_AM
@@ -46,33 +46,28 @@ static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
 
-//返回加载的镜像文件大小
 static long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
-    //如果img_file为NULL,说明没有指定文件,则使用默认内置的镜像,返回其大小4096
   }
 
   FILE *fp = fopen(img_file, "rb");
   Assert(fp, "Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);
-  //ftell()可以获取文件当前的读写位置偏移量
   long size = ftell(fp);
 
   Log("The image is %s, size = %ld", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
   int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
-  //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
   assert(ret == 1);
 
   fclose(fp);
   return size;
 }
 
-//解析命令行参数
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -84,7 +79,6 @@ static int parse_args(int argc, char *argv[]) {
   };
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
-    //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
@@ -131,7 +125,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
 
-  /* Initialize the simple debugger.初始化简单调试器 */
+  /* Initialize the simple debugger. */
   init_sdb();
 
 #ifndef CONFIG_ISA_loongarch32r

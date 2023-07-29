@@ -18,9 +18,7 @@
 
 #include <common.h>
 
-/*check register index*/
 static inline int check_reg_idx(int idx) {
-  /* if index in certain range */
   IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < MUXDEF(CONFIG_RVE, 16, 32)));
   return idx;
 }

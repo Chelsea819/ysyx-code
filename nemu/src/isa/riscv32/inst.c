@@ -13,8 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-/* different ISAs is different in the pattern of codes and codes' mean */
-
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
