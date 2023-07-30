@@ -97,16 +97,18 @@ uint32_t convert_16(char *args){
 }
 
 static int cmd_si(char *args){
-  for(int i = 0; i < strlen(args) ; i ++){
-    if(args[i] > '9' || args[i] < '0'){
-      Log("Please input number!");
-      return 0;
-    }
-  }
   uint64_t n = 0;
-  if(args != NULL) n = convert_ten(args);
-  else  n = 1;
-  cpu_exec(n);
+  if(args == NULL)  n = 1;
+  else {
+    for(int i = 0; i < strlen(args) ; i ++){
+      if(args[i] > '9' || args[i] < '0'){
+        Log("Please input number!");
+        return 0;
+      }
+    }
+    n = convert_ten(args);
+    cpu_exec(n);
+  }
   return 0;
 }
 
