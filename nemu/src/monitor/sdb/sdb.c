@@ -307,6 +307,11 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
+  WP *head = get_head();
+  while(head != NULL){
+    free(head->target);
+    head = head->next;
+  }
 }
 
 void init_sdb()
