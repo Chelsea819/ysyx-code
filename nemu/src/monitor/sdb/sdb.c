@@ -166,7 +166,8 @@ static void watchPoints_display(){
 
 static int cmd_info(char *args){
   if (*args == 'r')  isa_reg_display();
-  if (*args == 'w')  watchPoints_display();
+  else if (*args == 'w')  watchPoints_display();
+  else Log("Unknown command '%s'\n", args);
   return 0;
 }
 
