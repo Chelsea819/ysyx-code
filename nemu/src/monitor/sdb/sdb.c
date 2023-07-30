@@ -104,7 +104,7 @@ static int cmd_si(char *args){
     }
   }
   uint64_t n = 0;
-  if(args) n = convert_ten(args);
+  if(args != NULL) n = convert_ten(args);
   else  n = 1;
   cpu_exec(n);
   return 0;
