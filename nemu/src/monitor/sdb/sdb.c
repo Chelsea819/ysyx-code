@@ -107,8 +107,8 @@ static int cmd_si(char *args){
       }
     }
     n = convert_ten(args);
-    cpu_exec(n);
   }
+  cpu_exec(n);
   return 0;
 }
 
