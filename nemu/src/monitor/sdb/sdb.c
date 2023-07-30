@@ -97,6 +97,10 @@ uint32_t convert_16(char *args){
 }
 
 static int cmd_si(char *args){
+  for(int i = 0; i < strlen(args) ; i ++){
+    if(args[i] > '9' || args[i] < '0')
+      Log("Please input number!");
+  }
   int n = convert_ten(args);
   cpu_exec(n);
   return 0;
