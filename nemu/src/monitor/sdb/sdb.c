@@ -147,6 +147,7 @@ static int cmd_pcount(char *args){
 }
 
 static int cmd_x(char *args){
+  if(too_lessArg(args) == 1) return 0;
   char *arg1 = strtok(NULL," ");
   char *arg2 = strtok(NULL," ");
   int len = convert_ten(arg1);
