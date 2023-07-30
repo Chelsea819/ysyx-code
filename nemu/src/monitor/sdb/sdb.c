@@ -61,6 +61,14 @@ static char *rl_gets()
   return line_read;
 }
 
+static char too_lessArg(char *args){
+  if(args == NULL) {
+    Log("Without necessary arguments!");
+    return 1;
+  }
+  return 0;
+}
+
 static int cmd_c(char *args)
 {
   /*Simulate how the CPU works.*/
@@ -130,7 +138,7 @@ static int cmd_w(char *args){
 
 static int cmd_pcount(char *args){
 
-  bool success = __bool_true_false_are_defined;
+  bool success = true;
   if(args == NULL) {
     Log("Without necessary arguments!");
     return 0;
@@ -169,7 +177,8 @@ static void watchPoints_display(){
 }
 
 static int cmd_info(char *args){
-  if (*args == 'r')  isa_reg_display();
+  if (too_lessArg(args) == 1) return 0; 
+  else if (*args == 'r')  isa_reg_display();
   else if (*args == 'w')  watchPoints_display();
   else Log("Unknown command '%s'", args);
   return 0;
