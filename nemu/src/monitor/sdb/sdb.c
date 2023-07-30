@@ -149,9 +149,8 @@ static int cmd_pcount(char *args){
 static int cmd_x(char *args){
   if(too_lessArg(args) == 1) return 0;
   char *arg1 = strtok(NULL," ");
-  if(too_lessArg(args) == 1) return 0;
   char *arg2 = strtok(NULL," ");
-  if(too_lessArg(args) == 1) return 0;
+  if(too_lessArg(arg2) == 1) return 0;
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
   for (int i = 0;i < len;i ++){
