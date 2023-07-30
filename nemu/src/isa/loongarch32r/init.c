@@ -28,7 +28,7 @@ static const uint32_t img [] = {
 
 static void restart() {
   /* Set the initial program counter. */
-  //RESET_VECTOR(应该是一个固定的重置地址)
+  //RESET_VECTOR是一个固定的重置地址
   cpu.pc = RESET_VECTOR;
 
   /* The zero register is always 0. */
@@ -39,11 +39,11 @@ static void restart() {
 //用来初始化整个虚拟计算机系统
 void init_isa() {
   /* Load built-in image. */
-  /*使用memcpy()将 img 数组(应该包含预置的代码)
+  /*使用memcpy()将 img 
   复制到从RESET_VECTOR开始的内存区域*/
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
-  //将程序计数器pc设为重置地址RESET_VECTOR,开始执行复制到内存的代码
+  //将程序计数器pc设为重置地址RESET_VECTOR
   restart();
 }

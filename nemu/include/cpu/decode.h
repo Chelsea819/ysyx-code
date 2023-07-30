@@ -22,9 +22,9 @@ typedef struct Decode {
   vaddr_t pc;
   vaddr_t snpc; // static next pc
   vaddr_t dnpc; // dynamic next pc
-  ISADecodeInfo isa;
+  ISADecodeInfo isa; //用于存放ISA相关的译码信息
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
-} Decode;
+} Decode;   //译码信息结构体Decode
 
 // --- pattern matching mechanism ---
 __attribute__((always_inline))
