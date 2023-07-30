@@ -62,13 +62,14 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
-  bool success = false;
+  bool success = true;
   uint32_t addr = 0;
 
   WP *index = get_head();
   while (index != NULL)
   {
     uint32_t addr = expr(index->target, &success);
+    Assert(success,"Make_token fail!");
     if(addr != index->data){
       nemu_state.state = NEMU_STOP;
       index->times += 1;
