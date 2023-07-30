@@ -117,6 +117,8 @@ void free_wp(WP *wp){
     }
 
   memset(wp,0,sizeof(*wp));
+  free(wp->target);
+  
 
   //add it to free_
   if(!free_) {
