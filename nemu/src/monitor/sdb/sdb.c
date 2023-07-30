@@ -137,10 +137,8 @@ static int cmd_w(char *args){
 }
 
 static int cmd_pcount(char *args){
-
   bool success = true;
-  if(args == NULL) {
-    Log("Without necessary arguments!");
+  if(too_lessArg(args) == 1) {
     return 0;
   }
   printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,expr(args,&success),expr(args,&success));
