@@ -103,7 +103,9 @@ static int cmd_si(char *args){
       return 0;
     }
   }
-  int n = convert_ten(args);
+  uint64_t n = 0;
+  if(args) n = convert_ten(args);
+  else  n = 1;
   cpu_exec(n);
   return 0;
 }
