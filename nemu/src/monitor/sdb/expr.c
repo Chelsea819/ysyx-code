@@ -281,7 +281,6 @@ uint32_t eval(int p, int q){
 
     //寄存器里的值
     case TK_REG: 
-      success = true;
       return isa_reg_str2val(tokens[p].str, &success);
 
     //十六进制数 
