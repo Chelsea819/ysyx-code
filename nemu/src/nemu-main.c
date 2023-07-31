@@ -19,6 +19,8 @@ void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
+word_t expr(char *e, bool *success);
+uint32_t convert_ten(char *args);
 
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
@@ -27,6 +29,29 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
+
+  FILE * fp = fopen("/home/chelsea/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
+  if(fp == NULL){
+    Assert(0,"Can not open 'input' !");
+  }
+
+  char* exp = malloc(32 * sizeof(char));
+  bool success = false;
+  word_t result_exp = 0;
+  word_t result_before = 0;
+  while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
+    Log("Begin test!!!");
+
+    if(strlen(exp) >= 31)  continue;
+
+    result_exp = expr(exp,&success);
+
+    if(result_exp != result_before) Log("result_exp != result_before");
+    memset(exp,0,32 * sizeof(char));
+    printf("result_exp == result_before!\n");
+  }
+  fclose(fp);
+  free(exp);
 
   /* Start engine. */
   engine_start();

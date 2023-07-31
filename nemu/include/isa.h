@@ -21,7 +21,7 @@
 
 // The macro `__GUEST_ISA__` is defined in $(CFLAGS).
 // It will be expanded as "x86" or "mips32" ...
-typedef concat(__GUEST_ISA__, _CPU_state) CPU_state;
+typedef concat(__GUEST_ISA__, _CPU_state) CPU_state;  //寄存器结构体
 typedef concat(__GUEST_ISA__, _ISADecodeInfo) ISADecodeInfo;
 
 // monitor
@@ -42,6 +42,8 @@ enum { MMU_DIRECT, MMU_TRANSLATE, MMU_FAIL };
 enum { MEM_TYPE_IFETCH, MEM_TYPE_READ, MEM_TYPE_WRITE };
 enum { MEM_RET_OK, MEM_RET_FAIL, MEM_RET_CROSS_PAGE };
 #ifndef isa_mmu_check
+/*检查当前系统状态下对内存区间为[vaddr, vaddr + len), 
+类型为type的访问是否需要经过地址转换*/
 int isa_mmu_check(vaddr_t vaddr, int len, int type);
 #endif
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type);

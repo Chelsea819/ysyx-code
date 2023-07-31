@@ -35,12 +35,10 @@ static WP *head = NULL, *free_ = NULL;
 
 WP* new_wp(char *args){
   //search if existed the same
-  bool success = false;
+  bool success = true;
   WP* p_searchExist = head;
   while(p_searchExist != NULL){
-    //printf("%s %s\n",args,p_searchExist->target); 
     if(strcmp(p_searchExist->target,args) == 0) {
-      printf("strcmp == 0\n %d %s %s\n",p_searchExist->NO,args,p_searchExist->target); 
       return NULL;
     }
     p_searchExist = p_searchExist->next;
@@ -57,7 +55,6 @@ WP* new_wp(char *args){
     }
     get_wp = get_wp->next;
   }
-  printf("Succeed in finding an available wp %d\n",get_wp->NO);
 
   //cut it from free_
   get_wp->past->next = NULL;
@@ -66,6 +63,7 @@ WP* new_wp(char *args){
   get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
+  Assert(success,"Make_token fail!");
 
   //add it to head list
   if(head == NULL){
@@ -86,16 +84,14 @@ WP* new_wp(char *args){
     get_wp->past = addSpot;
     get_wp->NO = addSpot->NO + 1;
   }
-  printf("Succeed in add new wp to %d \n",get_wp->NO);
-  printf("%s %s\n",get_wp->target,args);
 
     WP *index = head;
     while(index){
-      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+      //printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
-    printf("head : %p\n",head);
-  printf("head : %p\n",head->next);
+    //printf("head : %p\n",head);
+  //printf("head : %p\n",head->next);
   return get_wp;
 }
 
@@ -112,11 +108,13 @@ void free_wp(WP *wp){
     if(wp->past != NULL) wp->past->next = wp->next;
     else head = wp->next;
     if(wp->next != NULL) wp->next->past = wp->past;
-    //printf("wp->past->next %p \n wp->next->past %p\n",wp->past->next,wp->next->past);
-    printf("Remove it from %d in head\n",wp->NO);
+    //printf("Remove it from %d in head\n",wp->NO);
     }
 
-  memset(wp,0,sizeof(*wp));
+  free(wp->target);
+
+  wp->data = 0;
+  wp->times = 0;
 
   //add it to free_
   if(!free_) {
@@ -138,7 +136,7 @@ void free_wp(WP *wp){
     }
     index = index->next;
   }
-  printf("ADD it to %d in free_",wp->NO);
+  //printf("ADD it to %d in free_",wp->NO);
   return;
 
 

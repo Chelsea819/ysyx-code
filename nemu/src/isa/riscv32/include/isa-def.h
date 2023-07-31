@@ -23,7 +23,7 @@ typedef struct {
   //normal register
 
   vaddr_t pc;
-} MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
+} MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state); //寄存器结构体
 
 // decode
 typedef struct {

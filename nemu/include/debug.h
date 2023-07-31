@@ -24,6 +24,7 @@
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
+//Assert宏用于调试检查,如果条件不满足则打印信息并退出
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \

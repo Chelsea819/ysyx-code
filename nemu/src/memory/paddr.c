@@ -22,6 +22,7 @@
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//{}使用聚合初始化把数组初始化为0
 #endif
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
@@ -48,12 +49,12 @@ void init_mem() {
   则调用malloc()分配一块CONFIG_MSIZE大小的内存区域,
   并存入pmem变量 */
   assert(pmem);
-  //使用assert()检查分配是否成功。
+  //检查分配是否成功。
 #endif
 #ifdef CONFIG_MEM_RANDOM
   /*如果定义了CONFIG_MEM_RANDOM,
   则将pmem作为uint32_t指针,
-  循环将每个字初始化为随机数*/
+  循环初始化为随机数*/
   uint32_t *p = (uint32_t *)pmem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {

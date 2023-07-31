@@ -72,6 +72,7 @@ static int decode_exec(Decode *s) {
   return 0;
 }
 
+//取出s->pc指向的指令并译码执行, 同时更新s->snpc
 int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   return decode_exec(s);

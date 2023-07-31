@@ -136,8 +136,10 @@ static bool make_token(char *e) {
 
           case TK_SUB:
             if( (nr_token == 0) 
-            || (nr_token > 0 && tokens[nr_token - 1].type >= 258 && tokens[nr_token - 1].type <= 263 ))
+            || (nr_token > 0 && 
+              ((tokens[nr_token - 1].type >= TK_MUL && tokens[nr_token - 1].type <= TK_AND) || tokens[nr_token - 1].type == TK_LEFT_BRA)))
             {
+              Log("Get the negtive num! nr_token = %d",nr_token);
               flag_neg += 1;
               break;
             } 
@@ -268,28 +270,24 @@ uint32_t eval(int p, int q){
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
+    Assert(0,"Bad expression!");
   }
   else if (p == q) {
     /* Single token.
      * For now this token should be a number.
      * Return the value of the number.
      */
-    //printf("p = q = %d\n",q);
     switch (tokens[p].type){
 
     case TK_NUM: return convert_ten(tokens[p].str);
 
     //寄存器里的值
     case TK_REG: 
-      success = true;
       return isa_reg_str2val(tokens[p].str, &success);
 
     //十六进制数 
     case TK_HEXA: 
       return convert_16(tokens[p].str);
-
-    //解引用，内存里的值
-    //case DEREF: return vaddr_read(tokens[p].str, 4);
     
     default:
       Assert(0,"Unknown content!\n");
@@ -343,7 +341,9 @@ word_t expr(char *e, bool *success) {
   //TODO(); 
 
   for (i = 0; i < 32; i ++) {
-    if(tokens[i].type == 0) break;
+    if(tokens[i].type == 0) {
+      break;
+    }
     if (tokens[i].type == TK_MUL && 
     (i == 0 || 
     tokens[i - 1].type >=263 )
@@ -351,6 +351,5 @@ word_t expr(char *e, bool *success) {
       tokens[i].type = DEREF;
     }
   }
-  
   return eval(0, i - 1);
 }

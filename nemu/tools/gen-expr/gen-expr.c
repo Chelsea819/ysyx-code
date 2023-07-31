@@ -17,7 +17,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <signal.h>
+#include <sys/types.h>
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 // this should be enough
 //将随机生成的表达式输出到缓冲区buf中
@@ -35,9 +38,16 @@ static char *code_format =
 
 static char *code_format2 =
 "#include <stdio.h>\n"
+"#include <signal.h>\n"
+"#include <sys/types.h>\n"
+"void handler(int signo) {"
+    // 处理 SIGFPE 信号
+    "printf(\"Got floating point exception!\");"
+"}"
 "int main() { "
-"  int result = %s; "
-"  printf(\"%%d\", result); "
+"  signal(SIGFPE, handler);"
+"  float result = %s; "
+"  printf(\"%%f\", result); "
 "  return 0; "
 "}";
 
@@ -49,15 +59,13 @@ char gen_num(){
   int num = rand()%10;
   char numArr[]="0123456789";
   buf[index_buf ++] = numArr[num];
-  printf("get %c\n",numArr[num]);
+  //printf("get %c\n",numArr[num]);
   return 0;
 }
 
 uint32_t gen(char type){
-  //char *arr = &type;
-  //strncat(buf,arr,1);
   buf[index_buf ++] = type;
-  printf("get %c\n",type);
+  //printf("get %c\n",type);
   return 0;
 }
 
@@ -65,7 +73,7 @@ char gen_rand_op(){
   int type = rand()%4;
   char numArr[]="+-*/";
   buf[index_buf ++] = numArr[type];
-  printf("get %c\n",numArr[type]);
+  //printf("get %c\n",numArr[type]);
   return 0;
 }
 
@@ -73,7 +81,7 @@ static void gen_rand_expr() {
   uint32_t i = 0;
   i = choose(3);
  
-  printf("choose(3) = %d\n",i);
+  //printf("choose(3) = %d\n",i);
   switch (i) {
     case 0: {gen_num(); break;}
     case 1: {gen('('); gen_rand_expr(); gen(')'); break;}
@@ -101,10 +109,15 @@ int main(int argc, char *argv[]) {
 
       //count_debug
 
+      if(strlen(buf) > 31) {
+        i-=1;
+        continue;
+      }
+
       //将要算的表达式放入代码中，生成“计算器”
       sprintf(code_buf, code_format, buf);
       sprintf(code_buf, code_format2, buf);
-      printf("%s \n",code_buf);
+      //printf("%s \n",code_buf);
 
       FILE *fp2 = fopen("/tmp/.code.c", "w");
       assert(fp2 != NULL);
@@ -120,11 +133,20 @@ int main(int argc, char *argv[]) {
       fp2 = popen("/tmp/.expr", "r");
       assert(fp2 != NULL);
 
-      int result2;
-      ret2 = fscanf(fp2, "%d", &result2);
+      float result2;
+      ret2 = fscanf(fp2, "%f", &result2);
       pclose(fp2);
 
-      if(result2 < 0) { i -= 1; printf("succeed in catching neg!\n");  continue;}
+      if(isnan(result2)) { 
+        i -= 1;  
+        //printf("zero divide!\n");  
+        continue;
+      }
+      if(result2 < 0) { 
+        i -= 1; 
+        //printf("succeed in catching neg!\n");  
+        continue;
+      }
 
       FILE *fp = fopen("/tmp/.code.c", "w");
       assert(fp != NULL);

@@ -24,7 +24,7 @@ void init_log(const char *log_file) {
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
     //Assert宏检查文件打开是否成功,如果失败则打印错误信息并退出
-    //Assert宏用于调试检查,如果条件不满足则打印信息并退出
+    
     log_fp = fp;
     //如果文件打开成功,则将log_fp指向这个文件
   }

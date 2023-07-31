@@ -61,6 +61,14 @@ static char *rl_gets()
   return line_read;
 }
 
+static char too_lessArg(char *args){
+  if(args == NULL) {
+    Log("Without necessary arguments!");
+    return 1;
+  }
+  return 0;
+}
+
 static int cmd_c(char *args)
 {
   /*Simulate how the CPU works.*/
@@ -97,7 +105,17 @@ uint32_t convert_16(char *args){
 }
 
 static int cmd_si(char *args){
-  int n = convert_ten(args);
+  uint64_t n = 0;
+  if(args == NULL)  n = 1;
+  else {
+    for(int i = 0; i < strlen(args) ; i ++){
+      if(args[i] > '9' || args[i] < '0'){
+        Log("Please input number!");
+        return 0;
+      }
+    }
+    n = convert_ten(args);
+  }
   cpu_exec(n);
   return 0;
 }
@@ -111,24 +129,30 @@ static int cmd_q(char *args)
 static int cmd_help(char *args);
 
 static int cmd_w(char *args){
+  if(too_lessArg(args) == 1) return 0;
   WP* ret =new_wp(args);
   if(ret==NULL) printf("%s already in wp_pool!\n",args); 
-  //printf("RET-TARGET:%s\n",ret->target);
-  //printf("RET-TARGET:%p\n",args);
   return 0;
 }
 
 static int cmd_pcount(char *args){
-
-  bool success = false;
-  if(args) success = true;
-  printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,expr(args,&success),expr(args,&success));
+  bool success = true;
+  if(too_lessArg(args) == 1) {
+    return 0;
+  }
+  word_t result = expr(args,&success);
+  printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,result,result);
+  Assert(success,"Make_token fail!");
   return 0;
 }
 
 static int cmd_x(char *args){
+  if(too_lessArg(args) == 1) return 0;
+
   char *arg1 = strtok(NULL," ");
+
   char *arg2 = strtok(NULL," ");
+  if(too_lessArg(arg2) == 1) return 0;
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
   for (int i = 0;i < len;i ++){
@@ -155,18 +179,19 @@ static void watchPoints_display(){
 }
 
 static int cmd_info(char *args){
-  if (*args == 'r')  isa_reg_display();
-  if (*args == 'w')  watchPoints_display();
+  if (too_lessArg(args) == 1) return 0; 
+  else if (*args == 'r')  isa_reg_display();
+  else if (*args == 'w')  watchPoints_display();
+  else Log("Unknown command '%s'", args);
   return 0;
 }
 
 static int cmd_d(char *args){
+  if(too_lessArg(args) == 1) return 0;
   WP *index = get_head();
   while(index != NULL){
     if(strcmp(args,index->target) == 0){
-      printf("get the args\n");
       free_wp(index);
-      printf("Succeed in removing %s!\n",args);
       return 0;;
     }
     index = index->next;
@@ -282,6 +307,11 @@ void sdb_mainloop()
     {
       printf("Unknown command '%s'\n", cmd);
     }
+  }
+  WP *head = get_head();
+  while(head != NULL){
+    free(head->target);
+    head = head->next;
   }
 }
 
