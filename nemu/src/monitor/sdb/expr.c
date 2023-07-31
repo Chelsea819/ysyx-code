@@ -155,7 +155,7 @@ static bool make_token(char *e) {
             || (nr_token > 0 && 
               ((tokens[nr_token - 1].type >= TK_MUL && tokens[nr_token - 1].type <= TK_AND) || tokens[nr_token - 1].type >= TK_LEFT_BRA)))
             {
-              Log("Get the negtive num!");
+              Log("Get the negtive num! nr_token = %d",nr_token);
               flag_neg += 1;
               break;
             } 
