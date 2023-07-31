@@ -134,22 +134,6 @@ static bool make_token(char *e) {
           case TK_NOTYPE:
             break;
 
-// enum {
-//   TK_NOTYPE = 256,  //space
-//   TK_LEFT_BRA, TK_RIGHT_BRA, //bracket
-//   TK_NUM, TK_HEXA, TK_REG,DEREF, //data
-//   //3优先级 * /
-//   TK_MUL,TK_DIV, 
-//   //4优先级 + - 
-//   TK_ADD,TK_SUB,
-//   //7优先级 == !=
-//   TK_EQ, TK_NEQ,
-//   //11优先级&&
-//   TK_AND,
-
-//   /* TODO: Add more token types */
-
-// };
           case TK_SUB:
             if( (nr_token == 0) 
             || (nr_token > 0 && 
