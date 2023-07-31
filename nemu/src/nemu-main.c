@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
-  char* exp = malloc(32 * sizeof(char));
+  char* exp = malloc(300 * sizeof(char));
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     //result_before = convert_ten(result);
 
     if(result_exp != result_before) Log("result_exp != result_before");
+    printf("result_exp == result_before");
   }
   fclose(fp);
   free(exp);

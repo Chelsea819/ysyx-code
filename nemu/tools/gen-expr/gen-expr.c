@@ -109,6 +109,11 @@ int main(int argc, char *argv[]) {
 
       //count_debug
 
+      if(strlen(buf) > 200) {
+        i-=1;
+        continue;
+      }
+
       //将要算的表达式放入代码中，生成“计算器”
       sprintf(code_buf, code_format, buf);
       sprintf(code_buf, code_format2, buf);
