@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
     if(strlen(exp) >= 31)  continue;
 
     result_exp = expr(exp,&success);
-    printf("result_exp = %d\n",result_exp);
-    printf("result_before = %d\n",result_before);
+    printf("result_exp = %p_\n",&result_exp);
+    printf("result_before = %p\n",&result_before);
     //result_before = convert_ten(result);
 
     if(result_exp != result_before) Log("result_exp != result_before");
