@@ -34,11 +34,11 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
+
   char* exp = malloc(32 * sizeof(char));
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
-  //char exp = NULL;
   Log("Before test!!!");
   while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
     Log("Begin test!!!");
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     printf("result_exp = %p_\n",&result_exp);
     printf("result_before = %p\n",&result_before);
 
-    //if(result_exp != result_before) Log("result_exp != result_before");
+    if(result_exp != result_before) Log("result_exp != result_before");
     printf("result_exp == result_before");
     memset(exp,0,32 * sizeof(char));
     printf("result_exp == result_before");
