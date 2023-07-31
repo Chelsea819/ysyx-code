@@ -277,7 +277,6 @@ uint32_t eval(int p, int q){
      * For now this token should be a number.
      * Return the value of the number.
      */
-    //printf("p = q = %d\n",q);
     switch (tokens[p].type){
 
     case TK_NUM: return convert_ten(tokens[p].str);
@@ -289,9 +288,6 @@ uint32_t eval(int p, int q){
     //十六进制数 
     case TK_HEXA: 
       return convert_16(tokens[p].str);
-
-    //解引用，内存里的值
-    //case DEREF: return vaddr_read(tokens[p].str, 4);
     
     default:
       Assert(0,"Unknown content!\n");
