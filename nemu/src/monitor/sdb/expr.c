@@ -343,6 +343,7 @@ word_t expr(char *e, bool *success) {
   //TODO(); 
 
   for (i = 0; i < 32; i ++) {
+    Log("i = %d, tokens[i].type =%d\n",i,tokens[i].type);
     if(tokens[i].type == 0) {
       Log("i = %d, tokens[i].type =%d\n",i,tokens[i].type);
       break;
