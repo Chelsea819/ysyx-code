@@ -52,11 +52,11 @@ int main(int argc, char *argv[]) {
     result_exp = expr(exp,&success);
     printf("result_exp = %p_\n",&result_exp);
     printf("result_before = %p\n",&result_before);
-    //result_before = convert_ten(result);
 
     if(result_exp != result_before) Log("result_exp != result_before");
     printf("result_exp == result_before");
     memset(exp,0,32 * sizeof(char));
+    printf("result_exp == result_before");
   }
   fclose(fp);
   free(exp);
