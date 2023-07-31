@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
-  char* exp = malloc(300 * sizeof(char));
+  char* exp = malloc(32 * sizeof(char));
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     //char *exp = strtok(NULL," ");
     Log("exp = %s_11",exp);
 
-    if(strlen(exp) >= 30)  continue;
+    if(strlen(exp) >= 31)  continue;
 
     result_exp = expr(exp,&success);
     //result_before = convert_ten(result);

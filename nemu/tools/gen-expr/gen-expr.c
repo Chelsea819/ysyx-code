@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 
       //count_debug
 
-      if(strlen(buf) > 200) {
+      if(strlen(buf) > 31) {
         i-=1;
         continue;
       }
