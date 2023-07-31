@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
-  FILE * fp = fopen("~/ysyx-workbench/nemu/tools/gen-expr/build", "r");
+  FILE * fp = fopen("~/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
