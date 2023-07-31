@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
+  Log("Before test!!!");
   while(fgets(arr,100,fp) != NULL){
     Log("Begin test!!!");
     result = strtok(arr," ");
