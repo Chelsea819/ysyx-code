@@ -42,9 +42,9 @@ int main(int argc, char *argv[]) {
   while(fgets(arr,50,fp) != NULL){
     Log("Begin test!!!");
     char *result = strtok(arr," ");
-    Log("result = %s",result);
+    Log("result = %s_11",result);
     char *exp = strtok(NULL," ");
-    Log("exp = %s",exp);
+    Log("exp = %s_11",exp);
 
     if(strlen(exp) >= 30)  continue;
 
