@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
 
     result_exp = expr(exp,&success);
     printf("result_exp = %d\n",result_exp);
+    printf("result_before = %d\n",result_before);
     //result_before = convert_ten(result);
 
     if(result_exp != result_before) Log("result_exp != result_before");
