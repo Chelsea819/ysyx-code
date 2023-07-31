@@ -267,7 +267,7 @@ uint32_t eval(int p, int q){
   bool success = false;
   
   //int error = 0;
-  printf("initial p = %d ,q = %d\n",p,q);
+  //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     Assert(0,"Bad expression!");
@@ -277,7 +277,7 @@ uint32_t eval(int p, int q){
      * For now this token should be a number.
      * Return the value of the number.
      */
-    printf("p = q = %d\n",q);
+    //printf("p = q = %d\n",q);
     switch (tokens[p].type){
 
     case TK_NUM: return convert_ten(tokens[p].str);
@@ -302,7 +302,7 @@ uint32_t eval(int p, int q){
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
+    //printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
     return eval(p + 1, q - 1);
   }
   else {
@@ -314,10 +314,10 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    printf("val1 = %d\n",val1);
+    //printf("val1 = %d\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = %d\n",val2);
-    printf("find_main op_type: %d\n",op_type);
+    //printf("val2 = %d\n",val2);
+    //printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
