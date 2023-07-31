@@ -268,7 +268,7 @@ uint32_t eval(int p, int q){
   printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
-    //Assert(0,"Bad expression!");
+    Assert(0,"Bad expression!");
   }
   else if (p == q) {
     /* Single token.
