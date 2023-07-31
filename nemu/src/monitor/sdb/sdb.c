@@ -140,7 +140,8 @@ static int cmd_pcount(char *args){
   if(too_lessArg(args) == 1) {
     return 0;
   }
-  printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,expr(args,&success),expr(args,&success));
+  word_t result = expr(args,&success);
+  printf("\033[105m [ %s ] = [%u] [0x%08x]\033[0m\n",args,result,result);
   Assert(success,"Make_token fail!");
   return 0;
 }
