@@ -39,11 +39,8 @@ int main(int argc, char *argv[]) {
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
-  Log("Before test!!!");
   while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
     Log("Begin test!!!");
-    Log("result = %d",result_before);
-    Log("exp = %s",exp);
 
     if(strlen(exp) >= 31)  continue;
 
@@ -51,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     if(result_exp != result_before) Log("result_exp != result_before");
     memset(exp,0,32 * sizeof(char));
-    printf("result_exp == result_before");
+    printf("result_exp == result_before!\n");
   }
   fclose(fp);
   free(exp);
