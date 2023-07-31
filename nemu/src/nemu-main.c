@@ -42,17 +42,14 @@ int main(int argc, char *argv[]) {
   Log("Before test!!!");
   while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
     Log("Begin test!!!");
-    Log("result = %d_11",result_before);
-    Log("exp = %s_11",exp);
+    Log("result = %d",result_before);
+    Log("exp = %s",exp);
 
     if(strlen(exp) >= 31)  continue;
 
     result_exp = expr(exp,&success);
-    printf("result_exp = %p_\n",&result_exp);
-    printf("result_before = %p\n",&result_before);
 
     if(result_exp != result_before) Log("result_exp != result_before");
-    printf("result_exp == result_before");
     memset(exp,0,32 * sizeof(char));
     printf("result_exp == result_before");
   }
