@@ -34,17 +34,15 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
-  char arr[100] = {0};
-  char* result = NULL;
-  char* exp = NULL;
+  char* arr = malloc(50 * sizeof(char));
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
   Log("Before test!!!");
-  while(fgets(arr,100,fp) != NULL){
+  while(fgets(arr,50,fp) != NULL){
     Log("Begin test!!!");
-    result = strtok(arr," ");
-    exp = strtok(NULL," ");
+    char *result = strtok(arr," ");
+    char *exp = strtok(NULL," ");
 
     if(strlen(exp) >= 30)  continue;
 
@@ -54,6 +52,7 @@ int main(int argc, char *argv[]) {
     if(result_exp != result_before) Log("result_exp != result_before");
   }
   fclose(fp);
+  free(arr);
 
   /* Start engine. */
   engine_start();
