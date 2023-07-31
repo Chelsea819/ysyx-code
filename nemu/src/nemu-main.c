@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   word_t result_exp = 0;
   word_t result_before = 0;
   while(fgets(arr,100,fp) != NULL){
-
+    Log("Begin test!!!");
     result = strtok(arr," ");
     exp = strtok(NULL," ");
 
