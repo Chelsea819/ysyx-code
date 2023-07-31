@@ -343,7 +343,10 @@ word_t expr(char *e, bool *success) {
   //TODO(); 
 
   for (i = 0; i < 32; i ++) {
-    if(tokens[i].type == 0) break;
+    if(tokens[i].type == 0) {
+      Log("i = %d, tokens[i].type =%d\n",i,tokens[i].type);
+      break;
+    }
     if (tokens[i].type == TK_MUL && 
     (i == 0 || 
     tokens[i - 1].type >=263 )
