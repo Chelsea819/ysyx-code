@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
-  char* arr = NULL;
+  char arr[100] = {0};
   char* result = NULL;
   char* exp = NULL;
   bool success = false;
