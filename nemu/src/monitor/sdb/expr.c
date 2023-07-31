@@ -228,7 +228,7 @@ static int find_main(int p,int q){
 }
 
 bool check_parentheses(int p, int q){
-  printf("enter check\n");
+  //printf("enter check\n");
   int left = 0;
   int right = 0;
   int fake_false = 0;
@@ -345,9 +345,7 @@ word_t expr(char *e, bool *success) {
   //TODO(); 
 
   for (i = 0; i < 32; i ++) {
-    Log("i = %d, tokens[i].type =%d\n",i,tokens[i].type);
     if(tokens[i].type == 0) {
-      Log("i = %d, tokens[i].type =%d\n",i,tokens[i].type);
       break;
     }
     if (tokens[i].type == TK_MUL && 
@@ -357,6 +355,5 @@ word_t expr(char *e, bool *success) {
       tokens[i].type = DEREF;
     }
   }
-  Log("i = %d\n",i);
   return eval(0, i - 1);
 }
