@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
 
     if(result_exp != result_before) Log("result_exp != result_before");
     printf("result_exp == result_before");
+    memset(exp,0,32 * sizeof(char));
   }
   fclose(fp);
   free(exp);
