@@ -34,27 +34,28 @@ int main(int argc, char *argv[]) {
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
   }
-  char* arr = malloc(50 * sizeof(char));
+  char* exp = malloc(32 * sizeof(char));
   bool success = false;
   word_t result_exp = 0;
   word_t result_before = 0;
+  //char exp = NULL;
   Log("Before test!!!");
-  while(fgets(arr,50,fp) != NULL){
+  while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
     Log("Begin test!!!");
-    char *result = strtok(arr," ");
-    Log("result = %s_11",result);
-    char *exp = strtok(NULL," ");
+    //char *result = strtok(arr," ");
+    Log("result = %d_11",result_before);
+    //char *exp = strtok(NULL," ");
     Log("exp = %s_11",exp);
 
     if(strlen(exp) >= 30)  continue;
 
     result_exp = expr(exp,&success);
-    result_before = convert_ten(result);
+    //result_before = convert_ten(result);
 
     if(result_exp != result_before) Log("result_exp != result_before");
   }
   fclose(fp);
-  free(arr);
+  free(exp);
 
   /* Start engine. */
   engine_start();
