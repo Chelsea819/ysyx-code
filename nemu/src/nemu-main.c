@@ -32,8 +32,7 @@ int main(int argc, char *argv[]) {
 
   FILE * fp = fopen("~/ysyx-workbench/nemu/tools/gen-expr/build", "r");
   if(fp == NULL){
-    Log("Can not open 'input' !");
-    return 0;
+    Assert(0,"Can not open 'input' !");
   }
   char* arr = NULL;
   char* result = NULL;
