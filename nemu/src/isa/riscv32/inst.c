@@ -26,7 +26,7 @@
 
 enum {
   TYPE_I, TYPE_U, TYPE_S,
-  TYPE_N, TYPE_J// none
+  TYPE_N, TYPE_J, TYPE_R // none
 };
 //用于寄存器的读取结果记录到相应的操作数变量中
 #define src1R() do { *src1 = R(rs1); } while (0)
@@ -53,7 +53,8 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_I: src1R();          immI(); break;
     case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
-    case TYPE_J:                   immJ(); break; 
+    case TYPE_J:                   immJ(); break;
+    case TYPE_R: src1R(); src2R();         break; 
   }
 }
 
@@ -83,6 +84,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->pc + 4, s->dnpc = s->pc + imm );
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2));
   INSTPAT("??????? ????? ????? 010 ????? 00000 11", lw     , I, R(rd) = Mr(src1 + imm, 4));
+  INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, R(rd) = src1 + src2 );
 
 
   //非法指令
