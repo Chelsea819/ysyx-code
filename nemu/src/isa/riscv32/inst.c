@@ -26,7 +26,7 @@
 
 enum {
   TYPE_I, TYPE_U, TYPE_S,
-  TYPE_N, TYPE_J, TYPE_R // none
+  TYPE_N, TYPE_J, TYPE_R, TYPE_B // none
 };
 //用于寄存器的读取结果记录到相应的操作数变量中
 #define src1R() do { *src1 = R(rs1); } while (0)
@@ -36,6 +36,7 @@ enum {
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 19 | BITS(i, 19, 12)<<11 | BITS(i, 20, 20)<< 10 | BITS(i, 30, 21)) << 1; } while(0)
+#define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 11 | BITS(i, 7, 7)<< 10 | BITS(i, 30, 25) << 4  | BITS(i, 11, 8)) << 1 ; } while(0)
 
 //代码需要进行进一步的译码工作，获取一些值
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -55,6 +56,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_S: src1R(); src2R(); immS(); break;
     case TYPE_J:                   immJ(); break;
     case TYPE_R: src1R(); src2R();         break; 
+    case TYPE_B: src1R(); src2R(); immB(); break;
   }
 }
 
@@ -87,7 +89,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, R(rd) = src1 + src2 );
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, R(rd) = src1 - src2 );
   INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, R(rd) = (src1 < imm));
-
+  INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, if(src1 == src2)  s->dnpc = s->pc + imm);
+ 
 
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
