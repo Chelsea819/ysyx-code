@@ -51,7 +51,7 @@ app: $(BINARY)
 
 $(BINARY): $(OBJS) $(ARCHIVES)
 	@echo + LD $@
-	@$(LD) -E $(SRCS:%.c=%.c) -o $(SRCS:%.c=$(OBJ_DIR)/%.i)
+	@$(LD) -E $(SRCS:%.c=%.i) -o $(SRCS:%.c=$(OBJ_DIR)/%.i)
 	@$(LD) -o $@ $(OBJS) $(LDFLAGS) $(ARCHIVES) $(LIBS)
 
 clean:
