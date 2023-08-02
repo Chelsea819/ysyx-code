@@ -25,7 +25,7 @@
 #define Mw vaddr_write
 
 enum {
-  TYPE_I, TYPE_U, TYPE_S, TYPE_Ish, TYPE_R_5,
+  TYPE_I, TYPE_U, TYPE_S, TYPE_R_5,
   TYPE_N, TYPE_J, TYPE_R, TYPE_B // none
 };
 //用于寄存器的读取结果记录到相应的操作数变量中
@@ -38,7 +38,6 @@ enum {
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 19 | BITS(i, 19, 12)<<11 | BITS(i, 20, 20)<< 10 | BITS(i, 30, 21)) << 1; } while(0)
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 11 | BITS(i, 7, 7)<< 10 | BITS(i, 30, 25) << 4  | BITS(i, 11, 8)) << 1 ; } while(0)
-#define Ishant() do { *imm = SEXT(BITS(i, 25, 20), 6); } while(0)
 
 //代码需要进行进一步的译码工作，获取一些值
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -60,7 +59,6 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_R: src1R(); src2R();         break;
     case TYPE_R_5: src1R(); src2R_5();         break;  
     case TYPE_B: src1R(); src2R(); immB(); break;
-    case TYPE_Ish: src1R();        Ishant(); break;
   }
 }
 
@@ -99,12 +97,13 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 100 ????? 01100 11", xor     ,R, R(rd) = src1 ^ src2 ); 
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or      ,R, R(rd) = src1 | src2 ); 
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh     , S, Mw(src1 + imm, 2, src2));
-  INSTPAT("010000? ????? ????? 101 ????? 00100 11", srai   , Ish, if(BITS(s->isa.inst.val, 25, 25)==0)  R(rd) = (src1 >> imm) );
+  INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai   , I, if(BITS(imm, 5, 5) == 0)  R(rd) = (src1 >> BITS(imm, 4, 0)) );
   INSTPAT("??????? ????? ????? 111 ????? 00100 11", andi   , I, R(rd) = src1 & imm);
   INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R_5, R(rd) = src1 << src2 ); 
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, R(rd) = src1 & src2 ); 
   INSTPAT("??????? ????? ????? 100 ????? 00100 11", xori   , I, R(rd) = src1 ^ imm);
   INSTPAT("??????? ????? ????? 101 ????? 11000 11", bge    , B, if(src1 >= src2)  s->dnpc = s->pc + imm);
+  INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli   , I, if(BITS(imm, 5, 5) == 0)  R(rd) = ((unsigned)src1 >> BITS(imm, 4, 0)));
 
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
