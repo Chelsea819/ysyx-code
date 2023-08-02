@@ -96,12 +96,13 @@ uint32_t convert_ten(char *args){
 
 uint32_t convert_16(char *args){
   uint32_t addr = 0;
-  int flag = 1;
+  uint32_t flag = 1;
   for(int i = strlen(args) - 1;i >= 2;i --){
     if(args[i] >= 'a' || args[i] <= 'f')
       addr += ((int)args[i] - (int)'a' + 10) * flag;
     else 
       addr += ((int)args[i] - (int)'0') * flag;
+      
     flag *= 16;
   }
   return addr;
