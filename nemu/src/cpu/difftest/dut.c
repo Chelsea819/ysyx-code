@@ -121,6 +121,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     return;
   }
 
+  //该指令的执行结果以NEMU的状态为准
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
