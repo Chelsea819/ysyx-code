@@ -100,11 +100,11 @@ uint32_t convert_16(char *args){
   for(int i = strlen(args) - 1;i >= 2;i --){
     if(args[i] >= 'a' || args[i] <= 'f'){
       addr += ((int)args[i] - (int)'a' + 10) * flag;
-      printf("process addr = 0x%x\n",addr);
+      printf("process addr = 0x%08x\n",addr);
     }
     else {
       addr += ((int)args[i] - (int)'0') * flag;
-      printf("process addr = 0x%x\n",addr);
+      printf("process addr = 0x%08x\n",addr);
   }
     flag *= 16;
   }
