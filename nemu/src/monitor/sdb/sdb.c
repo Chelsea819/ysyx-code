@@ -103,6 +103,8 @@ uint32_t convert_16(char *args){
       printf("process addr = 0x%08x\n",addr);
     }
     else {
+      printf("current num = %d\n",(int)args[i] - (int)'0');
+      printf("current flag = %d\n",flag);
       addr += ((int)args[i] - (int)'0') * flag;
       printf("process addr = 0x%08x\n",addr);
   }
