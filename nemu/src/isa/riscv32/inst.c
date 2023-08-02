@@ -25,12 +25,13 @@
 #define Mw vaddr_write
 
 enum {
-  TYPE_I, TYPE_U, TYPE_S, TYPE_Ish,
+  TYPE_I, TYPE_U, TYPE_S, TYPE_Ish, TYPE_R_5,
   TYPE_N, TYPE_J, TYPE_R, TYPE_B // none
 };
 //用于寄存器的读取结果记录到相应的操作数变量中
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
+#define src2R_5() do { *src2 = BITS(R(rs2), 4, 0); } while (0)
 //用于从指令中抽取出立即数
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
@@ -56,7 +57,8 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
     case TYPE_J:                   immJ(); break;
-    case TYPE_R: src1R(); src2R();         break; 
+    case TYPE_R: src1R(); src2R();         break;
+    case TYPE_R_5: src1R(); src2R_5();         break;  
     case TYPE_B: src1R(); src2R(); immB(); break;
     case TYPE_Ish: src1R();        Ishant(); break;
   }
@@ -97,8 +99,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 100 ????? 01100 11", xor     ,R, R(rd) = src1 ^ src2 ); 
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or      ,R, R(rd) = src1 | src2 ); 
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh     , S, Mw(src1 + imm, 2, src2));
-  INSTPAT("010000? ????? ????? 101 ????? 00100 11", srai   , I, if(BITS(s->isa.inst.val, 25, 25)==0)  R(rd) = (src1 >> imm) );
+  INSTPAT("010000? ????? ????? 101 ????? 00100 11", srai   , Ish, if(BITS(s->isa.inst.val, 25, 25)==0)  R(rd) = (src1 >> imm) );
   INSTPAT("??????? ????? ????? 111 ????? 00100 11", andi   , I, R(rd) = src1 & imm);
+  INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R_5, R(rd) = src1 << src2 ); 
 
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
