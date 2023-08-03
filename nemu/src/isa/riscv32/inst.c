@@ -57,7 +57,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_S: src1R(); src2R(); immS(); break;
     case TYPE_J:                   immJ(); break;
     case TYPE_R: src1R(); src2R();         break;
-    case TYPE_R_5: src1R(); src2R_5();         break;  
+    case TYPE_R_5: src1R(); src2R_5();     break;  
     case TYPE_B: src1R(); src2R(); immB(); break;
   }
 }
@@ -110,12 +110,11 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = src1 / src2 ); 
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, R(rd) = src1 % src2 );
   INSTPAT("??????? ????? ????? 100 ????? 11000 11", blt    , B, if((signed)src1 < (signed)src2)  s->dnpc = s->pc + imm);
-  INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt    , I, R(rd) = (src1 < src2));
+  INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt    , I, R(rd) = (unsigned)((signed)src1 < (signed)src2));
 
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
 
-  printf("s->pc = 0x%x s->dnpc = 0x%x imm = 0x%x\n",s->pc,s->dnpc,imm);
   
   INSTPAT_END();
 
