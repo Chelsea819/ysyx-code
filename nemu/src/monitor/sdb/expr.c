@@ -284,8 +284,10 @@ uint32_t eval(int p, int q){
     //寄存器 or pc 里的值
     case TK_REG: 
       printf("pc current\n");
-      char *arr1 = NULL;
+      char *arr1 = malloc(3*sizeof(char));
+      memset(arr1,0,3*sizeof(char));
       strncpy(arr1,tokens[p].str,2);
+      
       return isa_reg_str2val(arr1, &success);
 
     //十六进制数 
