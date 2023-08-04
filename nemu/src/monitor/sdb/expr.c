@@ -267,7 +267,7 @@ uint32_t eval(int p, int q){
   bool success = false;
   
   //int error = 0;
-  //printf("initial p = %d ,q = %d\n",p,q);
+  printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     Assert(0,"Bad expression!");
