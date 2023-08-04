@@ -35,7 +35,7 @@ void isa_reg_display() {
 
 
 word_t isa_reg_str2val(const char *s, bool *success) {
-  printf("args = _%s_",s);
+  printf("args = _%s_\n",s);
   if(strcmp("pc",s) == 0){
       *success = true;
       printf("strcmp(pc,s) == 0\n");
