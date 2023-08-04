@@ -283,6 +283,7 @@ uint32_t eval(int p, int q){
 
     //寄存器 or pc 里的值
     case TK_REG: 
+      printf("pc current\n");
       return isa_reg_str2val(tokens[p].str, &success);
 
     //十六进制数 
