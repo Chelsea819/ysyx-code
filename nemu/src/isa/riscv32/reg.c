@@ -16,6 +16,8 @@
 #include <isa.h>
 #include "local-include/reg.h"
 
+uint32_t convert_ten(char *args);
+
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -39,5 +41,9 @@ word_t isa_reg_str2val(const char *s, bool *success) {
       return gpr(i);
     }
   }
+  if(strcmp("pc",s) == 0){
+      *success = true;
+      return cpu.pc;
+  }  
   return 0;
 }
