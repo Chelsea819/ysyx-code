@@ -206,6 +206,7 @@ static int cmd_d(char *args){
     index = index->next;
   }
   printf("No %s in watchpool!\n",args);
+  watchPoints_display();
   return 0;
 }
 
