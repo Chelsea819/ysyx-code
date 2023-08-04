@@ -199,7 +199,7 @@ static int cmd_d(char *args){
   if(too_lessArg(args) == 1) return 0;
   WP *index = get_head();
   while(index != NULL){
-    if(strcmp(args,index->target) == 0){
+    if(convert_ten(args) == index->NO){
       free_wp(index);
       return 0;;
     }
