@@ -163,7 +163,7 @@ config DIFFTEST
     Enable differential testing with a reference design.
     Note that this will significantly reduce the performance of NEMU.
 
-config WATCH_POINT
+config WATCHPOINT
   bool "Enable examining watchpoints"
   default n
 
