@@ -78,6 +78,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
       printf("New value = %d\n\n", addr);
       return;
     }
+    index = index->next;
+    return;
 
   }
   #endif
