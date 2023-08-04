@@ -198,7 +198,7 @@ static bool make_token(char *e) {
 static int op_type = 262;
 
 static int find_main(int p,int q){
-  printf("enter main_find p = %d, q = %d\n",p ,q);
+  //printf("enter main_find p = %d, q = %d\n",p ,q);
   int flag = 0;
   int flag_bracket = 0;
   op_type = 262;
@@ -219,11 +219,11 @@ static int find_main(int p,int q){
       if(tokens[i].type > op_type) {
         op_type = tokens[i].type;
         flag = i;
-        printf("current op_type = %d flag = %d\n",op_type,flag);
+        //printf("current op_type = %d flag = %d\n",op_type,flag);
       }
     }
   }
-  printf("get main_find op_type = %d flag = %d\n",op_type,flag);
+  //printf("get main_find op_type = %d flag = %d\n",op_type,flag);
   return flag;
 }
 
@@ -267,7 +267,7 @@ uint32_t eval(int p, int q){
   bool success = false;
   
   //int error = 0;
-  printf("initial p = %d ,q = %d\n",p,q);
+  //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     Assert(0,"Bad expression!");
@@ -283,7 +283,7 @@ uint32_t eval(int p, int q){
 
     //寄存器 or pc 里的值
     case TK_REG: 
-      printf("pc current\n");
+      //printf("pc current\n");
       char *arr1 = malloc(3*sizeof(char));
       memset(arr1,0,3*sizeof(char));
       strncpy(arr1,tokens[p].str,2);
@@ -315,10 +315,10 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    printf("val1 = 0x%08x\n",val1);
+    //printf("val1 = 0x%08x\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = 0x%08x\n",val2);
-    printf("find_main op_type: %d\n",op_type);
+    //printf("val2 = 0x%08x\n",val2);
+    //printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
