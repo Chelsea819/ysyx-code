@@ -133,10 +133,13 @@ static int cmd_q(char *args)
 
 static int cmd_help(char *args);
 
+static void watchPoints_display();
+
 static int cmd_w(char *args){
   if(too_lessArg(args) == 1) return 0;
   WP* ret =new_wp(args);
   if(ret==NULL) printf("%s already in wp_pool!\n",args); 
+  watchPoints_display();
   return 0;
 }
 
