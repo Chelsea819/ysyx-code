@@ -201,6 +201,7 @@ static int cmd_d(char *args){
   while(index != NULL){
     if(convert_ten(args) == index->NO){
       free_wp(index);
+      watchPoints_display();
       return 0;;
     }
     index = index->next;
