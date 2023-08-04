@@ -310,9 +310,9 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    printf("val1 = %d\n",val1);
+    printf("val1 = 0x%08x\n",val1);
     val2 = eval(op + 1, q);
-    printf("val2 = %d\n",val2);
+    printf("val2 = 0x%08x\n",val2);
     printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
