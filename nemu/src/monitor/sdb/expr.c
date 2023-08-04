@@ -284,7 +284,9 @@ uint32_t eval(int p, int q){
     //寄存器 or pc 里的值
     case TK_REG: 
       printf("pc current\n");
-      return isa_reg_str2val(tokens[p].str, &success);
+      char *arr1 = NULL;
+      strncpy(arr1,tokens[p].str,2);
+      return isa_reg_str2val(arr1, &success);
 
     //十六进制数 
     case TK_HEXA: 
