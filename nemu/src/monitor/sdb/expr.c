@@ -234,8 +234,11 @@ bool check_parentheses(int p, int q){
   int fake_false = 0;
   if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)      return false;
   else {
-    for(int i = p; i < q ; i ++){
-      if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
+    for(int i = p; i <= q ; i ++){
+      // if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
+      //   fake_false = 1;
+      // }
+      if(left == right  && i != q ) {
         fake_false = 1;
       }
       if(tokens[i].type == TK_RIGHT_BRA) {
