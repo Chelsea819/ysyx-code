@@ -232,9 +232,7 @@ bool check_parentheses(int p, int q){
   int left = 0;
   int right = 0;
   int fake_false = 0;
-  if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
-    {
-      return false;}
+  if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)      return false;
   else {
     for(int i = p; i < q ; i ++){
       if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
@@ -242,7 +240,9 @@ bool check_parentheses(int p, int q){
       }
       if(tokens[i].type == TK_RIGHT_BRA) {
         right += 1;
-        if(right > left)  Assert(0,"Bad expression--too much right brackets");
+        if(right > left)  {
+          printf("right = %d left = %d\n",right,left);
+          Assert(0,"Bad expression--too much right brackets");}
         }
       else if(tokens[i].type == TK_LEFT_BRA) {
         left += 1;
@@ -267,7 +267,7 @@ uint32_t eval(int p, int q){
   bool success = false;
   
   //int error = 0;
-  //printf("initial p = %d ,q = %d\n",p,q);
+  printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
     /* Bad expression */
     Assert(0,"Bad expression!");
@@ -303,7 +303,7 @@ uint32_t eval(int p, int q){
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    //printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
+    printf("check_parentheses(p, q) == true, p = %d , q = %d\n",p,q);
     return eval(p + 1, q - 1);
   }
   else {
@@ -315,10 +315,10 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    //printf("val1 = 0x%08x\n",val1);
+    printf("val1 = 0x%08x\n",val1);
     val2 = eval(op + 1, q);
-    //printf("val2 = 0x%08x\n",val2);
-    //printf("find_main op_type: %d\n",op_type);
+    printf("val2 = 0x%08x\n",val2);
+    printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {
       case TK_ADD: return val1 + val2;
