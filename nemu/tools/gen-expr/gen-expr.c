@@ -40,13 +40,11 @@ static char *code_format2 =
 "#include <stdio.h>\n"
 "#include <signal.h>\n"
 "#include <sys/types.h>\n"
- "void handler(int signo) {"
-    // 处理 SIGFPE 信号
-    "signal(SIGFPE,SIG_DFL);"
-"}"
+"#include <math.h>\n"
+"int flag = 0;"
 "int main() { "
-"  signal(SIGFPE, handler);"
 "  float result = %s; "
+"  if(isnan(result)) result = -1;"
 "  printf(\"%%f\", result); "
 "  return 0; "
 "}";
