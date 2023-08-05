@@ -240,6 +240,7 @@ bool check_parentheses(int p, int q){
       // }
       if(left == right  && i != q ) {
         fake_false = 1;
+        printf("fake_false = 1\n");
       }
       if(tokens[i].type == TK_RIGHT_BRA) {
         right += 1;
