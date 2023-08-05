@@ -241,7 +241,7 @@ bool check_parentheses(int p, int q){
       if(tokens[i].type == TK_RIGHT_BRA) {
         right += 1;
         if(right > left)  {
-          printf("right = %d left = %d\n",right,left);
+          printf("right = %d left = %d i = %d \n",right,left,i);
           Assert(0,"Bad expression--too much right brackets");}
         }
       else if(tokens[i].type == TK_LEFT_BRA) {
