@@ -238,7 +238,7 @@ bool check_parentheses(int p, int q){
       // if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
       //   fake_false = 1;
       // }
-      if(left == right  && i != q ) {
+      if(left == right && left!=0  && i != q ) {
         fake_false = 1;
         printf("fake_false = 1\n");
       }
