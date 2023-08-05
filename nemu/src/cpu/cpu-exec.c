@@ -68,16 +68,19 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   WP *index = get_head();
   while (index != NULL)
   {
-    uint32_t addr = expr(index->target, &success);
+    addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
     if(addr != index->data){
       nemu_state.state = NEMU_STOP;
       index->times += 1;
-      printf("\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
-      printf("\nOld value = %d\n", index->data);
+      printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
+      printf("Old value = %d\n", index->data);
       printf("New value = %d\n\n", addr);
+      index->data = addr;
       return;
     }
+    index = index->next;
+    return;
 
   }
   #endif
@@ -125,7 +128,7 @@ static void execute(uint64_t n)
   for (; n > 0; n--)
   {
     exec_once(&s, cpu.pc);
-    g_nr_guest_inst++;
+    g_nr_guest_inst++;  //记录客户指令的计时器
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING)
       break;
