@@ -254,7 +254,7 @@ bool check_parentheses(int p, int q){
       }
 
     }
-    if(left != right + 1) Assert(0,"Bad expression--too much left brackets,left = %d right = %d\n",left,right);
+    if(left != right ) Assert(0,"Bad expression--too much left brackets,left = %d right = %d\n",left,right);
   }
   if(fake_false) return false;
   return true;
