@@ -11,42 +11,70 @@
 #include <stdio.h>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
-#include "Vtop.h"
-#include "Vtop___024root.h"
-#include <nvboard.h>
+#include "Vysyx_22041211_top.h"
+#include "Vysyx_22041211_top___024root.h"
+//#include <nvboard.h>
 
 #define MAX_SIM_TIME 20
 vluint64_t sim_time = 0;
+#define CONFIG_MSIZE 0X80000000
+#define CONFIG_MBASE 0X80000000
+
 
 static  TOP_NAME dut;
-void nvboard_bind_all_pins(Vtop* top);
+//void nvboard_bind_all_pins(Vtop* top);
+static uint8_t *pmem = NULL;
+
+static int init_mem(){
+	pmem = (uint8_t *)malloc(CONFIG_MSIZE);
+	assert(pmem);
+	uint32_t *p = (uint32_t *)pmem;
+	*p = 0b10000000000000000000000010010011;
+	*(p + 1) = 0b01000000000000000000000100010011;
+	*(p + 2) = 0b11000000000000000000000110010011;
+	*(p + 3) = 0b00100000000000000000001000010011;
+
+	return 0;
+}
+
+static inline uint32_t host_read(void *addr) {
+    return *(uint32_t *)addr;
+}
+
+uint8_t* guest_to_host(uint32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+
+static uint32_t pmem_read(uint32_t addr) {
+  uint32_t ret = host_read(guest_to_host(addr));
+  return ret;
+}
+
 
 int main(int argc, char** argv, char** env) {
 
-	nvboard_bind_all_pins(&dut);
-	nvboard_init();
+	//nvboard_bind_all_pins(&dut);
+	//nvboard_init();
 
 	Verilated::traceEverOn(true);
 	VerilatedVcdC *m_trace = new VerilatedVcdC;  
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
-//	while (sim_time < MAX_SIM_TIME) {
-	while(1){
-//		int a1 = rand() & 1;
-//		int b1 = rand() & 1;
-		//	dut->clk ^= 1; 
-	//	dut.a = a1;
-	//	dut.b = b1;
+	init_mem();
+	dut.rst = 1;
+	int flag = 3;
+	while (sim_time < MAX_SIM_TIME) {
+//	while(1){
+		dut.clk ^= 1; 
+		dut.inst = pmem_read(dut.pc);
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
-	//	assert(dut.f == (a1 ^ b1));
-		nvboard_update();
-		usleep(1);
+	//	nvboard_update();
+	//	usleep(1);
+		dut.rst = 0;
+		if(flag --) break;
 	}
 	m_trace->close();
 	//delete dut;
-	//
 	exit(EXIT_SUCCESS);
 }
 

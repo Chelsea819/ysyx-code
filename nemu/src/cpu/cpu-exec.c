@@ -121,7 +121,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 }
 
-/* stimulate the way CPU works in ,get commands constantly */
+/* stimulate the way CPU works ,get commands constantly */
 static void execute(uint64_t n)
 {
   Decode s;
