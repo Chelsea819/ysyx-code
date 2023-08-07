@@ -9,6 +9,8 @@
 #include <iostream>
 #include <assert.h>
 #include <stdio.h>
+#include "svdpi.h"
+#include "Vysyx_22041211_top__Dpi.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include "Vysyx_22041211_top.h"
@@ -19,19 +21,22 @@
 vluint64_t sim_time = 0;
 //#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
-#include <iostream>
-#include <iomanip> // 用于设置输出格式
-#include <cstdint> // 包含 uint32_t 类型
 
 // *pmem = 0b 000000000001 00000 000 000010 010011;
 // *(pmem + 1) = 0b 00000000010 00000 000 000010 0010011;
 // *(pmem + 2) = 0b 00000000011 00000 000 000011 0010011;
 // *(pmem + 3) = 0b 00000000100 00000 000 000100 0010011;
 
+//bool ifebreak(int)
 
 static  TOP_NAME dut;
 //void nvboard_bind_all_pins(Vtop* top);
 static uint32_t *pmem = NULL;
+bool ifbreak = false;
+
+void ifebreak_func(int key){
+	if(key == 0b001001) ifbreak = true ;
+}
 
 static int init_mem(){
 	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
@@ -43,6 +48,7 @@ static int init_mem(){
 	*(pmem + 4) = 0b00000000101000000000001010010011;
 	*(pmem + 5) = 0b00000000111000000000001110010011;
 	*(pmem + 6) = 0b00000001000000000000010000010011;
+	*(pmem + 7) = 0b00000000000100000000000001110011; //ebreak
 
 	return 0;
 }
@@ -57,8 +63,6 @@ static uint32_t pmem_read(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
   return ret;
 }
-
-
 
 
 int main(int argc, char** argv, char** env) {
@@ -77,7 +81,7 @@ int main(int argc, char** argv, char** env) {
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
-		if(flag -- > 13){
+		if(flag-- > 14){
 			dut.eval();
 			m_trace->dump(sim_time);
 			sim_time++;
@@ -94,8 +98,8 @@ int main(int argc, char** argv, char** env) {
 	//	nvboard_update();
 	//	usleep(1);
 		dut.rst = 0;
-		printf("flag = %d\n",flag);
-		if(!(flag --)) break;
+		//printf("flag = %d\n",flag);
+		if(ifbreak) break;
 	}
 	free(pmem);
 	pmem = NULL;
