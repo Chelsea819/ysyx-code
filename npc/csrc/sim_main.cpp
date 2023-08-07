@@ -84,7 +84,7 @@ int main(int argc, char** argv, char** env) {
 	//	usleep(1);
 		dut.rst = 0;
 		printf("flag = %d\n",flag);
-		if(flag --) break;
+		if(!(flag --)) break;
 	}
 	free(pmem);
 	pmem = NULL;
