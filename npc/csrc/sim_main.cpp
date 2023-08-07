@@ -93,7 +93,7 @@ int main(int argc, char** argv, char** env) {
 		sim_time++;
 	//	nvboard_update();
 	//	usleep(1);
-		if(flag == 11) {dut.rst = 0;}
+		dut.rst = 0;
 		printf("flag = %d\n",flag);
 		if(!(flag --)) break;
 	}
