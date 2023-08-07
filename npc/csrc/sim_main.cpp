@@ -15,7 +15,7 @@
 #include "Vysyx_22041211_top___024root.h"
 //#include <nvboard.h>
 
-#define MAX_SIM_TIME 20
+#define MAX_SIM_TIME 30
 vluint64_t sim_time = 0;
 //#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
@@ -72,7 +72,7 @@ int main(int argc, char** argv, char** env) {
 	m_trace->open("waveform.vcd");
 	init_mem();
 	dut.rst = 1;
-	int flag = 16;
+	int flag = 20;
 	printf("before while\n");
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
