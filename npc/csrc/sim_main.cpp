@@ -77,6 +77,12 @@ int main(int argc, char** argv, char** env) {
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
+		if(flag > 13){
+			dut.eval();
+			m_trace->dump(sim_time);
+			sim_time++;
+			break;
+		}
 		printf("0x%032x\n",dut.pc);
 		printf("before pmem_read\n");
 		dut.inst = pmem_read(dut.pc);
@@ -87,7 +93,7 @@ int main(int argc, char** argv, char** env) {
 		sim_time++;
 	//	nvboard_update();
 	//	usleep(1);
-		dut.rst = 0;
+		if(flag == 11) {dut.rst = 0;}
 		printf("flag = %d\n",flag);
 		if(!(flag --)) break;
 	}
