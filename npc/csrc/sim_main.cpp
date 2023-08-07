@@ -31,7 +31,7 @@ vluint64_t sim_time = 0;
 
 static  TOP_NAME dut;
 //void nvboard_bind_all_pins(Vtop* top);
-static uint8_t *pmem = NULL;
+static uint32_t *pmem = NULL;
 bool ifbreak = false;
 
 void ifebreak_func(int key){
@@ -39,16 +39,16 @@ void ifebreak_func(int key){
 }
 
 static int init_mem(){
-	pmem = (uint8_t *)malloc(sizeof(uint8_t)*40);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
-	*(pmem + 4) = 0b00000000010000000000000100010011;
-	*(pmem + 8) = 0b00000000011000000000000110010011;
-	*(pmem + 12) = 0b00000000100000000000001000010011;
-	*(pmem + 16) = 0b00000000101000000000001010010011;
-	*(pmem + 20) = 0b00000000111000000000001110010011;
-	*(pmem + 24) = 0b00000001000000000000010000010011;
-	*(pmem + 28) = 0b00000000000100000000000001110011; //ebreak
+	*(pmem + 1) = 0b00000000010000000000000100010011;
+	*(pmem + 2) = 0b00000000011000000000000110010011;
+	*(pmem + 3) = 0b00000000100000000000001000010011;
+	*(pmem + 4) = 0b00000000101000000000001010010011;
+	*(pmem + 5) = 0b00000000111000000000001110010011;
+	*(pmem + 6) = 0b00000001000000000000010000010011;
+	*(pmem + 7) = 0b00000000000100000000000001110011; //ebreak
 
 	return 0;
 }
@@ -57,7 +57,7 @@ static inline uint32_t host_read(void *addr) {
     return *(uint32_t *)addr;
 }
 
-uint8_t* guest_to_host(uint32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint32_t* guest_to_host(uint32_t paddr) { return pmem + (paddr - CONFIG_MBASE) / 4; }
 
 static uint32_t pmem_read(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
@@ -81,7 +81,7 @@ int main(int argc, char** argv, char** env) {
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
-		if(flag-- > 15){
+		if(flag-- > 14){
 			dut.eval();
 			m_trace->dump(sim_time);
 			sim_time++;
