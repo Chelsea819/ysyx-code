@@ -31,7 +31,7 @@ static  TOP_NAME dut;
 static uint32_t *pmem = NULL;
 
 static int init_mem(){
-	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*9);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
 	*(pmem + 1) = 0b00000000010000000000000100010011;
@@ -65,6 +65,7 @@ int main(int argc, char** argv, char** env) {
 	init_mem();
 	dut.rst = 1;
 	int flag = 2;
+	printf("before while\n");
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
