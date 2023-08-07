@@ -3,6 +3,7 @@
 module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     input       [DATA_LEN - 1:0]	inst,
     output	    [DATA_LEN - 1:0]	imm ,
+    input                           clk,
     output      [4:0]               rd  ,
     output      [4:0]               rsc1,
     output      [4:0]               rsc2
@@ -10,7 +11,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
 );
     reg     [5:0]                   key ;
-    wire    [31:0]                  key_tmp;
+    reg    [31:0]                  key_tmp;
 
     assign  rd      = inst[11:7];
     assign  rsc1    = inst[19:15];
@@ -34,10 +35,14 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     });
 
 
-    import "DPI-C" function void ifebreak_func(int key);
-    initial begin
-        ifebreak_func(key_tmp);
-    end
+    import "DPI-C" context function void ifebreak_func(int key);
+    always @(posedge clk)
+        dpi_key(key_tmp);
+
+    task dpi_key(input reg [31:0] k);  // 在任务中使用 input reg 类型
+        /* verilator no_inline_task */
+        ifebreak_func(k);
+    endtask
     
 
 

@@ -35,10 +35,8 @@ static uint32_t *pmem = NULL;
 bool ifbreak = false;
 
 void ifebreak_func(int key){
-	while(1){
-		printf("/nwhile/n");
-		if(key == 9) {ifbreak = true; break;} 
-	}
+	printf("while");
+	if(key == 9) {ifbreak = true; } 
 }
 
 static int init_mem(){

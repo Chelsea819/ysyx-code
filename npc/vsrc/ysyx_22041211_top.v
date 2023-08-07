@@ -40,6 +40,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.inst	(inst),
 		.imm	(imm),
 		.rd		(rd),
+		.clk	(clk),
 		.rsc1	(rsc1),
 		.rsc2	(rsc2)
 	);
