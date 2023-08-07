@@ -73,6 +73,8 @@ int main(int argc, char** argv, char** env) {
 		dut.rst = 0;
 		if(flag --) break;
 	}
+	free(pmem);
+	pmem = NULL;
 	m_trace->close();
 	//delete dut;
 	exit(EXIT_SUCCESS);
