@@ -35,7 +35,7 @@ static uint32_t *pmem = NULL;
 bool ifbreak = false;
 
 void ifebreak_func(int key){
-	if(key == 0b001001) ifbreak = true ;
+	if(key == 9) ifbreak = true ;
 }
 
 static int init_mem(){
@@ -99,7 +99,10 @@ int main(int argc, char** argv, char** env) {
 	//	usleep(1);
 		dut.rst = 0;
 		//printf("flag = %d\n",flag);
-		if(ifbreak) break;
+		if(ifbreak) {
+			printf("\nebreak!\n");
+			break;
+		}
 	}
 	free(pmem);
 	pmem = NULL;
