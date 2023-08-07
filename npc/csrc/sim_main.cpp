@@ -23,16 +23,15 @@ vluint64_t sim_time = 0;
 
 static  TOP_NAME dut;
 //void nvboard_bind_all_pins(Vtop* top);
-static uint8_t *pmem = NULL;
+static uint32_t *pmem = NULL;
 
 static int init_mem(){
-	pmem = (uint8_t *)malloc(CONFIG_MSIZE);
+	pmem = (uint32_t *)malloc(CONFIG_MSIZE);
 	assert(pmem);
-	uint32_t *p = (uint32_t *)pmem;
-	*p = 0b10000000000000000000000010010011;
-	*(p + 1) = 0b01000000000000000000000100010011;
-	*(p + 2) = 0b11000000000000000000000110010011;
-	*(p + 3) = 0b00100000000000000000001000010011;
+	*pmem = 0b10000000000000000000000010010011;
+	*(pmem + 1) = 0b01000000000000000000000100010011;
+	*(pmem + 2) = 0b11000000000000000000000110010011;
+	*(pmem + 3) = 0b00100000000000000000001000010011;
 
 	return 0;
 }
@@ -41,7 +40,7 @@ static inline uint32_t host_read(void *addr) {
     return *(uint32_t *)addr;
 }
 
-uint8_t* guest_to_host(uint32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint32_t* guest_to_host(uint32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static uint32_t pmem_read(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
