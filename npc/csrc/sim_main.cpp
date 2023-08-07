@@ -48,12 +48,14 @@ static inline uint32_t host_read(void *addr) {
     return *(uint32_t *)addr;
 }
 
-uint32_t* guest_to_host(uint32_t paddr) { return pmem + paddr; }
+uint32_t* guest_to_host(uint32_t paddr) { return pmem + (paddr / 32); }
 
 static uint32_t pmem_read(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
   return ret;
 }
+
+
 
 
 int main(int argc, char** argv, char** env) {
