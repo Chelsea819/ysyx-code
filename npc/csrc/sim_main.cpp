@@ -87,7 +87,7 @@ int main(int argc, char** argv, char** env) {
 			sim_time++;
 			continue;
 		}
-		printf("0x%032x\n",dut.pc);
+		printf("pc = 0x%08x\n",dut.pc);
 		printf("before pmem_read\n");
 		dut.inst = pmem_read(dut.pc);
 		printf("dut.inst = 0x%032x\n",dut.inst);
