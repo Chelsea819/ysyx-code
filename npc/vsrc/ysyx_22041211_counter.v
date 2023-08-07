@@ -11,6 +11,6 @@ module ysyx_22041211_counter #(parameter DATA_LEN = 32, ADDR_LEN = 32,RESET_VAL 
 	input	[ADDR_LEN - 1:0]			pc_old	,
 	output	[ADDR_LEN - 1:0]			pc_new
 );
-	ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) my_Reg (clk,rst,pc_old + DATA_LEN,1'b1,pc_new);
+	ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) my_Reg (clk,rst,pc_old + DATA_LEN / 8,1'b1,pc_new);
 
 endmodule
