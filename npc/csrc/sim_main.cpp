@@ -19,6 +19,9 @@
 vluint64_t sim_time = 0;
 //#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
+#include <iostream>
+#include <iomanip> // 用于设置输出格式
+#include <cstdint> // 包含 uint32_t 类型
 
 // *pmem = 0b 000000000001 00000 000 000010 010011;
 // *(pmem + 1) = 0b 00000000010 00000 000 000010 0010011;
@@ -73,6 +76,7 @@ int main(int argc, char** argv, char** env) {
 		printf("before pmem_read\n");
 		dut.inst = pmem_read(dut.pc);
 		printf("dut.inst = 0x%032x\n",dut.inst);
+		std::cout << "Hexadecimal representation: 0x" << std::setfill('0') << std::setw(8) << std::hex << dut.inst << std::endl;
 		printf("after pmem_read\n");
 		dut.eval();
 		m_trace->dump(sim_time);
