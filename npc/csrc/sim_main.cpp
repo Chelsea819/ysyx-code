@@ -59,7 +59,7 @@ int main(int argc, char** argv, char** env) {
 	m_trace->open("waveform.vcd");
 	init_mem();
 	dut.rst = 1;
-	int flag = 3;
+	int flag = 2;
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
