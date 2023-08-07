@@ -14,7 +14,7 @@ module ysyx_22041211_add #(parameter DATA_LEN = 32)(
 	output		[DATA_LEN - 1:0]		result
 );
 	assign	result = {DATA_LEN{~rst}} & ( data1 + data2 ) & {DATA_LEN{en}};
-	//ysyx_22041211_Reg #(WIDTH = 1)(clk,1'b0,(data1[DATA_LEN - 1] == data2[DATA_LEN - 1] && result[DATA_LEN - 1] != data1[DATA_LEN - 1]),en,overflow);
+	
 
 
 endmodule
