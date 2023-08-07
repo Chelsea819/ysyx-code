@@ -17,7 +17,7 @@
 
 #define MAX_SIM_TIME 20
 vluint64_t sim_time = 0;
-#define CONFIG_MSIZE 0X80000000
+//#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
 
 
@@ -26,7 +26,7 @@ static  TOP_NAME dut;
 static uint32_t *pmem = NULL;
 
 static int init_mem(){
-	pmem = (uint32_t *)malloc(CONFIG_MSIZE);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
 	assert(pmem);
 	*pmem = 0b10000000000000000000000010010011;
 	*(pmem + 1) = 0b01000000000000000000000100010011;
