@@ -81,7 +81,7 @@ int main(int argc, char** argv, char** env) {
 			dut.eval();
 			m_trace->dump(sim_time);
 			sim_time++;
-			break;
+			continue;
 		}
 		printf("0x%032x\n",dut.pc);
 		printf("before pmem_read\n");
