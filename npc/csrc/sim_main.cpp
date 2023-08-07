@@ -76,7 +76,6 @@ int main(int argc, char** argv, char** env) {
 		printf("before pmem_read\n");
 		dut.inst = pmem_read(dut.pc);
 		printf("dut.inst = 0x%032x\n",dut.inst);
-		std::cout << "Hexadecimal representation: 0x" << std::setfill('0') << std::setw(8) << std::hex << dut.inst << std::endl;
 		printf("after pmem_read\n");
 		dut.eval();
 		m_trace->dump(sim_time);
@@ -84,6 +83,7 @@ int main(int argc, char** argv, char** env) {
 	//	nvboard_update();
 	//	usleep(1);
 		dut.rst = 0;
+		printf("flag = %d\n",flag);
 		if(flag --) break;
 	}
 	free(pmem);
