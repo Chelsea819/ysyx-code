@@ -78,7 +78,6 @@ int main(int argc, char** argv, char** env) {
 	init_mem();
 	dut.rst = 1;
 	int flag = 20;
-	printf("before while\n");
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
 		dut.clk ^= 1; 
@@ -88,11 +87,11 @@ int main(int argc, char** argv, char** env) {
 			sim_time++;
 			continue;
 		}
-		printf("pc = 0x%08x\n",dut.pc);
-		printf("before pmem_read\n");
+		// printf("pc = 0x%08x\n",dut.pc);
+		// printf("before pmem_read\n");
 		dut.inst = pmem_read(dut.pc);
-		printf("dut.inst = 0x%032x\n",dut.inst);
-		printf("after pmem_read\n");
+		// printf("dut.inst = 0x%032x\n",dut.inst);
+		// printf("after pmem_read\n");
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;

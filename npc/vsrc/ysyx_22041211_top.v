@@ -68,7 +68,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.data1		(scr1),
 		.data2		(imm),
 		.en			(add_en),
-		.clk		(clk),
 		.rst		(rst),
 		.result		(result)
 	);
