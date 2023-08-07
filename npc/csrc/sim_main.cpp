@@ -31,7 +31,7 @@ static  TOP_NAME dut;
 static uint32_t *pmem = NULL;
 
 static int init_mem(){
-	pmem = (uint32_t *)malloc(sizeof(uint32_t)*9);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
 	*(pmem + 1) = 0b00000000010000000000000100010011;
@@ -45,7 +45,7 @@ static inline uint32_t host_read(void *addr) {
     return *(uint32_t *)addr;
 }
 
-uint32_t* guest_to_host(uint32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint32_t* guest_to_host(uint32_t paddr) { return pmem + paddr; }
 
 static uint32_t pmem_read(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
