@@ -130,6 +130,7 @@ static void execute(uint64_t n)
     exec_once(&s, cpu.pc);
     g_nr_guest_inst++;  //记录客户指令的计时器
     trace_and_difftest(&s, cpu.pc);
+    //当nemu_state.state被设置为NEMU_STOP时，nemu停止执行指令
     if (nemu_state.state != NEMU_RUNNING)
       break;
     IFDEF(CONFIG_DEVICE, device_update());

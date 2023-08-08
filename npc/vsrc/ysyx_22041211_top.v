@@ -24,6 +24,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire                              	add_en	;
     wire                              	reg_wen	;
 	wire			[DATA_LEN - 1:0]	result	;
+	wire      		[2:0]               key		;
 
 	assign pc = pc_temp;
 	assign result1 = scr2;
@@ -42,6 +43,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.rd		(rd),
 		.clk	(clk),
 		.rsc1	(rsc1),
+		.key	(key),
 		.rsc2	(rsc2)
 	);
 
@@ -60,6 +62,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	ysyx_22041211_controller my_controller(
 		.inst	({inst[14:12],inst[6:0]}),
+		.key	(key),
 		.add_en	(add_en),
 		.reg_wen(reg_wen)
 	);
