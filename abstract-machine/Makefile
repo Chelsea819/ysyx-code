@@ -8,30 +8,40 @@ html:
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
-ifeq ($(MAKECMDGOALS),)
+#### $(MAKECMDGOALS)内置变量，包含用户在命令行指定的目标列表
+ifeq ($(MAKECMDGOALS),)   
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
 ### Override checks when `make clean/clean-all/html`
+#### 寻找字符串中是否存在特定的子字符串
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
+#### 通过使用$(info)函数和字符串插值，可以将构建信息消息打印到标准输出。
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
+#### 寻找是否有该文件
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
+#### $(error) 是一个Makefile中的函数，
+#### 用于在构建过程中生成错误消息并中止构建
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
 
 ### Check: environment variable `$ARCH` must be in the supported list
+#### $(basename)用于获取文件名的基本名称部分（即去除扩展名）
+#### $(notdir)仅获取文件名部分，去掉前面的路径
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
+#### check所用ISA是否合法
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
 
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
 ARCH_SPLIT = $(subst -, ,$(ARCH))
+#### 提取以空格分割开的单词文本
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
@@ -45,20 +55,25 @@ endif
 
 ## 2. General Compilation Targets
 
-### Create the destination directory (`build/$ARCH`)
+### Create the destination directory (`build/$ARCH`) 
+### 创建目标文件夹
 WORK_DIR  = $(shell pwd)
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
 IMAGE_REL = build/$(NAME)-$(ARCH)
-IMAGE     = $(abspath $(IMAGE_REL))
-#打包成的归档文件
+#### 将相对路径转换为绝对路径 $(WORK_DIR)/build/$(NAME)-$(ARCH)
+IMAGE     = $(abspath $(IMAGE_REL)) 
+#### 打包成的归档文件
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
-OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
+#### $(DST_DIR)/%.o
+OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS)))) 
+#### 对一个以空格分割的字符串列表进行排序，按首字母
 LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
+#### $(join) 将连接两个字符串列表，即将构建路径列表与库名称列表进行连接
 LINKAGE   = $(OBJS) \
   $(addsuffix -$(ARCH).a, $(join \
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
@@ -76,7 +91,7 @@ OBJDUMP   = $(CROSS_COMPILE)objdump
 OBJCOPY   = $(CROSS_COMPILE)objcopy
 READELF   = $(CROSS_COMPILE)readelf
 
-### Compilation flags
+### Compilation flags  库链接  参数
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
@@ -94,10 +109,11 @@ LDFLAGS  += -z noexecstack
 
 ## 4. Arch-Specific Configurations
 
-### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
+### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`) 
+####不同ISA不同的配置
 -include $(AM_HOME)/scripts/$(ARCH).mk
 
-### Fall back to native gcc/binutils if there is no cross compiler
+### Fall back to native gcc/binutils if there is no cross compiler 交叉编译
 ifeq ($(wildcard $(shell which $(CC))),)
   $(info #  $(CC) not found; fall back to default gcc and binutils)
   CROSS_COMPILE :=
