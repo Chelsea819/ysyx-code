@@ -3,8 +3,8 @@ DIR = ./obj_dir
 EXE = $(BUILD_DIR)/$(TOPNAME)
 WAVE = waveform.vcd
 
-TOPNAME = top
-NXDC_FILES = constr/top.nxdc
+TOPNAME = ysyx_22041211_top
+NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATH ?=
 
 VERILATOR = verilator
@@ -30,10 +30,10 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
-CSRCS += $(SRC_AUTO_BIND)
+#CSRCS += $(SRC_AUTO_BIND)
 
 # rules for NVBoard
-include $(NVBOARD_HOME)/scripts/nvboard.mk
+#include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
@@ -41,7 +41,7 @@ CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image
 
 
-$(BIN):$(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+$(BIN):$(VSRCS) $(CSRCS) #$(NVBOARD_ARCHIVE)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME)  $^\

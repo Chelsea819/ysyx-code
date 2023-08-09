@@ -60,7 +60,10 @@ else
 include $(NEMU_HOME)/scripts/native.mk
 endif
 
-.PHONY:count
+html:
+	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
+
+.PHONY:count html
 
 count:
 	find -name "*.c" -o -name "*.h" | xargs cat | grep -v ^$$ | wc -l
