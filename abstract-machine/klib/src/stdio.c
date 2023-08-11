@@ -22,6 +22,7 @@ void convert(int num){
 }
 
 int sprintf(char *out, const char *fmt, ...) {
+  putch('a');
   va_list ap;
   va_start(ap,fmt);
   int flag = 1;
@@ -61,8 +62,8 @@ int sprintf(char *out, const char *fmt, ...) {
     }
     else  out[k] = fmt[i];
   }
-  putstr("out");
-  putch('a');
+  //putstr("out");
+  
   //for(int index = 0; index < k; index ++) putch(*(out + index));
   return k;
 }
