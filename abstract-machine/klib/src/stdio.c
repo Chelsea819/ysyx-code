@@ -73,7 +73,7 @@ int sprintf(char *out, const char *fmt, ...) {
     else  out[k] = fmt[i];
   }
   va_end(ap);
-  memset_bk(out,0,k * sizeof(char));
+  //memset_bk(out,0,k * sizeof(char));
   return k;
 }
 
