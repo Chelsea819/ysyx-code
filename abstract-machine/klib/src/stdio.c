@@ -21,9 +21,7 @@ void convert(int num){
   arr_tmp[numAdd --] = tmp + 48; 
 }
 
-int sprintf_func(char *out, const char *fmt, ...) {
-  //char a = 'a';
-  //putch(a);
+int sprintf(char *out, const char *fmt, ...) {
   va_list ap;
   va_start(ap,fmt);
   int flag = 1;    
@@ -63,6 +61,7 @@ int sprintf_func(char *out, const char *fmt, ...) {
     }
     else  out[k] = fmt[i];
   }
+  va_end(ap);
   return k;
 }
 
