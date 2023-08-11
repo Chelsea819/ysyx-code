@@ -30,7 +30,7 @@ int sprintf(char *out, const char *fmt, ...) {
   int num = 0;
   int k = 0;
   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
-    if(fmt[i] == '%') {flag1^=1; tmp = i; }
+    if(fmt[i] == '%') {flag1^=1; tmp = i;}
     if(flag1 == 1 && i == tmp + 1){
         
       if(fmt[i] == 'd'){
