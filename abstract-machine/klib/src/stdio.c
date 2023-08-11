@@ -74,7 +74,6 @@ int sprintf(char *out, const char *fmt, ...) {
   }
   va_end(ap);
   memset_bk(out,0,k * sizeof(char));
-  free(out);
   return k;
 }
 
