@@ -30,13 +30,14 @@ int sprintf(char *out, const char *fmt, ...) {
   int num = 0;
   int k = 0;
   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
-    if(fmt[i] == '%') {flag1^=1; tmp = i;}
+    if(fmt[i] == '%') {flag1^=1; tmp = i; }
     if(flag1 == 1 && i == tmp + 1){
         
       if(fmt[i] == 'd'){
         memset(arr_tmp,0,20 * sizeof(char));
         numAdd = 19;
         num = va_arg(ap,int);
+        flag = 1;
         while(num/flag != 0){
           convert(num/flag);
           flag*=10;
