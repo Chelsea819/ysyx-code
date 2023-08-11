@@ -27,7 +27,7 @@ int sprintf(char *out, const char *fmt, ...) {
   int flag = 1;
   int flag1 = 0;
   int tmp = 0;
-  int num = 0;
+  int num = 0; 
   int k = 0;
   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
     if(fmt[i] == '%') {flag1^=1; tmp = i;}
@@ -41,7 +41,7 @@ int sprintf(char *out, const char *fmt, ...) {
         while(num/flag != 0){
           convert(num/flag);
           flag*=10;
-        }
+        }   
         k --;
         numAdd ++;
         for( ;numAdd < 20 ; k++,numAdd ++){
@@ -61,6 +61,7 @@ int sprintf(char *out, const char *fmt, ...) {
     }
     else  out[k] = fmt[i];
   }
+  for(int index = 0; index < k; index ++) putch(*(out + index));
   return k;
 }
 
