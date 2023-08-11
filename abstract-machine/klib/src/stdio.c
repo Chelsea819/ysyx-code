@@ -13,6 +13,17 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
 }
 
+void *memset_bk(void *s, int c, size_t n) {
+  unsigned char *sp = (unsigned char *)s;
+  unsigned char val = (unsigned char)c;
+  for(int i = 0; i < n; i++){
+    *((int *)sp + i) = val;
+  }
+  return s;
+  //panic("Not implemented");
+}
+
+
 static char arr_tmp[20] = {0};
 static int numAdd = 19;
 
@@ -34,7 +45,7 @@ int sprintf(char *out, const char *fmt, ...) {
     if(percent == 1 && i == tmp + 1){
         
       if(fmt[i] == 'd'){
-        memset(arr_tmp,0,20 * sizeof(char));
+        memset_bk(arr_tmp,0,20 * sizeof(char));
         numAdd = 19;
         num = va_arg(ap,int);
         flag = 1;
@@ -62,6 +73,7 @@ int sprintf(char *out, const char *fmt, ...) {
     else  out[k] = fmt[i];
   }
   va_end(ap);
+  memset_bk(out,0,k * sizeof(char));
   free(out);
   return k;
 }
