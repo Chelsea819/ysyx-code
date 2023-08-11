@@ -22,7 +22,8 @@ void convert(int num){
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-  putch('a');
+  char a = 'a';
+  putch(a);
   va_list ap;
   va_start(ap,fmt);
   int flag = 1;
