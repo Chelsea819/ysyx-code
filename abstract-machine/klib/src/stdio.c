@@ -13,8 +13,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
 }
 
-char arr_tmp[20] = {0};
-int numAdd = 19;
+static char arr_tmp[20] = {0};
+static int numAdd = 19;
 
 void convert(int num){
   int tmp = num % 10;
