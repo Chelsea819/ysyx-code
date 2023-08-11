@@ -20,19 +20,19 @@ void *memset_bk(void *s, int c, size_t n) {
     *((int *)sp + i) = val;
   }
   return s;
-  //panic("Not implemented");
 }
 
 
-static char arr_tmp[20] = {0};
-static int numAdd = 19;
 
-void convert(int num){
+
+void convert(int num,int* numAdd,char *arr_tmp){
   int tmp = num % 10;
-  arr_tmp[numAdd --] = tmp + 48; 
+  arr_tmp[(*numAdd) --] = tmp + 48; 
 }
 
 int sprintf(char *out, const char *fmt, ...) {
+  char arr_tmp[20] = {0};
+  int numAdd = 19;
   va_list ap;
   va_start(ap,fmt);
   int flag = 1;    
@@ -43,14 +43,13 @@ int sprintf(char *out, const char *fmt, ...) {
   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
     if(fmt[i] == '%') {percent^=1; tmp = i;}
     if(percent == 1 && i == tmp + 1){
-        
       if(fmt[i] == 'd'){
         memset_bk(arr_tmp,0,20 * sizeof(char));
         numAdd = 19;
         num = va_arg(ap,int);
         flag = 1;
         while(num/flag != 0){
-          convert(num/flag);
+          convert(num/flag,&numAdd,arr_tmp);
           flag*=10;
         }   
         k --;
@@ -73,7 +72,6 @@ int sprintf(char *out, const char *fmt, ...) {
     else  out[k] = fmt[i];
   }
   va_end(ap);
-  //memset_bk(out,0,k * sizeof(char));
   return k;
 }
 
