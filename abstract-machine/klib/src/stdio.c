@@ -55,7 +55,7 @@ int sprintf(char *out, const char *fmt, ...) {
     else  out[k] = fmt[i];
   }
   return k;
-  panic("Not implemented");
+  //panic("Not implemented");
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
