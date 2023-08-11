@@ -125,7 +125,7 @@ $(DST_DIR)/%.o: %.S
 	@$(AS) $(ASFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
-$(LIBS): %:
+$(LIBS): %: 
 	@$(MAKE) -s -C $(AM_HOME)/$* archive
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
@@ -147,7 +147,7 @@ $(ARCHIVE): $(OBJS)
 image: image-dep
 archive: $(ARCHIVE)
 image-dep: $(OBJS) am $(LIBS)
-	@echo \# Creating image [$(ARCH)]
+	@echo \# Creating image1 [$(ARCH)]
 .PHONY: image image-dep archive run $(LIBS)
 
 ### Clean a single project (remove `build/`)
