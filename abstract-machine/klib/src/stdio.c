@@ -26,14 +26,14 @@ int sprintf(char *out, const char *fmt, ...) {
   //putch(a);
   va_list ap;
   va_start(ap,fmt);
-  int flag = 1;
-  int flag1 = 0;
-  int tmp = 0;
+  int flag = 1;    
+  int percent = 0; //检测%
+  int tmp = 0; 
   int num = 0; 
   int k = 0;
   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
-    if(fmt[i] == '%') {flag1^=1; tmp = i;}
-    if(flag1 == 1 && i == tmp + 1){
+    if(fmt[i] == '%') {percent^=1; tmp = i;}
+    if(percent == 1 && i == tmp + 1){
         
       if(fmt[i] == 'd'){
         memset(arr_tmp,0,20 * sizeof(char));
@@ -59,12 +59,11 @@ int sprintf(char *out, const char *fmt, ...) {
         }
         k --;
       }
-      flag1 = 0;
+      percent = 0;
     }
     else  out[k] = fmt[i];
   }
   //putstr("out");
-  
   //for(int index = 0; index < k; index ++) putch(*(out + index));
   return k;
 }
