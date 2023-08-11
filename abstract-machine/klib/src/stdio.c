@@ -62,6 +62,7 @@ int sprintf(char *out, const char *fmt, ...) {
     else  out[k] = fmt[i];
   }
   va_end(ap);
+  free(out);
   return k;
 }
 
