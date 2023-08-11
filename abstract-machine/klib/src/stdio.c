@@ -23,8 +23,6 @@ void *memset_bk(void *s, int c, size_t n) {
 }
 
 
-
-
 void convert(int num,int* numAdd,char *arr_tmp){
   int tmp = num % 10;
   arr_tmp[(*numAdd) --] = tmp + 48; 
