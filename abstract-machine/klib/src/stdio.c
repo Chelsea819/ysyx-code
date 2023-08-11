@@ -61,7 +61,8 @@ int sprintf(char *out, const char *fmt, ...) {
     }
     else  out[k] = fmt[i];
   }
-  for(int index = 0; index < k; index ++) putch(*(out + index));
+  putstr(out);
+  //for(int index = 0; index < k; index ++) putch(*(out + index));
   return k;
 }
 
