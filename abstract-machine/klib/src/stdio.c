@@ -114,7 +114,7 @@ int sprintf(char *out, const char *fmt, ...) {
       k++;
     } 
   }
-  out[k + 1] = '\0';
+  out[k] = '\0';
   va_end(ap);
   return k + 1;
 }
