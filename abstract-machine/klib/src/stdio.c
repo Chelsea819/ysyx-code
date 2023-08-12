@@ -42,7 +42,7 @@ int sprintf(char *out, const char *fmt, ...) {
     if(fmt[i] == '%') {percent^=1; tmp = i;}
     if(percent == 1 && i == tmp + 1){
       if(fmt[i] == 'd'){
-        memset_bk(arr_tmp,0,20 * sizeof(char));
+        //memset_bk(arr_tmp,0,20 * sizeof(char));
         numAdd = 19;
         num = va_arg(ap,int);
         flag = 1;
