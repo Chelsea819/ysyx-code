@@ -107,13 +107,12 @@ int sprintf(char *out, const char *fmt, ...) {
           out[k] = str[j];
         }
       }
-      k --; //k多加了一个1,给他减去
       percent = 0;
     }
     else {
       out[k] = fmt[i];
       k++;
-    }
+    } 
   }
   out[k + 1] = '\0';
   va_end(ap);
