@@ -33,7 +33,7 @@ int sprintf(char *out, const char *fmt, ...) {
   int numAdd = 19;
   va_list ap;
   va_start(ap,fmt);
-  int flag = 1;    
+  int flag = 1;
   int percent = 0; //检测%
   int tmp = 0; 
   int num = 0; 
