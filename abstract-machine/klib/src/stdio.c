@@ -13,15 +13,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
 }
 
-void *memset_bk(void *s, int c, size_t n) {
-  unsigned char *sp = (unsigned char *)s;
-  unsigned char val = (unsigned char)c;
-  for(int i = 0; i < n; i++){
-    *((int *)sp + i) = val;
-  }
-  return s;
-}
-
 
 void convert(int num,int* numAdd,char *arr_tmp){
   int tmp = num % 10;
