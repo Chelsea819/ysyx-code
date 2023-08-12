@@ -30,7 +30,7 @@ void convert(int num,int* numAdd,char *arr_tmp){
 
 int sprintf(char *out, const char *fmt, ...) {
   char arr_tmp[20] = {0};
-  int numAdd = 19;
+  int numAdd = 18;
   va_list ap;
   va_start(ap,fmt);
   int flag = 1;
@@ -43,7 +43,7 @@ int sprintf(char *out, const char *fmt, ...) {
     if(percent == 1 && i == tmp + 1){
       if(fmt[i] == 'd'){
         //memset_bk(arr_tmp,0,20 * sizeof(char));
-        numAdd = 19;
+        numAdd = 18;
         num = va_arg(ap,int);
         flag = 1;
         while(num/flag != 0){
@@ -52,7 +52,7 @@ int sprintf(char *out, const char *fmt, ...) {
         }   
         k --;
         numAdd ++;
-        for( ;numAdd < 20 ; k++,numAdd ++){
+        for( ;numAdd < 19 ; k++,numAdd ++){
           out[k] = arr_tmp[numAdd];
         }
         k--;
