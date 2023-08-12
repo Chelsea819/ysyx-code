@@ -71,47 +71,49 @@ void convert(int num,int* numAdd,char *arr_tmp){
 //碰到%后，指示%的指针不变 pCurrent先前跑 找到格式化输出的格式
 
 int sprintf(char *out, const char *fmt, ...) {
-  char arr_tmp[20] = {0};  //存放数字转换成的字符
-  int numAdd = 18;  //数组的下标
-
+  
   va_list ap;
   va_start(ap,fmt);
 
-  int flag = 1;    //位数
   int percent = 0; //检测%
   int tmp = 0;     //存放%的下标
-  int num = 0;     //要替换的数字
   int k = 0;       //out数组的下标
 
-  for(int i = 0; *(fmt + i) != '\0'; i++,k++){
+  for(int i = 0; *(fmt + i) != '\0'; i++){
     if(fmt[i] == '%') {percent^=1; tmp = i;}
 
     //当percent为1时进入循环
     else if(percent == 1 && i == tmp + 1){
       // %d
       if(fmt[i] == 'd'){
-        numAdd = 18;
-        num = va_arg(ap,int);
-        flag = 1;
+        char arr_tmp[20] = {0};  //存放数字转换成的字符
+        int numAdd = 18;  //数组的下标
+        int num = va_arg(ap,int); //要替换的数字
+        int flag = 1;  //位数
         while(num/flag != 0){
           convert(num/flag,&numAdd,arr_tmp);
-          flag*=10;
+          flag *= 10;
         }   
         numAdd ++;
         for( ;numAdd < 19 ; k++,numAdd ++){
           out[k] = arr_tmp[numAdd];
         }
       } 
+
+      //%s
       if(fmt[i] == 's'){
         char *str = va_arg(ap,char*);
         for(int j = 0; str[j] != '\0'; j++,k++){
           out[k] = str[j];
         }
       }
-      k --;
+      k --; //k多加了一个1,给他减去
       percent = 0;
     }
-    else  out[k] = fmt[i];
+    else {
+      out[k] = fmt[i];
+      k++;
+    }
   }
   out[k + 1] = '\0';
   va_end(ap);
