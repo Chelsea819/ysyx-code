@@ -153,7 +153,6 @@ void assert_fail_msg()
 {
   isa_reg_display();
   statistic();
-  printf("\n111111111111111111\n");
 }
 
 /* Simulate how the CPU works. */
