@@ -120,6 +120,18 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
+
+  if(curre == header && curre->rbuf != NULL){
+    header = header->next;
+    bottom = curre;
+  }
+  else{
+    curre->rbuf = malloc(sizeof(char) * 50);
+  }
+  strcpy(curre->rbuf,s->logbuf);
+  curre = curre->next;
+
+
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
@@ -138,19 +150,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
   // printf("s->logbuf = %s\n",s->logbuf);
-
-  if(curre == header && curre->rbuf != NULL){
-    header = header->next;
-    bottom = curre;
-  }
-  else{
-    curre->rbuf = malloc(sizeof(char) * 50);
-  }
-  //strncpy(curre->rbuf,4,"    ");
-  strcpy(curre->rbuf,s->logbuf);
-  //curre->rbuf = s->logbuf;
-  curre = curre->next;
-
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
