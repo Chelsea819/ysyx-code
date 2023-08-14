@@ -122,19 +122,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  
-  if(curre == header && curre->rbuf != NULL){
-    header = header->next;
-    bottom = curre;
-  }
-  else{
-    curre->rbuf = malloc(sizeof(char) * 50);
-  }
-  //strncpy(curre->rbuf,4,"    ");
-  strcpy(curre->rbuf,s->logbuf);
-  //curre->rbuf = s->logbuf;
-  curre = curre->next;
-
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
   int i;
