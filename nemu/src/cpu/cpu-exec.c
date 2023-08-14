@@ -60,7 +60,7 @@ typedef struct watchpoint {
   int NO;
   int times;
   uint32_t data;
-  char *target;
+  char target[100];
   struct watchpoint *next;
   struct watchpoint *past;
 
@@ -140,8 +140,8 @@ static void exec_once(Decode *s, vaddr_t pc)
     bottom = curre;
   }
   //strncpy(curre->rbuf,4,"    ");
-  //strcpy(&(curre->rbuf),s->logbuf);
-  curre->rbuf = s->logbuf;
+  strcpy(curre->rbuf,s->logbuf);
+  //curre->rbuf = s->logbuf;
   curre = curre->next;
 
 
@@ -184,7 +184,7 @@ static void statistic()
 }
 
 void iringbuf_display(){
-  for(int i = 0; irbuf[i].rbuf != NULL; i++){
+  for(int i = 0; irbuf[i].rbuf[0] != '\0'; i++){
     if(irbuf + i == curre->past){
       printf("-->\t%s\n",irbuf[i].rbuf);
       continue;
