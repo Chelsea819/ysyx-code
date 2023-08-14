@@ -39,6 +39,8 @@ void init_wp_pool();
 WP* new_wp(char *args);
 WP* get_head();
 void free_wp(WP *wp);
+void init_iringbuf();
+
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets()
@@ -334,4 +336,7 @@ void init_sdb()
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+  /* Initialize the iringbuf. */
+  init_iringbuf();
 }

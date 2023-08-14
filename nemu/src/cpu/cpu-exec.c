@@ -31,6 +31,28 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+typedef struct iringbuf_state{
+  char *rbuf;
+  struct iringbuf_state *next;
+  struct iringbuf_state *past;
+}iringbuf;
+
+static iringbuf irbuf[12]={};
+static iringbuf* header = NULL;
+static iringbuf* curre = NULL;
+static iringbuf* bottom = NULL;
+
+void init_iringbuf(){
+  int i;
+  for(i = 0; i < 12; i ++){
+    irbuf[i].next = (i == 11? irbuf: &irbuf[i + 1]);
+    irbuf[i].past = (i == 0? &irbuf[11]: &irbuf[i - 1]);
+  }
+  header = irbuf;
+  curre = irbuf;
+  bottom = irbuf + 11;
+}
+
 void device_update();
 
 
@@ -111,7 +133,17 @@ static void exec_once(Decode *s, vaddr_t pc)
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  printf("s->logbuf = %s\n",s->logbuf);
+  // printf("s->logbuf = %s\n",s->logbuf);
+
+  if(curre == header){
+    header = header->next;
+    bottom = curre;
+  }
+  //strncpy(curre->rbuf,4,"    ");
+  //strcpy(&(curre->rbuf),s->logbuf);
+  curre->rbuf = s->logbuf;
+  curre = curre->next;
+
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -151,8 +183,19 @@ static void statistic()
     Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
+void iringbuf_display(){
+  for(int i = 0; irbuf[i].rbuf != NULL; i++){
+    if(irbuf + i == curre->past){
+      printf("--> %s\n",irbuf[i].rbuf);
+      continue;
+    }
+    printf("\t%s\n",irbuf[i].rbuf);
+  }
+}
+
 void assert_fail_msg()
 {
+  iringbuf_display();
   isa_reg_display();
   statistic();
 }
