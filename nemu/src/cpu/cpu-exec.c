@@ -139,12 +139,12 @@ static void exec_once(Decode *s, vaddr_t pc)
   p += space_len;
   // printf("s->logbuf = %s\n",s->logbuf);
 
-  if(curre == header){
+  if(curre == header && curre->rbuf != NULL){
     header = header->next;
     bottom = curre;
   }
   else{
-    curre->rbuf = malloc(sizeof(char) * 60);
+    curre->rbuf = malloc(sizeof(char) * 50);
   }
   //strncpy(curre->rbuf,4,"    ");
   strcpy(curre->rbuf,s->logbuf);
