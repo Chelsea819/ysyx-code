@@ -19,53 +19,6 @@ void convert(int num,int* numAdd,char *arr_tmp){
   arr_tmp[(*numAdd) --] = tmp + 48; 
 }
 
-// int sprintf(char *out, const char *fmt, ...) {
-//   char arr_tmp[20] = {0};  //存放数字转换成的字符
-//   int numAdd = 18;  //数组的下标
-
-//   va_list ap;
-//   va_start(ap,fmt);
-
-//   int flag = 1;    //位数
-//   int percent = 0; //检测%
-//   int tmp = 0;     //存放%的下标
-//   int num = 0;     //
-//   int k = 0;
-//   for(int i = 0; *(fmt + i) != '\0'; i++,k++){
-//     if(fmt[i] == '%') {percent^=1; tmp = i;}
-//     if(percent == 1 && i == tmp + 1){
-//       if(fmt[i] == 'd'){
-//         //memset_bk(arr_tmp,0,20 * sizeof(char));
-//         numAdd = 18;
-//         num = va_arg(ap,int);
-//         flag = 1;
-//         while(num/flag != 0){
-//           convert(num/flag,&numAdd,arr_tmp);
-//           flag*=10;
-//         }   
-//         k --;
-//         numAdd ++;
-//         for( ;numAdd < 19 ; k++,numAdd ++){
-//           out[k] = arr_tmp[numAdd];
-//         }
-//         k--;
-//       } 
-//       if(fmt[i] == 's'){
-//         char *str = va_arg(ap,char*);
-//         k --;
-//         for(int j = 0; str[j] != '\0'; j++,k++){
-//           out[k] = str[j];
-//         }
-//         k --;
-//       }
-//       percent = 0;
-//     }
-//     else  out[k] = fmt[i];
-//   }
-//   out[k + 1] = '\0';
-//   va_end(ap);
-//   return k + 1;
-// }
 
 
 //碰到%后，指示%的指针不变 pCurrent先前跑 找到格式化输出的格式
