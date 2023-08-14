@@ -121,17 +121,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 
-  if(curre == header && curre->rbuf != NULL){
-    header = header->next;
-    bottom = curre;
-  }
-  else{
-    curre->rbuf = malloc(sizeof(char) * 50);
-  }
-  strcpy(curre->rbuf,s->logbuf);
-  curre = curre->next;
-
-
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
