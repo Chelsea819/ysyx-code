@@ -159,6 +159,17 @@ static void exec_once(Decode *s, vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
+
+  if(curre == header && curre->rbuf != NULL){
+    header = header->next;
+    bottom = curre;
+  }
+  else{
+    curre->rbuf = malloc(sizeof(char) * 50);
+  }
+  strcpy(curre->rbuf,s->logbuf);
+  curre = curre->next;
+
 }
 
 /* stimulate the way CPU works ,get commands constantly */
