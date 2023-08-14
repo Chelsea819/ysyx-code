@@ -186,7 +186,7 @@ static void statistic()
 void iringbuf_display(){
   for(int i = 0; irbuf[i].rbuf != NULL; i++){
     if(irbuf + i == curre->past){
-      printf("--> %s\n",irbuf[i].rbuf);
+      printf("-->\t%s\n",irbuf[i].rbuf);
       continue;
     }
     printf("\t%s\n",irbuf[i].rbuf);
