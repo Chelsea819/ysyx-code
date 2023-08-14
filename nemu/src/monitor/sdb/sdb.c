@@ -34,6 +34,12 @@ typedef struct watchpoint {
 
 } WP;
 
+typedef struct iringbuf_state{
+  char *rbuf;
+  struct iringbuf_state *next;
+  struct iringbuf_state *past;
+}iringbuf;
+
 void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
@@ -269,6 +275,8 @@ void sdb_set_batch_mode()
   is_batch_mode = true;
 }
 
+iringbuf* get_head_iringbuf();
+
 /* Receive commands from user. */
 void sdb_mainloop()
 {
@@ -324,8 +332,16 @@ void sdb_mainloop()
   WP *head = get_head();
   while(head != NULL){
     free(head->target);
+    head->target = NULL;
     head = head->next;
   }
+  iringbuf *head_i = get_head_iringbuf();
+  while(head_i != NULL && head_i->rbuf != NULL){
+    free(head_i->rbuf);
+    head_i->rbuf = NULL;
+    head_i = head_i->next;
+  }
+  
 }
 
 void init_sdb()

@@ -37,7 +37,7 @@ typedef struct iringbuf_state{
   struct iringbuf_state *past;
 }iringbuf;
 
-static iringbuf irbuf[12]={};
+iringbuf irbuf[12]={};
 static iringbuf* header = NULL;
 static iringbuf* curre = NULL;
 static iringbuf* bottom = NULL;
@@ -51,6 +51,10 @@ void init_iringbuf(){
   header = irbuf;
   curre = irbuf;
   bottom = irbuf + 11;
+}
+
+iringbuf* get_head_iringbuf(){
+  return irbuf;
 }
 
 void device_update();
@@ -139,6 +143,9 @@ static void exec_once(Decode *s, vaddr_t pc)
     header = header->next;
     bottom = curre;
   }
+  else{
+    curre->rbuf = malloc(sizeof(char) * 60);
+  }
   //strncpy(curre->rbuf,4,"    ");
   strcpy(curre->rbuf,s->logbuf);
   //curre->rbuf = s->logbuf;
@@ -184,7 +191,7 @@ static void statistic()
 }
 
 void iringbuf_display(){
-  for(int i = 0; irbuf[i].rbuf[0] != '\0'; i++){
+  for(int i = 0; irbuf[i].rbuf != NULL; i++){
     if(irbuf + i == curre->past){
       printf("-->\t%s\n",irbuf[i].rbuf);
       continue;
