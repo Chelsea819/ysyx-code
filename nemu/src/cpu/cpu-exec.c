@@ -192,7 +192,8 @@ static void statistic()
 
 void iringbuf_display(){
   for(int i = 0; ; i++){
-    if(&(irbuf[i]) == NULL || irbuf[i].rbuf == NULL) break;
+    Assert(&(irbuf[i]) != NULL,"irbuf exists NULL!");
+    if(irbuf[i].rbuf == NULL) break;
     if(irbuf + i == curre->past){
       printf("-->\t%s\n",irbuf[i].rbuf);
       continue;
