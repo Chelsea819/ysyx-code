@@ -27,6 +27,10 @@ LDFLAGS := -O2 $(LDFLAGS)
 
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
 
+# fixdep:一个聪明的小工具
+## 通过分析文件中的CONFIG_XX宏将对autoconf.h的以来分成若干空文件的依赖
+## Kconfig更新配置选项时，更新相应空文件的时间戳
+
 # Compilation patterns
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
