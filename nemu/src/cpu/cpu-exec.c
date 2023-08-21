@@ -120,7 +120,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-printf("val = %u  %s\n ",s->isa.inst.val,s->logbuf);
+//printf("val = %u  %s\n ",s->isa.inst.val,s->logbuf);
   
 
 #ifdef CONFIG_ITRACE
