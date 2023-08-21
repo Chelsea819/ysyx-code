@@ -93,7 +93,6 @@ static int init_ftrace(){
 
   ftrace_fp = fp;
   
-
   int ret = fread(&Elf_header,sizeof(Elf64_Ehdr),1,ftrace_fp);
   if (ret != 1) {
     perror("Error reading from file");
@@ -103,13 +102,13 @@ static int init_ftrace(){
   for(int n = 0; n < Elf_header.e_shnum; n ++){
     ret = fread(&Elf_sec,sizeof(Elf64_Shdr),1,ftrace_fp);
     if (ret != 1) {
-    perror("Error reading from file");
+      perror("Error reading from file");
     }
     if(Elf_sec.sh_type == SHT_SYMTAB){
       sym_off = Elf_sec.sh_offset;
       continue;
     }
-    if(Elf_sec.sh_type == SHT_STRTAB){
+    if(Elf_sec.sh_name == Elf_header.e_shstrndx){
       str_off = Elf_sec.sh_offset;
       str_size = Elf_sec.sh_size;
       continue;
