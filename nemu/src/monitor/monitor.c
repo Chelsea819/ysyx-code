@@ -127,6 +127,7 @@ static int init_ftrace(){
   printf(".strtab : %s\n",strtab);
   printf("str_off = %ld \n",str_off);
   printf("sym_off = %ld\n",sym_off);
+  printf("str_size = %ld\n",str_size);
   
   return 0;
 }
