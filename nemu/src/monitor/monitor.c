@@ -74,45 +74,63 @@ static long load_img() {
   return size;
 }
 
-// FILE *ftrace_fp = NULL;
+FILE *ftrace_fp = NULL;
 
-// static int init_ftrace(){
-//   FILE *fp = NULL;
-//   if(ftrace_file != NULL){
-//     fp = fopen(ftrace_file,"r");
-//     Assert(fp, "Can not open '%s'",ftrace_file);
-//   }
+  Elf64_Ehdr Elf_header;
+  Elf64_Shdr Elf_sec;
+  Elf64_Off sym_off;
+  Elf64_Off str_off;
+  Elf64_Sym  Elf_sym;
+  Elf64_Xword str_size;
+  char *strtab = NULL;
 
-//   ftrace_fp = fp;
+static int init_ftrace(){
+  FILE *fp = NULL;
+  if(ftrace_file != NULL){
+    fp = fopen(ftrace_file,"r");
+    Assert(fp, "Can not open '%s'",ftrace_file);
+  }
 
-//   Elf64_Ehdr Elf_header;
-//   Elf64_Shdr Elf_sec;
-//   Elf64_Off sym_off;
-//   Elf64_Off str_off;
-//   Elf64_Sym  Elf_sym;
-//   Elf64_Xword str_size;
-//   char *strtab = malloc(str_size);
-
-//   fread(&Elf_header,sizeof(Elf64_Ehdr),1,ftrace_fp);
-//   fseek(ftrace_fp,Elf_header.e_shoff,SEEK_SET);
-
-//   for(int n = 0; n < Elf_header.e_shnum; n ++){
-//     fread(&Elf_sec,sizeof(Elf64_Shdr),1,ftrace_fp);
-//     if(Elf_sec.sh_type == SHT_SYMTAB){
-//       sym_off = Elf_sec.sh_offset;
-//       continue;
-//     }
-//     if(Elf_sec.sh_type == SHT_STRTAB){
-//       str_off = Elf_sec.sh_offset;
-//       str_size = Elf_sec.sh_size;
-//       continue;
-//     }
-//   }
-//   fread(&Elf_sym,sizeof(Elf64_Sym),1,ftrace_fp);
-//   fread(strtab,str_size,1,ftrace_fp);
+  ftrace_fp = fp;
   
 
-// }
+  int ret = fread(&Elf_header,sizeof(Elf64_Ehdr),1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+  fseek(ftrace_fp,Elf_header.e_shoff,SEEK_SET);
+
+  for(int n = 0; n < Elf_header.e_shnum; n ++){
+    ret = fread(&Elf_sec,sizeof(Elf64_Shdr),1,ftrace_fp);
+    if (ret != 1) {
+    perror("Error reading from file");
+    }
+    if(Elf_sec.sh_type == SHT_SYMTAB){
+      sym_off = Elf_sec.sh_offset;
+      continue;
+    }
+    if(Elf_sec.sh_type == SHT_STRTAB){
+      str_off = Elf_sec.sh_offset;
+      str_size = Elf_sec.sh_size;
+      continue;
+    }
+  }
+  strtab = malloc(str_size);
+  ret = fread(&Elf_sym,sizeof(Elf64_Sym),1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+  ret = fread(strtab,str_size,1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+
+  printf(".strtab : %s\n",strtab);
+  printf("str_off = %ld \n",str_off);
+  printf("sym_off = %ld\n",sym_off);
+  
+  return 0;
+}
 
 //解析命令行参数
 static int parse_args(int argc, char *argv[]) {
@@ -178,6 +196,8 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger.初始化简单调试器 */
   init_sdb();
+
+  init_ftrace();
 
 #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(
