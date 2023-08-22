@@ -120,7 +120,6 @@ static int init_ftrace(){
   fseek(ftrace_fp,str_off,SEEK_SET);
   ret = fread(strtab,str_size,1,ftrace_fp);
   if (ret != 1) {
-    printf("ret = %d\n",ret);
     perror("Error reading from file");
   }
   
@@ -147,7 +146,6 @@ static int init_ftrace(){
   fseek(ftrace_fp,sym_off,SEEK_SET);
   ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
   if (ret != 1) {
-    printf("ret = %d\n",ret);
     perror("Error reading from file");
   }
 
