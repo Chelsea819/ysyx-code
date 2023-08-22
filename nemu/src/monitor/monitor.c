@@ -116,7 +116,7 @@ static int init_ftrace(){
   str_off = Elf_sec.sh_offset;
   str_size = Elf_sec.sh_size;
   
-  // printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+  printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
   // printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
   // printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
   // printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
