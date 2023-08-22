@@ -86,10 +86,11 @@ FILE *ftrace_fp = NULL;
 
 static int init_ftrace(){
   FILE *fp = NULL;
-  if(ftrace_file != NULL){
-    fp = fopen(ftrace_file,"r");
-    Assert(fp, "Can not open '%s'",ftrace_file);
-  }
+ 
+  Assert(ftrace_file, "ftrace_file is NULL!\n");
+
+  fp = fopen(ftrace_file,"r");
+  Assert(fp, "Can not open '%s'",ftrace_file);
 
   ftrace_fp = fp;
   
