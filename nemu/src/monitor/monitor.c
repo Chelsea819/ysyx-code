@@ -108,7 +108,7 @@ static int init_ftrace(){
   Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
 
   //移到section header的位置
-  fseek(ftrace_fp,Elf_header.e_shoff,SEEK_SET);
+  fseek(ftrace_fp,Elf_header.e_shoff + sizeof(Elf32_Shdr) * (Elf_header.e_shstrndx - 1),SEEK_SET);
   ret = fread(&Elf_sec,sizeof(Elf32_Shdr),1,ftrace_fp);
     if (ret != 1) {
       perror("Error reading from file");
