@@ -107,7 +107,7 @@ static int init_ftrace(){
   Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32,"Not a 32-bit ELF file\n");
   Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
 
-  //移到section header的位置
+  //移到.strtab的位置，并进行读取
   fseek(ftrace_fp,Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1),SEEK_SET);
   ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
     if (ret != 1) {
@@ -115,12 +115,20 @@ static int init_ftrace(){
     }
   str_off = Elf_sec.sh_offset;
   str_size = Elf_sec.sh_size;
+  strtab = malloc(str_size);
   
-  printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+  fseek(ftrace_fp,str_off,SEEK_SET);
+  ret = fread(strtab,str_size,1,ftrace_fp);
+  if (ret != 1) {
+    printf("ret = %d\n",ret);
+    perror("Error reading from file");
+  }
+  
   // printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
   // printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
   // printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
 
+  //get .symtab
   for(int n = 0; n < Elf_header.e_shnum; n ++){
     fseek(ftrace_fp,Elf_header.e_shoff + n * Elf_header.e_shentsize,SEEK_SET);
     ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
@@ -134,17 +142,10 @@ static int init_ftrace(){
       continue;
     }
   }
-  strtab = malloc(str_size);
-
+  
+  //读取.symtab
   fseek(ftrace_fp,sym_off,SEEK_SET);
   ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
-  if (ret != 1) {
-    printf("ret = %d\n",ret);
-    perror("Error reading from file");
-  }
-
-  fseek(ftrace_fp,str_off,SEEK_SET);
-  ret = fread(strtab,str_size,1,ftrace_fp);
   if (ret != 1) {
     printf("ret = %d\n",ret);
     perror("Error reading from file");
