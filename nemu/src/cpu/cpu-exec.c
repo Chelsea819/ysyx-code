@@ -122,9 +122,13 @@ void convert_2(int num){
     num /= 2;
   }
   n --;
+  for( ; n < 32; n ++){
+    tmp[n] = 0;
+  }
   for(int k = 0; n >= 0; n --, k ++){
     result[k] = tmp[n] + '0';
   }
+  
   printf("result = %s",result);
   //return result;
 }
