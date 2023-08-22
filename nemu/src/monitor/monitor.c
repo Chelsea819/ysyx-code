@@ -151,7 +151,7 @@ static int init_ftrace(){
     perror("Error reading from file");
   }
 
-  printf(".strtab : _%s_\n",strtab);
+  printf(".strtab : _%s_  length = %ld\n",strtab,strlen(strtab));
   printf("str_off = %d \n",str_off);
   printf("sym_off = %d\n",sym_off);
   printf("str_size = %ld\n",str_size);
