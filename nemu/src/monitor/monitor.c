@@ -76,12 +76,12 @@ static long load_img() {
 
 FILE *ftrace_fp = NULL;
 
-  Elf64_Ehdr Elf_header;
-  Elf64_Shdr Elf_sec;
-  Elf64_Off sym_off;
-  Elf64_Off str_off;
-  Elf64_Sym  Elf_sym;
-  Elf64_Xword str_size;
+  Elf32_Ehdr Elf_header;
+  Elf32_Shdr Elf_sec;
+  Elf32_Off sym_off;
+  Elf32_Off str_off;
+  Elf32_Sym  Elf_sym;
+  Elf32_Xword str_size;
   char *strtab = NULL;
 
 static int init_ftrace(){
@@ -96,7 +96,7 @@ static int init_ftrace(){
   ftrace_fp = fp;
   
   //读取ELF header
-  int ret = fread(&Elf_header,sizeof(Elf64_Ehdr),1,ftrace_fp);
+  int ret = fread(&Elf_header,sizeof(Elf32_Ehdr),1,ftrace_fp);
   if (ret != 1) {
     perror("Error reading from file");
   }
@@ -104,14 +104,14 @@ static int init_ftrace(){
     Assert(0,"Not an ELF file!\n");
   }
 
-  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS64,"Not a 64-bit ELF file\n");
+  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32,"Not a 32-bit ELF file\n");
   Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
 
   //移到section header的位置
   fseek(ftrace_fp,Elf_header.e_shoff,SEEK_SET);
 
   for(int n = 0; n < Elf_header.e_shnum; n ++){
-    ret = fread(&Elf_sec,sizeof(Elf64_Shdr),1,ftrace_fp);
+    ret = fread(&Elf_sec,sizeof(Elf32_Shdr),1,ftrace_fp);
     if (ret != 1) {
       perror("Error reading from file");
     }
@@ -126,7 +126,7 @@ static int init_ftrace(){
     }
   }
   strtab = malloc(str_size);
-  ret = fread(&Elf_sym,sizeof(Elf64_Sym),1,ftrace_fp);
+  ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
   if (ret != 1) {
     perror("Error reading from file");
   }
@@ -136,8 +136,8 @@ static int init_ftrace(){
   }
 
   printf(".strtab : %s\n",strtab);
-  printf("str_off = %ld \n",str_off);
-  printf("sym_off = %ld\n",sym_off);
+  printf("str_off = %d \n",str_off);
+  printf("sym_off = %d\n",sym_off);
   printf("str_size = %ld\n",str_size);
   
   return 0;
