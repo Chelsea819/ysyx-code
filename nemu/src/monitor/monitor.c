@@ -86,7 +86,8 @@ FILE *ftrace_fp = NULL;
 
 static int init_ftrace(){
   FILE *fp = NULL;
- 
+  
+  //检查文件是否能正常读取
   Assert(ftrace_file, "ftrace_file is NULL!\n");
 
   fp = fopen(ftrace_file,"r");
@@ -94,10 +95,19 @@ static int init_ftrace(){
 
   ftrace_fp = fp;
   
+  //读取ELF header
   int ret = fread(&Elf_header,sizeof(Elf64_Ehdr),1,ftrace_fp);
   if (ret != 1) {
     perror("Error reading from file");
   }
+  if(Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]),"ELF",3) != 0){
+    Assert(0,"Not an ELF file!\n");
+  }
+
+  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS64,"Not a 64-bit ELF file\n");
+  Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
+
+  //移到section header的位置
   fseek(ftrace_fp,Elf_header.e_shoff,SEEK_SET);
 
   for(int n = 0; n < Elf_header.e_shnum; n ++){
