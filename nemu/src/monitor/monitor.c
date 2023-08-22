@@ -136,6 +136,7 @@ static int init_ftrace(){
   strtab = malloc(str_size);
   ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
   if (ret != 1) {
+    printf("ret = %d\n",ret);
     perror("Error reading from file");
   }
   ret = fread(strtab,str_size,1,ftrace_fp);
