@@ -124,6 +124,7 @@ static int init_ftrace(){
     if (ret != 1) {
       perror("Error reading from file");
     }
+    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
     if(Elf_sec.sh_type == SHT_SYMTAB){
       sym_off = Elf_sec.sh_offset;
       continue;
