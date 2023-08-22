@@ -142,6 +142,8 @@ static int init_ftrace(){
     printf("ret = %d\n",ret);
     perror("Error reading from file");
   }
+
+  fseek(ftrace_fp,str_off,SEEK_SET);
   ret = fread(strtab,str_size,1,ftrace_fp);
   if (ret != 1) {
     printf("ret = %d\n",ret);
