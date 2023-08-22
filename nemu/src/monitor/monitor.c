@@ -113,6 +113,8 @@ static int init_ftrace(){
     if (ret != 1) {
       perror("Error reading from file");
     }
+    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+    printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
     printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
     printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
 
