@@ -108,15 +108,18 @@ static int init_ftrace(){
   Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
 
   //移到section header的位置
-  fseek(ftrace_fp,Elf_header.e_shoff + sizeof(Elf32_Shdr) * (Elf_header.e_shstrndx - 1),SEEK_SET);
+  fseek(ftrace_fp,Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1),SEEK_SET);
   ret = fread(&Elf_sec,sizeof(Elf32_Shdr),1,ftrace_fp);
     if (ret != 1) {
       perror("Error reading from file");
     }
-    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
-    printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
-    printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
-    printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
+  str_off = Elf_sec.sh_offset;
+  str_size = Elf_sec.sh_size;
+  
+  printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+  printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
+  printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
+  printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
 
   for(int n = 0; n < Elf_header.e_shnum; n ++){
     fseek(ftrace_fp,Elf_header.e_shoff + n,SEEK_SET);
