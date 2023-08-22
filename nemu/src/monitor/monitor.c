@@ -129,6 +129,7 @@ static int init_ftrace(){
     }
     printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
     if(Elf_sec.sh_type == SHT_SYMTAB){
+      printf("11111\n");
       sym_off = Elf_sec.sh_offset;
       continue;
     }
