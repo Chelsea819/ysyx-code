@@ -140,6 +140,7 @@ static int init_ftrace(){
   }
   ret = fread(strtab,str_size,1,ftrace_fp);
   if (ret != 1) {
+    printf("ret = %d\n",ret);
     perror("Error reading from file");
   }
 
