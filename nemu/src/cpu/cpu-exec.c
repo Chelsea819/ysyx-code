@@ -234,7 +234,7 @@ const char *reg[] = {
 };
 
 uint32_t convert_16(char *args);
-//static int n = 0;
+static int n = 0;
 
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
@@ -249,7 +249,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   int addr = 0;
   char reg_tmp[3] = {0};
   char name[20] = {0};
-  //bool if_return = false;
+  bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
   Elf64_Sym sym;
@@ -268,10 +268,10 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       }
     }
-    // //返回函数
-    // if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
-    //   if_return = true;
-    // }
+    //返回函数
+    if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
+      if_return = true;
+    }
   }
   else{
     if_conduct = false;
@@ -287,7 +287,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         perror("Read error");
       }
       if(sym.st_value == addr){
-        //printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
+        printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
         break;
       }
       if(n == 50){
@@ -296,8 +296,8 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
     fseek(ftrace_fp,sym.st_name,SEEK_SET);
     ret = fread(name,19,1,ftrace_fp);
-    // if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
-    // else printf("0x%08x: ret [%s]\n",cpu.pc,name);
+    if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
+    else printf("0x%08x: ret [%s]\n",cpu.pc,name);
   }
   
 
@@ -331,10 +331,10 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 #endif
 
-  // if(n < 6){
-  //   n ++;
+  if(n < 6){
+    n ++;
   printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
-  //}
+  }
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
