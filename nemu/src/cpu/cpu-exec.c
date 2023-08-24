@@ -55,6 +55,7 @@ FILE *ftrace_fp = NULL;
   Elf32_Off str_off;
   Elf32_Sym  Elf_sym;
   Elf32_Xword str_size;
+  Elf32_Xword sym_size;
   char *strtab = NULL;
 
 int init_ftrace(const char *ftrace_file){
@@ -111,6 +112,7 @@ int init_ftrace(const char *ftrace_file){
     if(Elf_sec.sh_type == SHT_SYMTAB){
       printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
       sym_off = Elf_sec.sh_offset;
+      sym_size = Elf_sec.sh_entsize;
       continue;
     }
   }
@@ -275,7 +277,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //将地址与函数对应
   if(if_conduct){
     for(int n = 0; ;n ++){
-      fseek(ftrace_fp,sym_off + n * sizeof(Elf32_Sym),SEEK_SET);
+      fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
       printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
       if(ret != 1){
