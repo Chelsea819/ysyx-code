@@ -275,6 +275,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     if_conduct = false;
   }  
   //将地址与函数对应
+  printf("sym_size = %ld\n",sym_size);
   if(if_conduct){
     for(int n = 0; ;n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
