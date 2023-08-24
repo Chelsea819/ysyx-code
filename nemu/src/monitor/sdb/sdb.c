@@ -105,9 +105,7 @@ uint32_t convert_ten(char *args){
 uint32_t convert_16(char *args){
   uint32_t addr = 0;
   uint32_t flag = 1;
-  printf("pass num = %s\n",args);
   for(int i = strlen(args) - 1;i >= 2;i --){
-    printf("args[%d] = %c\n",i,args[i]);
     if(args[i] >= 'a' && args[i] <= 'f'){
       addr += ((int)args[i] - (int)'a' + 10) * flag;
     }
@@ -116,7 +114,6 @@ uint32_t convert_16(char *args){
   }
     flag *= 16;
   }
-  printf("convert num = 0x%08x\n",addr);
   return addr;
 }
 

@@ -277,13 +277,14 @@ static void exec_once(Decode *s, vaddr_t pc)
     for(int n = 0; ;n ++){
       fseek(ftrace_fp,sym_off + n * sizeof(Elf32_Sym),SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
+      printf("sym.st_value = 0x%08x",addr);
       if(ret != 1){
         perror("Read error");
       }
       if(sym.st_value == addr){
         break;
       }
-      if(n == 100){
+      if(n == 50){
         Assert(0,"Fail in searching!");
       }
     }
