@@ -18,6 +18,11 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #include "../monitor/sdb/sdb.h"
+#include <elf.h>
+
+#include <isa.h>
+#include "../isa/riscv32/local-include/reg.h"
+
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -41,6 +46,89 @@ iringbuf irbuf[12]={};
 static iringbuf* header = NULL;
 static iringbuf* curre = NULL;
 static iringbuf* bottom = NULL;
+
+FILE *ftrace_fp = NULL;
+
+  Elf32_Ehdr Elf_header;
+  Elf32_Shdr Elf_sec;
+  Elf32_Off sym_off;
+  Elf32_Off str_off;
+  Elf32_Sym  Elf_sym;
+  Elf32_Xword str_size;
+  char *strtab = NULL;
+
+int init_ftrace(const char *ftrace_file){
+  FILE *fp = NULL;
+  
+  //检查文件是否能正常读取
+  Assert(ftrace_file, "ftrace_file is NULL!\n");
+
+  fp = fopen(ftrace_file,"r");
+  Assert(fp, "Can not open '%s'",ftrace_file);
+
+  ftrace_fp = fp;
+  
+  //读取ELF header
+  int ret = fread(&Elf_header,sizeof(Elf32_Ehdr),1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+  if(Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]),"ELF",3) != 0){
+    Assert(0,"Not an ELF file!\n");
+  }
+
+  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32,"Not a 32-bit ELF file\n");
+  Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
+
+  //移到.strtab的位置，并进行读取
+  fseek(ftrace_fp,Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1),SEEK_SET);
+  ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
+    if (ret != 1) {
+      perror("Error reading from file");
+    }
+  str_off = Elf_sec.sh_offset;
+  str_size = Elf_sec.sh_size;
+  strtab = malloc(str_size);
+  
+  fseek(ftrace_fp,str_off,SEEK_SET);
+  ret = fread(strtab,str_size,1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+  
+  // printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
+  // printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
+  // printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
+
+  //get .symtab
+  for(int n = 0; n < Elf_header.e_shnum; n ++){
+    fseek(ftrace_fp,Elf_header.e_shoff + n * Elf_header.e_shentsize,SEEK_SET);
+    ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
+    if (ret != 1) {
+      perror("Error reading from file");
+    }
+    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+    if(Elf_sec.sh_type == SHT_SYMTAB){
+      printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
+      sym_off = Elf_sec.sh_offset;
+      continue;
+    }
+  }
+  
+  //读取.symtab
+  fseek(ftrace_fp,sym_off,SEEK_SET);
+  ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
+  if (ret != 1) {
+    perror("Error reading from file");
+  }
+
+  printf(".strtab : _%s_  length = %ld\n",&strtab[9],strlen(&strtab[9]));
+  printf("str_off = %d \n",str_off);
+  printf("sym_off = %d\n",sym_off);
+  printf("str_size = %ld\n",str_size);
+  
+  return 0;
+}
 
 void init_iringbuf(){
   int i;
@@ -134,6 +222,15 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 //   //return result;
 // }
 
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+
+uint32_t convert_16(char *args);
+
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
@@ -143,12 +240,51 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
   printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
+  char addr_tmp[9] = {0};
+  int addr = 0;
+  char reg_tmp[3] = {0};
+  char name[20] = {0};
+  bool if_return = false;
+  int ret = 0;
+  Elf64_Sym sym;
+  //检测jal 函数调用 取出跳转到的地址
   if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-
+    strncpy(addr_tmp,&(s->logbuf[34]),8);
+    addr = convert_16(addr_tmp);
   } 
+  //检测jalr函数调用/函数返回，取出跳转到的地址
   else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
-
+    strncpy(reg_tmp,&(s->logbuf[37]),2);
+    for(int i = 0; i < 32; i ++){
+      if(strncmp(regs[i],reg_tmp,strlen("ra")) == 0){
+        addr = gpr(i);
+        break;
+      }
+    }
+    //返回函数
+    if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
+      if_return = true;
+    }
   }  
+  //将地址与函数对应
+  for(int n = 0; ;n ++){
+    fseek(ftrace_fp,sym_off + n * sizeof(Elf32_Sym),SEEK_SET);
+    ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
+    if(ret != 1){
+      perror("Read error");
+    }
+    if(sym.st_value == addr){
+      break;
+    }
+    if(n == 100){
+      Assert(0,"Fail in searching!");
+    }
+  }
+  fseek(ftrace_fp,sym.st_name,SEEK_SET);
+  ret = fread(name,19,1,ftrace_fp);
+  if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
+  else printf("0x%08x: ret [%s]\n",cpu.pc,name);
+  
 
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;

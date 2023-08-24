@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-#include <elf.h>
+
 
 void init_rand();
 void init_log(const char *log_file);
@@ -23,6 +23,7 @@ void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
+int init_ftrace(const char *ftrace_file);
 void init_disasm(const char *triple);
 
 static void welcome() {
@@ -74,88 +75,6 @@ static long load_img() {
   return size;
 }
 
-FILE *ftrace_fp = NULL;
-
-  Elf32_Ehdr Elf_header;
-  Elf32_Shdr Elf_sec;
-  Elf32_Off sym_off;
-  Elf32_Off str_off;
-  Elf32_Sym  Elf_sym;
-  Elf32_Xword str_size;
-  char *strtab = NULL;
-
-static int init_ftrace(){
-  FILE *fp = NULL;
-  
-  //检查文件是否能正常读取
-  Assert(ftrace_file, "ftrace_file is NULL!\n");
-
-  fp = fopen(ftrace_file,"r");
-  Assert(fp, "Can not open '%s'",ftrace_file);
-
-  ftrace_fp = fp;
-  
-  //读取ELF header
-  int ret = fread(&Elf_header,sizeof(Elf32_Ehdr),1,ftrace_fp);
-  if (ret != 1) {
-    perror("Error reading from file");
-  }
-  if(Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]),"ELF",3) != 0){
-    Assert(0,"Not an ELF file!\n");
-  }
-
-  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32,"Not a 32-bit ELF file\n");
-  Assert(Elf_header.e_type == ET_EXEC,"Not an exec file\n");
-
-  //移到.strtab的位置，并进行读取
-  fseek(ftrace_fp,Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1),SEEK_SET);
-  ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
-    if (ret != 1) {
-      perror("Error reading from file");
-    }
-  str_off = Elf_sec.sh_offset;
-  str_size = Elf_sec.sh_size;
-  strtab = malloc(str_size);
-  
-  fseek(ftrace_fp,str_off,SEEK_SET);
-  ret = fread(strtab,str_size,1,ftrace_fp);
-  if (ret != 1) {
-    perror("Error reading from file");
-  }
-  
-  // printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
-  // printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
-  // printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
-
-  //get .symtab
-  for(int n = 0; n < Elf_header.e_shnum; n ++){
-    fseek(ftrace_fp,Elf_header.e_shoff + n * Elf_header.e_shentsize,SEEK_SET);
-    ret = fread(&Elf_sec,Elf_header.e_shentsize,1,ftrace_fp);
-    if (ret != 1) {
-      perror("Error reading from file");
-    }
-    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
-    if(Elf_sec.sh_type == SHT_SYMTAB){
-      printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
-      sym_off = Elf_sec.sh_offset;
-      continue;
-    }
-  }
-  
-  //读取.symtab
-  fseek(ftrace_fp,sym_off,SEEK_SET);
-  ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
-  if (ret != 1) {
-    perror("Error reading from file");
-  }
-
-  printf(".strtab : _%s_  length = %ld\n",&strtab[9],strlen(&strtab[9]));
-  printf("str_off = %d \n",str_off);
-  printf("sym_off = %d\n",sym_off);
-  printf("str_size = %ld\n",str_size);
-  
-  return 0;
-}
 
 //解析命令行参数
 static int parse_args(int argc, char *argv[]) {
@@ -222,7 +141,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize the simple debugger.初始化简单调试器 */
   init_sdb();
 
-  init_ftrace();
+  init_ftrace(ftrace_file);
 
 #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(
