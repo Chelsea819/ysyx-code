@@ -142,7 +142,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  printf("val = %s len = %ld\n ",&(s->logbuf[25]),strlen(s->logbuf));
+  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
   
 
 #ifdef CONFIG_ITRACE
