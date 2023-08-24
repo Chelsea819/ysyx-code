@@ -111,27 +111,28 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   }
   #endif
 }
-// 28 - 14 - 7 - 3 - 1 - 0
-//           1   1   1
-void convert_2(int num){
-  char result[100] = {0};
-  int tmp[100] = {0};
-  int n = 0;
-  for(n = 0; num / 2 != 0; n ++){
-    tmp[n] = num % 2;
-    num /= 2;
-  }
-  n --;
-  for( ; n < 32; n ++){
-    tmp[n] = 0;
-  }
-  for(int k = 0; n >= 0; n --, k ++){
-    result[k] = tmp[n] + '0';
-  }
+
+// // 28 - 14 - 7 - 3 - 1 - 0
+// //           1   1   1
+// void convert_2(int num){
+//   char result[100] = {0};
+//   int tmp[100] = {0};
+//   int n = 0;
+//   for(n = 0; num / 2 != 0; n ++){
+//     tmp[n] = num % 2;
+//     num /= 2;
+//   }
+//   n --;
+//   for( ; n < 32; n ++){
+//     tmp[n] = 0;
+//   }
+//   for(int k = 0; n >= 0; n --, k ++){
+//     result[k] = tmp[n] + '0';
+//   }
   
-  printf("result = %s",result);
-  //return result;
-}
+//   printf("result = %s",result);
+//   //return result;
+// }
 
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
@@ -141,8 +142,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  convert_2(s->isa.inst.val);
-  printf("val = %s\n ",s->logbuf);
+  printf("val = %s len = %ld\n ",s->logbuf,strlen(s->logbuf));
   
 
 #ifdef CONFIG_ITRACE
