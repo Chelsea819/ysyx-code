@@ -261,6 +261,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         addr = gpr(i);
         break;
       }
+      if(i == 31) Assert(0,"Fail in get reg!");
     }
     //返回函数
     if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
