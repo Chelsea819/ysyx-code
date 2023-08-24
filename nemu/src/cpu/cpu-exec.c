@@ -56,6 +56,7 @@ FILE *ftrace_fp = NULL;
   Elf32_Sym  Elf_sym;
   Elf32_Xword str_size;
   Elf32_Xword sym_size;
+  int sym_num;
   char *strtab = NULL;
 
 int init_ftrace(const char *ftrace_file){
@@ -108,11 +109,11 @@ int init_ftrace(const char *ftrace_file){
     if (ret != 1) {
       perror("Error reading from file");
     }
-    printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
     if(Elf_sec.sh_type == SHT_SYMTAB){
       printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
       sym_off = Elf_sec.sh_offset;
       sym_size = Elf_sec.sh_entsize;
+      sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
       continue;
     }
   }
@@ -275,9 +276,9 @@ static void exec_once(Decode *s, vaddr_t pc)
     if_conduct = false;
   }  
   //将地址与函数对应
-  printf("sym_size = %ld %ld\n",sym_size,sizeof(Elf32_Sym));
+  printf("sym_size = %ld sym_num = %d\n",sym_size,sym_num);
   if(if_conduct){
-    for(int n = 0; ;n ++){
+    for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
       printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
