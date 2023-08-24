@@ -248,7 +248,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   char addr_tmp[11] = {0};
   int addr = 0;
   char reg_tmp[3] = {0};
-  char name[20] = {0};
+  char *name = malloc(20);
   bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
@@ -278,7 +278,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     if_conduct = false;
   }  
   //将地址与函数对应
-  
   if(if_conduct){
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
@@ -295,8 +294,10 @@ static void exec_once(Decode *s, vaddr_t pc)
         Assert(0,"Fail in searching!");
       }
     }
-    fseek(ftrace_fp,sym.st_name,SEEK_SET);
-    ret = fread(name,19,1,ftrace_fp);
+    // fseek(ftrace_fp,(Elf32_Word*)strtab + sym.st_name,SEEK_SET);
+    // ret = fread(name,19,1,ftrace_fp);
+
+    strncpy(name,strtab + sym.st_name,19);
     if(!if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
     else printf("0x%08x: ret [%s]\n",cpu.pc,name);
   }
