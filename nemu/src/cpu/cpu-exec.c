@@ -239,7 +239,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
+  for(int n = 0; n < 6; n ++){
+  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));}
   // char addr_tmp[9] = {0};
   // int addr = 0;
   // char reg_tmp[3] = {0};
