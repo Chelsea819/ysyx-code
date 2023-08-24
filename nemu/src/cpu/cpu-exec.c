@@ -253,14 +253,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   bool if_conduct = true;
   int ret = 0;
   Elf64_Sym sym;
-  //检测jal 函数调用 取出跳转到的地址
-  if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-    strncpy(addr_tmp,&(s->logbuf[32]),10);
-    addr = convert_16(addr_tmp);
-    printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
-  } 
-  //检测jalr函数调用/函数返回，取出跳转到的地址
-  else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
+  //检测jalr函数调用/函数返回，取出跳转到的地址 
+  if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[37]),2);
     for(int i = 0; i < 32; i ++){
       if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
@@ -272,6 +266,12 @@ static void exec_once(Decode *s, vaddr_t pc)
     if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
       if_return = true;
     }
+  } 
+  //检测jal 函数调用 取出跳转到的地址
+  else if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
+    strncpy(addr_tmp,&(s->logbuf[32]),10);
+    addr = convert_16(addr_tmp);
+    printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
   }
   else{
     if_conduct = false;
