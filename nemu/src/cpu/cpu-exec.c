@@ -253,6 +253,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
     strncpy(addr_tmp,&(s->logbuf[34]),8);
     addr = convert_16(addr_tmp);
+    printf("addr = 0x%08x\n",addr);
   } 
   //检测jalr函数调用/函数返回，取出跳转到的地址
   else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
