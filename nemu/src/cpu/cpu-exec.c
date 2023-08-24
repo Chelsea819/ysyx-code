@@ -240,50 +240,50 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
   printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
-  char addr_tmp[9] = {0};
-  int addr = 0;
-  char reg_tmp[3] = {0};
-  char name[20] = {0};
-  bool if_return = false;
-  int ret = 0;
-  Elf64_Sym sym;
-  //检测jal 函数调用 取出跳转到的地址
-  if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-    strncpy(addr_tmp,&(s->logbuf[34]),8);
-    addr = convert_16(addr_tmp);
-  } 
-  //检测jalr函数调用/函数返回，取出跳转到的地址
-  else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
-    strncpy(reg_tmp,&(s->logbuf[37]),2);
-    for(int i = 0; i < 32; i ++){
-      if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
-        addr = gpr(i);
-        break;
-      }
-    }
-    //返回函数
-    if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
-      if_return = true;
-    }
-  }  
-  //将地址与函数对应
-  for(int n = 0; ;n ++){
-    fseek(ftrace_fp,sym_off + n * sizeof(Elf32_Sym),SEEK_SET);
-    ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
-    if(ret != 1){
-      perror("Read error");
-    }
-    if(sym.st_value == addr){
-      break;
-    }
-    if(n == 100){
-      Assert(0,"Fail in searching!");
-    }
-  }
-  fseek(ftrace_fp,sym.st_name,SEEK_SET);
-  ret = fread(name,19,1,ftrace_fp);
-  if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
-  else printf("0x%08x: ret [%s]\n",cpu.pc,name);
+  // char addr_tmp[9] = {0};
+  // int addr = 0;
+  // char reg_tmp[3] = {0};
+  // char name[20] = {0};
+  // bool if_return = false;
+  // int ret = 0;
+  // Elf64_Sym sym;
+  // //检测jal 函数调用 取出跳转到的地址
+  // if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
+  //   strncpy(addr_tmp,&(s->logbuf[34]),8);
+  //   addr = convert_16(addr_tmp);
+  // } 
+  // //检测jalr函数调用/函数返回，取出跳转到的地址
+  // else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
+  //   strncpy(reg_tmp,&(s->logbuf[37]),2);
+  //   for(int i = 0; i < 32; i ++){
+  //     if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
+  //       addr = gpr(i);
+  //       break;
+  //     }
+  //   }
+  //   //返回函数
+  //   if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
+  //     if_return = true;
+  //   }
+  // }  
+  // //将地址与函数对应
+  // for(int n = 0; ;n ++){
+  //   fseek(ftrace_fp,sym_off + n * sizeof(Elf32_Sym),SEEK_SET);
+  //   ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
+  //   if(ret != 1){
+  //     perror("Read error");
+  //   }
+  //   if(sym.st_value == addr){
+  //     break;
+  //   }
+  //   if(n == 100){
+  //     Assert(0,"Fail in searching!");
+  //   }
+  // }
+  // fseek(ftrace_fp,sym.st_name,SEEK_SET);
+  // ret = fread(name,19,1,ftrace_fp);
+  // if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
+  // else printf("0x%08x: ret [%s]\n",cpu.pc,name);
   
 
 #ifdef CONFIG_ITRACE
