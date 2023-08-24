@@ -222,7 +222,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 //   //return result;
 // }
 
-const char *regs[] = {
+const char *reg[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
@@ -256,7 +256,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[37]),2);
     for(int i = 0; i < 32; i ++){
-      if(strncmp(regs[i],reg_tmp,strlen("ra")) == 0){
+      if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
         addr = gpr(i);
         break;
       }
