@@ -114,6 +114,7 @@ uint32_t convert_16(char *args){
   }
     flag *= 16;
   }
+  printf("convert num = 0x%08x\n",addr);
   return addr;
 }
 
