@@ -241,7 +241,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
   
-  char addr_tmp[9] = {0};
+  char addr_tmp[11] = {0};
   int addr = 0;
   char reg_tmp[3] = {0};
   char name[20] = {0};
@@ -251,7 +251,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   Elf64_Sym sym;
   //检测jal 函数调用 取出跳转到的地址
   if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-    strncpy(addr_tmp,&(s->logbuf[32]),8);
+    strncpy(addr_tmp,&(s->logbuf[32]),10);
     addr = convert_16(addr_tmp);
     printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
   } 
