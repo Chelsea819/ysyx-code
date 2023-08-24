@@ -306,6 +306,9 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
   
+  if(n < 6){
+    n ++;
+  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));}
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -326,9 +329,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   strcpy(curre->rbuf,s->logbuf);
   curre = curre->next;
 
-  if(n < 6){
-    n ++;
-  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));}
+  
 
 }
 
