@@ -297,7 +297,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
     fseek(ftrace_fp,sym.st_name,SEEK_SET);
     ret = fread(name,19,1,ftrace_fp);
-    if(if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
+    if(!if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
     else printf("0x%08x: ret [%s]\n",cpu.pc,name);
   }
   
