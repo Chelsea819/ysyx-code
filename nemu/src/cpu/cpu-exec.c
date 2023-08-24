@@ -251,7 +251,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   Elf64_Sym sym;
   //检测jal 函数调用 取出跳转到的地址
   if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-    strncpy(addr_tmp,&(s->logbuf[34]),8);
+    strncpy(addr_tmp,&(s->logbuf[32]),8);
     addr = convert_16(addr_tmp);
     printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
   } 
