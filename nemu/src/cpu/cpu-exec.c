@@ -143,7 +143,12 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
   printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
-  
+  if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
+
+  } 
+  else if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
+
+  }  
 
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
