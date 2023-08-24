@@ -129,6 +129,7 @@ int init_ftrace(const char *ftrace_file){
   printf("str_off = %d \n",str_off);
   printf("sym_off = %d\n",sym_off);
   printf("str_size = %ld\n",str_size);
+  printf("sym_size = %ld sym_num = %d\n",sym_size,sym_num);
   
   return 0;
 }
@@ -276,7 +277,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     if_conduct = false;
   }  
   //将地址与函数对应
-  printf("sym_size = %ld sym_num = %d\n",sym_size,sym_num);
+  
   if(if_conduct){
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
