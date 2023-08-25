@@ -243,6 +243,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   char addr_tmp[11] = {0};
   int addr = 0;
   char reg_tmp[3] = {0};
+  char reg_tmp_zero[3] = {0};
   char *name = malloc(20);
   //static int n = 0;
   bool if_return = false;
@@ -252,17 +253,20 @@ static void exec_once(Decode *s, vaddr_t pc)
   //检测jalr函数调用/函数返回，取出跳转到的地址 
   if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[35]),2);
+    strncpy(reg_tmp_zero,&(s->logbuf[37]),2);
     printf("reg = %s\n",reg_tmp);
     for(int i = 0; i < 32; i ++){
       if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
         addr = gpr(i);
         break;
       }
+      //返回函数
+      if(strncmp(reg[i],reg_tmp_zero,strlen("ra")) == 0){
+        addr = gpr(i);
+        if_return = true;
+        break;
+      }
       if(i == 31) Assert(0,"Fail in get reg!");
-    }
-    //返回函数
-    if(strncmp(reg_tmp,"ra",strlen("ra")) == 0){
-      if_return = true;
     }
   } 
   //检测jal 函数调用 取出跳转到的地址
