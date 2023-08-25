@@ -299,8 +299,8 @@ static void exec_once(Decode *s, vaddr_t pc)
 
     //读出来的函数名不对
     strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
-    else printf("0x%08x: ret [%s]\n",cpu.pc,name);
+    if(!if_return) printf("\033[102m 0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,addr);
+    else printf("\033[102m 0x%08x: ret [%s] \033[m\n",cpu.pc,name);
   }
   
 
