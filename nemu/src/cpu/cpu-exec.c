@@ -235,7 +235,6 @@ uint32_t convert_16(char *args);
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
-  //chat *iringbuf = 
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);
@@ -245,6 +244,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   int addr = 0;
   char reg_tmp[3] = {0};
   char *name = malloc(20);
+  static int n = 0;
   bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
@@ -341,6 +341,11 @@ static void exec_once(Decode *s, vaddr_t pc)
   }
   strcpy(curre->rbuf,s->logbuf);
   curre = curre->next;
+
+  if(n < 6){
+    printf("s->logbuf: %s\n",s->logbuf);
+    n ++;
+  }
 
   
 
