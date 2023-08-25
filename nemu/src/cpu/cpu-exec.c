@@ -285,15 +285,12 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       if(sym.st_value == addr && sym.st_info == 18){
         printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-        
         break;
       }
       if(n == sym_num - 1){
         Assert(0,"Fail in searching!");
       }
     }
-    // fseek(ftrace_fp,(Elf32_Word*)strtab + sym.st_name,SEEK_SET);
-    // ret = fread(name,19,1,ftrace_fp);
 
     printf("st_name: 0x%08x ",sym.st_name);
 
