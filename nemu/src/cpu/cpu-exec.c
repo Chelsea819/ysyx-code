@@ -248,7 +248,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
-  Elf64_Sym sym;
+  Elf32_Sym sym;
   //检测jalr函数调用/函数返回，取出跳转到的地址 
   if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[37]),2);
@@ -283,7 +283,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         perror("Read error");
       }
       if(sym.st_value == addr){
-        printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
+        printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
       }
       if(n == sym_num - 1){
