@@ -251,7 +251,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   Elf32_Sym sym;
   //检测jalr函数调用/函数返回，取出跳转到的地址 
   if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
-    strncpy(reg_tmp,&(s->logbuf[37]),2);
+    strncpy(reg_tmp,&(s->logbuf[35]),2);
     printf("reg = %s\n",reg_tmp);
     for(int i = 0; i < 32; i ++){
       if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
@@ -280,7 +280,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
-      //printf("n = %d info :%d\n",n,sym.st_info);
       if(ret != 1){
         perror("Read error");
       }
