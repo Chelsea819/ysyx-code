@@ -284,6 +284,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       if(sym.st_value == addr){
         printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        printf("info :%d\n",sym.st_info);
         break;
       }
       if(n == sym_num - 1){
