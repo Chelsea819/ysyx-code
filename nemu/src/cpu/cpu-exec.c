@@ -286,7 +286,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         printf("sym.st_value = 0x%08lx sym.st_size = %ld \n",sym.st_value,sym.st_size);
         break;
       }
-      if(n == 50){
+      if(n == sym_num - 1){
         Assert(0,"Fail in searching!");
       }
     }
