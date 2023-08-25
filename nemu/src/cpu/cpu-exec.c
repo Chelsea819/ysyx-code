@@ -252,6 +252,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //检测jalr函数调用/函数返回，取出跳转到的地址 
   if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[37]),2);
+    printf("reg = %s\n",reg_tmp);
     for(int i = 0; i < 32; i ++){
       if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
         addr = gpr(i);
