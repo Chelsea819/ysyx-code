@@ -254,7 +254,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
     strncpy(reg_tmp,&(s->logbuf[35]),2);
     strncpy(reg_tmp_zero,&(s->logbuf[37]),2);
-    printf("reg = %s\n",reg_tmp);
+    //printf("reg = %s\n",reg_tmp);
     for(int i = 0; i < 32; i ++){
       if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
         addr = gpr(i);
@@ -273,7 +273,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   else if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
     strncpy(addr_tmp,&(s->logbuf[32]),10);
     addr = convert_16(addr_tmp);
-    printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
+    //printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
   }
   else{
     if_conduct = false;
@@ -288,7 +288,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         perror("Read error");
       }
       if((sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
-        printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
       }
       if(n == sym_num - 1){
