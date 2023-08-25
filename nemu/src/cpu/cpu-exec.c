@@ -278,7 +278,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
-      printf("info :%d\n",sym.st_info);
+      printf("n = %d info :%d\n",n,sym.st_info);
       if(ret != 1){
         perror("Read error");
       }
