@@ -125,10 +125,7 @@ int init_ftrace(const char *ftrace_file){
     perror("Error reading from file");
   }
 
-  printf(".strtab : _%s_  length = %ld\n",&strtab[9],strlen(&strtab[9]));
-  printf("str_off = %d \n",str_off);
   printf("sym_off = %d\n",sym_off);
-  printf("str_size = %ld\n",str_size);
   printf("sym_size = %ld sym_num = %d\n",sym_size,sym_num);
   
   return 0;
@@ -295,6 +292,8 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
     // fseek(ftrace_fp,(Elf32_Word*)strtab + sym.st_name,SEEK_SET);
     // ret = fread(name,19,1,ftrace_fp);
+
+    printf("st_name: 0x%08x ",sym.st_name);
 
     //读出来的函数名不对
     strncpy(name,strtab + sym.st_name,19);
