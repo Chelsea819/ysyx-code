@@ -280,7 +280,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   }  
   //将地址与函数对应
   if(if_conduct){
-    printf("s->logbuf: %s\n",s->logbuf);
+    //printf("s->logbuf: %s\n",s->logbuf);
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
