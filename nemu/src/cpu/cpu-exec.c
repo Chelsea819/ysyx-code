@@ -343,7 +343,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   strcpy(curre->rbuf,s->logbuf);
   curre = curre->next;
 
-  if(n < 6){
+  if(n < 19){
     printf("s->logbuf: %s\n",s->logbuf);
     n ++;
   }
