@@ -234,7 +234,6 @@ const char *reg[] = {
 };
 
 uint32_t convert_16(char *args);
-static int n = 0;
 
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
@@ -297,6 +296,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     // fseek(ftrace_fp,(Elf32_Word*)strtab + sym.st_name,SEEK_SET);
     // ret = fread(name,19,1,ftrace_fp);
 
+    //读出来的函数名不对
     strncpy(name,strtab + sym.st_name,19);
     if(!if_return) printf("0x%08x: call[%s@0x%08x]\n",cpu.pc,name,addr);
     else printf("0x%08x: ret [%s]\n",cpu.pc,name);
@@ -332,11 +332,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
-
-  if(n < 6){
-    n ++;
-  printf("val = %s len = %ld\n ",&(s->logbuf[24]),strlen(s->logbuf));
-  }
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
