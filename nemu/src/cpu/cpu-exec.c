@@ -245,7 +245,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   char reg_tmp[3] = {0};
   char reg_tmp_zero[3] = {0};
   char *name = malloc(20);
-  //static int n = 0;
+  static int n = 0;
   bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
@@ -297,12 +297,13 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
     }
 
-    printf("st_name: 0x%08x ",sym.st_name);
+    //printf("st_name: 0x%08x ",sym.st_name);
 
     //读出来的函数名不对
+    n++;
     strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("\033[102m 0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,addr);
-    else printf("\033[102m 0x%08x: ret [%s] \033[m\n",cpu.pc,name);
+    if(!if_return) printf("\033[102m n:  0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,addr);
+    else printf("\033[102m n:  0x%08x: ret [%s] \033[m\n",cpu.pc,name);
   }
   
 
