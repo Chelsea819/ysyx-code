@@ -302,7 +302,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     //读出来的函数名不对
     n++;
     strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("\033[102m n:  0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,addr);
+    if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
     else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
   }
   
