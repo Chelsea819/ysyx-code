@@ -245,7 +245,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   char reg_tmp[3] = {0};
   char reg_tmp_zero[3] = {0};
   char *name = malloc(20);
-  static int n = 0;
+  //static int n = 0;
   bool if_return = false;
   bool if_conduct = true;
   int ret = 0;
@@ -280,7 +280,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   }  
   //将地址与函数对应
   if(if_conduct){
-    //printf("s->logbuf: %s\n",s->logbuf);
+    printf("s->logbuf: %s\n",s->logbuf);
     for(int n = 0; n < sym_num; n ++){
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
@@ -346,10 +346,10 @@ static void exec_once(Decode *s, vaddr_t pc)
   strcpy(curre->rbuf,s->logbuf);
   curre = curre->next;
 
-  if(n < 19){
-    printf("s->logbuf: %s\n",s->logbuf);
-    n ++;
-  }
+  // if(n < 19){
+  //   printf("s->logbuf: %s\n",s->logbuf);
+  //   n ++;
+  // }
 
   
 
