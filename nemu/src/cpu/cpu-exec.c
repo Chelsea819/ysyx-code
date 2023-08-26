@@ -287,10 +287,11 @@ static void exec_once(Decode *s, vaddr_t pc)
       if(ret != 1){
         perror("Read error");
       }
-      if((sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
+      if(if_return && (sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
         //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
       }
+      else if(!if_return && sym.st_value == addr && sym.st_info == 18) break;
       if(n == sym_num - 1){
         Assert(0,"Fail in searching!");
       }
