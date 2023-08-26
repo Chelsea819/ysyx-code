@@ -263,7 +263,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       //返回函数
       if(strncmp(reg[i],reg_tmp_zero,strlen("ra")) == 0){
         addr = gpr(i);
-        if_return = true;
+        if(strncmp(reg[i],"ra",strlen("ra")) == 0)  if_return = true;
         break;
       }
       if(i == 31) Assert(0,"Fail in get reg!");
