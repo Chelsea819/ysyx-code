@@ -415,7 +415,11 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
 
-  printf("s->logbuf == %s",s->logbuf);
+  static int j = 0;
+  if(j == 0){
+    printf("s->logbuf == %s",s->logbuf); j ++;
+  }
+  
   
   
 
