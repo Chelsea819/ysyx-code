@@ -353,10 +353,10 @@ static void exec_once(Decode *s, vaddr_t pc)
       if_return = false;
       if_conduct = true;
     }
-    else if(rd == 0){
-      if_return = false;
-      if_conduct = true;
-    }
+    // else if(rd == 0){
+    //   if_return = false;
+    //   if_conduct = true;
+    // }
   }
 
   if(if_conduct){
