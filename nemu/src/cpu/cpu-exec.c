@@ -342,18 +342,21 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //判断出jalr
   else if(strcmp(opcode,"1100111") == 0){
-    if_conduct = true;
+    
     //函数返回
     if(rd == 0 && rs1 == 1 ){
       if_return = true;
+      if_conduct = true;
     }
     //函数调用
     else if(rd == 1){
       if_return = false;
+      if_conduct = true;
     }
-    // else if(rd == 0){
-    //   if_return = false;
-    // }
+    else if(rd == 0){
+      if_return = false;
+      if_conduct = true;
+    }
   }
 
   if(if_conduct){
