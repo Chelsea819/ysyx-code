@@ -242,8 +242,8 @@ char *convertTo_2(char args){
 }
 
 /* let CPU conduct current command and renew PC */
-#define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 19 | BITS(i, 19, 12)<<11 | BITS(i, 20, 20)<< 10 | BITS(i, 30, 21)) << 1; } while(0)
-#define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
+#define immJ_tmp() do { imm = (SEXT(BITS(i, 31, 31), 1) << 19 | BITS(i, 19, 12)<<11 | BITS(i, 20, 20)<< 10 | BITS(i, 30, 21)) << 1; } while(0)
+#define immI_tmp() do { imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define R(i) gpr(i)
 #define src1R() do { *src1 = R(rs1); } while (0)
 
@@ -328,33 +328,34 @@ static void exec_once(Decode *s, vaddr_t pc)
   char *opcode = malloc(8);
   strncpy(opcode,&ins[25],7);
   opcode[7] = '\0';
-  char *rd_arr = malloc(6);
-  strncpy(rd_arr,&ins[20],5);
-  rd_arr[5] = '\0';
-  // char *rs1 = malloc(6);
-  // strncpy(rs1,&ins[12],5);
   int rd = BITS(s->isa.inst.val, 11, 7);
-  printf("opcode = %s\n",opcode);
-  printf("rd_arr = %s\n",rd_arr);
-  printf("rd = %d\n",rd);
-
+  //int rs1 = BITS(s->isa.inst.val, 19, 15);
+  word_t  imm = 0;//src1 = 0,
+  
   //2.1 jal or jalr
   
   //2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  // if(strcmp(opcode,"1101111") == 0 && strcmp(rd,"00001") == 0){
-  //   char *imm_jal = malloc(21);
-  //   imm_jal[0] = '0';
-  //   strncat(imm_jal,&ins[1],10);
-  //   strncat(imm_jal,&ins[11],1);
-  //   strncat(imm_jal,&ins[12],1);
-  //   if(strcmp(imm_jal,"1101111") == 0)
-  // }
+  if(strcmp(opcode,"1101111") == 0 && rd == 1){
+    immJ_tmp();
+    printf("imm_J = %d\n",imm);
+  }
 
 
   //2.1.2 jalr 函数调用 or 函数返回
-  // else if(strcmp(opcode,"1100111") == 0 && strcmp(rd,"00001") == 0){
-  //   char *imm_jalr = malloc(12);
-  // }
+  //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
+  //函数调用 jalr, rd = x1, rs1 = a5, imm = 0
+  //函数调用 jalr, rd = x0, rs1 = a5, imm = 0
+
+  //判断出jalr
+  else if(strcmp(opcode,"1100111") == 0){
+    immI_tmp();
+    printf("imm_I = %d\n",imm);
+    //函数返回
+    // if(imm == 0 && rs1 == 1 && rd == 0){
+
+    // }
+    // else if(imm ==)
+  }
 
 
   //3.取出跳转地址
