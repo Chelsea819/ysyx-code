@@ -313,14 +313,13 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  int imm = (SEXT(BITS(m, 31, 31), 1) << 19 | BITS(m, 19, 12)<<11 | BITS(m, 20, 20)<< 10 | BITS(m, 30, 21)) << 1;
-  printf("imm = 0x%08x\n",imm);
+
   //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   //函数调用 jal,  rd = x1, imm = ***
   //函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   //函数调用 jalr, rd = x0, rs1 = a5, imm = 0
 
-  //opcode rd rs1 imm
+  //opcode rd rs1 
   char *opcode = malloc(8);
   memset(opcode,0,8);
   strncpy(opcode,&ins[25],7);
