@@ -230,6 +230,7 @@ char *convertTo_2(char args){
     //为0 则该位之后的低位均为0
     if(!num){
       for(; n < 4; n ++) result[n] = '0';
+      break;
     }
 
     result[n] = num / flag + '0';
