@@ -286,7 +286,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     k += 2;
   }
   //ins_tmp_16[8] = '\0';
-  printf("ins_tmp_16 = %s\n",ins_tmp_16);
+  //printf("ins_tmp_16 = %s\n",ins_tmp_16);
 
   //1.2将十六进制形式的指令转换为二进制
   //1.2.1 转换为二进制形式
