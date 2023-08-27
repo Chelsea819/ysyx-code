@@ -242,8 +242,8 @@ char *convertTo_2(char args){
 }
 
 /* let CPU conduct current command and renew PC */
-#define immJ_tmp() do { imm = (SEXT(BITS(i, 31, 31), 1) << 19 | BITS(i, 19, 12)<<11 | BITS(i, 20, 20)<< 10 | BITS(i, 30, 21)) << 1; } while(0)
-#define immI_tmp() do { imm = SEXT(BITS(i, 31, 20), 12); } while(0)
+#define immJ_tmp() do { imm = (SEXT(BITS(m, 31, 31), 1) << 19 | BITS(m, 19, 12)<<11 | BITS(m, 20, 20)<< 10 | BITS(m, 30, 21)) << 1; } while(0)
+#define immI_tmp() do { imm = SEXT(BITS(m, 31, 20), 12); } while(0)
 #define R(i) gpr(i)
 #define src1R() do { *src1 = R(rs1); } while (0)
 
@@ -318,6 +318,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   free(ins_tmp_16);
 
   //2.判断函数调用/函数返回
+  uint32_t m = s->isa.inst.val;
 
   //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   //函数调用 jal,  rd = x1, imm = ***
@@ -328,7 +329,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   char *opcode = malloc(8);
   strncpy(opcode,&ins[25],7);
   opcode[7] = '\0';
-  int rd = BITS(s->isa.inst.val, 11, 7);
+  int rd = BITS(m, 11, 7);
   //int rs1 = BITS(s->isa.inst.val, 19, 15);
   word_t  imm = 0;//src1 = 0,
   
