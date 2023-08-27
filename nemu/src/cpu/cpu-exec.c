@@ -327,8 +327,10 @@ static void exec_once(Decode *s, vaddr_t pc)
   //opcode rd rs1 imm
   char *opcode = malloc(8);
   strncpy(opcode,&ins[25],7);
+  opcode[7] = '\0';
   char *rd_arr = malloc(6);
   strncpy(rd_arr,&ins[20],5);
+  rd_arr[5] = '\0';
   // char *rs1 = malloc(6);
   // strncpy(rs1,&ins[12],5);
   int rd = BITS(i, 11, 7);
