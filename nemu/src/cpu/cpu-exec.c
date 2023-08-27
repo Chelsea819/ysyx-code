@@ -300,6 +300,9 @@ static void exec_once(Decode *s, vaddr_t pc)
   ins[32] = '\0';
   printf("ins = %s\n",ins);
 
+  free(ins);
+  free(ins_tmp_16);
+
 
 
 
