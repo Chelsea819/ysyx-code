@@ -244,16 +244,24 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   int k = 12;
-  char *ins_tmp = malloc(8);
+  char *ins_tmp_16 = malloc(8);
   //char *ins = malloc(32);
   
+  //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
-    ins_tmp[n++] = s->logbuf[k++]; //0 12 //2 15 //4 //6
-    ins_tmp[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
+    ins_tmp_16[n++] = s->logbuf[k++]; //0 12 //2 15 //4 //6
+    ins_tmp_16[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
     k += 2;
   }
 
-  printf("ins_tmp = _%s_\n",ins_tmp);
+  //1.2将十六进制形式的指令转换为二进制
+  //1.2.1 将字符转换为数
+  int ins_num_16 = convert_16(ins_tmp_16);
+  printf("ins_num_16 = 0x%032x\n",ins_num_16);
+
+
+
+
 
 
   
