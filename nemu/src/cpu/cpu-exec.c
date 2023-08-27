@@ -277,7 +277,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   int k = 12;
   char *ins_tmp_16 = malloc(9);
-  char *ins = malloc(33);
+  //har *ins = malloc(33);
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -291,19 +291,19 @@ static void exec_once(Decode *s, vaddr_t pc)
   //1.2将十六进制形式的指令转换为二进制
   //1.2.1 转换为二进制形式
   //8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
-  for(int n = 0; n < 8; n ++){
-    char *per = convertTo_2(ins_tmp_16[n]);
-    strcat(ins,per);
-    free(per);
-    per = NULL;
-    printf("ins = %s\n",ins);
-  } 
-  ins[32] = '\0';
-  printf("ins = %s\n",ins);
-  printf("s->logbuf = %s\n",s->logbuf);
+  // for(int n = 0; n < 8; n ++){
+  //   char *per = convertTo_2(ins_tmp_16[n]);
+  //   strcat(ins,per);
+  //   free(per);
+  //   per = NULL;
+  //   printf("ins = %s\n",ins);
+  // } 
+  // ins[32] = '\0';
+  // printf("ins = %s\n",ins);
+  // printf("s->logbuf = %s\n",s->logbuf);
 
-  free(ins);
-  free(ins_tmp_16);
+  // free(ins);
+  // free(ins_tmp_16);
 
 
 
