@@ -201,34 +201,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   #endif
 }
 
-// // 28 - 14 - 7 - 3 - 1 - 0
-// //           1   1   1
-// void convert_2(int num){
-//   char result[100] = {0};
-//   int tmp[100] = {0};
-//   int n = 0;
-//   for(n = 0; num / 2 != 0; n ++){
-//     tmp[n] = num % 2;
-//     num /= 2;
-//   }
-//   n --;
-//   for( ; n < 32; n ++){
-//     tmp[n] = 0;
-//   }
-//   for(int k = 0; n >= 0; n --, k ++){
-//     result[k] = tmp[n] + '0';
-//   }
-  
-//   printf("result = %s",result);
-//   //return result;
-// }
-
-// const char *reg[] = {
-//   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-//   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-//   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-//   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-// };
+const char *reg[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
 
 //uint32_t convert_16(char *args);
 
@@ -271,13 +249,50 @@ static void exec_once(Decode *s, vaddr_t pc)
   isa_exec_once(s);
   cpu.pc = s->dnpc;
   //printf("s->logbuf = %s\n",s->logbuf);
+  
+
+#ifdef CONFIG_ITRACE
+  char *p = s->logbuf;
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
+  int ilen = s->snpc - s->pc;
+  int i;
+  uint8_t *inst = (uint8_t *)&s->isa.inst.val;
+  
+  for (i = ilen - 1; i >= 0; i--)
+  {
+    p += snprintf(p, 4, " %02x", inst[i]);
+  }
+  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
+  int space_len = ilen_max - ilen;
+  if (space_len < 0)
+    space_len = 0;
+  space_len = space_len * 3 + 1;
+  memset(p, ' ', space_len);
+  p += space_len;
+
+  static int j = 0;
+  if(j == 0){
+    printf("s->logbuf == %s",s->logbuf); j ++;
+  }
+  
+  
+  
+
+#ifndef CONFIG_ISA_loongarch32r
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
+              MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
+#else
+  p[0] = '\0'; // the upstream llvm does not support loongarch32r
+#endif
+#endif
 
   //根据指令判断函数调用/函数返回
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   int k = 12;
   char *ins_tmp_16 = malloc(9);
-  //har *ins = malloc(33);
+  char *ins = malloc(33);
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -285,36 +300,25 @@ static void exec_once(Decode *s, vaddr_t pc)
     ins_tmp_16[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
     k += 2;
   }
-  //ins_tmp_16[8] = '\0';
-  //printf("ins_tmp_16 = %s\n",ins_tmp_16);
+  ins_tmp_16[8] = '\0';
+  printf("ins_tmp_16 = %s\n",ins_tmp_16);
 
-  //1.2将十六进制形式的指令转换为二进制
-  //1.2.1 转换为二进制形式
-  //8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
-  // for(int n = 0; n < 8; n ++){
-  //   char *per = convertTo_2(ins_tmp_16[n]);
-  //   strcat(ins,per);
-  //   free(per);
-  //   per = NULL;
-  //   printf("ins = %s\n",ins);
-  // } 
-  // ins[32] = '\0';
-  // printf("ins = %s\n",ins);
-  // printf("s->logbuf = %s\n",s->logbuf);
+  // 1.2将十六进制形式的指令转换为二进制
+  // 1.2.1 转换为二进制形式
+  // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
+  for(int n = 0; n < 8; n ++){
+    char *per = convertTo_2(ins_tmp_16[n]);
+    strcat(ins,per);
+    free(per);
+    per = NULL;
+    printf("ins = %s\n",ins);
+  } 
+  ins[32] = '\0';
+  printf("ins = %s\n",ins);
+  printf("s->logbuf = %s\n",s->logbuf);
 
-  // free(ins);
-  // free(ins_tmp_16);
-
-
-
-
-
-
-
-  
-
-
-
+  free(ins);
+  free(ins_tmp_16);
 
   //2.判断函数调用/函数返回
 
@@ -394,43 +398,9 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
   //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
   // }
-  
 
-#ifdef CONFIG_ITRACE
-  char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
-  int ilen = s->snpc - s->pc;
-  int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst.val;
-  
-  for (i = ilen - 1; i >= 0; i--)
-  {
-    p += snprintf(p, 4, " %02x", inst[i]);
-  }
-  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
-  int space_len = ilen_max - ilen;
-  if (space_len < 0)
-    space_len = 0;
-  space_len = space_len * 3 + 1;
-  memset(p, ' ', space_len);
-  p += space_len;
 
-  static int j = 0;
-  if(j == 0){
-    printf("s->logbuf == %s",s->logbuf); j ++;
-  }
-  
-  
-  
 
-#ifndef CONFIG_ISA_loongarch32r
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-              MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-#else
-  p[0] = '\0'; // the upstream llvm does not support loongarch32r
-#endif
-#endif
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
