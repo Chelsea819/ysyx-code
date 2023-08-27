@@ -306,7 +306,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     strcat(ins,per);
     free(per);
     per = NULL;
-    printf("ins = %s\n",ins);
   } 
   ins[32] = '\0';
   printf("ins = %s\n",ins);
