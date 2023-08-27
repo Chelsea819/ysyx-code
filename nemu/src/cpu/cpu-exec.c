@@ -270,13 +270,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
 
-  static int j = 0;
-  if(j == 0){
-    printf("s->logbuf == %s",s->logbuf); j ++;
-  }
-  
-  
-  
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -286,7 +279,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
-
+    static int j = 0;
+  if(j < 10){
   //根据指令判断函数调用/函数返回
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
@@ -399,8 +393,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
   // }
 
-
-
+  j ++;
+  }
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
@@ -416,8 +410,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   printf("s->logbuf: %s\n",s->logbuf);
   //   n ++;
   // }
-
-  
 
 }
 
