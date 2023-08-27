@@ -349,7 +349,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //判断出jalr
   else if(strcmp(opcode,"1100111") == 0){
     immI_tmp();
-    printf("imm_I = 0x%08x\n",imm);
+    printf("imm_I = 0x%032x\n",imm);
     //函数返回
     // if(imm == 0 && rs1 == 1 && rd == 0){
 
