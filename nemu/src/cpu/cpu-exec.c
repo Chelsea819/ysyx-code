@@ -353,10 +353,10 @@ static void exec_once(Decode *s, vaddr_t pc)
       if_return = false;
       if_conduct = true;
     }
-    // else if(rd == 0){
-    //   if_return = false;
-    //   if_conduct = true;
-    // }
+    else if(rd == 0){
+      if_return = false;
+      if_conduct = true;
+    }
   }
 
   if(if_conduct){
@@ -395,7 +395,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
     strncpy(name,strtab + sym.st_name,19);
     if(!if_return) printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
-    else printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,s->pc,name);
+    else printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
     index ++;
 
 
