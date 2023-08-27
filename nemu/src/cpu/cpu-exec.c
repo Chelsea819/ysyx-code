@@ -223,12 +223,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 //   //return result;
 // }
 
-const char *reg[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
+// const char *reg[] = {
+//   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+//   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+//   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+//   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+// };
 
 uint32_t convert_16(char *args);
 
@@ -239,72 +239,106 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
+
+  //根据指令判断函数调用/函数返回
+
+  //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
+  int k = 12;
+  char *ins_tmp = malloc(8);
+  //char *ins = malloc(32);
   
-  char addr_tmp[11] = {0};
-  int addr = 0;
-  char reg_tmp[3] = {0};
-  char reg_tmp_zero[3] = {0};
-  char *name = malloc(20);
-  static int n = 0;
-  bool if_return = false;
-  bool if_conduct = true;
-  int ret = 0;
-  Elf32_Sym sym;
-  //检测jalr函数调用/函数返回，取出跳转到的地址 
-  if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
-    strncpy(reg_tmp,&(s->logbuf[35]),2);
-    strncpy(reg_tmp_zero,&(s->logbuf[37]),2);
-    //printf("reg = %s\n",reg_tmp);
-    for(int i = 0; i < 32; i ++){
-      if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
-        addr = gpr(i);
-        break;
-      }
-      //返回函数
-      if(strncmp(reg[i],reg_tmp_zero,strlen("ra")) == 0){
-        addr = gpr(i);
-        if(strncmp(reg[i],"ra",strlen("ra")) == 0)  if_return = true;
-        break;
-      }
-      if(i == 31) Assert(0,"Fail in get reg!");
-    }
-  } 
-  //检测jal 函数调用 取出跳转到的地址
-  else if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-    strncpy(addr_tmp,&(s->logbuf[32]),10);
-    addr = convert_16(addr_tmp);
-    //printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
+  for(int n = 0; n < 8; n ++){
+    k += 2;
+    ins_tmp[n++] = s->logbuf[k++]; //0 12 //2 15 //4 //6
+    ins_tmp[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
   }
-  else{
-    if_conduct = false;
-  }  
-  //将地址与函数对应
-  if(if_conduct){
-    printf("s->logbuf: %s\n",s->logbuf);
-    for(int n = 0; n < sym_num; n ++){
-      fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
-      ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
-      if(ret != 1){
-        perror("Read error");
-      }
-      if(if_return && (sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
-        //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-        break;
-      }
-      else if(!if_return && sym.st_value == addr && sym.st_info == 18) break;
-      if(n == sym_num - 1){
-        Assert(0,"Fail in searching!");
-      }
-    }
 
-    //printf("st_name: 0x%08x ",sym.st_name);
+  printf("ins_tmp = %s\n",ins_tmp);
 
-    //读出来的函数名不对
-    n++;
-    strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
-    else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
-  }
+
+  
+
+
+
+
+  //2.判断函数调用/函数返回
+
+  //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
+  //函数调用 jal,  rd = x1, imm = ***
+  //函数调用 jalr, rd = x1, rs1 = a5, imm = 0
+  //函数调用 jalr, rd = x0, rs1 = a5, imm = 0
+
+  //3.取出跳转地址
+
+  //4.找到是哪个函数
+
+  //5.调用的函数放入一个数据结构，返回函数放入一个数据结构
+  
+  // char addr_tmp[11] = {0};
+  // int addr = 0;
+  // char reg_tmp[3] = {0};
+  // char reg_tmp_zero[3] = {0};
+  // char *name = malloc(20);
+  // static int n = 0;
+  // bool if_return = false;
+  // bool if_conduct = true;
+  // int ret = 0;
+  // Elf32_Sym sym;
+  // //检测jalr函数调用/函数返回，取出跳转到的地址 
+  // if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
+  //   strncpy(reg_tmp,&(s->logbuf[35]),2);
+  //   strncpy(reg_tmp_zero,&(s->logbuf[37]),2);
+  //   //printf("reg = %s\n",reg_tmp);
+  //   for(int i = 0; i < 32; i ++){
+  //     if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
+  //       addr = gpr(i);
+  //       break;
+  //     }
+  //     //返回函数
+  //     if(strncmp(reg[i],reg_tmp_zero,strlen("ra")) == 0){
+  //       addr = gpr(i);
+  //       if(strncmp(reg[i],"ra",strlen("ra")) == 0)  if_return = true;
+  //       break;
+  //     }
+  //     if(i == 31) Assert(0,"Fail in get reg!");
+  //   }
+  // } 
+  // //检测jal 函数调用 取出跳转到的地址
+  // else if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
+  //   strncpy(addr_tmp,&(s->logbuf[32]),10);
+  //   addr = convert_16(addr_tmp);
+  //   //printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
+  // }
+  // else{
+  //   if_conduct = false;
+  // }  
+  // //将地址与函数对应
+  // if(if_conduct){
+  //   printf("s->logbuf: %s\n",s->logbuf);
+  //   for(int n = 0; n < sym_num; n ++){
+  //     fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
+  //     ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
+  //     if(ret != 1){
+  //       perror("Read error");
+  //     }
+  //     if(if_return && (sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
+  //       //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+  //       break;
+  //     }
+  //     else if(!if_return && sym.st_value == addr && sym.st_info == 18) break;
+  //     if(n == sym_num - 1){
+  //       Assert(0,"Fail in searching!");
+  //     }
+  //   }
+
+  //   //printf("st_name: 0x%08x ",sym.st_name);
+
+  //   //读出来的函数名不对
+  //   n++;
+  //   strncpy(name,strtab + sym.st_name,19);
+  //   if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
+  //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
+  // }
   
 
 #ifdef CONFIG_ITRACE
