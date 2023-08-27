@@ -277,8 +277,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
-    static int j = 0;
-  if(j < 100){
+  //   static int j = 0;
+  // if(j < 100){
   //根据指令判断函数调用/函数返回
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
@@ -467,8 +467,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
   // }
   }
-  j ++;
-  }
+  // j ++;
+  // }
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
