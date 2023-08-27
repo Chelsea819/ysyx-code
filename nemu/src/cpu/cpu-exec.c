@@ -223,6 +223,7 @@ char *convertTo_2(char args){
   }
 
   int flag = 8;
+  printf("num = %d\n",num);
 
   //15 -> 8 + 4 + 2 + 1
   //5 -> 4 + 1
