@@ -246,13 +246,8 @@ static void exec_once(Decode *s, vaddr_t pc)
 {
   s->pc = pc;
   s->snpc = pc;
-  // printf("before s->dnpc = 0x%08x\n",s->dnpc);
-  // printf("s->pc = 0x%08x\n",s->pc);
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  // printf("after s->dnpc = 0x%08x\n",s->dnpc);
-  // printf("s->pc = 0x%08x\n",s->pc);
-  
 
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
@@ -289,7 +284,9 @@ static void exec_once(Decode *s, vaddr_t pc)
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   int k = 12;
   char *ins_tmp_16 = malloc(9);
+  memset(ins_tmp_16,0,9);
   char *ins = malloc(33);
+  memset(ins,0,33);
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -302,7 +299,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 1.2将十六进制形式的指令转换为二进制
   // 1.2.1 转换为二进制形式
   // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
-  memset(ins,0,33);
   for(int n = 0; n < 8; n ++){
     char *per = convertTo_2(ins_tmp_16[n]);
     strcat(ins,per);
@@ -325,6 +321,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //opcode rd rs1 imm
   char *opcode = malloc(8);
+  memset(opcode,0,8);
   strncpy(opcode,&ins[25],7);
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
@@ -345,6 +342,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //判断出jalr
   else if(strcmp(opcode,"1100111") == 0){
+    printf("catch jalr!");
     if_conduct = true;
     //函数返回
     if(rd == 0 && rs1 == 1 ){
@@ -364,6 +362,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     Elf32_Sym sym;
     int ret = 0;
     char *name = malloc(20);
+    memset(name,0,20);
 
     printf("s->logbuf: %s\n",s->logbuf);
 
