@@ -208,7 +208,7 @@ const char *reg[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
-//uint32_t convert_16(char *args);
+uint32_t convert_16(char *args);
 
 //将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
 char *convertTo_2(char args){
@@ -333,7 +333,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   rd_arr[5] = '\0';
   // char *rs1 = malloc(6);
   // strncpy(rs1,&ins[12],5);
-  int rd = BITS(i, 11, 7);
+  int rd = BITS(convert_16(ins_tmp_16), 11, 7);
   printf("opcode = %s\n",opcode);
   printf("rd_arr = %s\n",rd_arr);
   printf("rd = %d\n",rd);
