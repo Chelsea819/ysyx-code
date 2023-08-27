@@ -314,7 +314,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   bool if_return = false;
   bool if_conduct = false;
   int imm = (SEXT(BITS(m, 31, 31), 1) << 19 | BITS(m, 19, 12)<<11 | BITS(m, 20, 20)<< 10 | BITS(m, 30, 21)) << 1;
-
+  printf("imm = 0x%08x\n",imm);
   //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   //函数调用 jal,  rd = x1, imm = ***
   //函数调用 jalr, rd = x1, rs1 = a5, imm = 0
@@ -345,7 +345,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   else if(strcmp(opcode,"1100111") == 0){
     
     //函数返回
-    if(rd == 0 && rs1 == 1 && imm == 0 ){
+    if(rd == 0 && rs1 == 1){
       if_return = true;
       if_conduct = true;
     }
