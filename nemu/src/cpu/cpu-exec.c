@@ -253,7 +253,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     ins_tmp[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
   }
 
-  printf("ins_tmp = %s\n",ins_tmp);
+  printf("ins_tmp = _%s_\n",ins_tmp);
 
 
   
