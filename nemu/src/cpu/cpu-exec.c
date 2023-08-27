@@ -286,7 +286,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     k += 2;
   }
   //ins_tmp_16[8] = '\0';
-  printf("s->logbuf = %s\n",s->logbuf);
   printf("ins_tmp_16 = %s\n",ins_tmp_16);
 
   //1.2将十六进制形式的指令转换为二进制
@@ -415,6 +414,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+
+  printf("s->logbuf == %s",s->logbuf);
   
   
 
