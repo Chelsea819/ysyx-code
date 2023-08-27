@@ -230,7 +230,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 //   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 // };
 
-uint32_t convert_16(char *args);
+//uint32_t convert_16(char *args);
 
 //将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
 char *convertTo_2(char args){
@@ -293,6 +293,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     strcat(ins,per);
     free(per);
     per = NULL;
+    printf("ins = %s",ins);
   } 
   ins[32] = '\0';
   printf("ins = %s",ins);
