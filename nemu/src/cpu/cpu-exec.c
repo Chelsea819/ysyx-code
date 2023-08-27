@@ -368,7 +368,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     printf("s->logbuf: %s\n",s->logbuf);
 
     
-    for(int n = sym_num - 1; n >= 0; n ++){
+    for(int n = sym_num - 1; n >= 0; n --){
       //3.1读取符号表
       fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
       ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
@@ -384,7 +384,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       //3.2.2 函数调用 是跳转到一个新函数的头部
       else if(!if_return && sym.st_value == s->dnpc && sym.st_info == 18) break;
-      if(n == sym_num - 1){
+      if(n == 0){
         Assert(0,"Fail in searching!");
       }
     }
