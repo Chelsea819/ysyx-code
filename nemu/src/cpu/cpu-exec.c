@@ -234,12 +234,10 @@ char *convertTo_2(char args){
     }
 
     result[n] = num / flag + '0';
-    printf("result[%d] = %c\n",n,result[n]);
     if(num / flag) num -= flag;
     flag /= 2;
   }
   result[4] = '\0';
-  printf("result = %s\n",result);
   return result;
 }
 
