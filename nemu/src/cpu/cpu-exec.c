@@ -301,6 +301,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 1.2.1 转换为二进制形式
   // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
   for(int n = 0; n < 8; n ++){
+    printf("ins_tmp_16[%d] = %c\n",n,ins_tmp_16[n]);
     char *per = convertTo_2(ins_tmp_16[n]);
     strcat(ins,per);
     free(per);
