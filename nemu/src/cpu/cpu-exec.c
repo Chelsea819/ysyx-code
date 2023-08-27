@@ -302,7 +302,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
   memset(ins,0,33);
   for(int n = 0; n < 8; n ++){
-    printf("ins_tmp_16[%d] = %c\n",n,ins_tmp_16[n]);
     char *per = convertTo_2(ins_tmp_16[n]);
     strcat(ins,per);
     free(per);
