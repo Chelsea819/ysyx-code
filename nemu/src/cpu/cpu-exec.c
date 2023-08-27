@@ -233,6 +233,7 @@ char *convertTo_2(char args){
     }
 
     result[n] = num / flag + '0';
+    printf("result[%d] = %c\n",n,result[n]);
     if(num / flag) num -= flag;
   }
   result[4] = '\0';
