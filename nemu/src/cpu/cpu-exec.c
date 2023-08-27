@@ -242,21 +242,16 @@ char *convertTo_2(char args){
 }
 
 /* let CPU conduct current command and renew PC */
-#define immJ_tmp() do { imm = (SEXT(BITS(m, 31, 31), 1) << 19 | BITS(m, 19, 12)<<11 | BITS(m, 20, 20)<< 10 | BITS(m, 30, 21)) << 1; } while(0)
-#define immI_tmp() do { imm = SEXT(BITS(m, 31, 20), 12); } while(0)
-#define R(i) gpr(i)
-#define src1R() do { *src1 = R(rs1); } while (0)
-
 static void exec_once(Decode *s, vaddr_t pc)
 {
   s->pc = pc;
   s->snpc = pc;
-  printf("before s->dnpc = 0x%08x\n",s->dnpc);
-  printf("s->pc = 0x%08x\n",s->pc);
+  // printf("before s->dnpc = 0x%08x\n",s->dnpc);
+  // printf("s->pc = 0x%08x\n",s->pc);
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  printf("after s->dnpc = 0x%08x\n",s->dnpc);
-  printf("s->pc = 0x%08x\n",s->pc);
+  // printf("after s->dnpc = 0x%08x\n",s->dnpc);
+  // printf("s->pc = 0x%08x\n",s->pc);
   
 
 #ifdef CONFIG_ITRACE
@@ -315,13 +310,13 @@ static void exec_once(Decode *s, vaddr_t pc)
     per = NULL;
   } 
   ins[32] = '\0';
-  printf("ins = %s\n",ins);
-  printf("s->logbuf = %s\n",s->logbuf);
 
   free(ins_tmp_16);
 
   //2.判断函数调用/函数返回
   uint32_t m = s->isa.inst.val;
+  bool if_return = false;
+  bool if_conduct = false;
 
   //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   //函数调用 jal,  rd = x1, imm = ***
@@ -334,17 +329,14 @@ static void exec_once(Decode *s, vaddr_t pc)
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
   int rs1 = BITS(m, 19, 15);
-  word_t imm = 0;
-//src1 = 0,
-  
+
   //2.1 jal or jalr
   
   //2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
   if(strcmp(opcode,"1101111") == 0 && rd == 1){
-    immJ_tmp();
-    printf("imm_J = %d\n",imm);
+    if_return = false;
+    if_conduct = true;
   }
-
 
   //2.1.2 jalr 函数调用 or 函数返回
   //函数返回 jalr, rd = x0, rs1 = x1, imm = 0
@@ -353,27 +345,62 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //判断出jalr
   else if(strcmp(opcode,"1100111") == 0){
-    immI_tmp();
-    printf("imm_I = %d\n",imm);
+    if_conduct = true;
     //函数返回
     if(rd == 0 && rs1 == 1 ){
-
+      if_return = true;
     }
     //函数调用
     else if(rd == 1){
-
+      if_return = false;
     }
     else if(rd == 0){
-
+      if_return = false;
     }
   }
 
+  if(if_conduct){
+    //3.找到是哪个函数
+    Elf32_Sym sym;
+    int ret = 0;
+    char *name = malloc(20);
 
-  //3.取出跳转地址
+    printf("s->logbuf: %s\n",s->logbuf);
 
-  //4.找到是哪个函数
+    
+    for(int n = sym_num - 1; n >= 0; n ++){
+      //3.1读取符号表
+      fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
+      ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
+      if(ret != 1){
+        perror("Read error");
+      }
 
-  //5.调用的函数放入一个数据结构，返回函数放入一个数据结构
+      //3.2找到对应的一行
+      //3.2.1 函数返回 是返回到原函数的中间位置
+      if(if_return && (sym.st_value <= s->dnpc && sym.st_value + sym.st_size >= s->dnpc )&& sym.st_info == 18){
+        //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        break;
+      }
+      //3.2.2 函数调用 是跳转到一个新函数的头部
+      else if(!if_return && sym.st_value == s->dnpc && sym.st_info == 18) break;
+      if(n == sym_num - 1){
+        Assert(0,"Fail in searching!");
+      }
+    }
+
+    //printf("st_name: 0x%08x ",sym.st_name);
+
+    //取出函数名称
+    strncpy(name,strtab + sym.st_name,19);
+    if(!if_return) printf("\033[102m 0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,s->dnpc);
+    else printf("\033[102m 0x%08x: ret [%s] \033[m\n",cpu.pc,name);
+
+
+
+
+
+  //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   
   // char addr_tmp[11] = {0};
   // int addr = 0;
@@ -440,7 +467,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
   //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
   // }
-
+  }
   j ++;
   }
 
