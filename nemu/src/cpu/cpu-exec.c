@@ -284,7 +284,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     ins_tmp_16[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
     k += 2;
   }
-  ins_tmp_16[8] = '\0';
+  //ins_tmp_16[8] = '\0';
   printf("ins_tmp_16 = %s\n",ins_tmp_16);
 
   //1.2将十六进制形式的指令转换为二进制
