@@ -278,7 +278,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 #endif
     static int j = 0;
-  if(j < 10){
+  if(j < 30){
   //根据指令判断函数调用/函数返回
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
