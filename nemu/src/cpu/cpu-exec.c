@@ -337,7 +337,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
   if(strcmp(opcode,"1101111") == 0 && rd == 1){
     immJ_tmp();
-    printf("imm_J = %d\n",imm);
+    printf("imm_J = 0x%032x\n",imm);
   }
 
 
