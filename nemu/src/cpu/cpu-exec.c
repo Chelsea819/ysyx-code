@@ -388,84 +388,16 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
     }
 
-    //printf("st_name: 0x%08x ",sym.st_name);
-
     //取出函数名称
+    static int index = 1;
+
     strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("\033[102m 0x%08x: call[%s@0x%08x] \033[m\n",cpu.pc,name,s->dnpc);
-    else printf("\033[102m 0x%08x: ret [%s] \033[m\n",cpu.pc,name);
-
-
-
+    if(!if_return) printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
+    else printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
 
 
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   
-  // char addr_tmp[11] = {0};
-  // int addr = 0;
-  // char reg_tmp[3] = {0};
-  // char reg_tmp_zero[3] = {0};
-  // char *name = malloc(20);
-  // static int n = 0;
-  // bool if_return = false;
-  // bool if_conduct = true;
-  // int ret = 0;
-  // Elf32_Sym sym;
-  // //检测jalr函数调用/函数返回，取出跳转到的地址 
-  // if(strncmp(&(s->logbuf[24]),"jalr",strlen("jalr")) == 0){
-  //   strncpy(reg_tmp,&(s->logbuf[35]),2);
-  //   strncpy(reg_tmp_zero,&(s->logbuf[37]),2);
-  //   //printf("reg = %s\n",reg_tmp);
-  //   for(int i = 0; i < 32; i ++){
-  //     if(strncmp(reg[i],reg_tmp,strlen("ra")) == 0){
-  //       addr = gpr(i);
-  //       break;
-  //     }
-  //     //返回函数
-  //     if(strncmp(reg[i],reg_tmp_zero,strlen("ra")) == 0){
-  //       addr = gpr(i);
-  //       if(strncmp(reg[i],"ra",strlen("ra")) == 0)  if_return = true;
-  //       break;
-  //     }
-  //     if(i == 31) Assert(0,"Fail in get reg!");
-  //   }
-  // } 
-  // //检测jal 函数调用 取出跳转到的地址
-  // else if(strncmp(&(s->logbuf[24]),"jal",strlen("jal")) == 0){
-  //   strncpy(addr_tmp,&(s->logbuf[32]),10);
-  //   addr = convert_16(addr_tmp);
-  //   //printf("addr_tmp = %s  addr = 0x%08x\n",addr_tmp,addr);
-  // }
-  // else{
-  //   if_conduct = false;
-  // }  
-  // //将地址与函数对应
-  // if(if_conduct){
-  //   printf("s->logbuf: %s\n",s->logbuf);
-  //   for(int n = 0; n < sym_num; n ++){
-  //     fseek(ftrace_fp,sym_off + n * sym_size,SEEK_SET);
-  //     ret = fread(&sym,sizeof(Elf32_Sym),1,ftrace_fp);
-  //     if(ret != 1){
-  //       perror("Read error");
-  //     }
-  //     if(if_return && (sym.st_value <= addr && sym.st_value + sym.st_size >= addr )&& sym.st_info == 18){
-  //       //printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-  //       break;
-  //     }
-  //     else if(!if_return && sym.st_value == addr && sym.st_info == 18) break;
-  //     if(n == sym_num - 1){
-  //       Assert(0,"Fail in searching!");
-  //     }
-  //   }
-
-  //   //printf("st_name: 0x%08x ",sym.st_name);
-
-  //   //读出来的函数名不对
-  //   n++;
-  //   strncpy(name,strtab + sym.st_name,19);
-  //   if(!if_return) printf("\033[102m %d:  0x%08x: call[%s@0x%08x] \033[m\n",n,cpu.pc,name,addr);
-  //   else printf("\033[102m %d:  0x%08x: ret [%s] \033[m\n",n,cpu.pc,name);
-  // }
   }
   // j ++;
   // }
@@ -484,7 +416,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   //   printf("s->logbuf: %s\n",s->logbuf);
   //   n ++;
   // }
-
 }
 
 /* stimulate the way CPU works ,get commands constantly */
