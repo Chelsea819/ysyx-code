@@ -301,6 +301,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   } 
   ins[32] = '\0';
   printf("ins = %s\n",ins);
+  printf("s->logbuf = %s\n",s->logbuf);
 
   free(ins);
   free(ins_tmp_16);
