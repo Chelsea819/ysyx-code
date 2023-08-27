@@ -330,8 +330,9 @@ static void exec_once(Decode *s, vaddr_t pc)
   strncpy(opcode,&ins[25],7);
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
-  //int rs1 = BITS(s->isa.inst.val, 19, 15);
+  //int rs1 = BITS(m, 19, 15);
   word_t  imm = 0;//src1 = 0,
+  printf("rd = %d\n",rd);
   
   //2.1 jal or jalr
   
