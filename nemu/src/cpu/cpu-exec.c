@@ -251,9 +251,12 @@ static void exec_once(Decode *s, vaddr_t pc)
 {
   s->pc = pc;
   s->snpc = pc;
+  printf("before s->dnpc = 0x%08x\n",s->dnpc);
+  printf("s->pc = 0x%08x\n",s->pc);
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  //printf("s->logbuf = %s\n",s->logbuf);
+  printf("after s->dnpc = 0x%08x\n",s->dnpc);
+  printf("s->pc = 0x%08x\n",s->pc);
   
 
 #ifdef CONFIG_ITRACE
@@ -285,7 +288,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 #endif
     static int j = 0;
-  if(j < 10){
+  if(j > 10){
   //根据指令判断函数调用/函数返回
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
@@ -330,16 +333,16 @@ static void exec_once(Decode *s, vaddr_t pc)
   strncpy(opcode,&ins[25],7);
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
-  //int rs1 = BITS(m, 19, 15);
-  word_t  imm = 0;//src1 = 0,
-  printf("rd = %d\n",rd);
+  int rs1 = BITS(m, 19, 15);
+  word_t imm = 0;
+//src1 = 0,
   
   //2.1 jal or jalr
   
   //2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
   if(strcmp(opcode,"1101111") == 0 && rd == 1){
     immJ_tmp();
-    printf("imm_J = 0x%032x\n",imm);
+    printf("imm_J = %d\n",imm);
   }
 
 
@@ -351,12 +354,18 @@ static void exec_once(Decode *s, vaddr_t pc)
   //判断出jalr
   else if(strcmp(opcode,"1100111") == 0){
     immI_tmp();
-    printf("imm_I = 0x%032x\n",imm);
+    printf("imm_I = %d\n",imm);
     //函数返回
-    // if(imm == 0 && rs1 == 1 && rd == 0){
+    if(rd == 0 && rs1 == 1 ){
 
-    // }
-    // else if(imm ==)
+    }
+    //函数调用
+    else if(rd == 1){
+
+    }
+    else if(rd == 0){
+
+    }
   }
 
 
