@@ -232,7 +232,7 @@ char *convertTo_2(char args){
       for(; n < 4; n ++) result[n] = '0';
     }
 
-    result[n] = (char)(num / flag) + '0';
+    result[n] = num / flag + '0';
     if(num / flag) num -= flag;
   }
   result[4] = '\0';
