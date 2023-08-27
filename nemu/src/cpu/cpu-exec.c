@@ -259,6 +259,7 @@ char *convertTo_2(char args){
     if(num / flag) num -= flag;
   }
   result[4] = '\0';
+  printf("result = %s\n",result);
   return result;
 }
 
