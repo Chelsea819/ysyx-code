@@ -270,6 +270,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
+  printf("s->logbuf = %s\n",s->logbuf);
 
   //根据指令判断函数调用/函数返回
 
