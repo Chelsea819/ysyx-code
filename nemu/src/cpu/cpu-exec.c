@@ -232,6 +232,36 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 
 uint32_t convert_16(char *args);
 
+//将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
+char *convertTo_2(char args){
+  char *result = malloc(5);
+  int num = 0;
+
+  if(args >= 'a' && args <= 'f'){
+    num = (int)args - (int)'a' + 10;
+  }
+  else {
+    num = (int)args - (int)'0';
+  }
+
+  int flag = 8;
+
+  //15 -> 8 + 4 + 2 + 1
+  //5 -> 4 + 1
+  //0
+  for(int n = 0; n < 4; n ++){
+    //为0 则该位之后的低位均为0
+    if(!num){
+      for(; n < 4; n ++) result[n] = '0';
+    }
+
+    result[n] = num / flag;
+    if(num / flag) num -= flag;
+  }
+  result[4] = '\0';
+  return result;
+}
+
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
@@ -244,8 +274,8 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   int k = 12;
-  char *ins_tmp_16 = malloc(8);
-  //char *ins = malloc(32);
+  char *ins_tmp_16 = malloc(9);
+  char *ins = malloc(33);
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -253,11 +283,20 @@ static void exec_once(Decode *s, vaddr_t pc)
     ins_tmp_16[n] = s->logbuf[k];     //1 13 //3 16 //5 //7
     k += 2;
   }
+  ins_tmp_16[8] = '\0';
 
   //1.2将十六进制形式的指令转换为二进制
-  //1.2.1 将字符转换为数
-  int ins_num_16 = convert_16(ins_tmp_16);
-  printf("ins_num_16 = 0x%032x\n",ins_num_16);
+  //1.2.1 转换为二进制形式
+  //8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
+  for(int n = 0; n < 8; n ++){
+    char *per = convertTo_2(ins_tmp_16[n]);
+    strcat(ins,per);
+    free(per);
+    per = NULL;
+  } 
+  ins[32] = '\0';
+  printf("ins = %s",ins);
+
 
 
 
