@@ -112,15 +112,7 @@ int init_ftrace(const char *ftrace_file){
       continue;
     }
   }
-  
-  //读取.symtab
-  fseek(ftrace_fp,sym_off,SEEK_SET);
-  ret = fread(&Elf_sym,sizeof(Elf32_Sym),1,ftrace_fp);
-  if (ret != 1) {
-    perror("Error reading from file");
-  }
 
-  
   return 0;
 }
 
