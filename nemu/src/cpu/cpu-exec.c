@@ -97,10 +97,6 @@ int init_ftrace(const char *ftrace_file){
   if (ret != 1) {
     perror("Error reading from file");
   }
-  
-  // printf("Elf_header.e_shstrndx = %d\n",Elf_header.e_shstrndx);
-  // printf("Elf_header.e_shoff = %d\n",Elf_header.e_shoff);
-  // printf("sizeof(Elf32_Shdr) = %ld sh_size = %d\n",sizeof(Elf32_Shdr),Elf_sec.sh_size);
 
   //get .symtab
   for(int n = 0; n < Elf_header.e_shnum; n ++){
@@ -110,7 +106,6 @@ int init_ftrace(const char *ftrace_file){
       perror("Error reading from file");
     }
     if(Elf_sec.sh_type == SHT_SYMTAB){
-      printf("Elf_sec.sh_name = %d\n",Elf_sec.sh_name);
       sym_off = Elf_sec.sh_offset;
       sym_size = Elf_sec.sh_entsize;
       sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
@@ -125,8 +120,6 @@ int init_ftrace(const char *ftrace_file){
     perror("Error reading from file");
   }
 
-  printf("sym_off = %d\n",sym_off);
-  printf("sym_size = %ld sym_num = %d\n",sym_size,sym_num);
   
   return 0;
 }
@@ -287,6 +280,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(ins_tmp_16,0,9);
   char *ins = malloc(33);
   memset(ins,0,33);
+  //char **func_call = malloc(50 * 20);
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -365,6 +359,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     int ret = 0;
     char *name = malloc(20);
     memset(name,0,20);
+    
 
     printf("s->logbuf: %s\n",s->logbuf);
 
@@ -398,12 +393,13 @@ static void exec_once(Decode *s, vaddr_t pc)
     else printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
     index ++;
 
+    free(name);
 
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   
   }
-  // j ++;
-  // }
+  free(opcode);
+  free(ins);
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;
@@ -415,10 +411,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   strcpy(curre->rbuf,s->logbuf);
   curre = curre->next;
 
-  // if(n < 19){
-  //   printf("s->logbuf: %s\n",s->logbuf);
-  //   n ++;
-  // }
 }
 
 /* stimulate the way CPU works ,get commands constantly */
