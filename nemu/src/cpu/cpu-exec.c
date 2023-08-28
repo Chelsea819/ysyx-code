@@ -116,6 +116,10 @@ int init_ftrace(const char *ftrace_file){
   return 0;
 }
 
+void free_strtab(){
+  free(strtab);
+}
+
 void init_iringbuf(){
   int i;
   for(i = 0; i < 12; i ++){
