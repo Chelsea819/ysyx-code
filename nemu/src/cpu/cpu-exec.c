@@ -407,6 +407,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     else{
       func_cur->next = func; 
       func_cur = func;
+      printf("%s\n",func_cur->past->func_name);
     }
     
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
