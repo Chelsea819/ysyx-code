@@ -393,6 +393,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   static int index = 1;
+  printf("111111\n");
   if(!if_return){
     //函数调用，将函数名放入链表
     struct func_call *func = malloc(sizeof(func));
