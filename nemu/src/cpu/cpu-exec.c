@@ -59,6 +59,7 @@ FILE *ftrace_fp = NULL;
   int sym_num;
   char *strtab = NULL;
 
+#ifdef CONFIG_FTRACE
 int init_ftrace(const char *ftrace_file){
   FILE *fp = NULL;
   
@@ -119,6 +120,7 @@ int init_ftrace(const char *ftrace_file){
 void free_strtab(){
   free(strtab);
 }
+#endif
 
 void init_iringbuf(){
   int i;
@@ -230,11 +232,13 @@ char *convertTo_2(char args){
   return result;
 }
 
+#ifdef CONFIG_FTRACE
 struct func_call{
   char *func_name;
   struct func_call *next;
   struct func_call *past;
 };
+#endif
 
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
@@ -272,6 +276,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
+
+#ifdef CONFIG_FTRACE
   //   static int j = 0;
   // if(j < 100){
   //根据指令判断函数调用/函数返回
@@ -443,6 +449,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   }
   free(opcode);
   free(ins);
+
+  #endif
 
   if(curre == header && curre->rbuf != NULL){
     header = header->next;

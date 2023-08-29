@@ -54,7 +54,9 @@ int main(int argc, char *argv[]) {
   /* Start engine. */
   engine_start();
 
+  #ifdef CONFIG_FTRACE
   free_strtab();
+  #endif
 
   return is_exit_status_bad();
 }
