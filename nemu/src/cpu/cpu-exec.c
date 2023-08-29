@@ -397,8 +397,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   if(!if_return){
     //函数调用，将函数名放入链表
     struct func_call *func = malloc(sizeof(func));
-    func->func_name = malloc(sizeof(func->func_name));
-    strcpy(func->func_name,name);printf("111111\n");
+    func->func_name = malloc(sizeof(func->func_name));printf("111111\n");
+    strcpy(func->func_name,name);
     func->past = func_cur;
     func_cur->next = func; 
     func->next = NULL;
