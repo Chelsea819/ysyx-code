@@ -415,6 +415,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   else{
     //函数返回，将函数名所在链表节点抽出
     while(1){
+      printf("s->logbuf_tmp = %s\n",s->logbuf);
       int flag = 0;
       if(strcmp(func_cur->func_name,name) == 0) flag = 1;
       printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,func_cur->func_name);
