@@ -282,7 +282,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(ins_tmp_16,0,9);
   char *ins = malloc(33);
   memset(ins,0,33);
-  struct func_call *func_cur = NULL;
   
   
   //1.1将logbuf中的指令存入临时数组
@@ -394,6 +393,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   static int index = 1;
   struct func_call *func = NULL;
+  struct func_call *func_cur = NULL;
   
   if(!if_return){
     //函数调用，将函数名放入链表
@@ -411,6 +411,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       printf("111111\n");
       printf("%s\n",func_cur->past->func_name);
     }
+    Assert(func_cur,"func_cur NULL!");
     
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
     index ++;
