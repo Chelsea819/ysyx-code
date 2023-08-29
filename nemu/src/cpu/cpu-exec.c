@@ -435,7 +435,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
 
   }
-
+    Assert(func_cur,"func_cur NULL!");
     free(name);
 
   }
