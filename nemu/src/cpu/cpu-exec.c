@@ -392,22 +392,23 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   static int index = 1;
-  struct func_call *func = NULL;
+  struct func_call func[30];
   struct func_call *func_cur = NULL;
+  static int index_func_call = 0;
   
   if(!if_return){
     //函数调用，将函数名放入链表
-    func = malloc(sizeof(struct func_call));
-    func->func_name = malloc(20);
-    strcpy(func->func_name,name);
-    func->past = func_cur;
-    func->next = NULL;
+    func[index_func_call].func_name = malloc(20);
+    strcpy(func[index_func_call].func_name,name);
+    func[index_func_call].past = func_cur;
+    func[index_func_call].next = NULL;
     if(!func_cur){
-      func_cur = func;
+      func_cur = &func[index_func_call];
     }
     else{
-      func_cur->next = func; 
-      func_cur = func;
+      func_cur->next = &func[index_func_call]; 
+      func_cur = &func[index_func_call];
+      index_func_call ++;
       printf("111111\n");
       printf("%s\n",func_cur->past->func_name);
     }
