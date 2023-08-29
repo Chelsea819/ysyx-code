@@ -367,10 +367,8 @@ static void exec_once(Decode *s, vaddr_t pc)
     int ret = 0;
     char *name = malloc(20);
     memset(name,0,20);
-    
-
-    printf("s->logbuf: %s\n",s->logbuf);
-
+  
+   // printf("s->logbuf: %s\n",s->logbuf);
     
     for(int n = sym_num - 1; n >= 0; n --){
       //3.1读取符号表
