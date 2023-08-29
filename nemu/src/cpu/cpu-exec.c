@@ -408,11 +408,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     else{
       func_cur->next = func; 
       func_cur = func;
-      printf("111111\n");
-      printf("%s\n",func_cur->past->func_name);
     }
-    Assert(func_cur,"func_cur NULL!");
-    
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
     index ++;
   }
@@ -425,11 +421,17 @@ static void exec_once(Decode *s, vaddr_t pc)
       printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,func_cur->func_name);
       index ++;
 
-      //抽出节点
       free(func_cur->func_name);
-      func_cur = func_cur->past;
-      free(func_cur->next);
-      func_cur->next = NULL;
+
+      //抽出节点
+      if(func_cur->past == NULL){
+        free(func_cur);
+      }
+      else{
+        func_cur = func_cur->past;
+        free(func_cur->next);
+        func_cur->next = NULL;
+      }
 
       if(flag)  break;
     }
