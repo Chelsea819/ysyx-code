@@ -407,6 +407,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     else{
       func_cur->next = func; 
       func_cur = func;
+      printf("111111\n");
       printf("%s\n",func_cur->past->func_name);
     }
     
