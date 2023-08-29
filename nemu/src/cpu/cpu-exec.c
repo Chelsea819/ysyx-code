@@ -400,6 +400,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     func->func_name = malloc(20);
     strcpy(func->func_name,name);
     func->past = func_cur;
+    printf("func = %p",func);
     func_cur->next = func; printf("111111\n");
     func->next = NULL;
     func_cur = func;
