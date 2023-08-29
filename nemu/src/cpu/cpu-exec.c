@@ -431,8 +431,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
 
   }
-    printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
-    index ++;
 
     free(name);
 
