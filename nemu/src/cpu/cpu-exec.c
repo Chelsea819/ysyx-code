@@ -395,13 +395,13 @@ static void exec_once(Decode *s, vaddr_t pc)
   static int index = 1;
   if(!if_return){
     //函数调用，将函数名放入链表
-    struct func_call func;
-    func.func_name = malloc(sizeof(func.func_name));
-    strcpy(func.func_name,name);
-    func.past = func_cur;
-    func_cur->next = &func; 
-    func.next = NULL;
-    func_cur = &func;
+    struct func_call *func = malloc(sizeof(func));
+    func->func_name = malloc(sizeof(func->func_name));
+    strcpy(func->func_name,name);
+    func->past = func_cur;
+    func_cur->next = func; 
+    func->next = NULL;
+    func_cur = func;
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
     index ++;
   }
@@ -416,16 +416,14 @@ static void exec_once(Decode *s, vaddr_t pc)
       //抽出节点
       free(func_cur->func_name);
       func_cur = func_cur->past;
+      free(func_cur->next);
       func_cur->next = NULL;
 
       if(flag)  break;
-      
     }
 
-
   }
- 
-     printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
+    printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
     index ++;
 
     free(name);
