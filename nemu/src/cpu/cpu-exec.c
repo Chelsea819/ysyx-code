@@ -230,6 +230,12 @@ char *convertTo_2(char args){
   return result;
 }
 
+struct func_call{
+  char *func_name;
+  struct func_call *next;
+  struct func_call *past;
+};
+
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
@@ -276,7 +282,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(ins_tmp_16,0,9);
   char *ins = malloc(33);
   memset(ins,0,33);
-  //char **func_call = malloc(50 * 20);
+  struct func_call *func_cur = NULL;
+  
   
   //1.1将logbuf中的指令存入临时数组
   for(int n = 0; n < 8; n ++){
@@ -382,17 +389,47 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
 
     //取出函数名称
-    static int index = 1;
-
     strncpy(name,strtab + sym.st_name,19);
-    if(!if_return) printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
-    else printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
+
+  //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+  static int index = 1;
+  if(!if_return){
+    //函数调用，将函数名放入链表
+    struct func_call func;
+    func.func_name = malloc(sizeof(func.func_name));
+    strcpy(func.func_name,name);
+    func.past = func_cur;
+    func_cur->next = &func; 
+    func.next = NULL;
+    func_cur = &func;
+    printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
+    index ++;
+  }
+  else{
+    //函数返回，将函数名所在链表节点抽出
+    while(1){
+      int flag = 0;
+      if(strcmp(func_cur->func_name,name) == 0) flag = 1;
+      printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,func_cur->func_name);
+      index ++;
+
+      //抽出节点
+      free(func_cur->func_name);
+      func_cur = func_cur->past;
+      func_cur->next = NULL;
+
+      if(flag)  break;
+      
+    }
+
+
+  }
+ 
+     printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,name);
     index ++;
 
     free(name);
 
-  //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-  
   }
   free(opcode);
   free(ins);
