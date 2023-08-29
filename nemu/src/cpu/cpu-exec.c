@@ -393,7 +393,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   //4.调用的函数放入一个数据结构，返回函数放入一个数据结构
   static int index = 1;
   struct func_call func[30];
-  struct func_call *func_cur = NULL;
+  static struct func_call *func_cur = NULL;
   static int index_func_call = 0;
   
   if(!if_return){
