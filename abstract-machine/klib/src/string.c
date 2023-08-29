@@ -90,8 +90,8 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 /* The memset() function returns a pointer 
       to the memory area s. */
 void *memset(void *s, int c, size_t n) {
-  char *sp = (char *)s;
-  char val = (char)c;
+  unsigned char *sp = (unsigned char *)s;
+  unsigned char val = (unsigned char)c;
   for(int i = 0; i < n; i++){
     *(sp + i) = val;
   }
