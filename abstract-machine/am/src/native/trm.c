@@ -18,6 +18,7 @@ void halt(int code) {
   for (const char *p = fmt; *p; p++) {
     char ch = *p;
     if (ch == '0' || ch == '4') {
+      //获得code对应的16进制字符串表示
       ch = "0123456789abcdef"[(code >> (ch - '0')) & 0xf];
     }
     putch(ch);
