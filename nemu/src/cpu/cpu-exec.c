@@ -413,7 +413,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       func_cur->next = func; 
       func_cur = func;
     }
-    printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
+    printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
     index ++;
   }
   else{
@@ -422,7 +422,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       Assert(func_cur,"func_cur NULL!");
       int flag = 0;
       if(strcmp(func_cur->func_name,name) == 0) flag = 1;
-      printf("\033[102m index %d-> 0x%08x: ret [%s] \033[m\n",index,cpu.pc,func_cur->func_name);
+      printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n",index,cpu.pc,func_cur->func_name);
       index ++;
 
       free(func_cur->func_name);
