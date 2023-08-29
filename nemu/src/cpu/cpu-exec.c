@@ -399,9 +399,9 @@ static void exec_once(Decode *s, vaddr_t pc)
     struct func_call *func = malloc(sizeof(struct func_call));
     func->func_name = malloc(20);
     strcpy(func->func_name,name);
-    func->past = func_cur;
+    func->past = func_cur;printf("111111\n");
     printf("func = %p",func);
-    func_cur->next = func; printf("111111\n");
+    func_cur->next = func; 
     func->next = NULL;
     func_cur = func;
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
