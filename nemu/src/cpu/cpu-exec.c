@@ -398,9 +398,9 @@ static void exec_once(Decode *s, vaddr_t pc)
     //函数调用，将函数名放入链表
     struct func_call *func = malloc(sizeof(struct func_call));
     func->func_name = malloc(20);
-    strcpy(func->func_name,name);printf("111111\n");
+    strcpy(func->func_name,name);
     func->past = func_cur;
-    func_cur->next = func; 
+    func_cur->next = func; printf("111111\n");
     func->next = NULL;
     func_cur = func;
     printf("\033[102m index %d-> 0x%08x: call[%s@0x%08x] \033[m\n",index,cpu.pc,name,s->dnpc);
