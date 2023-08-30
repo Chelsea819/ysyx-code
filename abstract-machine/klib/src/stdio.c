@@ -28,7 +28,6 @@ int sprintf(char *out, const char *fmt, ...) {
   va_list ap;
   va_start(ap,fmt);
 
-  putch('a');
   int percent = 0; //检测%
   int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
