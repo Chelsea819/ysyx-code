@@ -25,7 +25,7 @@ size_t strlen(const char *s) {
        the  buffer  pointed  to by dest.*/
 
 char *strcpy(char *dst, const char *src) {
-  //assert(strlen(src) > sizeof(dst) - 1);
+  assert(strlen(src) > sizeof(dst) - 1);
   int i = 0;
   for(i = 0; src[i] != '\0'; i++){
     dst[i] = src[i];
