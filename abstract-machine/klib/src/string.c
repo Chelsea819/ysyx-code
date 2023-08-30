@@ -95,6 +95,7 @@ void *memset(void *s, int c, size_t n) {
   for(int i = 0; i < n; i++){
     *(sp + i) = val;
   }
+  putch('a');
   return s;
   //panic("Not implemented");
 }
