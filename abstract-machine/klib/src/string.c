@@ -50,7 +50,7 @@ char *strncpy(char *dst, const char *src, size_t n) {
 char *strcat(char *dst, const char *src) {
   int i = 0;
   int k = 0;
-  for(i = 0; dst[i] != '\0'; i++)  ;
+  for(i = 0; dst[i] != '\0'; i++);
   for(; src[k] != '\0'; i++ ,k++){
     dst[i] = src[k];
   }
@@ -100,12 +100,27 @@ void *memset(void *s, int c, size_t n) {
   //panic("Not implemented");
 }
 
+/* The  memmove() function copies n bytes from memory area src to memory area dest.
+    The memory areas may overlap: copying takes place as though the bytes in src are
+    first  copied  into a temporary array that does not overlap src or dest, and the
+    bytes are then copied from the temporary array to dest. */
+
 void *memmove(void *dst, const void *src, size_t n) {
-  panic("Not implemented");
+  unsigned char *in = (unsigned char*)src;
+  unsigned char *out = (unsigned char*)dst;
+  for(int k = 0; k < n; k ++){
+    out[k] = in[k];
+  //panic("Not implemented");
+  }
+  return dst;
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
-  panic("Not implemented");
+  for(int k = 0; k < n; k ++){
+    ((unsigned char *)out)[k] = ((unsigned char *)in)[k];
+  }
+  return out;
+  //panic("Not implemented");
 }
 
 int memcmp(const void *s1, const void *s2, size_t n) {
