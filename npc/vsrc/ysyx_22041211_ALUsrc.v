@@ -1,15 +1,15 @@
 
 module ysyx_22041211_ALUsrc #(parameter DATA_LEN = 32)(
-	input		                		alu_src,
-	input		[DATA_LEN - 1:0]		imm,
-    input		[DATA_LEN - 1:0]		reg_data,
+	input		                		key,
+	input		[DATA_LEN - 1:0]		data1,
+    input		[DATA_LEN - 1:0]		data0,
 
-	output		[DATA_LEN - 1:0]		src2
+	output		[DATA_LEN - 1:0]		src
 );
 
-	ysyx_22041211_MuxKeyWithDefault #(2, 1, 32) choose_src2 (src2, alu_src, {DATA_LEN{1'b0}},{
-        1'b1 , imm,
-        1'b0 , reg_data 
+	ysyx_22041211_MuxKeyWithDefault #(2, 1, 32) choose_src2 (src, key, {DATA_LEN{1'b0}},{
+        1'b1 , data1,
+        1'b0 , data0 
     });
 
 

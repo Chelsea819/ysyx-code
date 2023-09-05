@@ -27,12 +27,13 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // 3'b100  S
 
     //tell-opcode 
-    ysyx_22041211_MuxKeyWithDefault #(5, 7, 3) i0 (key_all[2:0], inst[6:0], 3'b0,{
-        7'b0010011 , 3'b000, // 3'b000  I 
-        7'b1110011 , 3'b001, // 3'b001  N
-        7'b0110111 , 3'b010, // 3'b010  U
-        7'b0110011 , 3'b011, // 3'b011  R
-        7'b0100011 , 3'b100 // 3'b100  S
+    ysyx_22041211_MuxKeyWithDefault #(6, 7, 3) i0 (key_all[2:0], inst[6:0], 3'b0,{
+        7'b0010011 , 3'b000, // 3'b000  I addi sltiu srai andi
+        7'b1110011 , 3'b001, // 3'b001  N 
+        7'b0110111 , 3'b010, // 3'b010  U lui
+        7'b0010111 , 3'b010, // 3'b010  U auipc
+        7'b0110011 , 3'b011, // 3'b011  R add sub
+        7'b0100011 , 3'b100  // 3'b100  S sb sw sh
     });
 
     //type_N 识别具体是哪一条指令

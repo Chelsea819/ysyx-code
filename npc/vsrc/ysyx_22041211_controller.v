@@ -6,7 +6,8 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
     output                                        regWrite,
     // output                                        mem_toReg,
     // output                                        mem_write, //写内存操作
-    output                                        alu_src
+    output                                        alu_srcA,
+    output                                        alu_srcB
 );
     
     //ALU
@@ -14,10 +15,15 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
         10'b0000010011 , 1'b1 //tell addi 
     });
 
+    //choosing src1
+    ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) src1_choose (alu_srcA, inst[6:0], 1'b0,{
+        7'b0010111 , 1'b1 
+    });
+
     //choosing src2
     //B/S/R--reg
     //I/U/J--imm
-    ysyx_22041211_MuxKeyWithDefault #(1, 3, 1) src2_choose (alu_src, key, 1'b1,{
+    ysyx_22041211_MuxKeyWithDefault #(1, 3, 1) src2_choose (alu_srcB, key, 1'b1,{
         3'b011 , 1'b0 
     });
 

@@ -26,8 +26,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     wire                              	regWrite	;
 	//wire			[DATA_LEN - 1:0]	result	;
 	wire      		[2:0]               key		;
-	wire								alu_src;
-	wire			[DATA_LEN - 1:0]	reg_data;
+	wire								alu_srcA;
+	wire								alu_srcB;
+	wire			[DATA_LEN - 1:0]	reg_data1;
+	wire			[DATA_LEN - 1:0]	reg_data2;
 	// wire			                	mem_toReg;
 	// wire			                	mem_write;
 	// wire			[DATA_LEN - 1:0]	data_mem;
@@ -64,16 +66,22 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.rsc2		(rsc2),
 		.regWrite	(regWrite),
 		.rst		(rst),
-		.r_data1	(src1),
-		.r_data2	(reg_data)
+		.r_data1	(reg_data1),
+		.r_data2	(reg_data2)
 	);
 
+	ysyx_22041211_ALUsrc my_srcA_chosing(
+		.key		(alu_srcA),
+		.data1		(pc),
+		.data0		(reg_data1),
+		.src		(src1)
+	);
 
-	ysyx_22041211_ALUsrc my_src_chosing(
-		.alu_src	(alu_src),
-		.imm		(imm),
-		.reg_data	(reg_data),
-		.src2		(src2)
+	ysyx_22041211_ALUsrc my_srcB_chosing(
+		.key		(alu_srcB),
+		.data1		(imm),
+		.data0		(reg_data2),
+		.src		(src2)
 	);
 	
 
@@ -85,7 +93,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.regWrite		(regWrite),
 		// .mem_toReg		(mem_toReg),
 		// .mem_write		(mem_write),
-		.alu_src		(alu_src)
+		.alu_srcA		(alu_srcA),
+		.alu_srcB		(alu_srcB)
 	);
 
 	ysyx_22041211_ALU my_add(
