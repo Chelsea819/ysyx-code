@@ -19,15 +19,23 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
    	wire      		[4:0]               rd		;
     wire      		[4:0]               rsc1	;
     wire      		[4:0]               rsc2	;
-	wire			[DATA_LEN - 1:0]	scr1	;
-	wire			[DATA_LEN - 1:0]	scr2	;	
-	wire                              	add_en	;
-    wire                              	reg_wen	;
-	wire			[DATA_LEN - 1:0]	result	;
+	wire			[DATA_LEN - 1:0]	src1	;
+	wire			[DATA_LEN - 1:0]	src2	;
+	wire								en		;	
+	//wire            [2:0]               alu_control	;
+    wire                              	regWrite	;
+	//wire			[DATA_LEN - 1:0]	result	;
 	wire      		[2:0]               key		;
+	wire								alu_src;
+	wire			[DATA_LEN - 1:0]	reg_data;
+	// wire			                	mem_toReg;
+	// wire			                	mem_write;
+	// wire			[DATA_LEN - 1:0]	data_mem;
+	wire			[DATA_LEN - 1:0]	alu_result;
+	// wire			[DATA_LEN - 1:0]	w_reg_data;
 
 	assign pc = pc_temp;
-	assign result1 = scr2;
+	assign result1 = src2;
 
 	ysyx_22041211_counter my_counter(
 		.clk	(clk),
@@ -48,32 +56,59 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	);
 
 	ysyx_22041211_RegisterFile my_RegisterFile(
-		.clk	(clk),
-		.wdata	(result),
-		.rd		(rd),
-		.rsc1	(rsc1),
-		.rsc2	(rsc2),
-		.wen	(reg_wen),
-		.rst	(rst),
-		.r_data1(scr1),
-		.r_data2(scr2)
+		.clk		(clk),
+		//.wdata		(w_reg_data),
+		.wdata		(alu_result),
+		.rd			(rd),
+		.rsc1		(rsc1),
+		.rsc2		(rsc2),
+		.regWrite	(regWrite),
+		.rst		(rst),
+		.r_data1	(src1),
+		.r_data2	(reg_data)
+	);
+
+
+	ysyx_22041211_ALUsrc my_src_chosing(
+		.alu_src	(alu_src),
+		.imm		(imm),
+		.reg_data	(reg_data),
+		.src2		(src2)
 	);
 	
 
 	ysyx_22041211_controller my_controller(
-		.inst	({inst[14:12],inst[6:0]}),
-		.key	(key),
-		.add_en	(add_en),
-		.reg_wen(reg_wen)
+		.inst			({inst[14:12],inst[6:0]}),
+		.key			(key),
+		//.alu_control	(alu_control),
+		.add_en			(en),
+		.regWrite		(regWrite),
+		// .mem_toReg		(mem_toReg),
+		// .mem_write		(mem_write),
+		.alu_src		(alu_src)
 	);
 
-	ysyx_22041211_add my_add(
-		.data1		(scr1),
-		.data2		(imm),
-		.en			(add_en),
+	ysyx_22041211_ALU my_add(
+		.src1		(src1),
+		.src2		(src2),
+		.en			(en),
 		.rst		(rst),
-		.result		(result)
+		.result		(alu_result)
+		//.pc			(pc)
 	);
+
+	// ysyx_22041211_mem_toReg mem_toReg(
+	// 	.mem_toReg	(mem_toReg),
+	// 	.data_mem	(data_mem),
+	// 	.alu_result	(alu_result),
+	// 	.w_reg_data	(w_reg_data)
+	// );
+
+	// ysyx_22041211_dataMemory dataMemory(
+	// 	.alu_result		(alu_result),
+	// 	.mem_write		(mem_write),
+	// 	.data_mem		()
+	// )
 
 
 endmodule

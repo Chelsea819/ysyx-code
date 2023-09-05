@@ -23,20 +23,25 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // 3'b000  I 
     // 3'b001  N 
     // 3'b010  U
+    // 3'b011  R
+    // 3'b100  S
 
-    //primary-type 
-    ysyx_22041211_MuxKeyWithDefault #(2, 7, 3) i0 (key_all[2:0], inst[6:0], 3'b0,{
+    //tell-opcode 
+    ysyx_22041211_MuxKeyWithDefault #(5, 7, 3) i0 (key_all[2:0], inst[6:0], 3'b0,{
         7'b0010011 , 3'b000, // 3'b000  I 
-        7'b1110011 , 3'b001  // 3'b001  N
+        7'b1110011 , 3'b001, // 3'b001  N
+        7'b0110111 , 3'b010, // 3'b010  U
+        7'b0110011 , 3'b011, // 3'b011  R
+        7'b0100011 , 3'b100 // 3'b100  S
     });
 
-    //type_N
+    //type_N 识别具体是哪一条指令
     ysyx_22041211_MuxKeyWithDefault #(2, 25, 3) i2 (key_all[5:3], inst[31:7], 3'b0,{
         25'b0000000000000000000000000 , 3'b000,  //N-ecall
         25'b0000000000010000000000000 , 3'b001   //N-ebreak
     });
 
-
+    // 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int key);
     always @(posedge clk)
         dpi_key(key_tmp);
@@ -50,8 +55,8 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
     //imm
     ysyx_22041211_MuxKeyWithDefault #(2, 3, 32) i1 (imm, key_all[2:0], 32'b0,{
-        3'b000 , {{20{inst[31]}},inst[31:20]},
-        3'b010 , {inst[31:12],{12{1'b0}}}
+        3'b000 , {{20{inst[31]}},inst[31:20]}, // 3'b000  I
+        3'b010 , {inst[31:12],{12{1'b0}}}      // 3'b010  U
     });
 
 

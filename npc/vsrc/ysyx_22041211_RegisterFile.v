@@ -11,16 +11,18 @@ module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input	    [4:0]					rsc1	,
 	input	    [4:0]					rsc2	,
 	input	    [4:0]					rd		,
-	input								wen		,
+	input								regWrite,
 	input								rst		,
 	output		[DATA_WIDTH - 1:0]		r_data1	,
 	output		[DATA_WIDTH - 1:0]		r_data2	
 );
 	reg [DATA_WIDTH - 1:0] rf [ADDR_WIDTH - 1:0];
 	always @(posedge clk) begin
-		if (wen) rf[rd] <= wdata;
+		if (regWrite) rf[rd] <= wdata;
 	end
 	assign rf[0] = 0;
-	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg1 (clk,rst,rf[rsc1],wen,r_data1);
-	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg2 (clk,rst,rf[rsc2],wen,r_data2);
+
+	//读取操作数
+	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg1 (clk,rst,rf[rsc1],regWrite,r_data1);
+	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg2 (clk,rst,rf[rsc2],regWrite,r_data2);
 endmodule
