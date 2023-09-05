@@ -40,7 +40,7 @@ void ifebreak_func(int key){
 }
 
 static int init_mem(){
-	pmem = (uint32_t *)malloc(sizeof(uint32_t)*10);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*20);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
 	//			    ?????????????????000?????0010011
