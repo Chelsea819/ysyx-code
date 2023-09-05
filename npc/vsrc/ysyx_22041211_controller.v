@@ -9,10 +9,19 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
     output                                        alu_srcA,
     output                                        alu_srcB
 );
+    wire                                          alu_addi;
+    wire                                          alu_apuic;
+
+    assign add_en = alu_addi | alu_apuic;
     
     //ALU
-    ysyx_22041211_MuxKeyWithDefault #(1, 10, 1) alu_mode (add_en, inst, 1'b0,{
+    ysyx_22041211_MuxKeyWithDefault #(1, 10, 1) alu_mode1 (alu_addi, inst, 1'b0,{
         10'b0000010011 , 1'b1 //tell addi 
+        
+    });
+    ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) alu_mode2 (alu_apuic, inst[6:0], 1'b0,{
+        7'b0010111 , 1'b1 //tell aupic 
+        
     });
 
     //choosing src1
