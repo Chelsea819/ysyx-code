@@ -17,7 +17,7 @@
 #include "Vysyx_22041211_top___024root.h"
 //#include <nvboard.h>
 
-#define MAX_SIM_TIME 30
+#define MAX_SIM_TIME 100
 vluint64_t sim_time = 0;
 //#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
