@@ -59,7 +59,9 @@ static inline uint32_t host_read(void *addr) {
     return *(uint32_t *)addr;
 }
 
-uint32_t* guest_to_host(uint32_t paddr) { return pmem + (paddr - CONFIG_MBASE) / 4; }
+uint32_t* guest_to_host(uint32_t paddr) { 
+	printf("guest_to_host\n");
+	return pmem + (paddr - CONFIG_MBASE) / 4; }
 
 uint32_t pmem_read_npc(uint32_t addr) {printf("succeed!\n");
   uint32_t ret = host_read(guest_to_host(addr));printf("after succeed!\n");
