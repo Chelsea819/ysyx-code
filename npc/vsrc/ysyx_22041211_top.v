@@ -8,13 +8,12 @@
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
-	input			[DATA_LEN - 1:0]	inst,
-	output			[ADDR_LEN - 1:0]	pc	,
-	output			[DATA_LEN - 1:0]	result1
+	input	reg		[DATA_LEN - 1:0]	inst,
+	output			[ADDR_LEN - 1:0]	pc	
 	
 		
 );
-	wire 			[ADDR_LEN - 1:0]	pc_temp ;
+	reg 			[ADDR_LEN - 1:0]	pc_temp ;
 	wire	    	[DATA_LEN - 1:0]	imm		;	
    	wire      		[4:0]               rd		;
     wire      		[4:0]               rsc1	;
@@ -37,7 +36,21 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// wire			[DATA_LEN - 1:0]	w_reg_data;
 
 	assign pc = pc_temp;
-	assign result1 = src2;
+
+
+    // import "DPI-C" function void init_mem_npc();
+    //     initial begin
+    //         init_mem_npc(); 
+    //     end
+
+	// import "DPI-C" context function int pmem_read_npc(int addr);
+    // always @(posedge clk)
+    //     dpi_memRead(pc_temp);
+
+    // task dpi_memRead(input reg [31:0] k);  // 在任务中使用 input reg 类型
+    //     /* verilator no_inline_task */
+    //     inst = pmem_read_npc(k);
+    // endtask
 
 	ysyx_22041211_counter my_counter(
 		.clk	(clk),

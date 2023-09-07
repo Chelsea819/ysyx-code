@@ -22,12 +22,7 @@ vluint64_t sim_time = 0;
 //#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
 
-// *pmem = 0b 000000000001 00000 000 000010 010011;
-// *(pmem + 1) = 0b 00000000010 00000 000 000010 0010011;
-// *(pmem + 2) = 0b 00000000011 00000 000 000011 0010011;
-// *(pmem + 3) = 0b 00000000100 00000 000 000100 0010011;
 
-//bool ifebreak(int)
 
 static  TOP_NAME dut;
 //void nvboard_bind_all_pins(Vtop* top);
@@ -39,7 +34,7 @@ void ifebreak_func(int key){
 	if(key == 9) {ifbreak = true; } 
 }
 
-static int init_mem(){
+void init_mem_npc(){
 	pmem = (uint32_t *)malloc(sizeof(uint32_t)*20);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
@@ -55,7 +50,7 @@ static int init_mem(){
 	*(pmem + 9) = 0b00000000000000000011010000010111; //auipc
 	*(pmem + 10) = 0b00000000000100000000000001110011; //ebreak
 
-	return 0;
+	return ;
 }
 
 static inline uint32_t host_read(void *addr) {
@@ -64,7 +59,7 @@ static inline uint32_t host_read(void *addr) {
 
 uint32_t* guest_to_host(uint32_t paddr) { return pmem + (paddr - CONFIG_MBASE) / 4; }
 
-static uint32_t pmem_read(uint32_t addr) {
+uint32_t pmem_read_npc(uint32_t addr) {
   uint32_t ret = host_read(guest_to_host(addr));
   return ret;
 }
@@ -79,7 +74,7 @@ int main(int argc, char** argv, char** env) {
 	VerilatedVcdC *m_trace = new VerilatedVcdC;  
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
-	init_mem();
+	init_mem_npc();
 	dut.rst = 1;
 	int flag = 20;
 	while (sim_time < MAX_SIM_TIME) {
@@ -93,7 +88,7 @@ int main(int argc, char** argv, char** env) {
 		}
 		// printf("pc = 0x%08x\n",dut.pc);
 		// printf("before pmem_read\n");
-		dut.inst = pmem_read(dut.pc);
+		dut.inst = pmem_read_npc(dut.pc);
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
 		dut.eval();

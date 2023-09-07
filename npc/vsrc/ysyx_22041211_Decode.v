@@ -20,6 +20,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     assign  key_tmp = {{26{1'b0}},key_all};
     assign  key     = key_all[2:0];
 
+
     // 3'b000  I 
     // 3'b001  N 
     // 3'b010  U
