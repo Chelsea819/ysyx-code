@@ -62,7 +62,7 @@ static inline uint32_t host_read(void *addr) {
 uint32_t* guest_to_host(uint32_t paddr) { return pmem + (paddr - CONFIG_MBASE) / 4; }
 
 uint32_t pmem_read_npc(uint32_t addr) {printf("succeed!\n");
-  uint32_t ret = host_read(guest_to_host(addr));
+  uint32_t ret = host_read(guest_to_host(addr));printf("after succeed!\n");
   return ret;
 }
 
@@ -85,6 +85,10 @@ int main(int argc, char** argv, char** env) {
 	int flag = 20;
 	while (sim_time < MAX_SIM_TIME) {
 //	while(1){
+    // clk	1   0	1	0	1	0	1	0
+	// inspc0	1	1	2	2	3	3
+	// ins	0	1	1	2	2	3	3	
+	//evalpc1	1	2	2	3	3			
 		dut.clk ^= 1; 
 		if(flag-- > 14){
 			dut.eval();
@@ -94,7 +98,7 @@ int main(int argc, char** argv, char** env) {
 		}
 		// printf("pc = 0x%08x\n",dut.pc);
 		// printf("before pmem_read\n");
-		//dut.inst = pmem_read_npc(dut.pc);
+		// dut.inst = pmem_read_npc(dut.pc);
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
 		dut.eval();
