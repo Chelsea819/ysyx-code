@@ -35,7 +35,7 @@ void ifebreak_func(int key){
 }
 
 void init_mem_npc(){
-	pmem = (uint32_t *)malloc(sizeof(uint32_t)*20);
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*30);
 	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011;
 	*(pmem + 1) = 0b00000000010000000000000100010011; //2
