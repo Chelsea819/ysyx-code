@@ -19,21 +19,22 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
         10'b0000010011 , 1'b1 //tell addi 
         
     });
-    ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) alu_mode2 (alu_apuic, inst[6:0], 1'b0,{
-        7'b0010111 , 1'b1 //tell aupic 
+    ysyx_22041211_MuxKeyWithDefault #(2, 7, 1) alu_mode2 (alu_apuic, inst[6:0], 1'b0,{
+        7'b0010111 , 1'b1 , //tell aupic 
+        7'b0110111 , 1'b1   //tell lui 
         
     });
 
     //choosing src1
     ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) src1_choose (alu_srcA, inst[6:0], 1'b0,{
-        7'b0010111 , 1'b1 
+        7'b0010111 , 1'b1 //auipc -- pc
     });
 
     //choosing src2
     //B/S/R--reg
     //I/U/J--imm
     ysyx_22041211_MuxKeyWithDefault #(1, 3, 1) src2_choose (alu_srcB, key, 1'b1,{
-        3'b011 , 1'b0 
+        3'b011 , 1'b0   //reg-data -- reg
     });
 
     // //if store data to memory

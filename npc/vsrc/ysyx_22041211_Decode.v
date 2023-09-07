@@ -13,9 +13,9 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 );
     reg    [5:0]                   key_all ;
     reg    [31:0]                  key_tmp;
-
+                                                                            
     assign  rd      = inst[11:7];
-    assign  rsc1    = inst[19:15];
+    //assign  rsc1    = inst[19:15];
     assign  rsc2    = inst[24:20];
     assign  key_tmp = {{26{1'b0}},key_all};
     assign  key     = key_all[2:0];
@@ -43,6 +43,13 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
         25'b0000000000010000000000000 , 3'b001   //N-ebreak
     });
 
+    //rs1
+    ysyx_22041211_MuxKeyWithDefault #(1, 7, 5) i3 (rsc1, inst[6:0], inst[19:15],{
+        7'b0110111 , 5'b0
+    });
+
+
+
     // 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int key);
     always @(posedge clk)
@@ -52,7 +59,6 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
         /* verilator no_inline_task */
         ifebreak_func(k);
     endtask
-    
 
 
     //imm
