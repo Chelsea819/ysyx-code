@@ -14,6 +14,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		
 );
 	reg 			[ADDR_LEN - 1:0]	pc_temp ;
+	//wire			[ADDR_LEN - 1:0]	snpc    ;
 	wire	    	[DATA_LEN - 1:0]	imm		;	
    	wire      		[4:0]               rd		;
     wire      		[4:0]               rsc1	;
@@ -59,6 +60,16 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.pc_new	(pc_temp)
 
 	);
+
+	import "DPI-C" context function void get_inst();
+    always @(posedge clk)
+        dpi_key();
+
+    task dpi_key();  // 在任务中使用 input reg 类型
+        /* verilator no_inline_task */
+        get_inst();
+    endtask
+
 
 	ysyx_22041211_Decode my_Decode(
 		.inst	(inst),
