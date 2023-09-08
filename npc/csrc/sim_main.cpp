@@ -55,17 +55,22 @@ void init_mem_npc(){
 	return ;
 }
 
-static inline uint32_t host_read(void *addr) { printf("before host_read\n");
-    return *(uint32_t *)addr;printf("after host_read\n");
+static inline uint32_t host_read(void *addr) { 
+	printf("before host_read\n");
+    return *(uint32_t *)addr;
+	printf("after host_read\n");
 }
 
 
 uint32_t* guest_to_host(uint32_t paddr) { 
 	printf("before  guest_to_host\n");
-	return pmem + (paddr - CONFIG_MBASE) / 4; printf("after guest_to_host\n");}
+	return pmem + (paddr - CONFIG_MBASE) / 4; 
+	printf("after guest_to_host\n");}
 
-uint32_t pmem_read_npc(uint32_t addr) {printf("before mem_read_npc!\n");
-  uint32_t ret = host_read(guest_to_host(addr));printf("after pmem_read_npc!\n");
+uint32_t pmem_read_npc(uint32_t addr) {
+	printf("before mem_read_npc!\n");
+	uint32_t ret = host_read(guest_to_host(addr));
+	printf("after pmem_read_npc!\n");
   return ret;
 }
 
@@ -102,7 +107,7 @@ int main(int argc, char** argv, char** env) {
 		// printf("pc = 0x%08x\n",dut.pc);
 		// printf("before pmem_read\n");
 		//dut.inst = pmem_read_npc(dut.pc);
-		//get_inst();
+		get_inst();
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
 		dut.eval();
