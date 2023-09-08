@@ -101,7 +101,7 @@ int main(int argc, char** argv, char** env) {
 		// printf("pc = 0x%08x\n",dut.pc);
 		// printf("before pmem_read\n");
 		//dut.inst = pmem_read_npc(dut.pc);
-		get_inst();
+		//get_inst();
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
 		dut.eval();
