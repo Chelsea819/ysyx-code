@@ -13,12 +13,15 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 );
     reg    [5:0]                   key_all ;
     reg    [31:0]                  key_tmp;
+    wire   [4:0]                   rsc1_0;
+    wire   [4:0]                   rsc1_1;
                                                                             
     assign  rd      = inst[11:7];
     //assign  rsc1    = inst[19:15];
     assign  rsc2    = inst[24:20];
     assign  key_tmp = {{26{1'b0}},key_all};
     assign  key     = key_all[2:0];
+    assign  rsc1    = rsc1_0 | rsc1_1;
 
 
     // 3'b000  I 
@@ -44,9 +47,13 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     });
 
     //rs1
-    ysyx_22041211_MuxKeyWithDefault #(1, 7, 5) rs1_choose (rsc1, inst[6:0], inst[19:15],{
-        7'b0110111 , 5'b0
+    ysyx_22041211_MuxKeyWithDefault #(1, 7, 5) rs1_0_lui (rsc1_0, inst[6:0], inst[19:15],{
+        7'b0110111 , 5'b0   //lui
     });
+    ysyx_22041211_MuxKeyWithDefault #(1, 32, 5) rs1_0_ebreak (rsc1_1, inst, inst[19:15],{
+        32'b00000000000000000000000001110011 , 5'b0   //ebreak
+    });
+
 
 
 
