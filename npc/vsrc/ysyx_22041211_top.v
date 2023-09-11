@@ -84,7 +84,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.rsc1		(rsc1),
 		.rsc2		(rsc2),
 		.regWrite	(regWrite),
-		.rst		(rst),
 		.r_data1	(reg_data1),
 		.r_data2	(reg_data2)
 	);

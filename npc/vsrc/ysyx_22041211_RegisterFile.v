@@ -12,7 +12,6 @@ module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input	    [4:0]					rsc2	,
 	input	    [4:0]					rd		,
 	input								regWrite,
-	input								rst		,
 	output		[DATA_WIDTH - 1:0]		r_data1	,
 	output		[DATA_WIDTH - 1:0]		r_data2	
 );
@@ -23,6 +22,7 @@ module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	assign rf[0] = 0;
 
 	//读取操作数
-	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg1 (clk,rst,rf[rsc1],regWrite,r_data1);
-	ysyx_22041211_Reg #(DATA_WIDTH) my_Reg2 (clk,rst,rf[rsc2],regWrite,r_data2);
+	assign r_data1 = rf[rsc1];
+	assign r_data2 = rf[rsc2];
+
 endmodule

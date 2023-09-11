@@ -39,4 +39,3 @@ always @(*) begin
 	else out = (hit ? lut_out : default_out);
 end
 endmodule
-
