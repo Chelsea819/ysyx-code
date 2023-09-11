@@ -11,8 +11,8 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
 
 );
-    reg    [5:0]                   key_all ;
-    reg    [31:0]                  key_tmp;
+    wire    [5:0]                   key_all ;
+    wire    [31:0]                  key_tmp;
     wire   [4:0]                   rsc1_0;
     wire   [4:0]                   rsc1_1;
                                                                             
