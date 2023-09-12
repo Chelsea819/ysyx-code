@@ -34,9 +34,6 @@ void ifebreak_func(int key){
 	if(key == 9) {ifbreak = true; } 
 }
 
-void init_mem_npc(){
-	pmem = (uint32_t *)malloc(sizeof(uint32_t)*30);
-	assert(pmem);
 	// *pmem = 0b000000000001 00000 000 00001 0010011; //addi    x[1] = 0 + 1 
 	// *(pmem + 1) = 0b00000000010 00000 000 00001 00010011; //2   x[1] = 0 + 2 
 	// *(pmem + 2) = 0b00000000011 00000 000 00001 10010011; //3	x[1] = 0 + 3 
@@ -44,6 +41,10 @@ void init_mem_npc(){
 	// *(pmem + 4) = 0b00000000101 00000 000 00010 10010011; //5	x[2] = 0 + 5 
 	// *(pmem + 5) = 0b00000000111 00000 000 00011 10010011; //addi x[3] = 0 + 6 
 	// *(pmem + 6) = 0b00000001000 00000 000 00100 00010011; //addi x[4] = 0 + 7
+
+void init_mem_npc(){
+	pmem = (uint32_t *)malloc(sizeof(uint32_t)*30);
+	assert(pmem);
 	*pmem = 0b00000000000100000000000010010011; //addi    x[1] = 0 + 1 
 	*(pmem + 1) = 0b00000000010000000000000100010011; //2   x[1] = 0 + 2 
 	*(pmem + 2) = 0b00000000011000000000000110010011; //3	x[1] = 0 + 3 
@@ -88,43 +89,26 @@ void get_inst(){
 
 
 int main(int argc, char** argv, char** env) {
-
-	//nvboard_bind_all_pins(&dut);
-	//nvboard_init();
-
 	Verilated::traceEverOn(true);
 	VerilatedVcdC *m_trace = new VerilatedVcdC;  
+	init_mem_npc();
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
-	init_mem_npc();
 	dut.rst = 1;
-	int flag = 20;
-	while (sim_time < MAX_SIM_TIME) {
-//	while(1){
-    // clk	1   0	1	0	1	0	1	0
-	// inspc0	1	1	2	2	3	3
-	// ins	0	1	1	2	2	3	3	
-	//evalpc1	1	2	2	3	3			
+	dut.clk = 1;
+	dut.eval();
+	m_trace->dump(sim_time);
+	sim_time++;
+	
+	dut.rst = 0;
+
+	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1; 
-		if(flag-- > 14){
-			dut.eval();
-			m_trace->dump(sim_time);
-			sim_time++;
-			continue;
-		}
-		// printf("pc = 0x%08x\n",dut.pc);
-		// printf("before pmem_read\n");
-		// dut.inst = pmem_read_npc(dut.pc);
-		// get_inst();
-		// printf("dut.inst = 0x%032x\n",dut.inst);
-		// printf("after pmem_read\n");
+
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
-	//	nvboard_update();
-	//	usleep(1);
-		dut.rst = 0;
-		// printf("flag = %d\n",flag);
+
 		if(ifbreak) {
 			printf("\nebreak!\n");
 			break;
@@ -133,7 +117,6 @@ int main(int argc, char** argv, char** env) {
 	free(pmem);
 	pmem = NULL;
 	m_trace->close();
-	//delete dut;
 	exit(EXIT_SUCCESS);
 }
 
