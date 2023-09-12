@@ -22,6 +22,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     assign  rsc2    = inst[24:20];
     assign  key_tmp = {{26{1'b0}},key_certain,key_opcode};
     assign  key     = key_opcode;
+    assign key_certain = 3'b111;
     //assign  rsc1    = rsc1_0 | rsc1_1;
 
     // 3'b000  I 
@@ -55,8 +56,8 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // });
 
     //type_N 识别具体是哪一条指令
-    assign key_certain = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
-                          inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
+    // assign key_certain = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
+    //                      inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
 
     // assign key_all = (inst == 32'b00000000000000000000000001110011) ? 6'b000001 :    //N-ecall
     //                  (inst == 32'b00000000000100000000000001110011) ? 6'b001001 :    //N-ebreak
