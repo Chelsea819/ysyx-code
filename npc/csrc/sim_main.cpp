@@ -106,11 +106,6 @@ int main(int argc, char** argv, char** env) {
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
-
-	dut.clk = 0;
-	dut.eval();
-	m_trace->dump(sim_time);
-	sim_time++;
 	
 	dut.rst = 0;
 
