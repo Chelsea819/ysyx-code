@@ -12,22 +12,17 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
 
 );
-    wire    [5:0]                   key_all ;
+    wire    [2:0]                   key_opcode;
+    wire    [2:0]                   key_certain;
     wire    [31:0]                  key_tmp;
-    wire    [2:0]                   key_tmp_tmp;
-    wire    [31:0]                inst_tmp;
     // wire   [4:0]                   rsc1_0;
     // wire   [4:0]                   rsc1_1;
                                                                             
-    assign  inst_tmp      = inst;
-    assign  rd            = inst_tmp[11:7];
-    //assign  rsc1    = inst[19:15];
+    assign  rd      = inst[11:7];
     assign  rsc2    = inst[24:20];
-    assign  key_tmp = {{26{1'b0}},key_all};
-    assign  key     = key_tmp_tmp;
-    assign  key_tmp_tmp = key_all[2:0];
+    assign  key_tmp = {{26{1'b0}},key_certain,key_opcode};
+    assign  key     = key_opcode;
     //assign  rsc1    = rsc1_0 | rsc1_1;
-
 
     // 3'b000  I 
     // 3'b001  N 
@@ -46,11 +41,11 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // });
 
     //tell-opcode 
-    // assign key_all[2:0] = inst[6:0] == 7'b0010011 ? 3'b000 :                               // 3'b000  I addi sltiu srai andi
-    //                       inst[6:0] == 7'b1110011 ? 3'b001 :                               // 3'b001  N ecall ebreak  
-    //                       (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? 3'b010 :  // 3'b010  U lui auipc
-    //                       inst[6:0] == 7'b0110011 ? 3'b011 :                               // 3'b011  R add sub
-    //                       inst[6:0] == 7'b0100011 ? 3'b100 : 3'b111;                       // 3'b100  S sb sw sh
+    assign key_opcode = inst[6:0] == 7'b0010011 ? 3'b000 :                               // 3'b000  I addi sltiu srai andi
+                          inst[6:0] == 7'b1110011 ? 3'b001 :                               // 3'b001  N ecall ebreak  
+                          (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? 3'b010 :  // 3'b010  U lui auipc
+                          inst[6:0] == 7'b0110011 ? 3'b011 :                               // 3'b011  R add sub
+                          inst[6:0] == 7'b0100011 ? 3'b100 : 3'b111;                       // 3'b100  S sb sw sh
 
 
     // //type_N 识别具体是哪一条指令
@@ -59,17 +54,17 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     //     25'b0000000000010000000000000 , 3'b001   //N-ebreak
     // });
 
-    // //type_N 识别具体是哪一条指令
-    // assign key_all[5:3] = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
-    //                       inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
+    //type_N 识别具体是哪一条指令
+    assign key_certain = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
+                          inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
 
-    assign key_all = (inst == 32'b00000000000000000000000001110011) ? 6'b000001 :    //N-ecall
-                     (inst == 32'b00000000000100000000000001110011) ? 6'b001001 :    //N-ebreak
-                     (inst == 32'b00000000000100000000000001110011) ? 6'b001001 :    //N-ebreak
-                     inst[6:0] == 7'b0010011 ? 6'b000000 :                           //I addi sltiu srai andi
-                     (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? 6'b000010 :  // 3'b010  U lui auipc
-                     inst[6:0] == 7'b0110011 ? 6'b000011 :                               // 3'b011  R add sub
-                     inst[6:0] == 7'b0100011 ? 6'b000100 : 6'b000111;                       // 3'b100  S sb sw sh
+    // assign key_all = (inst == 32'b00000000000000000000000001110011) ? 6'b000001 :    //N-ecall
+    //                  (inst == 32'b00000000000100000000000001110011) ? 6'b001001 :    //N-ebreak
+    //                  (inst == 32'b00000000000100000000000001110011) ? 6'b001001 :    //N-ebreak
+    //                  inst[6:0] == 7'b0010011 ? 6'b000000 :                           //I addi sltiu srai andi
+    //                  (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? 6'b000010 :  // 3'b010  U lui auipc
+    //                  inst[6:0] == 7'b0110011 ? 6'b000011 :                               // 3'b011  R add sub
+    //                  inst[6:0] == 7'b0100011 ? 6'b000100 : 6'b000111;                       // 3'b100  S sb sw sh
 
 
 
@@ -108,8 +103,8 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // });
 
     //imm
-    assign imm = key_all[2:0] == 3'b000 ? {{20{inst[31]}},inst[31:20]} : 
-                 key_all[2:0] == 3'b010 ? {inst[31:12],{12{1'b0}}} : 32'b0;
+    assign imm = key_opcode == 3'b000 ? {{20{inst[31]}},inst[31:20]} : 
+                 key_opcode == 3'b010 ? {inst[31:12],{12{1'b0}}} : 32'b0;
 
 
 endmodule
