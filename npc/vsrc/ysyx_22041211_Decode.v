@@ -63,7 +63,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
         7'b0110111 , 5'b0   //lui
     });
     ysyx_22041211_MuxKeyWithDefault #(1, 32, 5) rs1_0_ebreak (rsc1_1, inst, inst[19:15],{
-        32'b00000000000000000000000001110011 , 5'b0   //ebreak
+        32'b00000000000100000000000001110011 , 5'b0   //ebreak 001001
     });
 
 
