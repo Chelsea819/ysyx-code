@@ -84,7 +84,7 @@ uint32_t pmem_read_npc(uint32_t addr) {
 }
 
 void get_inst(){
-	if(!dut.rst) dut.inst = pmem_read_npc(dut.pc);
+	if(dut.pc != 0) dut.inst = pmem_read_npc(dut.pc);
 	
 }
 
