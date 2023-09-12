@@ -111,9 +111,6 @@ int main(int argc, char** argv, char** env) {
 	sim_time++;
 	
 	dut.rst = 0;
-	dut.eval();
-		m_trace->dump(sim_time);
-		sim_time++;
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1; 
