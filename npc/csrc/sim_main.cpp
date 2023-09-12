@@ -92,6 +92,8 @@ void get_inst(){
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
 	VerilatedVcdC *m_trace = new VerilatedVcdC;
+	VerilatedContext* contextp = new VerilatedContext;
+
 
 	init_mem_npc();  //初始化内存
 	dut.trace(m_trace, 5);               
@@ -109,6 +111,9 @@ int main(int argc, char** argv, char** env) {
 	sim_time++;
 	
 	dut.rst = 0;
+	dut.eval();
+		m_trace->dump(sim_time);
+		sim_time++;
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1; 
