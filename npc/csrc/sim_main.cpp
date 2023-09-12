@@ -91,7 +91,8 @@ void get_inst(){
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
-	VerilatedVcdC *m_trace = new VerilatedVcdC;  
+	VerilatedVcdC *m_trace = new VerilatedVcdC;
+
 	init_mem_npc();  //初始化内存
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
@@ -121,6 +122,7 @@ int main(int argc, char** argv, char** env) {
 			break;
 		}
 	}
+	dut.final();
 	free(pmem);
 	pmem = NULL;
 	m_trace->close();	//关闭波形跟踪文件
