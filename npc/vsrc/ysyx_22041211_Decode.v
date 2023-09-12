@@ -49,14 +49,14 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
 
     //type_N 识别具体是哪一条指令
-    // ysyx_22041211_MuxKeyWithDefault #(2, 25, 3) tell_inst (key_all[5:3], inst[31:7], 3'b0,{
-    //     25'b0000000000000000000000000 , 3'b000,  //N-ecall
-    //     25'b0000000000010000000000000 , 3'b001   //N-ebreak
-    // });
+    ysyx_22041211_MuxKeyWithDefault #(2, 25, 3) tell_inst (key_all[5:3], inst[31:7], 3'b0,{
+        25'b0000000000000000000000000 , 3'b000,  //N-ecall
+        25'b0000000000010000000000000 , 3'b001   //N-ebreak
+    });
 
-    //type_N 识别具体是哪一条指令
-    assign key_all[5:3] = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
-                          inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
+    // //type_N 识别具体是哪一条指令
+    // assign key_all[5:3] = inst[31:7] == 25'b0000000000000000000000000 ? 3'b000 :             //N-ecall
+    //                       inst[31:7] == 25'b0000000000010000000000000 ? 3'b001 : 3'b111;     //N-ebreak
 
     //rs1
     ysyx_22041211_MuxKeyWithDefault #(1, 7, 5) rs1_0_lui (rsc1_0, inst[6:0], inst[19:15],{
