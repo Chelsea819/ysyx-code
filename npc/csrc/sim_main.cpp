@@ -118,7 +118,7 @@ int main(int argc, char** argv, char** env) {
 		// get_inst();
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
-		if(dut.clk == 1) dut.eval();
+		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
 	//	nvboard_update();
