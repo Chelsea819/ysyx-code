@@ -7,10 +7,13 @@ module ysyx_22041211_ALUsrc #(parameter DATA_LEN = 32)(
 	output		[DATA_LEN - 1:0]		src
 );
 
-	ysyx_22041211_MuxKeyWithDefault #(2, 1, 32) choose_src2 (src, key, {DATA_LEN{1'b0}},{
-        1'b1 , data1,
-        1'b0 , data0 
-    });
+	// ysyx_22041211_MuxKeyWithDefault #(2, 1, 32) choose_src2 (src, key, {DATA_LEN{1'b0}},{
+    //     1'b1 , data1,
+    //     1'b0 , data0 
+    // });
+
+    assign src = key == 1'b1 ? data1 : data0;
+
 
 
 endmodule
