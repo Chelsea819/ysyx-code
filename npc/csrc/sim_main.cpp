@@ -83,7 +83,7 @@ uint32_t pmem_read_npc(uint32_t addr) {
   return ret;
 }
 
-void get_inst(){printf("rst = %d\n",dut.rst);
+void get_inst(){
 	if(!dut.rst) dut.inst = pmem_read_npc(dut.pc);
 	
 }
