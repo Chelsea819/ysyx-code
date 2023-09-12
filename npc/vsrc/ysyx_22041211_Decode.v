@@ -1,5 +1,6 @@
 
 
+/* verilator lint_off UNUSEDSIGNAL */
 module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     input       [DATA_LEN - 1:0]	inst,
     output	    [DATA_LEN - 1:0]	imm ,
@@ -14,12 +15,12 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     wire    [5:0]                   key_all ;
     wire    [31:0]                  key_tmp;
     wire    [2:0]                   key_tmp_tmp;
-    wire    [4:0]                inst_tmp;
+    wire    [31:0]                inst_tmp;
     // wire   [4:0]                   rsc1_0;
     // wire   [4:0]                   rsc1_1;
                                                                             
-    assign  inst_tmp      = inst[11:7];
-    assign  rd            = inst_tmp;
+    assign  inst_tmp      = inst;
+    assign  rd            = inst_tmp[11:7];
     //assign  rsc1    = inst[19:15];
     assign  rsc2    = inst[24:20];
     assign  key_tmp = {{26{1'b0}},key_all};
@@ -112,3 +113,4 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
