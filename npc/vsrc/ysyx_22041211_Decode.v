@@ -14,6 +14,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 );
     wire    [2:0]                   key_opcode;
     wire    [2:0]                   key_certain;
+    wire    [5:0]                   key_all;
     wire    [31:0]                  key_tmp;
     // wire   [4:0]                   rsc1_0;
     // wire   [4:0]                   rsc1_1;
@@ -23,7 +24,8 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     //assign  key_tmp = {{26{1'b0}},key_all};
     assign  key_tmp = {{26{1'b0}},key_certain,key_opcode};
     assign  key     = key_opcode;
-    //assign key_certain = 3'b111;
+    //assign  key = key_all[2:0];
+    assign key_certain = 3'b111;
     //assign  rsc1    = rsc1_0 | rsc1_1;
 
     // 3'b000  I 

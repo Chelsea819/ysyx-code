@@ -119,7 +119,7 @@ int main(int argc, char** argv, char** env) {
 		// printf("dut.inst = 0x%032x\n",dut.inst);
 		// printf("after pmem_read\n");
 		dut.eval();
-		m_trace->dump(sim_time);
+		if(dut.clk == 1) m_trace->dump(sim_time);
 		sim_time++;
 	//	nvboard_update();
 	//	usleep(1);
