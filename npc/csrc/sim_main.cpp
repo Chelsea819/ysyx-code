@@ -30,7 +30,7 @@ static uint32_t *pmem = NULL;
 bool ifbreak = false;
 
 void ifebreak_func(int key){
-	printf("while key = %d\n");
+	printf("while key = %d\n",key);
 	if(key == 9) {ifbreak = true; } 
 }
 
