@@ -14,10 +14,12 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     wire    [5:0]                   key_all ;
     wire    [31:0]                  key_tmp;
     wire    [2:0]                   key_tmp_tmp;
+    wire    [4:0]                inst_tmp;
     // wire   [4:0]                   rsc1_0;
     // wire   [4:0]                   rsc1_1;
                                                                             
-    assign  rd      = inst[11:7];
+    assign  inst_tmp      = inst[11:7];
+    assign  rd            = inst_tmp;
     //assign  rsc1    = inst[19:15];
     assign  rsc2    = inst[24:20];
     assign  key_tmp = {{26{1'b0}},key_all};
