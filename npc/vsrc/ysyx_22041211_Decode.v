@@ -25,7 +25,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     assign  key_tmp = {{26{1'b0}},key_certain,key_opcode};
     assign  key     = key_opcode;
     //assign  key = key_all[2:0];
-    assign key_certain = 3'b111;
+    //assign key_certain = 3'b111;
     //assign  rsc1    = rsc1_0 | rsc1_1;
 
     // 3'b000  I 
