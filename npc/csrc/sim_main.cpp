@@ -129,7 +129,7 @@ int main(int argc, char** argv, char** env) {
 		dut.clk ^= 1; 
 		//dut.rst = 0;
 
-		dut.inst = pmem_read_npc(dut.pc);
+		if(dut.clk == 1) dut.inst = pmem_read_npc(dut.pc);
 
 		dut.eval();
 		m_trace->dump(sim_time);
