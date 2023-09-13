@@ -75,9 +75,9 @@ void init_mem_npc(){
 	pmem[7] = 0b00000000000000000001010000010111; //auipc
 	pmem[8] = 0b00000000000000000010010000010111; //auipc
 	pmem[9] = 0b00000000000000000011010000010111; //auipc
-	// *(pmem + 10) = 0b00000000000000000110000110110111; //lui
-	// *(pmem + 11) = 0b00000000000000001110001110110111; //lui
-	// *(pmem + 12) = 0b00000000000000011110011110110111; //lui
+	// pmem[10] = 0b00000000000000000110000110110111; //lui
+	// pmem[11] = 0b00000000000000001110001110110111; //lui
+	// pmem[12] = 0b00000000000000011110011110110111; //lui
 	pmem[10] = 0b00000000000100000000000001110011; //ebreak
 
 	return ;
@@ -118,19 +118,21 @@ int main(int argc, char** argv, char** env) {
 	init_mem_npc();  //初始化内存
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
-	dut.rst = 1;
+	
 
 	dut.clk = 0; 
+	dut.eval();
+	dut.rst = 1;
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
 
 	dut.clk = 1;
 	dut.eval(); 
+	dut.rst = 0;
+	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
-
-	dut.rst = 0;
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1; 
