@@ -111,6 +111,11 @@ int main(int argc, char** argv, char** env) {
 	sim_time++;
 
 	dut.clk = 0;
+	dut.eval();
+	m_trace->dump(sim_time);
+	sim_time++;
+
+	dut.clk = 0;
 	dut.rst = 0;
 	dut.inst = pmem_read_npc(dut.pc);
 	dut.eval();
