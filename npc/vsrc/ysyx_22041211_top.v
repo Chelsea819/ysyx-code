@@ -57,7 +57,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	);
 
 	import "DPI-C" context function void get_inst();
-    always @(posedge clk)
+    always @(*)
         dpi_inst();
 
     task dpi_inst();  // 在任务中使用 input reg 类型
