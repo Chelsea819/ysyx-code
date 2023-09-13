@@ -83,10 +83,10 @@ uint32_t pmem_read_npc(uint32_t addr) {
   return ret;
 }
 
-void get_inst(){
-	if(dut.pc != 0) dut.inst = pmem_read_npc(dut.pc);
+// void get_inst(){
+// 	if(dut.pc != 0) dut.inst = pmem_read_npc(dut.pc);
 	
-}
+// }
 
 
 int main(int argc, char** argv, char** env) {
@@ -113,7 +113,10 @@ int main(int argc, char** argv, char** env) {
 	
 
 	while (sim_time < MAX_SIM_TIME) {		
-		dut.clk ^= 1; dut.rst = 0;
+		dut.clk ^= 1; 
+		dut.rst = 0;
+
+		dut.inst = pmem_read_npc(dut.pc);
 
 		dut.eval();
 		m_trace->dump(sim_time);
