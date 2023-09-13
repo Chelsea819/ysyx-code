@@ -39,15 +39,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign pc = pc_temp;
 
 
-	// import "DPI-C" context function int pmem_read_npc(int addr);
-    // always @(posedge clk)
-    //     dpi_memRead(pc_temp);
-
-    // task dpi_memRead(input reg [31:0] k);  // 在任务中使用 input reg 类型
-    //     /* verilator no_inline_task */
-    //     inst = pmem_read_npc(k);
-    // endtask
-
 	ysyx_22041211_counter my_counter(
 		.clk	(clk),
 		.rst	(rst),
@@ -56,14 +47,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	);
 
-	// import "DPI-C" context function void get_inst();
-    // always @(posedge clk)
-    //     dpi_inst();
+	import "DPI-C" context function void get_inst();
+    always @(posedge clk)
+        dpi_inst();
 
-    // task dpi_inst();  // 在任务中使用 input reg 类型
-    //     /* verilator no_inline_task */
-    //     get_inst();
-    // endtask
+    task dpi_inst();  // 在任务中使用 input reg 类型
+        /* verilator no_inline_task */
+        get_inst();
+    endtask
 
 
 	ysyx_22041211_Decode my_Decode(
