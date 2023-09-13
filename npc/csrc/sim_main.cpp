@@ -111,6 +111,7 @@ int main(int argc, char** argv, char** env) {
 	sim_time++;
 
 	dut.clk = 0;
+	dut.rst = 0;
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
@@ -119,7 +120,7 @@ int main(int argc, char** argv, char** env) {
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1; 
-		dut.rst = 0;
+		//dut.rst = 0;
 
 		dut.inst = pmem_read_npc(dut.pc);
 
