@@ -105,11 +105,11 @@ int main(int argc, char** argv, char** env) {
 	m_trace->dump(sim_time);
 	sim_time++;
 
-	dut.clk = 1;dut.rst = 0;
+	dut.clk = 1;
 	dut.eval(); 
 	m_trace->dump(sim_time);
 	sim_time++;
-
+	dut.rst = 0;
 	// dut.clk = 0;
 	// //dut.rst = 0;
 	// dut.eval();
