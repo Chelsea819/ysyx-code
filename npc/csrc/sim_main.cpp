@@ -83,16 +83,16 @@ uint32_t pmem_read_npc(uint32_t addr) {
   return ret;
 }
 
-void get_inst(){
-	if(dut.pc != 0) dut.inst = pmem_read_npc(dut.pc);
+// void get_inst(){
+// 	if(dut.pc != 0) dut.inst = pmem_read_npc(dut.pc);
 	
-}
+// }
 
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
 	VerilatedVcdC *m_trace = new VerilatedVcdC;
-	VerilatedContext* contextp = new VerilatedContext;
+	//VerilatedContext* contextp = new VerilatedContext;
 
 
 	init_mem_npc();  //初始化内存
@@ -120,7 +120,7 @@ int main(int argc, char** argv, char** env) {
 		dut.clk ^= 1; 
 		//dut.rst = 0;
 
-		//if(dut.clk == 1) dut.inst = pmem_read_npc(dut.pc);
+		if(dut.clk == 1) dut.inst = pmem_read_npc(dut.pc);
 
 		dut.eval();
 		m_trace->dump(sim_time);
