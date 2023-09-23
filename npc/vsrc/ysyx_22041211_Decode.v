@@ -11,7 +11,6 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 );
     wire    [2:0]                   key_opcode;
     wire    [2:0]                   key_certain;
-   // wire    [5:0]                   key_all;
     wire    [31:0]                  key_tmp;
                                                                             
     assign  rd      = inst[11:7];
@@ -24,12 +23,14 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
     // 3'b010  U
     // 3'b011  R
     // 3'b100  S
+    // 3'b101  J
     //tell-opcode 
     assign key_opcode = inst[6:0] == 7'b0010011 ? 3'b000 :                               // 3'b000  I addi sltiu srai andi
                           inst[6:0] == 7'b1110011 ? 3'b001 :                               // 3'b001  N ecall ebreak  
                           (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? 3'b010 :  // 3'b010  U lui auipc
                           inst[6:0] == 7'b0110011 ? 3'b011 :                               // 3'b011  R add sub
-                          inst[6:0] == 7'b0100011 ? 3'b100 : 3'b111;                       // 3'b100  S sb sw sh
+                          inst[6:0] == 7'b0100011 ? 3'b100 :                               // 3'b100  S sb sw sh
+                          inst[6:0] == 7'b1101111 ? 3'b101 : 3'b111;                       // 3'b101  J                  
 
 
     //type_N 识别具体是哪一条指令

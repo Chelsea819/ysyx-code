@@ -1,13 +1,16 @@
-module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
+/* verilator lint_off UNUSEDSIGNAL */
+
+module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     input           [DATA_LEN - 1:0]              inst, //func+opcode
     input           [2:0]                         key,
     //output          [2:0]                         alu_control,
     output                                        add_en,
     output                                        regWrite,
+    output                                        branch,
     // output                                        mem_toReg,
     // output                                        mem_write, //写内存操作
     output                                        alu_srcA,
-    output                                        alu_srcB
+    output           [1:0]                        alu_srcB
 );
     // wire                                          alu_addi;
     // wire                                          alu_apuic;
@@ -26,7 +29,8 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
     // });
 
     //alu
-    assign add_en = inst == 10'b0000010011 || inst[6:0] ==  7'b0010111 || inst[6:0] == 7'b0110111 ? 1'b1 : 1'b0;
+    assign add_en = 1'b1;
+    //assign add_en = {inst[14:12],inst[6:0]} == 10'b0000010011 || inst[6:0] ==  7'b0010111 || inst[6:0] == 7'b0110111 ? 1'b1 : 1'b0;
 
 
     //choosing src1
@@ -36,9 +40,12 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
     // });
 
     //choosing src2
-    //B/S/R--reg
-    //I/U/J--imm
-    assign alu_srcB = (key == 3'b011) ? 1'b0 : 1'b1;
+    //B/S/R--reg        00
+    //I/U/J--imm        01
+    //jalr jal      +4  10
+    assign alu_srcB = ({inst[14:12],inst[6:0]} == 10'b0001100111 || inst[6:0] == 7'b1101111) ? 2'b10 :
+                      (key == 3'b011) ? 2'b0 : 2'b1;
+
     // ysyx_22041211_MuxKeyWithDefault #(1, 3, 1) src2_choose (alu_srcB, key, 1'b1,{
     //     3'b011 , 1'b0   //reg-data -- reg
     // });
@@ -62,10 +69,16 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 10)(
 
 
 
-    //regWrite----I/R/U 是否往reg里面写东西
-    assign regWrite = key == 3'b000 ? 1'b1 : 1'b0;
+    //regWrite----I/R/U/J 是否往reg里面写东西
+    //
+    assign regWrite = (key == 3'b000 || key == 3'b011 || key == 3'b010 || key == 3'b011 || key == 3'b101) ? 1'b1 : 1'b0;
     // ysyx_22041211_MuxKeyWithDefault #(1, 3, 1) w_reg (regWrite, key, 1'b0,{
     //     3'b000 , 1'b1
     // });
+
+    //branch----jalr jal-J B 
+    assign branch = ({inst[14:12],inst[6:0]} == 10'b0001100111 || inst[6:0] == 7'b1101111) ? 1'b1 : 1'b0;
     
 endmodule
+
+/* verilator lint_on UNUSEDSIGNAL */

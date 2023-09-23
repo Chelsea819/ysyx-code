@@ -5,6 +5,8 @@
 	> Created Time: 2023年08月06日 星期日 16时00分47秒
  ************************************************************************/
 
+/* verilator lint_off UNUSEDSIGNAL */
+
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
@@ -13,7 +15,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	
 		
 );
-	reg 			[ADDR_LEN - 1:0]	pc_temp ;
 	//wire			[ADDR_LEN - 1:0]	snpc    ;
 	wire	    	[DATA_LEN - 1:0]	imm		;	
    	wire      		[4:0]               rd		;
@@ -24,26 +25,43 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire								en		;	
 	//wire            [2:0]               alu_control	;
     wire                              	regWrite	;
+	wire								branch;
 	//wire			[DATA_LEN - 1:0]	result	;
 	wire      		[2:0]               key		;
 	wire								alu_srcA;
-	wire								alu_srcB;
+	wire			[1:0]				alu_srcB;
 	wire			[DATA_LEN - 1:0]	reg_data1;
 	wire			[DATA_LEN - 1:0]	reg_data2;
 	// wire			                	mem_toReg;
 	// wire			                	mem_write;
 	// wire			[DATA_LEN - 1:0]	data_mem;
 	wire			[DATA_LEN - 1:0]	alu_result;
+	wire 			[DATA_LEN - 1:0]	pc_plus;
+	wire			[DATA_LEN - 1:0]	pc_before;
+	wire			[DATA_LEN - 1:0]	pc_after;	
 	// wire			[DATA_LEN - 1:0]	w_reg_data;
 
-	assign pc = pc_temp;
+	assign pc = pc_before;
 
 
 	ysyx_22041211_counter my_counter(
 		.clk	(clk),
 		.rst	(rst),
-		.pc_old	(pc_temp),
-		.pc_new	(pc_temp)
+		.pc_new	(pc_after),
+		.pc	(pc_before)
+
+	);
+
+	ysyx_22041211_MuxKey #(2,1,32) PC_chosing (pc_plus, branch, {
+		1'b0, 32'b100,
+		1'b1, imm
+	});
+	
+
+	ysyx_22041211_pcPlus my_pcPlus(
+		.pc_old	(pc_before),
+		.src	(pc_plus),
+		.pc_new	(pc_after)
 
 	);
 
@@ -79,29 +97,30 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.r_data2	(reg_data2)
 	);
 
-	ysyx_22041211_ALUsrc my_srcA_chosing(
-		.key		(alu_srcA),
-		.data1		(pc),
-		.data0		(reg_data1),
-		.src		(src1)
-	);
 
-	ysyx_22041211_ALUsrc my_srcB_chosing(
-		.key		(alu_srcB),
-		.data1		(imm),
-		.data0		(reg_data2),
-		.src		(src2)
-	);
-	
+	ysyx_22041211_MuxKey #(2,1,32) my_srcAchosing (src1, alu_srcA, {
+		1'b0, reg_data1,
+		1'b1, pc
+	});
+
+
+	ysyx_22041211_MuxKey #(3,2,32) my_srcBchosing (src2, alu_srcB, {
+		2'b00, reg_data2,
+		2'b01, imm,
+		2'b10, 32'b100
+	});
+
 
 	ysyx_22041211_controller my_controller(
-		.inst			({inst[14:12],inst[6:0]}),
+		//.inst			({inst[14:12],inst[6:0]}),
+		.inst			(inst),
 		.key			(key),
 		//.alu_control	(alu_control),
 		.add_en			(en),
 		.regWrite		(regWrite),
 		// .mem_toReg		(mem_toReg),
 		// .mem_write		(mem_write),
+		.branch			(branch),
 		.alu_srcA		(alu_srcA),
 		.alu_srcB		(alu_srcB)
 	);
@@ -130,3 +149,5 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 
 endmodule
+
+/* verilator lint_on UNUSEDSIGNAL */

@@ -1,5 +1,5 @@
 
-module ysyx_22041211_ALUsrc #(parameter DATA_LEN = 32)(
+module ysyx_22041211_choose #(parameter DATA_LEN = 32)(
 	input		                		key,
 	input		[DATA_LEN - 1:0]		data1,
     input		[DATA_LEN - 1:0]		data0,
