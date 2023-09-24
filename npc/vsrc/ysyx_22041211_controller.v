@@ -34,7 +34,9 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
 
 
     //choosing src1
-    assign alu_srcA = inst[6:0] ==  7'b0010111 ? 1'b1 : 1'b0;
+    assign alu_srcA = (inst[6:0] ==  7'b0010111 || inst[6:0] ==  7'b1101111) ? 1'b1 : 1'b0;
+
+
     // ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) src1_choose (alu_srcA, inst[6:0], 1'b0,{
     //     7'b0010111 , 1'b1 //auipc -- pc
     // });
