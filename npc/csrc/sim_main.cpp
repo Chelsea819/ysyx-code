@@ -88,7 +88,7 @@ void init_mem_npc(){
 }
 
 static inline uint32_t host_read(void *addr) { 
-	printf("before host_read\n");
+	printf("before host_read addr = %p\n",addr);
     return *(uint32_t *)addr;
 	printf("after host_read\n");
 }
