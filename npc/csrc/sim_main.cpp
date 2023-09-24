@@ -144,6 +144,7 @@ int main(int argc, char** argv, char** env) {
 
 		if(dut.clk == 1) dut.inst = pmem_read_npc(dut.pc);
 		m_trace->dump(sim_time);
+		sim_time++;
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
