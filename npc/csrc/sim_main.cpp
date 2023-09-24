@@ -19,14 +19,11 @@
 
 #define MAX_SIM_TIME 100
 vluint64_t sim_time = 0;
-//#define CONFIG_MSIZE 0X80000000
 #define CONFIG_MBASE 0X80000000
 
 
 
 static  TOP_NAME dut;
-//void nvboard_bind_all_pins(Vtop* top);
-//static uint32_t *pmem = NULL;
 static uint32_t pmem[20] = {0};
 bool ifbreak = false;
 
@@ -78,7 +75,7 @@ void init_mem_npc(){
 	pmem[10] = 0b00000000000000000110000110110111; //lui
 	pmem[11] = 0b00000000000000001110001110110111; //lui
 	pmem[12] = 0b00000000000000011110011110110111; //lui
-	pmem[13] = 0b00000000100000000000000011101111; //jal   x[1] = pc m+4 + 4 pc += 8 
+	pmem[13] = 0b00000000100000000000000011101111; //jal   x[1] = pc + 4 pc += 8 
 	pmem[14] = 0b00000000000000001110001110110111; //lui
 	pmem[15] = 0b00000000000000011110011110110111; //lui
 	pmem[16] = 0b00000000111000000000001110010011; //addi x[3] = 0 + 6 
@@ -117,14 +114,11 @@ uint32_t pmem_read_npc(uint32_t addr) {
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
 	VerilatedVcdC *m_trace = new VerilatedVcdC;
-	//VerilatedContext* contextp = new VerilatedContext;
-
 
 	init_mem_npc();  //初始化内存
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
 	
-
 	dut.clk = 0; 
 	dut.eval();
 	dut.rst = 1;
@@ -137,11 +131,11 @@ int main(int argc, char** argv, char** env) {
 	dut.eval(); 
 	dut.rst = 0;
 	dut.eval();
+	
 	dut.inst = pmem_read_npc(dut.pc);
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
-
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1;
@@ -157,8 +151,6 @@ int main(int argc, char** argv, char** env) {
 		}
 	}
 	dut.final();
-	// free(pmem);
-	// pmem = NULL;
 	m_trace->close();	//关闭波形跟踪文件
 	exit(EXIT_SUCCESS);
 }
