@@ -78,7 +78,7 @@ void init_mem_npc(){
 	pmem[10] = 0b00000000000000000110000110110111; //lui
 	pmem[11] = 0b00000000000000001110001110110111; //lui
 	pmem[12] = 0b00000000000000011110011110110111; //lui
-	pmem[13] = 0b00000000100000000000000011101111; //jal   x[1] = pc + 4 pc += 8 
+	pmem[13] = 0b00000000100000000000000011101111; //jal   x[1] = pc m+4 + 4 pc += 8 
 	pmem[14] = 0b00000000000000001110001110110111; //lui
 	pmem[15] = 0b00000000000000011110011110110111; //lui
 	pmem[16] = 0b00000000111000000000001110010011; //addi x[3] = 0 + 6 
@@ -135,6 +135,11 @@ int main(int argc, char** argv, char** env) {
 	dut.clk = 1;
 	dut.eval(); 
 	dut.rst = 0;
+	dut.eval();
+	m_trace->dump(sim_time);
+	sim_time++;
+
+	dut.clk = 0; 
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
