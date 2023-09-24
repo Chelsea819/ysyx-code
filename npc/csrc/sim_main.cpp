@@ -88,22 +88,22 @@ void init_mem_npc(){
 }
 
 static inline uint32_t host_read(void *addr) { 
-	//printf("before host_read\n");
+	printf("before host_read\n");
     return *(uint32_t *)addr;
-	//printf("after host_read\n");
+	printf("after host_read\n");
 }
 
 
 uint32_t* guest_to_host(uint32_t paddr) { 
-	//printf("before  guest_to_host\n");
+	printf("before  guest_to_host\n");
 	return pmem + (paddr - CONFIG_MBASE) / 4; 
-	//printf("after guest_to_host\n");
+	printf("after guest_to_host\n");
 	}
 
 uint32_t pmem_read_npc(uint32_t addr) {
-	//printf("before mem_read_npc!\n");
+	printf("before mem_read_npc!\n");
 	uint32_t ret = host_read(guest_to_host(addr));
-	// printf("after pmem_read_npc!\n");
+	printf("after pmem_read_npc!\n");
   return ret;
 }
 
