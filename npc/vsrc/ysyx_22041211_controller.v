@@ -7,6 +7,7 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     output                                        add_en,
     output                                        regWrite,
     output                                        branch,
+    output                                        pc_choose1,
     // output                                        mem_toReg,
     // output                                        mem_write, //写内存操作
     output                                        alu_srcA,
@@ -81,6 +82,8 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     //branch----jalr jal-J B 
     assign branch = ({inst[14:12],inst[6:0]} == 10'b0001100111 || inst[6:0] == 7'b1101111) ? 1'b1 : 1'b0;
     
+    //pc_src1 jalr----reg1  0
+    assign pc_choose1 = (key == 3'b101) ? 1'b0 : 1'b1;
 endmodule
 
 /* verilator lint_on UNUSEDSIGNAL */

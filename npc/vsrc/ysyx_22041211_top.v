@@ -36,9 +36,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// wire			                	mem_write;
 	// wire			[DATA_LEN - 1:0]	data_mem;
 	wire			[DATA_LEN - 1:0]	alu_result;
-	wire 			[DATA_LEN - 1:0]	pc_plus;
+	wire 			[DATA_LEN - 1:0]	pc_src2;
 	wire			[DATA_LEN - 1:0]	pc_before;
-	wire			[DATA_LEN - 1:0]	pc_after;	
+	wire			[DATA_LEN - 1:0]	pc_after;
+	wire			[DATA_LEN - 1:0]	pc_src1;
+	wire								pc_choose1;	
 	// wire			[DATA_LEN - 1:0]	w_reg_data;
 
 	assign pc = pc_before;
@@ -52,18 +54,23 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	);
 
-	ysyx_22041211_MuxKey #(2,1,32) PC_chosing (pc_plus, branch, {
+	ysyx_22041211_MuxKey #(2,1,32) PC_chosing (pc_src2, branch, {
 		1'b0, 32'b100,
 		1'b1, imm
 	});
 	
 
 	ysyx_22041211_pcPlus my_pcPlus(
-		.pc_old	(pc_before),
-		.src	(pc_plus),
+		.pc_old	(pc_src1),
+		.src	(pc_src2),
+		.key	(pc_choose1),
 		.pc_new	(pc_after)
-
 	);
+
+	ysyx_22041211_MuxKey #(2,1,32) pcSrcChosing (pc_src1, pc_choose1, {
+		1'b0, reg_data1,
+		1'b1, pc_before
+	});
 
 	// import "DPI-C" context function void get_inst();
     // always @(posedge clk)
@@ -118,6 +125,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		//.alu_control	(alu_control),
 		.add_en			(en),
 		.regWrite		(regWrite),
+		.pc_choose1		(pc_choose1),
 		// .mem_toReg		(mem_toReg),
 		// .mem_write		(mem_write),
 		.branch			(branch),
