@@ -96,8 +96,8 @@ static inline uint32_t host_read(void *addr) {
 
 uint32_t* guest_to_host(uint32_t paddr) { 
 	printf("before  guest_to_host\n");
+	printf("pmem + (paddr - CONFIG_MBASE) / 4 = 0x%x\n",pmem + (paddr - CONFIG_MBASE) / 4);
 	return pmem + (paddr - CONFIG_MBASE) / 4; 
-	printf("after guest_to_host\n");
 	}
 
 uint32_t pmem_read_npc(uint32_t addr) {
