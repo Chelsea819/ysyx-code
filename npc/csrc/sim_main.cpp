@@ -142,10 +142,6 @@ int main(int argc, char** argv, char** env) {
 	m_trace->dump(sim_time);
 	sim_time++;
 
-	dut.clk = 0; 
-	dut.eval();
-	m_trace->dump(sim_time);
-	sim_time++;
 
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1;
