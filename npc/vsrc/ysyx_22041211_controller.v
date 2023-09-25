@@ -83,7 +83,7 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     assign branch = ({inst[14:12],inst[6:0]} == 10'b0001100111 || inst[6:0] == 7'b1101111) ? 1'b1 : 1'b0;
     
     //pc_src1 jalr----reg1  0
-    assign pc_choose1 = (key == 3'b101) ? 1'b0 : 1'b1;
+    assign pc_choose1 = ({inst[14:12],inst[6:0]} == 10'b0001100111) ? 1'b0 : 1'b1;
 endmodule
 
 /* verilator lint_on UNUSEDSIGNAL */
