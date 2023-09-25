@@ -50,7 +50,7 @@ $(BIN):$(VSRCS) $(CSRCS) #$(NVBOARD_ARCHIVE)
 
 $(shell mkdir -p $(BUILD_DIR))
 
-sim:  $(BIN)
+run:  $(BIN)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(EXE)
 
