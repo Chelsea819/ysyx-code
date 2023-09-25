@@ -134,7 +134,10 @@ int main(int argc, char** argv, char** env) {
 	dut.rst = 0;
 	dut.eval();
 
+	int n = 0;
 	dut.inst = pmem_read_npc(dut.pc);
+	printf("\n n = %d\n",++n);
+
 	dut.eval();
 	m_trace->dump(sim_time);
 	sim_time++;
@@ -143,6 +146,8 @@ int main(int argc, char** argv, char** env) {
 		dut.clk ^= 1;
 		dut.eval();
 		if(dut.clk == 1) dut.inst = pmem_read_npc(dut.pc);
+		printf("\n n = %d\n",++n);
+
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
