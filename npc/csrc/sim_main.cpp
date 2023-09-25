@@ -135,8 +135,9 @@ int main(int argc, char** argv, char** env) {
 	dut.eval();
 
 	int n = 0;
-	dut.inst = pmem_read_npc(dut.pc);
 	printf("\n n = %d  pc = 0x%08x\n",++n,dut.pc);
+	dut.inst = pmem_read_npc(dut.pc);
+	
 
 	dut.eval();
 	m_trace->dump(sim_time);
@@ -145,9 +146,10 @@ int main(int argc, char** argv, char** env) {
 	while (sim_time < MAX_SIM_TIME) {		
 		dut.clk ^= 1;
 		dut.eval();
-		if(dut.clk == 1) {dut.inst = pmem_read_npc(dut.pc);
-		printf("\n n = %d  pc = 0x%08x\n",++n,dut.pc);
-}
+		if(dut.clk == 1) {
+			printf("\n n = %d  pc = 0x%08x\n",++n,dut.pc);
+			dut.inst = pmem_read_npc(dut.pc);
+		}
 		dut.eval();
 		m_trace->dump(sim_time);
 		sim_time++;
