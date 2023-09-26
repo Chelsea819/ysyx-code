@@ -1,5 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
+#include "../spike/htif.h"
 
 extern char _heap_start;
 int main(const char *args);
@@ -18,6 +19,9 @@ void putch(char ch) {
 }
 
 void halt(int code) {
+  //htif_poweroff();
+  //exit(0);
+  asm volatile ("ebreak");
   while (1);
 }
 
