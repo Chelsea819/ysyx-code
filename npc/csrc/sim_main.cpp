@@ -15,17 +15,27 @@
 #include <verilated_vcd_c.h>
 #include "Vysyx_22041211_top.h"
 #include "Vysyx_22041211_top___024root.h"
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <string.h>
+#include <getopt.h>
+
 //#include <nvboard.h>
 
 #define MAX_SIM_TIME 100
 vluint64_t sim_time = 0;
+#define PMEM_LEFT  ((uint32_t )CONFIG_MBASE)
 #define CONFIG_MBASE 0X80000000
+#define CONFIG_PC_RESET_OFFSET 0x0
+#define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 
 
 
 static  TOP_NAME dut;
 static uint32_t pmem[20] = {0};
 bool ifbreak = false;
+static char *img_file = NULL;
 
 void ifebreak_func(int key){
 	printf("while key = %d\n",key);
@@ -60,6 +70,40 @@ void ifebreak_func(int key){
 
 // 	return ;
 // }
+
+static int parseArgs(int argc, char *argv[]) {
+  const struct option table[] = {
+    {"batch"    , no_argument      , NULL, 'b'},
+    {"log"      , required_argument, NULL, 'l'},
+    {"diff"     , required_argument, NULL, 'd'},
+    {"port"     , required_argument, NULL, 'p'},
+    {"ftrace"   , required_argument, NULL, 'f'},
+    {"help"     , no_argument      , NULL, 'h'},
+    {0          , 0                , NULL,  0 },
+  };
+  int o;
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
+    //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
+    switch (o) {
+      case 'b': break;
+      case 'p': break;
+      case 'l': break;
+      case 'd': break;
+      case 'f': break;
+      case 1: img_file = optarg; return 0;
+      default:
+        printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
+        printf("\t-b,--batch              run with batch mode\n");
+        printf("\t-l,--log=FILE           output log to FILE\n");
+        printf("\t-f,--ftrace=FILE        get elf from FILE\n");
+        printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
+        printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
+        printf("\n");
+        exit(0);
+    }
+  }
+  return 0;
+}
 
 void init_mem_npc(){
 	//80000000-80000004-80000008-8000000c-80000010-80000014-80000024-80000028-8000002c-80000018-8000001c-80000020-80000030
@@ -107,12 +151,42 @@ uint32_t pmem_read_npc(uint32_t addr) {
 	
 // }
 
+static long load_img() {
+  if (img_file == NULL) {
+    printf("No image is given. Use the default build-in image.");
+    return 4096; // built-in image size
+    //如果img_file为NULL,说明没有指定文件,则使用默认内置的镜像,返回其大小4096
+  }
+
+  FILE *fp = fopen(img_file, "rb");
+  assert(fp);
+
+  fseek(fp, 0, SEEK_END);
+  //ftell()可以获取文件当前的读写位置偏移量
+  long size = ftell(fp);
+
+  printf("The image is %s, size = %ld", img_file, size);
+
+  fseek(fp, 0, SEEK_SET);
+  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+  //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
+  assert(ret == 1);
+
+  fclose(fp);
+  return size;
+}
+
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
 	VerilatedVcdC *m_trace = new VerilatedVcdC;
 
+	parseArgs(argc, argv);
+
 	init_mem_npc();  //初始化内存
+
+	load_img();
+
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
 	
