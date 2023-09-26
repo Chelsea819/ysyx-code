@@ -54,7 +54,7 @@ module ysyx_22041211_Decode #(parameter DATA_LEN = 32)(
 
     //imm
     assign imm = key_opcode == 3'b000 ? {{20{inst[31]}},inst[31:20]} :      //I
-                 key_opcode == 3'b101 ? {{10{inst[31]}},inst[31],inst[19:12],inst[20],inst[30:20],1'b0} :      //J
+                 key_opcode == 3'b101 ? {{11{inst[31]}},inst[31],inst[19:12],inst[20],inst[30:21],1'b0} :      //J
                  key_opcode == 3'b010 ? {inst[31:12],{12{1'b0}}} : 32'b0;   //U
 
 
