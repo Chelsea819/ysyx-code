@@ -5,7 +5,7 @@ WAVE = waveform.vcd
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH ?=
+INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --build --cc --trace -Wall\
@@ -29,6 +29,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+#HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 #CSRCS += $(SRC_AUTO_BIND)
 
@@ -37,16 +38,19 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
+CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
 LDFLAGS += -lSDL2 -lSDL2_image
 
 
 $(BIN):$(VSRCS) $(CSRCS) #$(NVBOARD_ARCHIVE)
+	$(warning INC_PATH = $(INC_PATH))
+#@echo +++++$(INC_PATH)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME)  $^\
+		--top-module $(TOPNAME) $^\
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+	
 
 $(shell mkdir -p $(BUILD_DIR))
 

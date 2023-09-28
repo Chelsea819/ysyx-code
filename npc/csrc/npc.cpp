@@ -1,7 +1,7 @@
 #include <getopt.h>
 #include "npc.h"
-#include "./common.h"
-#include "./paddr.h"
+#include "common.h"
+#include "paddr.h"
 
 void init_mem_npc();
 void init_isa();

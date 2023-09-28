@@ -13,25 +13,23 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __ISA_RISCV_H__
-#define __ISA_RISCV_H__
+#include "paddr.h"
+#include "common.h"
+#include "macro.h"
 
-#include <common.h>
+// this is not consistent with uint8_t
+// but it is ok since we do not access the array directly
+static const uint32_t img [] = {
+  0x00000297,  // auipc t0,0
+  0x00100093,  // addi    x[1] = 0 + 1
+  0x00000297,  // auipc t0,0
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100093,  // addi    x[1] = 0 + 1
+};
 
-typedef struct {
-  word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
-  //normal register
 
-  vaddr_t pc;
-} MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state); //寄存器结构体
+void init_isa() {
+  /* Load built-in image. */
+  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-// decode
-typedef struct {
-  union {
-    uint32_t val;
-  } inst;
-} MUXDEF(CONFIG_RV64, riscv64_ISADecodeInfo, riscv32_ISADecodeInfo);
-
-#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
-
-#endif
+}

@@ -13,18 +13,33 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
-#include <cpu/difftest.h>
-#include "../local-include/reg.h"
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
-// 把通用寄存器和PC与从DUT中读出的寄存器的值进行比较.
-bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  if(cpu.pc!= ref_r->pc) return false;
-  for(int i = 0; i < 32; i++){
-    if(ref_r->gpr[i] != gpr(i)) return false;
-  } 
-  return true;
-}
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <string.h>
 
-void isa_difftest_attach() {
-}
+#include "macro.h"
+
+
+#include <assert.h>
+#include <stdlib.h>
+
+#if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul
+#define PMEM64 1
+#endif
+
+
+typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
+typedef MUXDEF(CONFIG_ISA64, int64_t, int32_t)  sword_t;
+#define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
+
+typedef word_t vaddr_t;
+typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
+#define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
+typedef uint16_t ioaddr_t;
+
+
+#endif
