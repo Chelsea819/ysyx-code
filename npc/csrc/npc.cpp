@@ -5,6 +5,7 @@
 
 void init_mem_npc();
 void init_isa();
+void init_sdb();
 
 static char *img_file = NULL;
 
@@ -82,4 +83,7 @@ void init_npc(int argc,char *argv[]){
 
     //load certain program to memory
     long img_size = load_img();
+
+    /* Initialize the simple debugger.初始化简单调试器 */
+    init_sdb();
 }
