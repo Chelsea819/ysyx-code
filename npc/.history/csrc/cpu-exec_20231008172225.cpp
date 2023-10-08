@@ -60,7 +60,7 @@ extern VerilatedVcdC *m_trace;
 // WP* get_head();
 
 void ifebreak_func(int key){
-	printf("while key = %d\n",key);
+	// printf("while key = %d\n",key);
 	if(key == 9) {ifbreak = true; } 
 }
 
