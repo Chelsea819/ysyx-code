@@ -83,10 +83,6 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
-    if(dut.clk){
-      n ++;
-      continue;
-    }
     printf("\nbefore CPU runing [%d]\n",n);
     exec_once();
     printf("after CPU runing [%d]\n",n);
