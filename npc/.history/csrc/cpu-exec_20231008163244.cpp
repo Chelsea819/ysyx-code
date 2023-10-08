@@ -82,9 +82,8 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
-    printf("before CPU runing [%d]\n",n);
+    printf("CPU runing [%d]\n",n);
     exec_once();
-    printf("after CPU runing [%d]\n",n);
     g_nr_guest_inst++;  //记录客户指令的计时器
     if(ifbreak) {
         printf("\nebreak!\n");
