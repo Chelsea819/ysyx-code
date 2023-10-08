@@ -69,8 +69,8 @@ void ifebreak_func(int key){
 static void exec_once()
 {   
   do{
-    if(dut.pc != 0x80000000 || dut.inst != 0) {
-      dut.clk ^= 1;
+    if(dut.pc != 0x80000000 || dut.inst != 0)  
+    { dut.clk ^= 1;
       dut.eval();
     }
     if(dut.clk == 1) {
