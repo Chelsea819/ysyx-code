@@ -71,7 +71,7 @@ static void exec_once()
     dut.clk ^= 1;
     dut.eval();
     if(dut.clk == 1) {
-      printf("helo!\n");
+      printf("helo!\n")
         printf("pc = 0x%08x   ",dut.pc);
         dut.inst = inst_fetch((vaddr_t)dut.pc, 4);
         printf("pc = 0x%08x nst = %032x\n",dut.pc,dut.inst);
