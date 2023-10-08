@@ -83,6 +83,7 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
+    printf("\nCPU runing [%d]\n",n);
     if(dut.clk == 0){
       exec_once();
       n ++;
@@ -91,7 +92,6 @@ static void execute(uint64_t n)
     else{
       exec_once();
     }
-    printf("\nCPU runing [%d]\n",n);
     g_nr_guest_inst++;  //记录客户指令的计时器
     if(ifbreak) {
         printf("\nebreak!\n");

@@ -83,6 +83,7 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
+    
     if(dut.clk == 0){
       exec_once();
       n ++;
