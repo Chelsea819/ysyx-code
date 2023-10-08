@@ -60,7 +60,7 @@ extern VerilatedVcdC *m_trace;
 // WP* get_head();
 
 void ifebreak_func(int key){
-  printf("func_ifbreak: pc = %08x\n",dut.pc);
+  printf("pc = %08x\n",dut.pc);
 	//printf("while key = %d\n",key);
 	if(key == 9) {ifbreak = true; } 
 }
@@ -90,10 +90,10 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
-    //printf("\n------------------------------------------\n");
+    printf("\n------------------------------------------\n");
     exec_once();
-    // printf("\nCPU runing [%ld]\n",n);
-    // printf("------------------------------------------\n");
+    printf("\nCPU runing [%ld]\n",n);
+    printf("------------------------------------------\n");
     g_nr_guest_inst++;  //记录客户指令的计时器
     if(ifbreak) {
         printf("\nebreak!\n");
