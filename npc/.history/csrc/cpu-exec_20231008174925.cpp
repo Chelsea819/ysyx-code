@@ -107,11 +107,11 @@ static void statistic()
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   printf("host time spent = %d us\n", g_timer);
-  printf("total guest instructions = %d\n", g_nr_guest_inst);
+  printf("total guest instructions = %d", g_nr_guest_inst);
   if (g_timer > 0)
-    printf("simulation frequency = %d inst/s\n", g_nr_guest_inst * 1000000 / g_timer);
+    printf("simulation frequency = %d inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else
-    printf("Finish running in less than 1 us and can not calculate the simulation frequency\n");
+    printf("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
 // void assert_fail_msg()
