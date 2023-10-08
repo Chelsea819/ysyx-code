@@ -75,11 +75,7 @@ static char too_lessArg(char *args){
 static int cmd_c(char *args)
 {
   /*Simulate how the CPU works.*/
-  if(ifbreak){
-    printf("END.............\n");
-    return 0;
-  }
-  else cpu_exec(-1);
+  cpu_exec(-1);
   return 0;
 }
 
@@ -118,10 +114,6 @@ uint32_t convert_16(char *args){
 }
 
 static int cmd_si(char *args){
-  if(ifbreak){
-    printf("END.............\n");
-    return 0;
-  }
   uint64_t n = 0;
   if(args == NULL)  n = 1;
   else {

@@ -118,10 +118,6 @@ uint32_t convert_16(char *args){
 }
 
 static int cmd_si(char *args){
-  if(ifbreak){
-    printf("END.............\n");
-    return 0;
-  }
   uint64_t n = 0;
   if(args == NULL)  n = 1;
   else {
