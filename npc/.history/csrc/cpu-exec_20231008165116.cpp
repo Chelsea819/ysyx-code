@@ -87,7 +87,6 @@ static void execute(uint64_t n)
     if(dut.clk == 1){
       exec_once();
       n ++;
-      printf("dut.clk = %d\n",dut.clk);
       printf("------------------------------------------\n");
       continue;
     } 
