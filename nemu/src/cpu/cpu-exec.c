@@ -245,6 +245,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 {
   s->pc = pc;
   s->snpc = pc;
+  //取指和译码
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 

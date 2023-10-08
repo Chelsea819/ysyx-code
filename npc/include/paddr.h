@@ -1,6 +1,6 @@
 
-#ifndef PADDR_H_
-#define PADDR_H_
+#ifndef _NPC_PADDR_H_
+#define _NPC_PADDR_H_
 
 #include <stdint.h>
 #include <inttypes.h>

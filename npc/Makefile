@@ -5,7 +5,7 @@ WAVE = waveform.vcd
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include
+INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include 
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --build --cc --trace -Wall\
@@ -39,7 +39,7 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
-LDFLAGS += -lSDL2 -lSDL2_image
+LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -pie
 
 
 $(BIN):$(VSRCS) $(CSRCS) #$(NVBOARD_ARCHIVE)

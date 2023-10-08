@@ -1,5 +1,5 @@
-#ifndef __MEMORY_VADDR_H__
-#define __MEMORY_VADDR_H__
+#ifndef __NPCMEMORY_VADDR_H__
+#define __NPCMEMORY_VADDR_H__
 
 #include "common.h"
 
