@@ -88,7 +88,7 @@ static void execute(uint64_t n)
   {
     printf("\n------------------------------------------\n");
     exec_once();
-    printf("\nCPU runing [%ld]\n",n);
+    printf("\nCPU runing [%d]\n",n);
     printf("------------------------------------------\n");
     g_nr_guest_inst++;  //记录客户指令的计时器
     if(ifbreak) {
