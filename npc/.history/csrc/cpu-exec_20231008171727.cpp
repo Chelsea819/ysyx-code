@@ -66,10 +66,10 @@ void ifebreak_func(int key){
 
 /* let CPU conduct current command and renew PC */
 static void exec_once()
-{   
+{   1 0
   do{
-    printf("ins = %032x",dut.inst);
-    if(dut.pc != 0x80000000) { dut.clk ^= 1;break;}
+    printf("ins = %032x",dut.inst)
+    if(dut.pc != 0x80000000)  dut.clk ^= 1 break;;
     dut.eval();
     if(dut.clk == 1) {
       dut.inst = inst_fetch((vaddr_t)dut.pc, 4);
