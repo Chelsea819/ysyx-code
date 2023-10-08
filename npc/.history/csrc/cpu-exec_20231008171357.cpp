@@ -66,7 +66,7 @@ void ifebreak_func(int key){
 
 /* let CPU conduct current command and renew PC */
 static void exec_once()
-{   
+{   1-> 0 0->1->0
   do{
     if(dut.pc != 0x80000000)  dut.clk ^= 1;
     dut.eval();
