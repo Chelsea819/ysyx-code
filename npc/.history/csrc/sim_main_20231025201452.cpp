@@ -30,7 +30,6 @@
 
 typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
 typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
-typedef word_t vaddr_t;
 
 #define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
@@ -59,25 +58,11 @@ static inline word_t host_read(void *addr, int len) {
   }
 }
 
-static inline void host_write(void *addr, int len, word_t data) {
-  switch (len) {
-    case 1: *(uint8_t  *)addr = data; return;
-    case 2: *(uint16_t *)addr = data; return;
-    case 4: *(uint32_t *)addr = data; return;
-    IFDEF(CONFIG_ISA64, case 8: *(uint64_t *)addr = data; return);
-    IFDEF(CONFIG_RT_CHECK, default: assert(0));
-  }
-}
-
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr,int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
-}
-
-static void pmem_write(paddr_t addr, int len, word_t data) {
-  host_write(guest_to_host(addr), len, data);
 }
 
 static word_t load_mem(paddr_t addr,int len) {
@@ -88,10 +73,6 @@ static word_t load_mem(paddr_t addr,int len) {
 void ifebreak_func(int inst){
 	//printf("while key = %d\n",key);
 	if(inst == 1048691) {ifbreak = true; } 
-}
-
-void mem_write(vaddr_t addr, int len, word_t data) {
-  paddr_write(addr, len, data);
 }
 
 int main(int argc, char** argv, char** env) {
@@ -126,7 +107,7 @@ int main(int argc, char** argv, char** env) {
 		dut.eval();
 		//上升沿取指令
 		if(dut.clk == 1) {
-			if(dut.memWrite) mem_write(dut.ALUResult,dut.DataLen + 1,dut.WriteData);
+			if(dut.memWrite) mem
 			dut.inst = pmem_read_npc(dut.pc,4);
 			dut.eval();
 		}

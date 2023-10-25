@@ -9,8 +9,6 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     output                                        branch,
     output          [3:0]                         ALUcontrol,
     output                                        regWrite,
-    output 			[1:0]				          DataLen 	,  // 0 1 3
-	output								          DataSign	,
     output                                        ALUSrc
 );
     wire            [1:0]                          ALUop;
@@ -39,14 +37,7 @@ module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
         7'b1101111, 1'b1,   //J 
         7'b1100111, 1'b1    //jalr
     ));
-    //有符号数1
-    assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001 || func3 == 3'b010)) ? 1'b1 : 1'b0;
 
-    //0-1 1-2 3-4
-    assign DataLen = (func3 == 3'b000 || func3 == 3'b100) ? 2'b00 : 
-                     (func3 == 3'b001 || func3 == 3'b101) ? 2'b01 : 
-                     (func3 == 3'b010 ) ? 2'b11 : 2'10;
- 
     //ALUop
     //00 +
     //01 -

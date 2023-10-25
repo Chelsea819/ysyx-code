@@ -18,9 +18,8 @@ module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 );
 	reg [DATA_WIDTH - 1:0] rf [ADDR_WIDTH - 1:0];
 	always @(posedge clk) begin
-		if (regWrite) rf[rd] <= wdata & (~rst);
+		if (regWrite) rf[rd] <= wdata;
 	end
-
 	assign rf[0] = 0;
 
 	//读取操作数

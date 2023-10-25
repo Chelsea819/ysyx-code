@@ -2,17 +2,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
 	input	reg		[DATA_LEN - 1:0]	inst,
-	input	        [DATA_LEN - 1:0]    WriteData	,
 	output			[DATA_LEN - 1:0]	pc			,
 	output			[DATA_LEN - 1:0]	ALUResult	,
+    output	        [DATA_LEN - 1:0]    WriteData	,
     output  		[DATA_LEN - 1:0]	ReadData	,    
-	output 			[1:0]				DataLen 	,  // 0 1 3
-	output								DataSign	,
-	output								memWrite	,						
+	output 			;	
 	output								memToReg	
 );
 	//my_counter
-	wire			[DATA_LEN - 1:0]	pc_tmp		;
 	wire			[DATA_LEN - 1:0]	pc_next		;
 	wire			[DATA_LEN - 1:0]	pcPlus		;
 	wire			[DATA_LEN - 1:0]	pcBranch	;
@@ -23,7 +20,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[DATA_LEN - 1:0]	reg_data2	;
 
 	//control
-
+	//wire								memToReg	;
+	wire								memWrite	;
 	wire								branch		;
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
@@ -43,8 +41,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//dataMem
 
 
-	assign pcSrc = branch & zero;	
-	assign pc = pc_tmp;
+	assign pcSrc = branch & zero;		
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
@@ -65,11 +62,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.clk		(clk),
 		.rst		(rst),
 		.pc_next	(pc_next),
-		.pc			(pc_tmp)
+		.pc			(pc)
 	);
 
 	ysyx_22041211_pcPlus my_pcPlus(
-		.pc_old	(pc_tmp),
+		.pc_old	(pc),
 		.pc_new	(pc_next)
 	);
 
@@ -104,7 +101,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	ysyx_22041211_pcPlusBranch my_pcPlusBranch (
 		.offset		(imm),
-		.pc_old		(pc_tmp),
+		.pc_old		(pc),
 		.pcBranch	(pcBranch)
 	);
 	
