@@ -1,6 +1,6 @@
 /* verilator lint_off UNUSEDSIGNAL */
 
-module ysyx_22041211_controller(
+module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     input           [6:0]                         opcode,
     input           [2:0]                         func3,
     input           [6:0]                         func7,
@@ -44,7 +44,7 @@ module ysyx_22041211_controller(
         7'b1100111, 1'b1    //jalr
     });
     //有符号数1
-    assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001)) ? 1'b1 : 1'b0;
+    assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001 || func3 == 3'b010)) ? 1'b1 : 1'b0;
 
     //0-1 1-2 3-4
     assign DataLen = (func3 == 3'b000 || func3 == 3'b100) ? 2'b00 : 

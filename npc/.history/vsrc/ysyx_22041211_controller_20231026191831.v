@@ -1,9 +1,9 @@
 /* verilator lint_off UNUSEDSIGNAL */
 
-module ysyx_22041211_controller(
+module ysyx_22041211_controller #(parameter DATA_LEN = 32)(
     input           [6:0]                         opcode,
-    input           [2:0]                         func3,
-    input           [6:0]                         func7,
+    input           [2:0]                         funct3,
+    input           [6:0]                         funct7,
     output          [1:0]                         memToReg,
     output                                        memWrite, //写内存操作
     output                                        branch,
@@ -44,7 +44,7 @@ module ysyx_22041211_controller(
         7'b1100111, 1'b1    //jalr
     });
     //有符号数1
-    assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001)) ? 1'b1 : 1'b0;
+    assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001 || func3 == 3'b010)) ? 1'b1 : 1'b0;
 
     //0-1 1-2 3-4
     assign DataLen = (func3 == 3'b000 || func3 == 3'b100) ? 2'b00 : 
@@ -65,24 +65,24 @@ module ysyx_22041211_controller(
     });
 
 
-    assign ALUcontrol = (ALUop == 2'b00)? 4'b0000:                             //根据op判断加法
+    assign ALUControl = (ALUop == 2'b00)? 4'b0000:                             //根据op判断加法
                         (ALUop == 2'b01)? 4'b0001:                             //根据op判断减法
-                        ({ALUop,func3,func7} == 12'b110000000000)? 4'b0000:  //R + add
-                        ({ALUop,func3,func7} == 12'b110000000001)? 4'b0001:  //R - sub
-                        ({ALUop,func3,func7} == 12'b110010000000)? 4'b0110:  //R << sll
-                        ({ALUop,func3,func7} == 12'b110100000000)? 4'b0011:  //R <s slt
-                        ({ALUop,func3,func7} == 12'b110110000000)? 4'b0100:  //R <u sltu
-                        ({ALUop,func3,func7} == 12'b111000000000)? 4'b0101:  //R ^ xor
-                        ({ALUop,func3,func7} == 12'b111010000000)? 4'b0110:  //R >>u srl
-                        ({ALUop,func3,func7} == 12'b111010100000)? 4'b0111:  //R >>s sra
-                        ({ALUop,func3,func7} == 12'b111100000000)? 4'b1000:  //R | or
-                        ({ALUop,func3,func7} == 12'b111110000000)? 4'b1001:  //R & and
-                        ({ALUop,branch,func3} == 6'b100000)? 4'b0000:  //I + addi
-                        ({ALUop,branch,func3} == 6'b100010)? 4'b0011:  //I <s slti
-                        ({ALUop,branch,func3} == 6'b100011)? 4'b0100:  //I <u sltiu
-                        ({ALUop,branch,func3} == 6'b100100)? 4'b0101:  //I ^ xori
-                        ({ALUop,branch,func3} == 6'b100110)? 4'b1000:  //I | ori
-                        ({ALUop,branch,func3} == 6'b100111)? 4'b1001:  //I & andi
+                        ({ALUop,funct3,funct7} == 12'b110000000000)? 4'b0000:  //R + add
+                        ({ALUop,funct3,funct7} == 12'b110000000001)? 4'b0001:  //R - sub
+                        ({ALUop,funct3,funct7} == 12'b110010000000)? 4'b0110:  //R << sll
+                        ({ALUop,funct3,funct7} == 12'b110100000000)? 4'b0011:  //R <s slt
+                        ({ALUop,funct3,funct7} == 12'b110110000000)? 4'b0100:  //R <u sltu
+                        ({ALUop,funct3,funct7} == 12'b111000000000)? 4'b0101:  //R ^ xor
+                        ({ALUop,funct3,funct7} == 12'b111010000000)? 4'b0110:  //R >>u srl
+                        ({ALUop,funct3,funct7} == 12'b111010100000)? 4'b0111:  //R >>s sra
+                        ({ALUop,funct3,funct7} == 12'b111100000000)? 4'b1000:  //R | or
+                        ({ALUop,funct3,funct7} == 12'b111110000000)? 4'b1001:  //R & and
+                        ({ALUop,branch,funct3} == 6'b100000)? 4'b0000:  //I + addi
+                        ({ALUop,branch,funct3} == 6'b100010)? 4'b0011:  //I <s slti
+                        ({ALUop,branch,funct3} == 6'b100011)? 4'b0100:  //I <u sltiu
+                        ({ALUop,branch,funct3} == 6'b100100)? 4'b0101:  //I ^ xori
+                        ({ALUop,branch,funct3} == 6'b100110)? 4'b1000:  //I | ori
+                        ({ALUop,branch,funct3} == 6'b100111)? 4'b1001:  //I & andi
                         (opcode == 7'b0110111) ? 4'b1010 : 4'b1111;  //U lui src2 
 
 

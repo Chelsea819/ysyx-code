@@ -33,7 +33,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1010, src2
 	});
 
-	assign zero = ~(src1 + (~src2 + 1) == 32'b0) ;
+	assign zero = (src1 + (~src2 + 1) == 32'b0) ;
 
 
 endmodule

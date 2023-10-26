@@ -10,7 +10,7 @@ module ysyx_22041211_pcPlusBranch #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		pc_old,
 	output		[DATA_LEN - 1:0]		pcBranch
 );
-	assign	pcBranch =  pc_old + offset;
+	assign	pcBranch =  (pc_old + offset)& ~1;
 
 endmodule
 

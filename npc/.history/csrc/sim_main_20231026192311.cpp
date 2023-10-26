@@ -28,17 +28,6 @@
 #define CONFIG_PC_RESET_OFFSET 0x0
 #define CONFIG_RT_CHECK 1
 
-#define CHOOSE2nd(a, b, ...) b
-#define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
-#define MUX_MACRO_PROPERTY(p, macro, a, b) MUX_WITH_COMMA(concat(p, macro), a, b)
-#define MUXDEF(macro, X, Y)  MUX_MACRO_PROPERTY(__P_DEF_, macro, X, Y)
-
-// simplification for conditional compilation
-#define __IGNORE(...)
-#define __KEEP(...) __VA_ARGS__
-// keep the code if a boolean macro is defined
-#define IFDEF(macro, ...) MUXDEF(macro, __KEEP, __IGNORE)(__VA_ARGS__)
-
 typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
 typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
 typedef word_t vaddr_t;
@@ -60,7 +49,7 @@ static const uint32_t img [] = {
   0x002a0000,  // break 0 (used as nemu_trap)
   0xdeadbeef,  // some data
 };
-static inline word_t host_read_npc(void *addr, int len) {
+static inline word_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
@@ -70,7 +59,7 @@ static inline word_t host_read_npc(void *addr, int len) {
   }
 }
 
-static inline void host_write_npc(void *addr, int len, word_t data) {
+static inline void host_write(void *addr, int len, word_t data) {
   switch (len) {
     case 1: *(uint8_t  *)addr = data; return;
     case 2: *(uint16_t *)addr = data; return;
@@ -80,20 +69,20 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
-static word_t pmem_read_npc(paddr_t addr,int len) {
-  word_t ret = host_read_npc(guest_to_host_npc(addr), len);
+static word_t pmem_read(paddr_t addr,int len) {
+  word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
 
-static void pmem_write_npc(paddr_t addr, int len, word_t data) {
-  host_write_npc(guest_to_host_npc(addr), len, data);
+static void pmem_write(paddr_t addr, int len, word_t data) {
+  host_write(guest_to_host(addr), len, data);
 }
 
-
-static vaddr_t load_mem_npc(paddr_t addr,int len) {
-	dut.ReadData = pmem_read_npc(addr,len);
+static word_t load_mem(paddr_t addr,int len) {
+	if(dut.DataSign == 0) return (pmem_read(addr,len),len * 8);
+	return (SEXT(pmem_read(addr,len),len * 8));
 }
 
 void ifebreak_func(int inst){
@@ -101,15 +90,15 @@ void ifebreak_func(int inst){
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
-void mem_write_npc(vaddr_t addr, int len, word_t data) {
-  pmem_write_npc(addr, len, data);
+void mem_write(vaddr_t addr, int len, word_t data) {
+  paddr_write(addr, len, data);
 }
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
 	VerilatedVcdC *m_trace = new VerilatedVcdC;
 
-	memcpy(guest_to_host_npc(RESET_VECTOR), img, sizeof(img)); //初始化内存
+	memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img)); //初始化内存
 
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
@@ -137,12 +126,12 @@ int main(int argc, char** argv, char** env) {
 		dut.eval();
 		//上升沿取指令
 		if(dut.clk == 1) {
-			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+			if(dut.memWrite) mem_write(dut.ALUResult,dut.DataLen + 1,dut.storeData);
 			dut.inst = pmem_read_npc(dut.pc,4);
 			dut.eval();
 		}
 		if(dut.memToReg == 1){
-			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
+			dut.ReadData = load_mem(dut.ALUResult,dut.DataLen + 1);
 			dut.eval();
 		}
 		m_trace->dump(sim_time);

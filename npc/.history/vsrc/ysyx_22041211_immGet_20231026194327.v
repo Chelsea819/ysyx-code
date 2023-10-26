@@ -13,5 +13,8 @@ module ysyx_22041211_immGet #(parameter DATA_LEN = 32)(
                  (inst[6:0] == 7'b0110111 || inst[6:0] == 7'b0010111) ? {inst[31:12],{12{1'b0}}} :  // 3'b010  U lui auipc
                  inst[6:0] == 7'b1101111 ? {{11{inst[31]}},inst[31],inst[19:12],inst[20],inst[30:21],1'b0}  : 32'b0;   // 3'b101  J                  
 
+                 
+
+
 endmodule
 /* verilator lint_on UNUSEDSIGNAL */

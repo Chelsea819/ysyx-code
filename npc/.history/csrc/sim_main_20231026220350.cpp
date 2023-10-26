@@ -92,7 +92,7 @@ static void pmem_write_npc(paddr_t addr, int len, word_t data) {
 }
 
 
-static vaddr_t load_mem_npc(paddr_t addr,int len) {
+static void load_mem_npc(paddr_t addr,int len) {
 	dut.ReadData = pmem_read_npc(addr,len);
 }
 
