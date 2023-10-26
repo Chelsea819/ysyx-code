@@ -111,7 +111,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.memToReg	(memToReg_tmp),
 		.memWrite	(memWrite),
 		.branch		(branch),
-		.jmp		(jmp),
 		.ALUcontrol	(ALUcontrol),
 		.regWrite	(regWrite),
 		.DataLen	(DataLen_tmp),
@@ -129,7 +128,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.zero		(zero),
 		.branch		(branch),
 		.jmp		(jmp),
-		.PCSrc		(pcSrc)
+		.PCSrc		(PCSrc)
 	);
 	
 

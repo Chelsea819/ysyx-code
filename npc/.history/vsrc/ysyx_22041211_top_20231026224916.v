@@ -29,7 +29,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
 	wire								regWrite	;
-	wire								jmp			;
 
 	//immGet
 	wire			[DATA_LEN - 1:0]	imm			;
@@ -46,7 +45,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[DATA_LEN - 1:0]	ReadData_tmp	;
 	wire 			[1:0]				DataLen_tmp		;
 	wire								DataSign	;
-	
+
+
+
+	assign pcSrc = branch & zero;	
 	assign pc = pc_tmp;
 	assign storeData = reg_data2;
 	assign ALUResult = ALUResult_bnk;
@@ -111,7 +113,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.memToReg	(memToReg_tmp),
 		.memWrite	(memWrite),
 		.branch		(branch),
-		.jmp		(jmp),
 		.ALUcontrol	(ALUcontrol),
 		.regWrite	(regWrite),
 		.DataLen	(DataLen_tmp),
@@ -129,7 +130,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.zero		(zero),
 		.branch		(branch),
 		.jmp		(jmp),
-		.PCSrc		(pcSrc)
+		.PCSrc		(PCSrc)
 	);
 	
 

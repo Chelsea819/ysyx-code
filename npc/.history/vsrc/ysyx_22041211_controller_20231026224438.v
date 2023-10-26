@@ -38,20 +38,12 @@ module ysyx_22041211_controller(
 
     //branch
     //指令跳转
-    //B 
-    ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) mux_branch (branch, opcode, 1'b0, {
-        7'b1100011, 1'b1   //B
-    });
-
-    //jmp
-    // J jal
-    ysyx_22041211_MuxKeyWithDefault #(2, 7, 1) mux_jmp (jmp,opcode, 1'b0, {
+    //jalr B J type
+    ysyx_22041211_MuxKeyWithDefault #(3, 7, 1) mux_branch (branch, opcode, 1'b0, {
+        7'b1100011, 1'b1,   //B
         7'b1101111, 1'b1,   //J 
         7'b1100111, 1'b1    //jalr
     });
-    
-        
-
     //有符号数1
     assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001)) ? 1'b1 : 1'b0;
 
