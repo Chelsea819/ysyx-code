@@ -246,7 +246,7 @@ int main(int argc, char** argv, char** env) {
 			case NPC_END:
 			case NPC_ABORT:
 				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				return 0;
+				return;
 			default:
 			npc_state.state = NPC_RUNNING;
 		}		

@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include "utils.h"
 
-NPCState npc_state = { .state = NPC_STOP };
+NPCState nemu_state = { .state = NPC_STOP };
 
 static char *img_file = NULL;
 
@@ -242,13 +242,13 @@ int main(int argc, char** argv, char** env) {
 	sim_time++;
 
 	while(1){
-		switch (npc_state.state){
+		switch (nemu_state.state){
 			case NPC_END:
 			case NPC_ABORT:
 				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				return 0;
+				return;
 			default:
-			npc_state.state = NPC_RUNNING;
+			nemu_state.state = NPC_RUNNING;
 		}		
 		dut.clk ^= 1;
 		dut.eval();
@@ -265,16 +265,16 @@ int main(int argc, char** argv, char** env) {
 		m_trace->dump(sim_time);
 		sim_time++;
 
-		switch (npc_state.state){
+		switch (nemu_state.state){
 			case NPC_RUNNING:
-				npc_state.state = NPC_STOP;
+				nemu_state.state = NPC_STOP;
 				break;
 
 			case NPC_END:
 			case NPC_ABORT:
-				Log("npc: %s at pc = " FMT_WORD,
-					(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-					npc_state.halt_pc);
+				Log("nemu: %s at pc = " FMT_WORD,
+					(nemu_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+					nemu_state.halt_pc);
 				// fall through
 			case NPC_QUIT:
 				Log("quit!\n");
