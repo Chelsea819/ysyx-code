@@ -58,6 +58,5 @@ int main(int argc, char *argv[]) {
   free_strtab();
   #endif
 
-  // return is_exit_status_bad();
-  return 0;
+  return is_exit_status_bad();
 }
