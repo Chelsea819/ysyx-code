@@ -66,11 +66,10 @@ static const uint32_t img [] = {
   0xdeadbeef  // some data
 };
 
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 void init_isa() {
   /* Load built-in image. */
-  memcpy(guest_to_host_npc(RESET_VECTOR), img, sizeof(img));
+  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
 }
 
@@ -94,7 +93,7 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
-
+uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
@@ -142,7 +141,7 @@ static long load_img() {
   printf("The image is %s, size = %ld", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host_npc(RESET_VECTOR), size, 1, fp);
+  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
   //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
   assert(ret == 1);
 
@@ -164,7 +163,7 @@ static int parseArgs(int argc, char *argv[]) {
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
     //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
     switch (o) {
-      case 'b': break; //sdb_set_batch_mode(); break;
+      case 'b': sdb_set_batch_mode(); break;
       case 'p': break;
       case 'l': break;
       case 'd': break;

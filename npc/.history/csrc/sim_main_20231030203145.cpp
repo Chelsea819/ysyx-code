@@ -66,7 +66,6 @@ static const uint32_t img [] = {
   0xdeadbeef  // some data
 };
 
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 void init_isa() {
   /* Load built-in image. */
@@ -94,7 +93,7 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
-
+uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
@@ -142,7 +141,7 @@ static long load_img() {
   printf("The image is %s, size = %ld", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host_npc(RESET_VECTOR), size, 1, fp);
+  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
   //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
   assert(ret == 1);
 

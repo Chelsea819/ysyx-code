@@ -66,7 +66,6 @@ static const uint32_t img [] = {
   0xdeadbeef  // some data
 };
 
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 void init_isa() {
   /* Load built-in image. */
@@ -94,7 +93,7 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
-
+uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);

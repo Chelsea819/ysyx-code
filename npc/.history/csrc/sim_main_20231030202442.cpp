@@ -65,15 +65,6 @@ static const uint32_t img [] = {
   0x002a0000,  // break 0 (used as nemu_trap)
   0xdeadbeef  // some data
 };
-
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-
-void init_isa() {
-  /* Load built-in image. */
-  memcpy(guest_to_host_npc(RESET_VECTOR), img, sizeof(img));
-
-}
-
 static inline word_t host_read_npc(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
@@ -94,7 +85,7 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
-
+uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
@@ -119,35 +110,8 @@ void mem_write_npc(vaddr_t addr, int len, word_t data) {
   pmem_write_npc(addr, len, data);
 }
 
-
-static void welcome() {
-  printf("Welcome to NPC!\n");
-  printf("For help, type \"help\"\n");
-}
-
-static long load_img() {
-  if (img_file == NULL) {
-    printf("No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-    //如果img_file为NULL,说明没有指定文件,则使用默认内置的镜像,返回其大小4096
-  }
-
-  FILE *fp = fopen(img_file, "rb");
-  assert(fp);
-
-  fseek(fp, 0, SEEK_END);
-  //ftell()可以获取文件当前的读写位置偏移量
-  long size = ftell(fp);
-
-  printf("The image is %s, size = %ld", img_file, size);
-
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host_npc(RESET_VECTOR), size, 1, fp);
-  //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
+void init_rand() {
+  srand(time(0));
 }
 
 static int parseArgs(int argc, char *argv[]) {
@@ -164,7 +128,7 @@ static int parseArgs(int argc, char *argv[]) {
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
     //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
     switch (o) {
-      case 'b': break; //sdb_set_batch_mode(); break;
+      case 'b': sdb_set_batch_mode(); break;
       case 'p': break;
       case 'l': break;
       case 'd': break;
@@ -190,10 +154,10 @@ void init_npc(int argc,char *argv[]){
     parseArgs(argc, argv);
 
     /* Set random time seed. */
-    //init_rand();
+    init_rand();
 
     //init memory
-    //init_mem_npc();
+    init_mem_npc();
 
     //load img to memory
     init_isa();
@@ -202,7 +166,7 @@ void init_npc(int argc,char *argv[]){
     long img_size = load_img();
 
     /* Initialize the simple debugger.初始化简单调试器 */
-    //init_sdb();
+    init_sdb();
 
     welcome();
 }
