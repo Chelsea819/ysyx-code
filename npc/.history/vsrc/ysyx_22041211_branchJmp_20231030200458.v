@@ -1,7 +1,7 @@
 module ysyx_22041211_branchJmp(
 	input		                		zero,
 	input		                        branch,
-	input 		  [1:0]                 jmp,
+	input 		                        jmp,
 	output		  [1:0]                 PCSrc
 );
     //00--default

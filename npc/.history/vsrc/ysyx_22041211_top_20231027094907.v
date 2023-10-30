@@ -29,7 +29,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
 	wire								regWrite	;
-	wire			[1:0]				jmp			;
+	wire								jmp			;
 
 	//immGet
 	wire			[DATA_LEN - 1:0]	imm			;

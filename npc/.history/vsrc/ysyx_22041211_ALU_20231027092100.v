@@ -15,13 +15,12 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	wire signed [31:0] signed_a  ;
 	wire signed [31:0] signed_b  ;
-	wire		[DATA_LEN - 1:0]		result_tmp;
+	wire		[DATA_LEN - 1:0]		result_tmp,
 
 	assign signed_a = src1;
 	assign signed_b = src2;
-	assign result = result_tmp;
 
-	ysyx_22041211_MuxKeyWithDefault #(11,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(11,4,32) ALUmode (result, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
@@ -35,7 +34,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1010, src2
 	});
 
-	assign zero = (result_tmp == 32'b0) ;
+	assign zero = ~(src1 + (~src2 + 1) == 32'b0) ;
 
 
 endmodule

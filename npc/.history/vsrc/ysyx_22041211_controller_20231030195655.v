@@ -45,9 +45,9 @@ module ysyx_22041211_controller(
 
     //jmp
     // J jal
-    ysyx_22041211_MuxKeyWithDefault #(2, 7, 2) mux_jmp (jmp,opcode, 2'b0, {
+    ysyx_22041211_MuxKeyWithDefault #(2, 7, 2) mux_jmp (jmp,opcode, 1'b0, {
         7'b1101111, 2'b01,   //J 
-        7'b1100111, 2'b10    //jalr
+        7'b1100111, 3'b10    //jalr
     });
     
         

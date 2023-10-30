@@ -7,7 +7,7 @@ module ysyx_22041211_controller(
     output          [1:0]                         memToReg,
     output                                        memWrite, //写内存操作
     output                                        branch,
-    output          [1:0]                         jmp,
+    output                                        jmp,
     output          [3:0]                         ALUcontrol,
     output                                        regWrite,
     output 			[1:0]				          DataLen 	,  // 0 1 3
@@ -45,9 +45,9 @@ module ysyx_22041211_controller(
 
     //jmp
     // J jal
-    ysyx_22041211_MuxKeyWithDefault #(2, 7, 2) mux_jmp (jmp,opcode, 2'b0, {
-        7'b1101111, 2'b01,   //J 
-        7'b1100111, 2'b10    //jalr
+    ysyx_22041211_MuxKeyWithDefault #(2, 7, 1) mux_jmp (jmp,opcode, 1'b0, {
+        7'b1101111, 1'b1,   //J 
+        7'b1100111, 1'b1    //jalr
     });
     
         

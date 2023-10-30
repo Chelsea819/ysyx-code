@@ -29,7 +29,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
 	wire								regWrite	;
-	wire			[1:0]				jmp			;
+	wire								jmp			;
 
 	//immGet
 	wire			[DATA_LEN - 1:0]	imm			;
@@ -70,10 +70,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         ifebreak_func(inst_bnk);
     endtask
 	
-	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
-		2'b01, pcBranch,
-		2'b00, pcPlus,
-		2'b10, ALUResult_bnk & ~1
+	ysyx_22041211_MuxKey #(2,1,32) PCSrc_choosing (pc_next ,pcSrc ,{
+		1'b1, pcBranch,
+		1'b0, pcPlus
 	});
 
 	ysyx_22041211_counter my_counter(

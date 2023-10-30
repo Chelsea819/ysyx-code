@@ -19,7 +19,6 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	assign signed_a = src1;
 	assign signed_b = src2;
-	assign result = result_tmp;
 
 	ysyx_22041211_MuxKeyWithDefault #(11,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
@@ -35,7 +34,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1010, src2
 	});
 
-	assign zero = (result_tmp == 32'b0) ;
+	assign zero = (result_tmp == 0) ;
 
 
 endmodule
