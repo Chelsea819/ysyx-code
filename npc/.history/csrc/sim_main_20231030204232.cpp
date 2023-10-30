@@ -59,7 +59,7 @@ bool ifbreak = false;
 TOP_NAME dut;
 
 static const uint32_t img [] = {
-  0x00000297,  // auipc t0,0
+  00x00000297,  // auipc t0,0
   0x00100093,  // addi    x[1] = 0 + 1
   0x00000297,  // auipc t0,0
   0x00100073,  // ebreak (used as npc_trap)
