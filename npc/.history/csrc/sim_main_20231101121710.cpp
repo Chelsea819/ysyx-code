@@ -356,7 +356,7 @@ int main(int argc, char** argv, char** env) {
 		
 		if(ifbreak) {
 			printf("\nebreak!\n");
-			NPCTRAP(dut.pc, 0);
+			NEMUTRAP(dut.pc, 0);
 		}
 
 		switch (npc_state.state){

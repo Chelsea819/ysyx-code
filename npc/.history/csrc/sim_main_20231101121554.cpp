@@ -59,7 +59,7 @@ typedef word_t vaddr_t;
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 
-#define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
+#define NEMUTRAP(thispc, code) set_nemu_state(NEMU_END, thispc, code)
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -351,12 +351,12 @@ int main(int argc, char** argv, char** env) {
 		sim_time++;
 		
 		if(dut.invalid == 1){
-			invalid_inst(dut.pc);
+				invalid_inst(dut.pc);
 		}
 		
 		if(ifbreak) {
 			printf("\nebreak!\n");
-			NPCTRAP(dut.pc, 0);
+			NEMUTRAP(dut.pc, 0);
 		}
 
 		switch (npc_state.state){

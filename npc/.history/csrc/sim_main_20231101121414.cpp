@@ -59,7 +59,7 @@ typedef word_t vaddr_t;
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 
-#define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
+#define NEMUTRAP(thispc, code) set_nemu_state(NEMU_END, thispc, code)
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -340,23 +340,21 @@ int main(int argc, char** argv, char** env) {
 			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
 			dut.inst = pmem_read_npc(dut.pc,4);
 			dut.eval();
-			
+			if(dut.invalid == 1){
+				invalid_inst(dut.pc);
+			}
 		}
-		
 		if(dut.memToReg == 1){
 			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
 			dut.eval();
 		}
 		m_trace->dump(sim_time);
 		sim_time++;
-		
-		if(dut.invalid == 1){
-			invalid_inst(dut.pc);
-		}
-		
+
 		if(ifbreak) {
 			printf("\nebreak!\n");
-			NPCTRAP(dut.pc, 0);
+			NEMUTRAP(dut.pc, 0);
+			break;
 		}
 
 		switch (npc_state.state){
