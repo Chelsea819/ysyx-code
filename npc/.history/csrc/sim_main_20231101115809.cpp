@@ -335,9 +335,6 @@ int main(int argc, char** argv, char** env) {
 			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
 			dut.inst = pmem_read_npc(dut.pc,4);
 			dut.eval();
-			if(dut.invalid == 1){
-				invalid_inst(dut.pc);
-			}
 		}
 		if(dut.memToReg == 1){
 			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);

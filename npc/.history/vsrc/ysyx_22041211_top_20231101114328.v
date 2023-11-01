@@ -60,15 +60,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 						  (DataLen_tmp == 2'b00) ? {{24{ReadData[7]}},ReadData[7:0]}:				//0--1 8bits
 						  (DataLen_tmp == 2'b01) ? {{16{ReadData[15]}},ReadData[15:0]}: 32'b0;		//1--2 16bits
 
-	assign invalid = ~((inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
+	assign invalid = (inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
 					 (inst[6:0] == 7'b1101111) | 	 					     //jal
 				     ({inst[14:12],inst[6:0]} == 10'b0001100111) |			 //I-jalr
 					 ({inst[14:12],inst[6:0]} == 10'b0001100011) |			 //B-beq
 					 ((inst[6:0] == 7'b0000011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b001 | inst[14:12] == 3'b010 | inst[14:12] == 3'b100 | inst[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
-					 ((inst[6:0] == 7'b0100011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b001 | inst[14:12] == 3'b010))	|		//S-sb sh sw
+					 ((inst[6:0] == 10'b0100011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b001 | inst[14:12] == 3'b010))	|		//S-sb sh sw
 					 ((inst[6:0] == 7'b0010011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b010 | inst[14:12] == 3'b011 | inst[14:12] == 3'b100 | inst[14:12] == 3'b110 | inst[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
 					 (inst[6:0] == 7'b0110011) | //R
-					 (inst == 32'b00000000000000000000000001110011));
+					 (inst == 32'b00000000000000000000000001110011);
 
 						  
 
