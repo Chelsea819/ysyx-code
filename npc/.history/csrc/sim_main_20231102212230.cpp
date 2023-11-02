@@ -408,6 +408,8 @@ int main(int argc, char** argv, char** env) {
 	dut.eval(); 
 	dut.rst = 0;
 	dut.eval();
+	dut.inst = pmem_read_npc(dut.pc,4);
+	dut.eval();
 
 	m_trace->dump(sim_time);
 	sim_time++;
