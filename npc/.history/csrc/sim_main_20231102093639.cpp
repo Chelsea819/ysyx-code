@@ -68,6 +68,134 @@ bool ifbreak = false;
 
 TOP_NAME dut;
 
+static int is_batch_mode = false;
+
+/* stimulate the way CPU works ,get commands constantly */
+static void execute(uint64_t n)
+{
+  for (; n > 0; n--)
+  {
+    exec_once();
+    g_nr_guest_inst++;  //记录客户指令的计时器
+    // if (nemu_state.state != NEMU_RUNNING)
+    //   break;
+  }
+}
+
+/* Simulate how the CPU works. */
+void cpu_exec(uint64_t n)
+{
+  execute(n);
+
+//   switch (nemu_state.state)
+//   {
+//   case NEMU_RUNNING:
+//     nemu_state.state = NEMU_STOP;
+//     break;
+
+//   case NEMU_END:
+//   case NEMU_ABORT:
+//     Log("nemu: %s at pc = " FMT_WORD,
+//         (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+//         nemu_state.halt_pc);
+//     // fall through
+//   case NEMU_QUIT:
+//     statistic();
+//   }
+}
+
+
+static int cmd_c(char *args)
+{
+  /*Simulate how the CPU works.*/
+  if(ifbreak){
+    printf(".............END.............\n");
+    return 0;
+  }
+  else cpu_exec(-1);
+  return 0;
+}
+
+void sdb_set_batch_mode()
+{
+  is_batch_mode = true;
+}
+
+/* Receive commands from user. */
+void sdb_mainloop()
+{
+  if (is_batch_mode)
+  {
+    cmd_c(NULL);
+    //return;
+  }
+
+  for (char *str; (str = rl_gets()) != NULL;)
+  {
+    char *str_end = str + strlen(str);
+
+    /* extract the first token as the command */
+    char *cmd = strtok(str, " ");
+    if (cmd == NULL)
+    {
+      continue;
+    }
+
+    /* treat the remaining string as the arguments,
+     * which may need further parsing
+     */
+    char *args = cmd + strlen(cmd) + 1;
+    if (args >= str_end)
+    {
+      args = NULL;
+    }
+    int i;
+    for (i = 0; i < NR_CMD; i++)
+    {
+      if (strcmp(cmd, cmd_table[i].name) == 0)
+      {
+        if (cmd_table[i].handler(args) < 0)
+        {
+          return;
+        }
+        break;
+      }
+    }
+
+    if (i == NR_CMD)
+    {
+      printf("Unknown command '%s'\n", cmd);
+    }
+  }
+
+  // WP *head = get_head();
+  // while(head != NULL){
+  //   free(head->target);
+  //   head->target = NULL;
+  //   head = head->next;
+  // }
+  // iringbuf *head_i = get_head_iringbuf();
+  // while(head_i != NULL && head_i->rbuf != NULL){
+  //   free(head_i->rbuf);
+  //   head_i->rbuf = NULL;
+  //   head_i = head_i->next;
+  // }
+  
+}
+
+
+/* start CPU or receive commands */
+void engine_start() {
+#ifdef CONFIG_TARGET_AM
+/* Simulate how the CPU works. */
+  cpu_exec(-1);
+#else
+  /* Receive commands from user. */
+  sdb_mainloop();
+#endif
+}
+
+
 /*
        _                         __  __                         _ 
       (_)                       |  \/  |                       | |
@@ -396,7 +524,7 @@ int main(int argc, char** argv, char** env) {
 	dut.trace(m_trace, 5);               
 	m_trace->open("waveform.vcd");
 	
-	dut.clk = 1; 
+	dut.clk = 0; 
 	dut.eval();
 	dut.rst = 1;
 	dut.eval();
@@ -404,64 +532,70 @@ int main(int argc, char** argv, char** env) {
 	m_trace->dump(sim_time);
 	sim_time++;
 
-	dut.clk = 0;
+	dut.clk = 1;
 	dut.eval(); 
 	dut.rst = 0;
+	dut.eval();
+	dut.inst = pmem_read_npc(dut.pc,4);
 	dut.eval();
 
 	m_trace->dump(sim_time);
 	sim_time++;
 
-	while(1){
-		switch (npc_state.state){
-			case NPC_END:
-			case NPC_ABORT:
-				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				return 0;
-			default:
-			npc_state.state = NPC_RUNNING;
-		}		
-		dut.clk ^= 1;
-		dut.eval();
-		//上升沿取指令
-		if(dut.clk == 1) {
-			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-			dut.inst = pmem_read_npc(dut.pc,4);
-			dut.eval();
+	/* Start engine. */
+	engine_start();
+
+
+	// while(1){
+	// 	switch (npc_state.state){
+	// 		case NPC_END:
+	// 		case NPC_ABORT:
+	// 			printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+	// 			return 0;
+	// 		default:
+	// 		npc_state.state = NPC_RUNNING;
+	// 	}		
+	// 	dut.clk ^= 1;
+	// 	dut.eval();
+	// 	//上升沿取指令
+	// 	if(dut.clk == 1) {
+	// 		if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+	// 		dut.inst = pmem_read_npc(dut.pc,4);
+	// 		dut.eval();
 			
-		}
+	// 	}
 		
-		if(dut.memToReg == 1){
-			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
-			dut.eval();
-		}
-		m_trace->dump(sim_time);
-		sim_time++;
+	// 	if(dut.memToReg == 1){
+	// 		dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
+	// 		dut.eval();
+	// 	}
+	// 	m_trace->dump(sim_time);
+	// 	sim_time++;
 		
-		if(dut.invalid == 1){
-			invalid_inst(dut.pc);
-		}
+	// 	if(dut.invalid == 1){
+	// 		invalid_inst(dut.pc);
+	// 	}
 		
-		if(ifbreak) {
-			printf("\nebreak!\n");
-			NPCTRAP(dut.pc, 0);
-		}
+	// 	if(ifbreak) {
+	// 		printf("\nebreak!\n");
+	// 		NPCTRAP(dut.pc, 0);
+	// 	}
 
-		switch (npc_state.state){
-			case NPC_RUNNING:
-				npc_state.state = NPC_STOP;
-				break;
+	// 	switch (npc_state.state){
+	// 		case NPC_RUNNING:
+	// 			npc_state.state = NPC_STOP;
+	// 			break;
 
-			case NPC_END:
-			case NPC_ABORT:
-				Log("npc: %s at pc = " FMT_WORD,
-					(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-					npc_state.halt_pc);
-			case NPC_QUIT:
-				Log("quit!\n");
-		}
+	// 		case NPC_END:
+	// 		case NPC_ABORT:
+	// 			Log("npc: %s at pc = " FMT_WORD,
+	// 				(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+	// 				npc_state.halt_pc);
+	// 		case NPC_QUIT:
+	// 			Log("quit!\n");
+	// 	}
 
-	}
+	// }
 
 	dut.final();
 	m_trace->close();	//关闭波形跟踪文件
