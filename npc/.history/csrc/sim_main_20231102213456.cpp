@@ -421,7 +421,8 @@ int main(int argc, char** argv, char** env) {
 			default:
 			npc_state.state = NPC_RUNNING;
 		}		
-		
+		dut.clk ^= 1;
+		dut.eval();
 		//上升沿取指令
 		if(dut.clk == 1) {
 			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
@@ -459,9 +460,6 @@ int main(int argc, char** argv, char** env) {
 			case NPC_QUIT:
 				Log("quit!\n");
 		}
-    
-    dut.clk ^= 1;
-		dut.eval();
 
 	}
 
