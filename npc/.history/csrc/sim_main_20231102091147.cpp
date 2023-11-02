@@ -15,7 +15,6 @@
 
 #include <time.h>
 #include <getopt.h>
-#include <regex.h>
 #include "utils.h"
 #include "common.h"
 
@@ -122,19 +121,6 @@ static const uint32_t img [] = {
   0x00100093,  // addi    x[1] = 0 + 1
 };
 
-void init_rand() {
-  srand(time(0));
-}
-
-void init_mem_npc(){
-    uint32_t *p = (uint32_t *)pmem;
-    int i;
-    for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
-        p[i] = rand();
-    }
-	return ;
-}
-
 uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 void init_isa() {
@@ -220,85 +206,6 @@ static long load_img() {
   return size;
 }
 
-enum {
-  TK_NOTYPE = 256,  //space
-  TK_LEFT_BRA, TK_RIGHT_BRA, //bracket
-  TK_NUM, TK_HEXA, TK_REG,DEREF, //data
-  //3优先级 * /
-  TK_MUL,TK_DIV, 
-  //4优先级 + - 
-  TK_ADD,TK_SUB,
-  //7优先级 == !=
-  TK_EQ, TK_NEQ,
-  //11优先级&&
-  TK_AND,
-
-  /* TODO: Add more token types */
-
-};
-
-//实现了一个基于正则表达式匹配的词法解析规则定义
-static struct rule {
-
-  //用于匹配的正则表达式
-  const char *regex;
-  //匹配成功后对应的语法标记类型
-  int token_type;
-} rules[] = {
-
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
-
-  {" +", TK_NOTYPE},    // spaces
-  {"==", TK_EQ},        // equal
-  {"\\+", TK_ADD},      // plus
-  {"-",TK_SUB},         // sub
-  {"\\*",TK_MUL},       // mul
-  {"/",TK_DIV},         // division
-  {"\\(",TK_LEFT_BRA},    // bracket-left
-  {"\\)",TK_RIGHT_BRA},   // bracket-right
-  {"^0x[a-z0-9]+",TK_HEXA},
-  {"[0-9]+",TK_NUM},    // num
-  {"^\\$+[a-z0-9]+",TK_REG},
-  {"!=",TK_NEQ},
-  {"&&",TK_AND},
-};
-
-#define NR_REGEX ARRLEN(rules)
-
-//collect the inner content after compling regex
-static regex_t re[NR_REGEX] = {};
-
-/* Rules are used for many times.
- * Therefore we compile them only once before any usage.
- */
-//这样可以预先编译所有正则模式,提高后续匹配效率
-//检查每个正则表达式是否编译成功,避免在匹配时才发现错误
-void init_regex() {
-  int i;
-  char error_msg[128];
-  int ret;
-
-  //遍历正则规则数组rules[],共有NR_REGEX条规则
-  for (i = 0; i < NR_REGEX; i ++) {
-    /*第三个参数是匹配选项,这里是REG_EXTENDED表示支持扩展正则语法*/
-    ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
-    if (ret != 0) {
-      regerror(ret, &re[i], error_msg, 128);
-      printf("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
-      assert(0);
-    }
-  }
-}
-
-void init_sdb()
-{
-  /* Compile the regular expressions. */
-  // 编译正则表达式
-  init_regex();
-}
-
 static int parseArgs(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -339,7 +246,7 @@ void init_npc(int argc,char *argv[]){
     parseArgs(argc, argv);
 
     /* Set random time seed. */
-    init_rand();
+    //init_rand();
 
     //init memory
     init_mem_npc();
@@ -351,7 +258,7 @@ void init_npc(int argc,char *argv[]){
     long img_size = load_img();
 
     /* Initialize the simple debugger.初始化简单调试器 */
-    init_sdb();
+    //init_sdb();
 
     welcome();
 }

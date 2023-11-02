@@ -292,13 +292,6 @@ void init_regex() {
   }
 }
 
-void init_sdb()
-{
-  /* Compile the regular expressions. */
-  // 编译正则表达式
-  init_regex();
-}
-
 static int parseArgs(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},

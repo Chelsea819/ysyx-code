@@ -220,51 +220,6 @@ static long load_img() {
   return size;
 }
 
-enum {
-  TK_NOTYPE = 256,  //space
-  TK_LEFT_BRA, TK_RIGHT_BRA, //bracket
-  TK_NUM, TK_HEXA, TK_REG,DEREF, //data
-  //3优先级 * /
-  TK_MUL,TK_DIV, 
-  //4优先级 + - 
-  TK_ADD,TK_SUB,
-  //7优先级 == !=
-  TK_EQ, TK_NEQ,
-  //11优先级&&
-  TK_AND,
-
-  /* TODO: Add more token types */
-
-};
-
-//实现了一个基于正则表达式匹配的词法解析规则定义
-static struct rule {
-
-  //用于匹配的正则表达式
-  const char *regex;
-  //匹配成功后对应的语法标记类型
-  int token_type;
-} rules[] = {
-
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
-
-  {" +", TK_NOTYPE},    // spaces
-  {"==", TK_EQ},        // equal
-  {"\\+", TK_ADD},      // plus
-  {"-",TK_SUB},         // sub
-  {"\\*",TK_MUL},       // mul
-  {"/",TK_DIV},         // division
-  {"\\(",TK_LEFT_BRA},    // bracket-left
-  {"\\)",TK_RIGHT_BRA},   // bracket-right
-  {"^0x[a-z0-9]+",TK_HEXA},
-  {"[0-9]+",TK_NUM},    // num
-  {"^\\$+[a-z0-9]+",TK_REG},
-  {"!=",TK_NEQ},
-  {"&&",TK_AND},
-};
-
 #define NR_REGEX ARRLEN(rules)
 
 //collect the inner content after compling regex
@@ -290,13 +245,6 @@ void init_regex() {
       assert(0);
     }
   }
-}
-
-void init_sdb()
-{
-  /* Compile the regular expressions. */
-  // 编译正则表达式
-  init_regex();
 }
 
 static int parseArgs(int argc, char *argv[]) {
