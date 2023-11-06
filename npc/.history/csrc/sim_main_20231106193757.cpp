@@ -458,7 +458,7 @@ int main(int argc, char** argv, char** env) {
 			case NPC_QUIT:
 				Log("quit!\n");
 		}
-    printf("\n");
+    printf("\n")
     
     dut.clk ^= 1;
 		dut.eval();
