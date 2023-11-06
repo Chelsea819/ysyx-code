@@ -458,12 +458,12 @@ void cpu_exec(uint64_t n)
 			npc_state.state = NPC_RUNNING;
 		}	
 
-  //  uint64_t timer_start = get_time();
+   uint64_t timer_start = get_time();
 
   execute(n);
 
-  // uint64_t timer_end = get_time();
-  // g_timer += timer_end - timer_start;
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
 
   switch (npc_state.state){
 			case NPC_RUNNING:
@@ -489,7 +489,7 @@ void engine_start() {
 // #else
   /* Receive commands from user. */
   // sdb_mainloop();
-// #endif
+#endif
 }
 
 int main(int argc, char** argv, char** env) {

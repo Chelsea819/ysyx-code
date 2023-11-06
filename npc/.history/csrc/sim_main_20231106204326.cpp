@@ -19,7 +19,7 @@
 #include "utils.h"
 #include "common.h"
 
-void set_npc_state(int state, vaddr_t pc, int halt_ret);
+void set_nemu_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
 
 NPCState npc_state = { .state = NPC_STOP };
@@ -70,7 +70,6 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 
 TOP_NAME dut;
-VerilatedVcdC *m_trace = new VerilatedVcdC;
 
 /*
        _                         __  __                         _ 
@@ -391,79 +390,26 @@ void invalid_inst(vaddr_t thispc) {
   set_npc_state(NPC_ABORT, thispc, -1);
 }
 
-/* let CPU conduct current command and renew PC */
-static void exec_once(vaddr_t pc)
-{
-  //上升沿取指令
-  if(dut.clk == 1) {
-    if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-    dut.inst = pmem_read_npc(dut.pc,4);
-    dut.eval();
-    printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    
-  }
-  if(dut.memToReg == 1){
-			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
-			dut.eval();
-		}
-	m_trace->dump(sim_time);
-	sim_time++;
-		
-  if(dut.invalid == 1){
-    invalid_inst(dut.pc);
-  }
-  if(ifbreak && dut.clk == 0){
-    printf("\nebreak!\n");
-    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    NPCTRAP(dut.pc, 0);
-  }
-
-
-}
-
-
-/* stimulate the way CPU works ,get commands constantly */
-static void execute(uint64_t n)
-{
-  // Decode s;
-  for (; n > 0; n--)
-  {
-    exec_once(dut.pc);
-    g_nr_guest_inst++;  //记录客户指令的计时器
-    // trace_and_difftest(&s, cpu.pc);
-    //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
-    if (npc_state.state != NPC_RUNNING)
-      break;
-
-    dut.clk ^= 1;
-    dut.eval();
-    // IFDEF(CONFIG_DEVICE, device_update());
-  }
-}
-
-
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n)
 {
   // g_print_step = (n < MAX_INST_TO_PRINT);
+  switch (nemu_state.state)
+  {
+  case NEMU_END:
+  case NEMU_ABORT:
+    printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
+    return;
+  default:
+    nemu_state.state = NEMU_RUNNING;
+  }
 
-  switch (npc_state.state){
-			case NPC_END:
-			case NPC_ABORT:
-				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				dut.final();
-        m_trace->close();	//关闭波形跟踪文件
-        exit(EXIT_SUCCESS);
-			default:
-			npc_state.state = NPC_RUNNING;
-		}	
-
-  //  uint64_t timer_start = get_time();
+   uint64_t timer_start = get_time();
 
   execute(n);
 
-  // uint64_t timer_end = get_time();
-  // g_timer += timer_end - timer_start;
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
 
   switch (npc_state.state){
 			case NPC_RUNNING:
@@ -479,22 +425,23 @@ void cpu_exec(uint64_t n)
 				Log("quit!\n");
         // statistic();
 		}
+
 }
 
 /* start CPU or receive commands */
 void engine_start() {
-// #ifdef CONFIG_TARGET_AM
+#ifdef CONFIG_TARGET_AM
 /* Simulate how the CPU works. */
   cpu_exec(-1);
-// #else
+#else
   /* Receive commands from user. */
-  // sdb_mainloop();
-// #endif
+  sdb_mainloop();
+#endif
 }
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
-	
+	VerilatedVcdC *m_trace = new VerilatedVcdC;
 
 	init_npc(argc, argv);
 
@@ -517,62 +464,62 @@ int main(int argc, char** argv, char** env) {
   /* Start engine. */
 	engine_start();
 
-	// while(1){
-	// 	switch (npc_state.state){
-	// 		case NPC_END:
-	// 		case NPC_ABORT:
-	// 			printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-	// 			dut.final();
-  //       m_trace->close();	//关闭波形跟踪文件
-  //       exit(EXIT_SUCCESS);
-	// 		default:
-	// 		npc_state.state = NPC_RUNNING;
-	// 	}		
+	while(1){
+		switch (npc_state.state){
+			case NPC_END:
+			case NPC_ABORT:
+				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+				dut.final();
+        m_trace->close();	//关闭波形跟踪文件
+        exit(EXIT_SUCCESS);
+			default:
+			npc_state.state = NPC_RUNNING;
+		}		
 		
-	// 	//上升沿取指令
-	// 	if(dut.clk == 1) {
-	// 		if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-	// 		dut.inst = pmem_read_npc(dut.pc,4);
-	// 		dut.eval();
-  //     printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+		//上升沿取指令
+		if(dut.clk == 1) {
+			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+			dut.inst = pmem_read_npc(dut.pc,4);
+			dut.eval();
+      printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 			
-	// 	}
+		}
 		
-	// 	if(dut.memToReg == 1){
-	// 		dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
-	// 		dut.eval();
-	// 	}
-	// 	m_trace->dump(sim_time);
-	// 	sim_time++;
+		if(dut.memToReg == 1){
+			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
+			dut.eval();
+		}
+		m_trace->dump(sim_time);
+		sim_time++;
 		
-	// 	if(dut.invalid == 1){
-	// 		invalid_inst(dut.pc);
-	// 	}
-	// 	if(ifbreak && dut.clk == 0){
-	// 		printf("\nebreak!\n");
-  //     printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-	// 		NPCTRAP(dut.pc, 0);
-	// 	}
+		if(dut.invalid == 1){
+			invalid_inst(dut.pc);
+		}
+		if(ifbreak && dut.clk == 0){
+			printf("\nebreak!\n");
+      printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+			NPCTRAP(dut.pc, 0);
+		}
 
-	// 	switch (npc_state.state){
-	// 		case NPC_RUNNING:
-	// 			npc_state.state = NPC_STOP;
-	// 			break;
+		switch (npc_state.state){
+			case NPC_RUNNING:
+				npc_state.state = NPC_STOP;
+				break;
 
-	// 		case NPC_END:
-	// 		case NPC_ABORT:
-	// 			Log("npc: %s at pc = " FMT_WORD,
-	// 				(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-	// 				npc_state.halt_pc);
-	// 		case NPC_QUIT:
-	// 			Log("quit!\n");
-	// 	}
-  //   printf("\n");
+			case NPC_END:
+			case NPC_ABORT:
+				Log("npc: %s at pc = " FMT_WORD,
+					(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+					npc_state.halt_pc);
+			case NPC_QUIT:
+				Log("quit!\n");
+		}
+    printf("\n");
     
-  //   dut.clk ^= 1;
-	// 	dut.eval();
+    dut.clk ^= 1;
+		dut.eval();
 
-	// }
+	}
 
 	dut.final();
 	m_trace->close();	//关闭波形跟踪文件
