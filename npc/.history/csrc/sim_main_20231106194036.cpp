@@ -424,7 +424,7 @@ int main(int argc, char** argv, char** env) {
 			if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
 			dut.inst = pmem_read_npc(dut.pc,4);
 			dut.eval();
-      printf("common1:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+      printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 			
 		}
 		
