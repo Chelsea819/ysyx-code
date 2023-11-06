@@ -414,9 +414,7 @@ int main(int argc, char** argv, char** env) {
 			case NPC_END:
 			case NPC_ABORT:
 				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				dut.final();
-        m_trace->close();	//关闭波形跟踪文件
-        exit(EXIT_SUCCESS);
+				return 0;
 			default:
 			npc_state.state = NPC_RUNNING;
 		}		
