@@ -519,61 +519,61 @@ static char too_lessArg(char *args){
   return 0;
 }
 
-static int cmd_c(char *args)
-{
-  /*Simulate how the CPU works.*/
-  cpu_exec(-1);
-  return 0;
-}
+// static int cmd_c(char *args)
+// {
+//   /*Simulate how the CPU works.*/
+//   cpu_exec(-1);
+//   return 0;
+// }
 
-uint32_t convert_ten(char *args){
-  uint32_t flag = 1;
-  uint32_t flag_neg = 0;
-  uint32_t n = 0;
+// uint32_t convert_ten(char *args){
+//   uint32_t flag = 1;
+//   uint32_t flag_neg = 0;
+//   uint32_t n = 0;
 
-  int i = strlen(args) - 1;
-  for(  ;i >= 0;i --){
-    if(args[i] == 'n'){
-      flag_neg += 1;
-      continue;
-    }
-    n += ((int)args[i] - (int)'0') * flag;
-    flag = flag * 10;
-  }
-  while(flag_neg --) n = n * (-1);
-  return n;
-}
-//0x80008ffc
-uint32_t convert_16(char *args){
-  uint32_t addr = 0;
-  uint32_t flag = 1;
-  for(int i = strlen(args) - 1;i >= 2;i --){
-    if(args[i] >= 'a' && args[i] <= 'f'){
-      addr += ((int)args[i] - (int)'a' + 10) * flag;
-    }
-    else {
-      addr += ((int)args[i] - (int)'0') * flag;
-  }
-    flag *= 16;
-  }
-  return addr;
-}
+//   int i = strlen(args) - 1;
+//   for(  ;i >= 0;i --){
+//     if(args[i] == 'n'){
+//       flag_neg += 1;
+//       continue;
+//     }
+//     n += ((int)args[i] - (int)'0') * flag;
+//     flag = flag * 10;
+//   }
+//   while(flag_neg --) n = n * (-1);
+//   return n;
+// }
+// //0x80008ffc
+// uint32_t convert_16(char *args){
+//   uint32_t addr = 0;
+//   uint32_t flag = 1;
+//   for(int i = strlen(args) - 1;i >= 2;i --){
+//     if(args[i] >= 'a' && args[i] <= 'f'){
+//       addr += ((int)args[i] - (int)'a' + 10) * flag;
+//     }
+//     else {
+//       addr += ((int)args[i] - (int)'0') * flag;
+//   }
+//     flag *= 16;
+//   }
+//   return addr;
+// }
 
-static int cmd_si(char *args){
-  uint64_t n = 0;
-  if(args == NULL)  n = 1;
-  else {
-    for(int i = 0; i < strlen(args) ; i ++){
-      if(args[i] > '9' || args[i] < '0'){
-        Log("Please input number!");
-        return 0;
-      }
-    }
-    n = convert_ten(args);
-  }
-  cpu_exec(n);
-  return 0;
-}
+// static int cmd_si(char *args){
+//   uint64_t n = 0;
+//   if(args == NULL)  n = 1;
+//   else {
+//     for(int i = 0; i < strlen(args) ; i ++){
+//       if(args[i] > '9' || args[i] < '0'){
+//         Log("Please input number!");
+//         return 0;
+//       }
+//     }
+//     n = convert_ten(args);
+//   }
+//   cpu_exec(n);
+//   return 0;
+// }
 
 static int cmd_q(char *args)
 {
@@ -595,11 +595,11 @@ static struct
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NPC", cmd_q},
     {"si", "Execuate one by one.",cmd_si},
-    // {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
-    // {"p","Get the result of EXPR.",cmd_pcount},
-    // {"x","Scan the memory.",cmd_x},
-    // {"w","Set a watchpoint.",cmd_w},
-    // {"d","Delete certain watchpoint.",cmd_d},
+    {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
+    {"p","Get the result of EXPR.",cmd_pcount},
+    {"x","Scan the memory.",cmd_x},
+    {"w","Set a watchpoint.",cmd_w},
+    {"d","Delete certain watchpoint.",cmd_d},
 
     /* TODO: Add more commands */
 

@@ -305,8 +305,6 @@ void init_sdb()
   init_regex();
 }
 
-void sdb_set_batch_mode();
-
 static int parseArgs(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -321,7 +319,7 @@ static int parseArgs(int argc, char *argv[]) {
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
     //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
     switch (o) {
-      case 'b': sdb_set_batch_mode(); break; //sdb_set_batch_mode(); break;
+      case 'b': break; //sdb_set_batch_mode(); break;
       case 'p': break;
       case 'l': break;
       case 'd': break;
@@ -501,7 +499,7 @@ static char *rl_gets()
     line_read = NULL;
   }
 
-  line_read = readline("(npc) ");
+  line_read = readline("(nemu) ");
 
   if (line_read && *line_read)
   {
@@ -577,7 +575,7 @@ static int cmd_si(char *args){
 
 static int cmd_q(char *args)
 {
-  npc_state.state = NPC_QUIT;
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
@@ -593,13 +591,13 @@ static struct
 } cmd_table[] = {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
-    {"q", "Exit NPC", cmd_q},
+    {"q", "Exit NEMU", cmd_q},
     {"si", "Execuate one by one.",cmd_si},
-    // {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
-    // {"p","Get the result of EXPR.",cmd_pcount},
-    // {"x","Scan the memory.",cmd_x},
-    // {"w","Set a watchpoint.",cmd_w},
-    // {"d","Delete certain watchpoint.",cmd_d},
+    {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
+    {"p","Get the result of EXPR.",cmd_pcount},
+    {"x","Scan the memory.",cmd_x},
+    {"w","Set a watchpoint.",cmd_w},
+    {"d","Delete certain watchpoint.",cmd_d},
 
     /* TODO: Add more commands */
 
