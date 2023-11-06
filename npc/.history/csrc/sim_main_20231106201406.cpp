@@ -440,7 +440,7 @@ int main(int argc, char** argv, char** env) {
 		if(dut.invalid == 1){
 			invalid_inst(dut.pc);
 		}
-		if(ifbreak && ~dut.clk){
+		if(ifbreak && ~clk){
 			printf("\nebreak!\n");
       printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 			NPCTRAP(dut.pc, 0);
