@@ -15,7 +15,6 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <locale.h>
 #include <time.h>
 #include <getopt.h>
 #include <regex.h>
