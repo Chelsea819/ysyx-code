@@ -447,7 +447,10 @@ static void exec_once(vaddr_t pc)
     printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
     NPCTRAP(dut.pc, 0);
   }
+
+
 }
+
 
 /* stimulate the way CPU works ,get commands constantly */
 static void execute(uint64_t n)
@@ -578,7 +581,6 @@ uint32_t convert_ten(char *args){
   return n;
 }
 //0x80008ffc
-
 uint32_t convert_16(char *args){
   uint32_t addr = 0;
   uint32_t flag = 1;
@@ -614,23 +616,6 @@ static int cmd_q(char *args)
 {
   npc_state.state = NPC_QUIT;
   return -1;
-}
-
-static int cmd_x(char *args){
-  if(too_lessArg(args) == 1) return 0;
-
-  char *arg1 = strtok(NULL," ");
-  char *arg2 = strtok(NULL," ");
-  if(too_lessArg(arg2) == 1) return 0;
-
-  int len = convert_ten(arg1);
-  vaddr_t addr = convert_16(arg2);
-  printf("addr = %08x\n",addr);
-
-  for (int i = 0;i < len;i ++){
-    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,pmem_read_npc(addr + i,4));
-  }
-  return 0; 
 }
 
 static int cmd_help(char *args);

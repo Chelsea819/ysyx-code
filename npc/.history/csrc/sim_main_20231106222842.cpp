@@ -628,7 +628,7 @@ static int cmd_x(char *args){
   printf("addr = %08x\n",addr);
 
   for (int i = 0;i < len;i ++){
-    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,pmem_read_npc(addr + i,4));
+    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,pmem_read_npc(addr + i,4)vaddr_read(addr + i, 4));
   }
   return 0; 
 }
