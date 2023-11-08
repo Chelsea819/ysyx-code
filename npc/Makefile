@@ -8,7 +8,7 @@ NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include 
 
 VERILATOR = verilator
-VERILATOR_CFLAGS += -MMD --build --cc --trace -Wall\
+VERILATOR_CFLAGS += -MMD --build --cc --trace -Wall --gdb\
 				-O3 --x-assign fast --x-initial fast --noassert #--threads 2
 
 BUILD_DIR = ./build
