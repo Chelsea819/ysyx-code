@@ -784,7 +784,7 @@ int main(int argc, char** argv, char** env) {
   /* Start engine. */
 	engine_start();
 
-  std::cout << dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1] << std::endl;
+  cout << dut.ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf << endl;
 
 	// while(1){
 	// 	switch (npc_state.state){
