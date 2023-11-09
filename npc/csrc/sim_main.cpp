@@ -23,6 +23,7 @@
 #include <regex.h>
 #include "utils.h"
 #include "common.h"
+#include "reg.h"
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
@@ -520,8 +521,24 @@ void cpu_exec(uint64_t n)
 		}
 }
 
+/* ------------------------------------reg.c------------------------------------ */
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
 
-/* ------------------------------------sdb------------------------------------ */
+void isa_reg_display() {
+  for(int i = 0; i < 32; i++){
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
+  }
+  printf("\033[102m PC: \033[0m \t0x%08x\n",dut.pc);
+  return;
+}
+
+
+/* ------------------------------------sdb.c------------------------------------ */
 
 static int is_batch_mode = false;
 
@@ -634,9 +651,16 @@ static int cmd_x(char *args){
   return 0; 
 }
 
+static int cmd_info(char *args){
+  if (too_lessArg(args) == 1) return 0; 
+  else if (*args == 'r')  isa_reg_display();
+  // else if (*args == 'w')  watchPoints_display();
+  else Log("Unknown command '%s'", args);
+  return 0;
+}
+
+
 static int cmd_help(char *args);
-
-
 
 static struct
 {
