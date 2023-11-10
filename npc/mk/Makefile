@@ -11,7 +11,7 @@ all:
 sim:
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	@echo "Write this Makefile by your self."
-	verilator -Wall --cc -MMD --trace --build -top $(TARGET) -Mdir ./obj_dir $(SIM) $(TEST) --exe  -o $(TARGET)
+	verilator -Wall --cc -MMD --trace --build -top $(TARGET) -Mdir ./obj_dir $(SIM) $(TEST) --exe  -o $(TARGET) --gdb
 	$(EXE)
 
 .PHONY:wave clean sim
