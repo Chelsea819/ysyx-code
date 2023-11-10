@@ -25,7 +25,7 @@ static inline int check_reg_idx(int idx) {
   return idx;
 }
 
-#define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
+#define gpr(idx) (dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[idx])
 
 static inline const char* reg_name(int idx) {
   extern const char* regs[];
