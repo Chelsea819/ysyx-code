@@ -531,7 +531,7 @@ const char *regs[] = {
 
 void isa_reg_display() {
   for(int i = 0; i < 32; i++){
-    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[i]);
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",dut.pc);
   return;
