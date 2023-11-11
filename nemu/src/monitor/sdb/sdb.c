@@ -152,6 +152,7 @@ static int cmd_w(char *args){
 }
 
 static int cmd_pcount(char *args){
+  watchPoints_display();
   bool success = true;
   if(too_lessArg(args) == 1) {
     return 0;

@@ -166,29 +166,29 @@ typedef struct watchpoint
 
 WP *get_head();
 
-static void watchPoints_display()
-{
-  WP *index = get_head();
-  if (index == NULL)
-  {
-    printf("Now, no WP in watchPool!\n");
-    return;
-  }
-  // printf("head : %p\n",index);
-  // printf("head->next : %p\n",index->next);
-  printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
-  while (index != NULL)
-  {
-    printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
-    printf("\033[96m \tbreakpoint already hit %d time \033[m \n", index->times);
-    index = index->next;
-  }
-  return;
-}
+// static void watchPoints_display()
+// {
+//   WP *index = get_head();
+//   if (index == NULL)
+//   {
+//     printf("Now, no WP in watchPool!\n");
+//     return;
+//   }
+//   // printf("head : %p\n",index);
+//   // printf("head->next : %p\n",index->next);
+//   printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
+//   while (index != NULL)
+//   {
+//     printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
+//     printf("\033[96m \tbreakpoint already hit %d time \033[m \n", index->times);
+//     index = index->next;
+//   }
+//   return;
+// }
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
-  watchPoints_display();
+  // watchPoints_display();
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
   {
