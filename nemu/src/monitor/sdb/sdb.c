@@ -188,7 +188,7 @@ static void watchPoints_display(){
   //printf("head->next : %p\n",index->next);
   printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
   while(index != NULL){
-    printf("\033[92m %d \thw watchpoint \tkeep \ty \t %s \033[m \n",index->NO,index->target);
+    printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n",index->NO,index->target);
     printf("\033[96m \tbreakpoint already hit %d time \033[m \n",index->times);
     index = index->next;
   }
