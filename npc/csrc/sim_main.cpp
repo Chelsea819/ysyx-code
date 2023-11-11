@@ -162,6 +162,11 @@ void init_rand() {
   srand(time(0));
 }
 
+static void out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, PMEM_LEFT, PMEM_RIGHT, dut.pc);
+}
+
 void init_mem_npc(){
     uint32_t *p = (uint32_t *)pmem;
     int i;
@@ -199,6 +204,10 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
   }
 }
 
+static inline bool in_pmem(paddr_t addr) {
+  return addr - CONFIG_MBASE < CONFIG_MSIZE;
+}
+
 static word_t pmem_read_npc(paddr_t addr,int len) {
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
   return ret;
@@ -210,7 +219,10 @@ static void pmem_write_npc(paddr_t addr, int len, word_t data) {
 
 
 static vaddr_t load_mem_npc(paddr_t addr,int len) {
-	return pmem_read_npc(addr,len);
+	if (likely(in_pmem(addr))) return pmem_read_npc(addr,len);
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  out_of_bound(addr);
+  return 0;
 }
 
 void ifebreak_func(int inst){
@@ -219,7 +231,9 @@ void ifebreak_func(int inst){
 }
 
 void mem_write_npc(vaddr_t addr, int len, word_t data) {
-  pmem_write_npc(addr, len, data);
+  if (likely(in_pmem(addr))) pmem_write_npc(addr, len, data);
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  out_of_bound(addr);
 }
 
 
