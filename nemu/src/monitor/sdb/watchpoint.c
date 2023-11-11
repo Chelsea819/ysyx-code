@@ -84,6 +84,7 @@ WP* new_wp(char *args){
     addSpot->next = get_wp;
     get_wp->past = addSpot;
     get_wp->NO = addSpot->NO + 1;
+    get_wp->next = NULL;
   }
 
     WP *index = head;
