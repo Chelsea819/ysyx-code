@@ -30,26 +30,26 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
-  // FILE * fp = fopen("/home/chelsea/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
-  // if(fp == NULL){
-  //   Assert(0,"Can not open 'input' !");
-  // }
+  FILE * fp = fopen("/home/chelsea/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
+  if(fp == NULL){
+    Assert(0,"Can not open 'input' !");
+  }
 
-  // char* exp = malloc(32 * sizeof(char));
-  // bool success = false;
-  // word_t result_exp = 0;
-  // word_t result_before = 0;
-  // while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
-  //   if(strlen(exp) >= 31)  continue;
+  char* exp = malloc(32 * sizeof(char));
+  bool success = false;
+  word_t result_exp = 0;
+  word_t result_before = 0;
+  while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
+    if(strlen(exp) >= 31)  continue;
 
-  //   result_exp = expr(exp,&success);
+    result_exp = expr(exp,&success);
 
-  //   if(result_exp != result_before) Log("result_exp != result_before");
-  //   memset(exp,0,32 * sizeof(char));
-  //   Log("result_exp == result_before!");
-  // }
-  // fclose(fp);
-  // free(exp);
+    if(result_exp != result_before) Log("result_exp != result_before");
+    memset(exp,0,32 * sizeof(char));
+    Log("result_exp == result_before!");
+  }
+  fclose(fp);
+  free(exp);
 
   /* Start engine. */
   engine_start();
