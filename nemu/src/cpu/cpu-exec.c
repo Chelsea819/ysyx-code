@@ -188,6 +188,7 @@ static void watchPoints_display()
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
+  watchPoints_display();
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
   {
@@ -207,7 +208,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   while (index != NULL)
   {
     printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
-    watchPoints_display();
+    // watchPoints_display();
     addr = expr(index->target, &success);
     Assert(success, "Make_token fail!");
     if (addr != index->data)
