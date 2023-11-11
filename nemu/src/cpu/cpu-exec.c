@@ -189,7 +189,7 @@ static void watchPoints_display()
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
-  // watchPoints_display();
+  watchPoints_display();
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
   {

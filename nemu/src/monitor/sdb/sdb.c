@@ -185,7 +185,7 @@ static void watchPoints_display(){
     printf("Now, no WP in watchPool!\n");
     return;
   }
-  //printf("head : %p\n",index);
+  printf("head : %p\n",index);
   //printf("head->next : %p\n",index->next);
   printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
   while(index != NULL){
