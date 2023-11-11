@@ -9,7 +9,7 @@ INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --build --cc --trace -Wall -j 0 \
-				-O3 --x-assign fast --x-initial fast --noassert --gdbbt
+				-O3 --x-assign fast --x-initial fast --noassert --gdb
 
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
