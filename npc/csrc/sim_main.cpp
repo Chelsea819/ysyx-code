@@ -1317,8 +1317,8 @@ static struct
     {"info","Print the state of register(r) or the content of watchpoint(w)",cmd_info},
     {"p","Get the result of EXPR.",cmd_pcount},
     {"x","Scan the memory.",cmd_x},
-    // {"w","Set a watchpoint.",cmd_w},
-    // {"d","Delete certain watchpoint.",cmd_d},
+    {"w","Set a watchpoint.",cmd_w},
+    {"d","Delete certain watchpoint.",cmd_d},
 
     /* TODO: Add more commands */
 
