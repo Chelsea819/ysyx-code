@@ -24,7 +24,7 @@ $(BINARY): compile_git
 
 # Some convenient rules
 
-override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  --batch
+override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  #--batch
 override ARGS += $(ARGS_DIFF) --ftrace=/home/chelsea/ysyx-workbench/am-kernels/tests/cpu-tests/build/$(ALL)-$(ARCH).elf
 
 # Command to execute NEMU
