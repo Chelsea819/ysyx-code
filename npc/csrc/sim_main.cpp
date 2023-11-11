@@ -363,6 +363,9 @@ void init_sdb()
   /* Compile the regular expressions. */
   // 编译正则表达式
   init_regex();
+
+  /* Initialize the watchpoint pool. */
+  init_wp_pool();
 }
 
 void sdb_set_batch_mode();
@@ -1412,6 +1415,18 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
+  WP *head = get_head();
+  while(head != NULL){
+    free(head->target);
+    head->target = NULL;
+    head = head->next;
+  }
+  // iringbuf *head_i = get_head_iringbuf();
+  // while(head_i != NULL && head_i->rbuf != NULL){
+  //   free(head_i->rbuf);
+  //   head_i->rbuf = NULL;
+  //   head_i = head_i->next;
+  // }
   
 }
 

@@ -49,15 +49,15 @@ WP* new_wp(char *args){
 
   //find ava point
   WP* get_wp = free_;
-  while(get_wp != NULL){
-    if(get_wp->next == NULL){
-      break;
-    }
-    get_wp = get_wp->next;
-  }
+  // while(get_wp != NULL){
+  //   if(get_wp->next == NULL){
+  //     break;
+  //   }
+  //   get_wp = get_wp->next;
+  // }
 
   //cut it from free_
-  get_wp->past->next = NULL;
+  // get_wp->past->next = NULL;
   get_wp->next = NULL;
   get_wp->times = 0;
   get_wp->target = malloc(strlen(args)+1);
@@ -87,7 +87,7 @@ WP* new_wp(char *args){
 
     WP *index = head;
     while(index){
-      //printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
     //printf("head : %p\n",head);
@@ -109,7 +109,7 @@ void free_wp(WP *wp){
     else head = wp->next;
     if(wp->next != NULL) wp->next->past = wp->past;
     //printf("Remove it from %d in head\n",wp->NO);
-    }
+  }
 
   free(wp->target);
 
