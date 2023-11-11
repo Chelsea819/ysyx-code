@@ -174,7 +174,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   WP *index = get_head();
   while (index != NULL)
   {
-    printf("index->target:[%s]\n",index->target);
+    printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n",index->NO,index->target);
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
     if(addr != index->data){
