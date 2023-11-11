@@ -169,6 +169,7 @@ WP *get_head();
 static void watchPoints_display()
 {
   WP *index = get_head();
+  printf("the passing head address:%p\n",index);
   if (index == NULL)
   {
     printf("Now, no WP in watchPool!\n");
