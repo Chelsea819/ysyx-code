@@ -272,6 +272,9 @@ uint32_t eval(int p, int q){
   int op = 0;
   bool success = false;
   
+
+  printf("p:%d\tq:%d", p, q);
+
   //int error = 0;
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
