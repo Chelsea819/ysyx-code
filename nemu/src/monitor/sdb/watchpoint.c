@@ -49,6 +49,7 @@ WP* new_wp(char *args){
 
   //find ava point
   WP* get_wp = free_;
+  free_ = free_->next;
   // while(get_wp != NULL){
   //   if(get_wp->next == NULL){
   //     break;
