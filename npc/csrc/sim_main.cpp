@@ -74,9 +74,27 @@ bool ifbreak = false;
 
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
+static bool g_print_step = false;
 
 TOP_NAME dut;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
+
+uint32_t convert_16(char *args);
+uint32_t convert_ten(char *args);
+
+#define NR_WP 32
+
+typedef struct watchpoint {
+  int NO;
+  int times;
+  uint32_t data;
+  char *target;
+  struct watchpoint *next;
+  struct watchpoint *past;
+
+  /* TODO: Add more members if necessary */
+
+} WP;
 
 
 /* ------------------------------------timer------------------------------------ */
@@ -413,6 +431,8 @@ void set_npc_state(int state, vaddr_t pc, int halt_ret) {
   npc_state.halt_ret = halt_ret;
 }
 
+
+
 __attribute__((noinline))
 void invalid_inst(vaddr_t thispc) {
   uint32_t temp[2];
@@ -435,6 +455,114 @@ void invalid_inst(vaddr_t thispc) {
         "* The machine is always right!\n"
         "* Every line of untested code is always wrong!\n\n", ANSI_FG_RED), isa_logo);
   set_npc_state(NPC_ABORT, thispc, -1);
+}
+
+/* ------------------------------------cpu-exe.c------------------------------------ */
+
+// static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
+// {
+// #ifdef CONFIG_ITRACE_COND
+//   if (ITRACE_COND)
+//   {
+//     log_write("%s\n", _this->logbuf);
+//   }
+// #endif
+//   if (g_print_step)
+//   {
+//     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
+//   }
+//   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+//   // #ifdef CONFIG_WATCHPOINT
+//   bool success = true;
+//   uint32_t addr = 0;
+
+//   WP *index = get_head();
+//   while (index != NULL)
+//   {
+//     addr = expr(index->target, &success);
+//     Assert(success,"Make_token fail!");
+//     if(addr != index->data){
+//       npc_state.state = NPC_STOP;
+//       index->times += 1;
+//       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
+//       printf("Old value = %d\n", index->data);
+//       printf("New value = %d\n\n", addr);
+//       index->data = addr;
+//       return;
+//     }
+//     index = index->next;
+//     return;
+
+//   }
+//   // #endif
+// }
+WP* get_head();
+word_t expr(char *e, bool *success);
+
+static void trace_and_difftest(vaddr_t dnpc)
+{
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND)
+  {
+    log_write("%s\n", _this->logbuf);
+  }
+#endif
+  if (g_print_step)
+  {
+    IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
+  }
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  bool success = true;
+  uint32_t addr = 0;
+
+  WP *index = get_head();
+  while (index != NULL)
+  {
+    addr = expr(index->target, &success);
+    Assert(success,"Make_token fail!");
+    if(addr != index->data){
+      npc_state.state = NPC_STOP;
+      index->times += 1;
+      printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
+      printf("Old value = %d\n", index->data);
+      printf("New value = %d\n\n", addr);
+      index->data = addr;
+      return;
+    }
+    index = index->next;
+    return;
+
+  }
+}
+
+char *convertTo_2(char args){
+  char *result = (char *)malloc(5);
+  int num = 0;
+
+  if(args >= 'a' && args <= 'f'){
+    num = (int)args - (int)'a' + 10;
+  }
+  else {
+    num = (int)args - (int)'0';
+  }
+
+  int flag = 8;
+  //15 -> 8 + 4 + 2 + 1
+  //5 -> 4 + 1
+  //0
+  for(int n = 0; n < 4; n ++){
+    //为0 则该位之后的低位均为0
+    if(!num){
+      for(; n < 4; n ++) result[n] = '0';
+      break;
+    }
+
+    result[n] = num / flag + '0';
+    if(num / flag) num -= flag;
+    flag /= 2;
+  }
+  result[4] = '\0';
+  return result;
 }
 
 /* let CPU conduct current command and renew PC */
@@ -473,7 +601,7 @@ static void execute(uint64_t n)
   {
     exec_once(dut.pc);
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    // trace_and_difftest(&s, cpu.pc);
+    trace_and_difftest(dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
@@ -514,6 +642,8 @@ static void statistic()
 //   isa_reg_display();
 //   statistic();
 // }
+
+
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n)
@@ -758,8 +888,7 @@ bool check_parentheses(int p, int q){
   return true;
 }   
 
-uint32_t convert_ten(char *args);
-uint32_t convert_16(char *args);
+
 
 uint32_t eval(int p, int q){
   //int num = 0;
@@ -862,6 +991,138 @@ word_t expr(char *e, bool *success) {
   return eval(0, i - 1);
 }
 
+/* ------------------------------------watchpoint.c------------------------------------ */
+
+
+static WP wp_pool[NR_WP] = {};
+static WP *head = NULL, *free_ = NULL;
+//static int gap = 31;
+
+WP* new_wp(char *args){
+  //search if existed the same
+  bool success = true;
+  WP* p_searchExist = head;
+  while(p_searchExist != NULL){
+    if(strcmp(p_searchExist->target,args) == 0) {
+      return NULL;
+    }
+    p_searchExist = p_searchExist->next;
+  }
+
+  //full
+  if(free_==NULL)  Assert(0,"wp_pool full!\n");
+
+  //find ava point
+  WP* get_wp = free_;
+  while(get_wp != NULL){
+    if(get_wp->next == NULL){
+      break;
+    }
+    get_wp = get_wp->next;
+  }
+
+  //cut it from free_
+  get_wp->past->next = NULL;
+  get_wp->next = NULL;
+  get_wp->times = 0;
+  get_wp->target = (char *)malloc(strlen(args)+1);
+  strcpy(get_wp->target,args);
+  get_wp->data = expr(args,&success);
+  Assert(success,"Make_token fail!");
+
+  //add it to head list
+  if(head == NULL){
+    head = get_wp;
+    get_wp->NO = 0;
+    get_wp->next = NULL;
+    get_wp->past = NULL;
+  }
+  else{
+    WP* addSpot = head;
+    while(addSpot != NULL){
+      if(addSpot->next == NULL){
+        break;
+      }
+      addSpot = addSpot->next;
+    }
+    addSpot->next = get_wp;
+    get_wp->past = addSpot;
+    get_wp->NO = addSpot->NO + 1;
+  }
+
+    WP *index = head;
+    while(index){
+      //printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+      index = index->next;
+    }
+    //printf("head : %p\n",head);
+  //printf("head : %p\n",head->next);
+  return get_wp;
+}
+
+WP* get_head(){
+  return head;
+}
+
+void free_wp(WP *wp){
+  if(!wp) Assert(0,"Free_wp received NULL!\n");
+
+  //remove it from head
+  if(wp->next == NULL && wp->past == NULL) head = NULL;
+  else{
+    if(wp->past != NULL) wp->past->next = wp->next;
+    else head = wp->next;
+    if(wp->next != NULL) wp->next->past = wp->past;
+    //printf("Remove it from %d in head\n",wp->NO);
+    }
+
+  free(wp->target);
+
+  wp->data = 0;
+  wp->times = 0;
+
+  //add it to free_
+  if(!free_) {
+    free_ = wp;
+    wp->next = NULL;
+    wp->NO = 0;
+    wp->past = NULL;
+    return;
+  }
+  
+  WP *index = free_;
+  while(index != NULL){
+    if(index->next == NULL){
+      index->next = wp;
+      wp->past = index;
+      wp->next = NULL;
+      wp->NO = index->NO + 1;
+      break;
+    }
+    index = index->next;
+  }
+  //printf("ADD it to %d in free_",wp->NO);
+  return;
+
+
+}
+
+void init_wp_pool() {
+  int i;
+  for (i = 0; i < NR_WP; i ++) {
+    wp_pool[i].NO = i;
+    wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
+    wp_pool[i].past = (i == 0 ? NULL : &wp_pool[i - 1]);
+  }
+
+  head = NULL;
+  free_ = wp_pool;
+}
+
+/* TODO: Implement the functionality of watchpoint */
+
+
+
 
 /* ------------------------------------sdb.c------------------------------------ */
 
@@ -959,6 +1220,31 @@ static int cmd_q(char *args)
   return -1;
 }
 
+static void watchPoints_display(){
+  WP *index = get_head();
+  if(index == NULL ) {
+    printf("Now, no WP in watchPool!\n");
+    return;
+  }
+  //printf("head : %p\n",index);
+  //printf("head->next : %p\n",index->next);
+  printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
+  while(index != NULL){
+    printf("\033[92m %d \thw watchpoint \tkeep \ty \t %s \033[m \n",index->NO,index->target);
+    printf("\033[96m \tbreakpoint already hit %d time \033[m \n",index->times);
+    index = index->next;
+  }
+  return;
+}
+
+static int cmd_w(char *args){
+  if(too_lessArg(args) == 1) return 0;
+  WP* ret =new_wp(args);
+  if(ret==NULL) printf("%s already in wp_pool!\n",args); 
+  watchPoints_display();
+  return 0;
+}
+
 static int cmd_pcount(char *args){
   bool success = true;
   if(too_lessArg(args) == 1) {
@@ -988,6 +1274,8 @@ static int cmd_x(char *args){
   return 0; 
 }
 
+
+
 static int cmd_info(char *args){
   if (too_lessArg(args) == 1) return 0; 
   else if (*args == 'r')  isa_reg_display();
@@ -998,6 +1286,23 @@ static int cmd_info(char *args){
 
 
 static int cmd_help(char *args);
+
+static int cmd_d(char *args){
+  if(too_lessArg(args) == 1) return 0;
+  WP *index = get_head();
+  while(index != NULL){
+    if(convert_ten(args) == index->NO){
+      free_wp(index);
+      watchPoints_display();
+      return 0;;
+    }
+    index = index->next;
+  }
+  printf("No %s in watchpool!\n",args);
+  watchPoints_display();
+  return 0;
+}
+
 
 static struct
 {
