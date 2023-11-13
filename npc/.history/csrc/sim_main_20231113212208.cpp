@@ -76,6 +76,9 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+static WP wp_pool[NR_WP] = {};
+static WP *head = NULL, *free_ = NULL;
+
 TOP_NAME dut;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
 
@@ -95,8 +98,6 @@ typedef struct watchpoint {
   /* TODO: Add more members if necessary */
 
 } WP;
-static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
 
 
 /* ------------------------------------timer------------------------------------ */
@@ -502,6 +503,7 @@ void invalid_inst(vaddr_t thispc) {
 //   }
 //   // #endif
 // }
+WP* get_head();
 word_t expr(char *e, bool *success);
 
 static void trace_and_difftest(vaddr_t dnpc)
@@ -520,7 +522,7 @@ static void trace_and_difftest(vaddr_t dnpc)
   bool success = true;
   uint32_t addr = 0;
 
-  WP *index = head;
+  WP *index = get_head();
   while (index != NULL)
   {
     addr = expr(index->target, &success);
@@ -1025,6 +1027,7 @@ WP* new_wp(char *args){
 
   //cut it from free_
   // get_wp->past->next = NULL;
+  get_wp->next = NULL;
   get_wp->times = 0;
   get_wp->target = (char *)malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
@@ -1041,7 +1044,10 @@ WP* new_wp(char *args){
   }
   else{
     WP* addSpot = head;
-    while(addSpot->next == NULL){
+    while(addSpot != NULL){
+      if(addSpot->next == NULL){
+        break;
+      }
       addSpot = addSpot->next;
     }
     addSpot->next = get_wp;
@@ -1058,6 +1064,10 @@ WP* new_wp(char *args){
     //printf("head : %p\n",head);
   //printf("head : %p\n",head->next);
   return get_wp;
+}
+
+WP* get_head(){
+  return head;
 }
 
 void free_wp(WP *wp){
@@ -1217,7 +1227,7 @@ static int cmd_q(char *args)
 }
 
 static void watchPoints_display(){
-  WP *index = head;
+  WP *index = get_head();
   if(index == NULL ) {
     printf("Now, no WP in watchPool!\n");
     return;
@@ -1285,7 +1295,7 @@ static int cmd_help(char *args);
 
 static int cmd_d(char *args){
   if(too_lessArg(args) == 1) return 0;
-  WP *index = head;
+  WP *index = get_head();
   while(index != NULL){
     if(convert_ten(args) == index->NO){
       free_wp(index);
@@ -1409,7 +1419,7 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
-  WP *head = head;
+  WP *head = get_head();
   while(head != NULL){
     free(head->target);
     head->target = NULL;

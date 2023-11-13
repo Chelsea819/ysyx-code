@@ -76,6 +76,9 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+static WP wp_pool[NR_WP] = {};
+static WP *head = NULL, *free_ = NULL;
+
 TOP_NAME dut;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
 
@@ -95,8 +98,6 @@ typedef struct watchpoint {
   /* TODO: Add more members if necessary */
 
 } WP;
-static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
 
 
 /* ------------------------------------timer------------------------------------ */
@@ -1025,6 +1026,7 @@ WP* new_wp(char *args){
 
   //cut it from free_
   // get_wp->past->next = NULL;
+  get_wp->next = NULL;
   get_wp->times = 0;
   get_wp->target = (char *)malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
