@@ -59,9 +59,8 @@ WP* new_wp(char *args){
 
   //cut it from free_
   // get_wp->past->next = NULL;
-  get_wp->next = NULL;
   get_wp->times = 0;
-  get_wp->target = malloc(strlen(args)+1);
+  get_wp->target = (char *)malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
   Assert(success,"Make_token fail!");
@@ -76,10 +75,7 @@ WP* new_wp(char *args){
   }
   else{
     WP* addSpot = head;
-    while(addSpot != NULL){
-      if(addSpot->next == NULL){
-        break;
-      }
+    while(addSpot->next != NULL){
       addSpot = addSpot->next;
     }
     addSpot->next = get_wp;
@@ -96,10 +92,6 @@ WP* new_wp(char *args){
     //printf("head : %p\n",head);
   //printf("head : %p\n",head->next);
   return get_wp;
-}
-
-WP* get_head(){
-  return head;
 }
 
 void free_wp(WP *wp){
