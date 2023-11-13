@@ -542,7 +542,7 @@ static void trace_and_difftest(vaddr_t dnpc)
     }
     printf("change!\n");
     index = index->next;
-    printf("after change!\n");
+    printf("change!\n");
     return;
   }
 }
