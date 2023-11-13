@@ -525,8 +525,6 @@ static void trace_and_difftest(vaddr_t dnpc)
   {
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
-    printf("enter watchpoint!\n");
-    printf("index->target:%s\n",index->target);
     if(addr != index->data){
       npc_state.state = NPC_STOP;
       index->times += 1;
