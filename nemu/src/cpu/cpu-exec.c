@@ -165,27 +165,7 @@ typedef struct watchpoint
 } WP;
 
 WP *get_head();
-
-static void watchPoints_display()
-{
-  WP *index = get_head();
-  printf("the passing head address:%p\n",index);
-  if (index == NULL)
-  {
-    printf("Now, no WP in watchPool!\n");
-    return;
-  }
-  // printf("head : %p\n",index);
-  // printf("head->next : %p\n",index->next);
-  printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
-  while (index != NULL)
-  {
-    printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
-    printf("\033[96m \tbreakpoint already hit %d time \033[m \n", index->times);
-    index = index->next;
-  }
-  return;
-}
+void watchPoints_display();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
