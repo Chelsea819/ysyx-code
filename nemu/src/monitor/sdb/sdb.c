@@ -179,7 +179,7 @@ static int cmd_x(char *args){
   return 0; 
 }
 
-void watchPoints_display(){
+static void watchPoints_display(){
   WP *index = get_head();
   if(index == NULL ) {
     printf("Now, no WP in watchPool!\n");

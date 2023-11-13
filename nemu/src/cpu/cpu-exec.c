@@ -165,11 +165,9 @@ typedef struct watchpoint
 } WP;
 
 WP *get_head();
-void watchPoints_display();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
-  watchPoints_display();
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
   {
@@ -509,7 +507,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 /* stimulate the way CPU works ,get commands constantly */
 static void execute(uint64_t n)
 {
-  watchPoints_display();
+  // watchPoints_display();
   Decode s;
   for (; n > 0; n--)
   {
