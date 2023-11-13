@@ -539,7 +539,7 @@ static void trace_and_difftest(vaddr_t dnpc)
       index->data = addr;
       return;
     }
-    // printf("")
+    printf("")
     index = index->next;
     return;
   }
