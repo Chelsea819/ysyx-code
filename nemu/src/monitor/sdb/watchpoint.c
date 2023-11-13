@@ -30,7 +30,7 @@ typedef struct watchpoint {
 } WP;
 
 static WP wp_pool[NR_WP] = {};
-WP *head = NULL, *free_ = NULL;
+static WP *head = NULL, *free_ = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){
@@ -49,18 +49,18 @@ WP* new_wp(char *args){
 
   //find ava point
   WP* get_wp = free_;
-  free_ = free_->next;
-  // while(get_wp != NULL){
-  //   if(get_wp->next == NULL){
-  //     break;
-  //   }
-  //   get_wp = get_wp->next;
-  // }
+  while(get_wp != NULL){
+    if(get_wp->next == NULL){
+      break;
+    }
+    get_wp = get_wp->next;
+  }
 
   //cut it from free_
-  // get_wp->past->next = NULL;
+  get_wp->past->next = NULL;
+  get_wp->next = NULL;
   get_wp->times = 0;
-  get_wp->target = (char *)malloc(strlen(args)+1);
+  get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
   Assert(success,"Make_token fail!");
@@ -71,22 +71,23 @@ WP* new_wp(char *args){
     get_wp->NO = 0;
     get_wp->next = NULL;
     get_wp->past = NULL;
-    printf("the passing head address:%p\n",head);
   }
   else{
     WP* addSpot = head;
-    while(addSpot->next != NULL){
+    while(addSpot != NULL){
+      if(addSpot->next == NULL){
+        break;
+      }
       addSpot = addSpot->next;
     }
     addSpot->next = get_wp;
     get_wp->past = addSpot;
     get_wp->NO = addSpot->NO + 1;
-    get_wp->next = NULL;
   }
 
     WP *index = head;
     while(index){
-      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+      //printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
     //printf("head : %p\n",head);
@@ -108,7 +109,7 @@ void free_wp(WP *wp){
     else head = wp->next;
     if(wp->next != NULL) wp->next->past = wp->past;
     //printf("Remove it from %d in head\n",wp->NO);
-  }
+    }
 
   free(wp->target);
 
