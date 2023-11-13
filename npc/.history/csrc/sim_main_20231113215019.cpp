@@ -81,7 +81,6 @@ VerilatedVcdC *m_trace = new VerilatedVcdC;
 
 uint32_t convert_16(char *args);
 uint32_t convert_ten(char *args);
-static void watchPoints_display();
 
 #define NR_WP 32
 
