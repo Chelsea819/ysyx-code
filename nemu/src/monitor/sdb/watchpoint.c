@@ -30,7 +30,7 @@ typedef struct watchpoint {
 } WP;
 
 static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+WP *head = NULL, *free_ = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){

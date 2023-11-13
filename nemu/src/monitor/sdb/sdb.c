@@ -43,9 +43,10 @@ typedef struct iringbuf_state{
 void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
-WP* get_head();
+// WP* get_head();
 void free_wp(WP *wp);
 void init_iringbuf();
+extern WP *head;
 
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -180,7 +181,7 @@ static int cmd_x(char *args){
 }
 
 static void watchPoints_display(){
-  WP *index = get_head();
+  WP *index = head;
   if(index == NULL ) {
     printf("Now, no WP in watchPool!\n");
     return;
@@ -206,7 +207,7 @@ static int cmd_info(char *args){
 
 static int cmd_d(char *args){
   if(too_lessArg(args) == 1) return 0;
-  WP *index = get_head();
+  WP *index = head;
   while(index != NULL){
     if(convert_ten(args) == index->NO){
       free_wp(index);
@@ -330,11 +331,11 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
-  WP *head = get_head();
-  while(head != NULL){
-    free(head->target);
-    head->target = NULL;
-    head = head->next;
+  WP *index = head;
+  while(index != NULL){
+    free(index->target);
+    index->target = NULL;
+    index = index->next;
   }
   iringbuf *head_i = get_head_iringbuf();
   while(head_i != NULL && head_i->rbuf != NULL){
