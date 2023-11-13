@@ -94,6 +94,10 @@ WP* new_wp(char *args){
   return get_wp;
 }
 
+WP* get_head(){
+  return head;
+}
+
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
 
