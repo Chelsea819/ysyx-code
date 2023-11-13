@@ -1286,7 +1286,7 @@ static int cmd_x(char *args){
 static int cmd_info(char *args){
   if (too_lessArg(args) == 1) return 0; 
   else if (*args == 'r')  isa_reg_display();
-  else if (*args == 'w')  watchPoints_display();
+  // else if (*args == 'w')  watchPoints_display();
   else Log("Unknown command '%s'", args);
   return 0;
 }
