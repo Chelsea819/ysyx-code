@@ -357,7 +357,6 @@ void init_regex() {
     }
   }
 }
-void init_wp_pool();
 
 void init_sdb()
 {
@@ -1030,7 +1029,7 @@ WP* new_wp(char *args){
   // get_wp->past->next = NULL;
   get_wp->next = NULL;
   get_wp->times = 0;
-  get_wp->target = (char *)malloc(strlen(args)+1);
+  get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
   Assert(success,"Make_token fail!");
@@ -1301,7 +1300,6 @@ static int cmd_d(char *args){
     if(convert_ten(args) == index->NO){
       free_wp(index);
       watchPoints_display();
-
       return 0;;
     }
     index = index->next;

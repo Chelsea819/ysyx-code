@@ -1030,7 +1030,7 @@ WP* new_wp(char *args){
   // get_wp->past->next = NULL;
   get_wp->next = NULL;
   get_wp->times = 0;
-  get_wp->target = (char *)malloc(strlen(args)+1);
+  get_wp->target = malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
   Assert(success,"Make_token fail!");
