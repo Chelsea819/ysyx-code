@@ -331,6 +331,8 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
+
+  printf("start free!\n\n");
   WP *head = get_head();
   while(head != NULL){
     free(head->target);

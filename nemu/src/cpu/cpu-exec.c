@@ -201,8 +201,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
       index->data = addr;
       return;
     }
-    index = index->next;
-    
+    index = index->next;  
   }
   return;
 #endif
