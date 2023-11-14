@@ -85,12 +85,12 @@ WP* new_wp(char *args){
     get_wp->next = NULL;
   }
 
-    WP *index = head;
-    watchPoints_display();
-    while(index){
-      printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
-      index = index->next;
-    }
+    // WP *index = head;
+    // watchPoints_display();
+    // while(index){
+    //   printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
+    //   index = index->next;
+    // }
   return get_wp;
 }
 

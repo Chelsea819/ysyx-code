@@ -147,7 +147,7 @@ static int cmd_w(char *args){
   if(too_lessArg(args) == 1) return 0;
   WP* ret =new_wp(args);
   if(ret==NULL) printf("%s already in wp_pool!\n",args);
-  if(head != NULL) printf("\n head \nNO:%d  target:%s   %p   data: %x\n",head->NO,head->target,head->target,head->data);
+  // if(head != NULL) printf("\n head \nNO:%d  target:%s   %p   data: %x\n",head->NO,head->target,head->target,head->data);
   watchPoints_display();
 // printf("printf address of head target:%p\n",head->target);
   return 0;
