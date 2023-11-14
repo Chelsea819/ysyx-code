@@ -17,7 +17,7 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-#include "../monitor/sdb/sdb.h"
+#include <sdb.h>
 #include <elf.h>
 
 #include <isa.h>
