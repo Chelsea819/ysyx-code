@@ -183,7 +183,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   bool success = true;
   uint32_t addr = 0;
 
-  WP *index = get_head();
+  // WP *index = get_head();
+  WP *index = head;
   while (index != NULL)
   {
     printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
