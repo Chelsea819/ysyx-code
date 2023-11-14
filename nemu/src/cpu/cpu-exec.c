@@ -184,6 +184,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   uint32_t addr = 0;
 
   WP *index = get_head();
+  printf("printf address of head:%p\n",index);
   printf("before \033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, get_head()->target);
   while (index != NULL)
   {
