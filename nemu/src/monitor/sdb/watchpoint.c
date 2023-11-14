@@ -29,8 +29,8 @@
 
 // } WP;
 
-WP wp_pool[NR_WP] = {};
-WP *free_ = NULL;
+// static WP wp_pool[NR_WP] = {};
+static WP *free_ = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){
