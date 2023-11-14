@@ -197,8 +197,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
       nemu_state.state = NEMU_STOP;
       index->times += 1;
       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
-      printf("Old value = %d\n", index->data);
-      printf("New value = %d\n\n", addr);
+      printf("Old value = 0x%08x\n", index->data);
+      printf("New value = 0x%08x\n\n", addr);
       index->data = addr;
       return;
     }
