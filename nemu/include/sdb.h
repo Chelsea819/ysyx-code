@@ -39,5 +39,6 @@ static WP *head = NULL;
 // WP* get_head(){
 //   return head;
 // }
+void watchPoints_display();
 
 #endif

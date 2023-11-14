@@ -142,8 +142,6 @@ static int cmd_q(char *args)
 
 static int cmd_help(char *args);
 
-static void watchPoints_display();
-
 static int cmd_w(char *args){
   if(too_lessArg(args) == 1) return 0;
   WP* ret =new_wp(args);
@@ -181,7 +179,7 @@ static int cmd_x(char *args){
   return 0; 
 }
 
-static void watchPoints_display(){
+void watchPoints_display(){
   // WP *index = get_head();
   WP *index = head;
   if(index == NULL ) {

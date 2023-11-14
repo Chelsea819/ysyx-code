@@ -85,6 +85,7 @@ WP* new_wp(char *args){
   }
 
     WP *index = head;
+    watchPoints_display();
     while(index){
       printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
