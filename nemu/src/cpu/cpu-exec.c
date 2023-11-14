@@ -151,20 +151,20 @@ iringbuf *get_head_iringbuf()
 
 void device_update();
 
-typedef struct watchpoint
-{
-  int NO;
-  int times;
-  uint32_t data;
-  char target[100];
-  struct watchpoint *next;
-  struct watchpoint *past;
+// typedef struct watchpoint
+// {
+//   int NO;
+//   int times;
+//   uint32_t data;
+//   char target[100];
+//   struct watchpoint *next;
+//   struct watchpoint *past;
 
-  /* TODO: Add more members if necessary */
+//   /* TODO: Add more members if necessary */
 
-} WP;
+// } WP;
 
-WP *get_head();
+// WP *get_head();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
@@ -184,8 +184,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   uint32_t addr = 0;
 
   WP *index = get_head();
-  printf("printf address of head:%p\n",index);
-  printf("before \033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, get_head()->target);
   while (index != NULL)
   {
     printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
@@ -204,8 +202,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     }
     index = index->next;  
   }
-  return;
 #endif
+  return;
 }
 
 const char *reg[] = {

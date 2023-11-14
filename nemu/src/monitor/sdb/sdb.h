@@ -17,7 +17,27 @@
 #define __SDB_H__
 
 #include <common.h>
+#define NR_WP 32
 
 word_t expr(char *e, bool *success);
+
+typedef struct watchpoint {
+  int NO;
+  int times;
+  uint32_t data;
+  char *target;
+  struct watchpoint *next;
+  struct watchpoint *past;
+
+  /* TODO: Add more members if necessary */
+
+} WP;
+
+static WP *head = NULL;
+// static WP wp_pool[NR_WP] = {};
+
+WP* get_head(){
+  return head;
+}
 
 #endif

@@ -22,17 +22,17 @@
 
 static int is_batch_mode = false;
 
-typedef struct watchpoint {
-  int NO;
-  int times;
-  uint32_t data;
-  char *target;
-  struct watchpoint *next;
-  struct watchpoint *past;
+// typedef struct watchpoint {
+//   int NO;
+//   int times;
+//   uint32_t data;
+//   char *target;
+//   struct watchpoint *next;
+//   struct watchpoint *past;
 
-  /* TODO: Add more members if necessary */
+//   /* TODO: Add more members if necessary */
 
-} WP;
+// } WP;
 
 typedef struct iringbuf_state{
   char *rbuf;
@@ -43,7 +43,7 @@ typedef struct iringbuf_state{
 void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
-WP* get_head();
+// WP* get_head();
 void free_wp(WP *wp);
 void init_iringbuf();
 

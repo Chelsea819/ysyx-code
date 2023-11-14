@@ -15,22 +15,22 @@
 
 #include "sdb.h"
 
-#define NR_WP 32
+// #define NR_WP 32
 
-typedef struct watchpoint {
-  int NO;
-  int times;
-  uint32_t data;
-  char *target;
-  struct watchpoint *next;
-  struct watchpoint *past;
+// typedef struct watchpoint {
+//   int NO;
+//   int times;
+//   uint32_t data;
+//   char *target;
+//   struct watchpoint *next;
+//   struct watchpoint *past;
 
-  /* TODO: Add more members if necessary */
+//   /* TODO: Add more members if necessary */
 
-} WP;
+// } WP;
 
 static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+static WP *free_ = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){
@@ -89,14 +89,12 @@ WP* new_wp(char *args){
       printf("\n head \nNO:%d  target:%s   %p   data: %x\n",index->NO,index->target,index->target,index->data);
       index = index->next;
     }
-    //printf("head : %p\n",head);
-  //printf("head : %p\n",head->next);
   return get_wp;
 }
 
-WP* get_head(){
-  return head;
-}
+// WP* get_head(){
+//   return head;
+// }
 
 void free_wp(WP *wp){
   if(!wp) Assert(0,"Free_wp received NULL!\n");
@@ -107,7 +105,6 @@ void free_wp(WP *wp){
     if(wp->past != NULL) wp->past->next = wp->next;
     else head = wp->next;
     if(wp->next != NULL) wp->next->past = wp->past;
-    //printf("Remove it from %d in head\n",wp->NO);
   }
 
   free(wp->target);
