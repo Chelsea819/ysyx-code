@@ -57,6 +57,7 @@ Elf32_Sym Elf_sym;
 Elf32_Xword str_size;
 Elf32_Xword sym_size;
 int sym_num;
+extern WP *head;
 char *strtab = NULL;
 
 #ifdef CONFIG_FTRACE

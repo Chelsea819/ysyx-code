@@ -15,7 +15,7 @@
 
 #include <sdb.h>
 
-// #define NR_WP 32
+#define NR_WP 32
 
 // typedef struct watchpoint {
 //   int NO;
@@ -29,8 +29,9 @@
 
 // } WP;
 
-// static WP wp_pool[NR_WP] = {};
-static WP *free_ = NULL;
+WP *wp_pool = NULL;
+WP *free_ = NULL;
+WP *head = NULL;
 //static int gap = 31;
 
 WP* new_wp(char *args){
@@ -141,6 +142,7 @@ void free_wp(WP *wp){
 
 void init_wp_pool() {
   int i;
+  wp_pool = (WP *)malloc(NR_WP * sizeof(WP));
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);

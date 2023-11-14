@@ -33,9 +33,9 @@ typedef struct watchpoint {
 
 } WP;
 
-static WP *head = NULL;
+// static WP *head = NULL;
 
-__attribute__((unused)) static WP wp_pool[NR_WP] = {};
+// __attribute__((unused)) static WP wp_pool[NR_WP] = {};
 // static WP *free_ = NULL;
 // static WP wp_pool[NR_WP] = {};
 

@@ -46,7 +46,8 @@ WP* new_wp(char *args);
 // WP* get_head();
 void free_wp(WP *wp);
 void init_iringbuf();
-
+extern WP *head;
+extern WP *wp_pool;
 
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -342,6 +343,7 @@ void sdb_mainloop()
     index->target = NULL;
     index = index->next;
   }
+  free(wp_pool);
   iringbuf *head_i = get_head_iringbuf();
   while(head_i != NULL && head_i->rbuf != NULL){
     free(head_i->rbuf);
