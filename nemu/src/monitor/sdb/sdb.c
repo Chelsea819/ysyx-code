@@ -149,7 +149,7 @@ static int cmd_w(char *args){
   WP* ret =new_wp(args);
   if(ret==NULL) printf("%s already in wp_pool!\n",args);
   watchPoints_display();
-printf("printf address of head:%p\n",get_head());
+printf("printf address of head target:%p\n",get_head()->target);
   return 0;
 }
 
