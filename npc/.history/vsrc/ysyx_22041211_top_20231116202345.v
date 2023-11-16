@@ -82,7 +82,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         ifebreak_func(inst_bnk);
     endtask
 
-	// 为ITRACE提供指令
+	// 检测到ebreak
     import "DPI-C" context function void inst_get(int inst);
     always @(*)
         dpi_inst(inst);

@@ -82,14 +82,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         ifebreak_func(inst_bnk);
     endtask
 
-	// 为ITRACE提供指令
-    import "DPI-C" context function void inst_get(int inst);
+	// 检测到ebreak
+    import "DPI-C" context function void ifebreak_func(int inst);
     always @(*)
         dpi_inst(inst);
 
     task dpi_inst(input reg [31:0] inst_bnk);  // 在任务中使用 input reg 类型
         /* verilator no_inline_task */
-        inst_get(inst_bnk);
+        ifebreak_func(inst_bnk);
     endtask
 
 

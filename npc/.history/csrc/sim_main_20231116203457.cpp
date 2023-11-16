@@ -639,9 +639,6 @@ static void exec_once(Decode *s,vaddr_t pc)
   }
 
   // s->isa.inst.val = dut.inst;
-
-  s->snpc += 4;
-
   #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
@@ -683,7 +680,7 @@ static void execute(uint64_t n)
   Decode s;
   for (; n > 0; n--)
   {
-    exec_once(&s, dut.pc);
+    exec_once(dut.pc);
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
     trace_and_difftest(&s, dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令

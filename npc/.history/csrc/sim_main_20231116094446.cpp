@@ -24,8 +24,6 @@
 #include "utils.h"
 #include "common.h"
 #include "reg.h"
-#include "cpu.h"
-#include "decode.h"
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
@@ -71,7 +69,6 @@ typedef word_t vaddr_t;
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
 #define CONFIG_ITRACE_COND 1
-#define CONFIG_ITRACE 1
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -538,7 +535,7 @@ void invalid_inst(vaddr_t thispc) {
 // }
 word_t expr(char *e, bool *success);
 
-static void trace_and_difftest(Decode *s, vaddr_t dnpc)
+static void trace_and_difftest(vaddr_t dnpc)
 {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
@@ -608,17 +605,9 @@ char *convertTo_2(char args){
   return result;
 }
 
-void inst_get(int inst){
-  s->isa.inst.val = inst;
-}
-
 /* let CPU conduct current command and renew PC */
-static void exec_once(Decode *s,vaddr_t pc)
+static void exec_once(vaddr_t pc)
 {
-  s->pc = pc;
-  s->snpc = pc;
-  s->dnpc = s->snpc;
-
   //上升沿取指令
   if(dut.clk == 1) {
     if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
@@ -637,10 +626,11 @@ static void exec_once(Decode *s,vaddr_t pc)
   if(dut.invalid == 1){
     invalid_inst(dut.pc);
   }
-
-  // s->isa.inst.val = dut.inst;
-
-  s->snpc += 4;
+  if(ifbreak && dut.clk == 0){
+    printf("\nebreak!\n");
+    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+    NPCTRAP(dut.pc, 0);
+  }
 
   #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
@@ -669,23 +659,17 @@ static void exec_once(Decode *s,vaddr_t pc)
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
-
-if(ifbreak && dut.clk == 0){
-    printf("\nebreak!\n");
-    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    NPCTRAP(dut.pc, 0);
-  }
 }
 
 /* stimulate the way CPU works ,get commands constantly */
 static void execute(uint64_t n)
 {
-  Decode s;
+  // Decode s;
   for (; n > 0; n--)
   {
-    exec_once(&s, dut.pc);
+    exec_once(dut.pc);
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    trace_and_difftest(&s, dut.pc);
+    trace_and_difftest(dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
@@ -733,6 +717,7 @@ static void statistic()
 void cpu_exec(uint64_t n)
 {
   // g_print_step = (n < MAX_INST_TO_PRINT);
+
   switch (npc_state.state){
 			case NPC_END:
 			case NPC_ABORT:
