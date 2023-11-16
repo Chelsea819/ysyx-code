@@ -75,7 +75,7 @@ static char too_lessArg(char *args){
   if(args == NULL) {
     Log("Without necessary arguments!");
     return 1;
-  }
+  } 
   return 0;
 }
 

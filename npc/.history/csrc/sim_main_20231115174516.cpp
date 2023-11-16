@@ -185,7 +185,6 @@ void init_rand() {
 
 /* ------------------------------------log.c------------------------------------ */
 FILE *log_fp = NULL;
-static char *log_file = NULL;
 
 void init_log(const char *log_file) {
   log_fp = stdout;

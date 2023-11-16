@@ -72,7 +72,7 @@ WP* new_wp(char *args){
     get_wp->NO = 0;
     get_wp->next = NULL;
     get_wp->past = NULL;
-    printf("the passing head address:%p\n",head);
+    // printf("the passing head address:%p\n",head);
   }
   else{
     WP* addSpot = head;

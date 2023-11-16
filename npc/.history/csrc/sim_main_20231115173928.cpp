@@ -184,8 +184,8 @@ void init_rand() {
 }
 
 /* ------------------------------------log.c------------------------------------ */
+
 FILE *log_fp = NULL;
-static char *log_file = NULL;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -415,7 +415,7 @@ static int parseArgs(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break; //sdb_set_batch_mode(); break;
       case 'p': break;
-      case 'l': log_file = optarg; break;
+      case 'l': break;
       case 'd': break;
       case 'f': break;
       case 1: img_file = optarg; return 0;

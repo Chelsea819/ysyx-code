@@ -183,31 +183,6 @@ void init_rand() {
   srand(time(0));
 }
 
-/* ------------------------------------log.c------------------------------------ */
-FILE *log_fp = NULL;
-static char *log_file = NULL;
-
-void init_log(const char *log_file) {
-  log_fp = stdout;
-  if (log_file != NULL) {
-    FILE *fp = fopen(log_file, "w");
-    Assert(fp, "Can not open '%s'", log_file);
-    //Assert宏检查文件打开是否成功,如果失败则打印错误信息并退出
-    
-    log_fp = fp;
-    //如果文件打开成功,则将log_fp指向这个文件
-  }
-  Log("Log is written to %s", log_file ? log_file : "stdout");
-  //调用Log函数,打印日志初始化信息
-  //如果log_file为空,则日志输出到stdout
-  //如果指定了文件,则日志输出到该文件
-}
-
-bool log_enable() {
-  return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
-}
-
 static void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, dut.pc);
@@ -415,7 +390,7 @@ static int parseArgs(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break; //sdb_set_batch_mode(); break;
       case 'p': break;
-      case 'l': log_file = optarg; break;
+      case 'l': break;
       case 'd': break;
       case 'f': break;
       case 1: img_file = optarg; return 0;
@@ -442,7 +417,8 @@ void init_npc(int argc,char *argv[]){
     init_rand();
 
     /* Open the log file. */
-    init_log(log_file);
+  init_log(log_file);
+
 
     //init memory
     init_mem_npc();

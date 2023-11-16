@@ -32,6 +32,7 @@ void init_log(const char *log_file) {
   //调用Log函数,打印日志初始化信息
   //如果log_file为空,则日志输出到stdout
   //如果指定了文件,则日志输出到该文件
+  printf("output to input.txt!\n");
 }
 
 bool log_enable() {

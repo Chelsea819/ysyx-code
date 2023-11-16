@@ -16,6 +16,10 @@ BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
+# Include all filelist.mk to merge file lists
+FILELIST_MK = $(shell find -L ./utils -name "filelist.mk")
+include $(FILELIST_MK)
+
 all:default
 
 default: $(BIN)
