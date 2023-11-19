@@ -49,7 +49,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
+CFLAGS += -fsanitize=address -fno-omit-frame-pointer $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -pie $(LIBS)
 
 
