@@ -72,6 +72,8 @@ typedef word_t vaddr_t;
 
 #define CONFIG_ITRACE_COND 1
 #define CONFIG_ITRACE 1
+#define CONFIG_TRACE 1
+#define __GUEST_ISA__ riscv32
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -191,6 +193,8 @@ void init_rand() {
 /* ------------------------------------log.c------------------------------------ */
 FILE *log_fp = NULL;
 static char *log_file = NULL;
+#define CONFIG_TRACE_START 0
+#define CONFIG_TRACE_END 10000
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -290,6 +294,13 @@ void mem_write_npc(vaddr_t addr, int len, word_t data) {
 
 static void welcome() {
   printf("Welcome to NPC!\n");
+  Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
+  IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
+        "to record the trace. This may lead to a large log file. "
+        "If it is not necessary, you can disable it in menuconfig"));
+  Log("Build time: %s, %s", __TIME__, __DATE__);
+  printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
+  printf("For help, type \"help\"\n");
 //   printf("For help, type \"help\"\n");
 }
 
@@ -537,20 +548,21 @@ void invalid_inst(vaddr_t thispc) {
 //   // #endif
 // }
 word_t expr(char *e, bool *success);
+Decode s;
 
-static void trace_and_difftest(Decode *s, vaddr_t dnpc)
+static void trace_and_difftest(vaddr_t dnpc)
 {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND)
+  if (CONFIG_ITRACE_COND)
   {
-    log_write("%s\n", _this->logbuf);
+    log_write("%s\n", s.logbuf);
   }
 #endif
   if (g_print_step)
   {
-    IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
+    IFDEF(CONFIG_ITRACE, puts(s.logbuf));
   }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
   bool success = true;
   uint32_t addr = 0;
 
@@ -609,15 +621,17 @@ char *convertTo_2(char args){
 }
 
 void inst_get(int inst){
-  s->isa.inst.val = inst;
+  s.isa.inst.val = inst;
 }
 
+
+
 /* let CPU conduct current command and renew PC */
-static void exec_once(Decode *s,vaddr_t pc)
+static void exec_once(vaddr_t pc)
 {
-  s->pc = pc;
-  s->snpc = pc;
-  s->dnpc = s->snpc;
+  s.pc = pc;
+  s.snpc = pc;
+  s.dnpc = s.snpc;
 
   //上升沿取指令
   if(dut.clk == 1) {
@@ -638,16 +652,16 @@ static void exec_once(Decode *s,vaddr_t pc)
     invalid_inst(dut.pc);
   }
 
-  // s->isa.inst.val = dut.inst;
+  // s.isa.inst.val = dut.inst;
 
-  s->snpc += 4;
+  s.snpc += 4;
 
   #ifdef CONFIG_ITRACE
-  char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
-  int ilen = s->snpc - s->pc;
+  char *p = s.logbuf;
+  p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.pc);
+  int ilen = s.snpc - s.pc;
   int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst.val;
+  uint8_t *inst = (uint8_t *)&s.isa.inst.val;
 
   for (i = ilen - 1; i >= 0; i--)
   {
@@ -663,8 +677,8 @@ static void exec_once(Decode *s,vaddr_t pc)
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-              MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
+  disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
+              MUXDEF(CONFIG_ISA_x86, s.snpc, s.pc), (uint8_t *)&s.isa.inst.val, ilen);
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
@@ -680,12 +694,11 @@ if(ifbreak && dut.clk == 0){
 /* stimulate the way CPU works ,get commands constantly */
 static void execute(uint64_t n)
 {
-  Decode s;
   for (; n > 0; n--)
   {
-    exec_once(&s, dut.pc);
+    exec_once(dut.pc);
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    trace_and_difftest(&s, dut.pc);
+    trace_and_difftest(dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;

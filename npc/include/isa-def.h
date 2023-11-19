@@ -17,6 +17,10 @@
 #define __ISA_RISCVNPC_H__
 
 #include "common.h"
+#define __GUEST_ISA__ riscv32
+#define CONFIG_ITRACE_COND 1
+#define CONFIG_ITRACE 1
+#define CONFIG_TRACE 1
 
 // decode
 typedef struct {
