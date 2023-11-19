@@ -484,6 +484,7 @@ void init_npc(int argc,char *argv[]){
                                "bad"))) "-pc-linux-gnu"
   ));
 #endif
+  printf("fetch!\n");
 
     welcome();
 }
