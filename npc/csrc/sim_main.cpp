@@ -627,6 +627,7 @@ void inst_get(int inst){
 
 
 /* let CPU conduct current command and renew PC */
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 static void exec_once(vaddr_t pc)
 {
   s.pc = pc;
@@ -676,7 +677,7 @@ static void exec_once(vaddr_t pc)
   p += space_len;
 
 #ifndef CONFIG_ISA_loongarch32r
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  
   disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
               MUXDEF(CONFIG_ISA_x86, s.snpc, s.pc), (uint8_t *)&s.isa.inst.val, ilen);
 #else
