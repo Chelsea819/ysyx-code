@@ -699,8 +699,6 @@ static void exec_once(vaddr_t pc)
   printf("s->pc:0x%08x\n",s.pc);
   printf("s->spc:0x%08x\n",s.snpc);
 
-
-
 #ifndef CONFIG_ISA_loongarch32r
   
   disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
