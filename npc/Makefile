@@ -49,7 +49,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += -fsanitize=address -fno-omit-frame-pointer $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
+CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -pie $(LIBS)
 
 
@@ -62,7 +62,8 @@ $(BIN):$(SRCS) $(VSRCS)
 	@rm -rf $(OBJ_DIR)
 	$(info "hhhh2")
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CFLAGS , -fsanitize=address -fno-omit-frame-pointer ) \
+		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	
