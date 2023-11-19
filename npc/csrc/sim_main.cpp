@@ -690,7 +690,7 @@ static void exec_once(vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
   printf("111\n");
-  printf("s.logbuf + sizeof(s.logbuf) - p:%s\n",s.logbuf + sizeof(s.logbuf) - p);
+  printf("s->buf:%s\n",s.logbuf);
   printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
   printf("s->pc:0x%08x\n",s.pc);
   printf("s->spc:0x%08x\n",s.snpc);
