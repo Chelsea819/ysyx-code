@@ -29,6 +29,7 @@
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
+extern "C" void init_disasm(const char *triple);
 
 NPCState npc_state = { .state = NPC_STOP };
 
@@ -471,6 +472,17 @@ void init_npc(int argc,char *argv[]){
 
     /* Initialize the simple debugger.初始化简单调试器 */
     init_sdb();
+
+    #ifndef CONFIG_ISA_loongarch32r
+  IFDEF(CONFIG_ITRACE, init_disasm(
+    MUXDEF(CONFIG_ISA_x86,     "i686",
+    MUXDEF(CONFIG_ISA_mips32,  "mipsel",
+    MUXDEF(CONFIG_ISA_riscv,
+      MUXDEF(CONFIG_RV64,      "riscv64",
+                               "riscv32"),
+                               "bad"))) "-pc-linux-gnu"
+  ));
+#endif
 
     welcome();
 }
