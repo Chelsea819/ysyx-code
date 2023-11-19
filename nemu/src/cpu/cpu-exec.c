@@ -292,6 +292,9 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   printf("111\n");
   printf("s->buf:%s\n",s->logbuf);
+  printf("s.logbuf :%p\n",s->logbuf);
+  printf("sizeof(s.logbuf) :%ld\n",sizeof(s->logbuf));
+  printf("p:%p\n",p);
   printf("s.logbuf + sizeof(s.logbuf) - p:0x%08lx\n",s->logbuf + sizeof(s->logbuf) - p);
   printf("s.isa.inst.val:0x%08x\n",s->isa.inst.val);
   printf("s->pc:0x%08x\n",s->pc);
