@@ -686,8 +686,10 @@ static void exec_once(vaddr_t pc)
   p += space_len;
   printf("111\n");
   printf("s->buf:%s\n",s.logbuf);
+  printf("s.isa.inst.val:%s\n",s.isa.inst.val);
   printf("s->pc:0x%08x\n",s.pc);
   printf("s->spc:0x%08x\n",s.snpc);
+
 
 
 #ifndef CONFIG_ISA_loongarch32r
