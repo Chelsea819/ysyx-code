@@ -46,7 +46,7 @@ static llvm::MCDisassembler *gDisassembler = nullptr;
 static llvm::MCSubtargetInfo *gSTI = nullptr;
 static llvm::MCInstPrinter *gIP = nullptr;
 
-void init_disasm(const char *triple) {
+extern "C" void init_disasm(const char *triple) {
   llvm::InitializeAllTargetInfos();
   llvm::InitializeAllTargetMCs();
   llvm::InitializeAllAsmParsers();
@@ -54,8 +54,6 @@ void init_disasm(const char *triple) {
 
   std::string errstr;
   std::string gTriple(triple);
-
-  
 
   llvm::MCInstrInfo *gMII = nullptr;
   llvm::MCRegisterInfo *gMRI = nullptr;
@@ -75,7 +73,6 @@ void init_disasm(const char *triple) {
     gSTI->ApplyFeatureFlag("+f");
     gSTI->ApplyFeatureFlag("+d");
   }
-  
   gMII = target->createMCInstrInfo();
   gMRI = target->createMCRegInfo(gTriple);
   auto AsmInfo = target->createMCAsmInfo(*gMRI, gTriple, MCOptions);
@@ -91,19 +88,16 @@ void init_disasm(const char *triple) {
       AsmInfo->getAssemblerDialect(), *AsmInfo, *gMII, *gMRI);
   gIP->setPrintImmHex(true);
   gIP->setPrintBranchImmAsAddress(true);
-  
   if (isa == "riscv32" || isa == "riscv64")
     gIP->applyTargetSpecificCLOption("no-aliases");
-
 }
 
-void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
   MCInst inst;
   llvm::ArrayRef<uint8_t> arr(code, nbyte);
   uint64_t dummy_size = 0;
   gDisassembler->getInstruction(inst, dummy_size, arr, pc, llvm::nulls());
 
-  printf("111\n");
   std::string s;
   raw_string_ostream os(s);
   gIP->printInst(&inst, pc, "", *gSTI, os);
