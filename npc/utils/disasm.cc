@@ -55,6 +55,8 @@ extern "C" void init_disasm(const char *triple) {
   std::string errstr;
   std::string gTriple(triple);
 
+  printf("triple: %s\n",triple);
+
   llvm::MCInstrInfo *gMII = nullptr;
   llvm::MCRegisterInfo *gMRI = nullptr;
   auto target = llvm::TargetRegistry::lookupTarget(gTriple, errstr);
