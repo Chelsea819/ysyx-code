@@ -55,7 +55,7 @@ extern "C" void init_disasm(const char *triple) {
   std::string errstr;
   std::string gTriple(triple);
 
-  printf("triple: %s\n",triple);
+  
 
   llvm::MCInstrInfo *gMII = nullptr;
   llvm::MCRegisterInfo *gMRI = nullptr;
@@ -75,6 +75,7 @@ extern "C" void init_disasm(const char *triple) {
     gSTI->ApplyFeatureFlag("+f");
     gSTI->ApplyFeatureFlag("+d");
   }
+  printf("triple: %s\n",triple);
   gMII = target->createMCInstrInfo();
   gMRI = target->createMCRegInfo(gTriple);
   auto AsmInfo = target->createMCAsmInfo(*gMRI, gTriple, MCOptions);
