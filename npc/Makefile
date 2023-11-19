@@ -87,7 +87,6 @@ $(BIN):$(SRCS) $(VSRCS)
 $(shell mkdir -p $(BUILD_DIR))
 
 run:$(BIN)
-	$(info "hhhh")
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(EXE) $(IMG) $(ARGS)
 
