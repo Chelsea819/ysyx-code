@@ -75,7 +75,7 @@ extern "C" void init_disasm(const char *triple) {
     gSTI->ApplyFeatureFlag("+f");
     gSTI->ApplyFeatureFlag("+d");
   }
-  printf("triple: %s\n",triple);
+  
   gMII = target->createMCInstrInfo();
   gMRI = target->createMCRegInfo(gTriple);
   auto AsmInfo = target->createMCAsmInfo(*gMRI, gTriple, MCOptions);
@@ -91,8 +91,10 @@ extern "C" void init_disasm(const char *triple) {
       AsmInfo->getAssemblerDialect(), *AsmInfo, *gMII, *gMRI);
   gIP->setPrintImmHex(true);
   gIP->setPrintBranchImmAsAddress(true);
+  printf("triple: %s\n",triple);
   if (isa == "riscv32" || isa == "riscv64")
     gIP->applyTargetSpecificCLOption("no-aliases");
+    printf("triple: %s\n",triple);
 }
 
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
