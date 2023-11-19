@@ -57,10 +57,8 @@ override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  #--batch
 
 
 $(BIN):$(SRCS) $(VSRCS) 
-	$(info "hhhh1")
 	$(warning INC_PATH = $(INC_PATH))
 	@rm -rf $(OBJ_DIR)
-	$(info "hhhh2")
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CFLAGS , $(CFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
