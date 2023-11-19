@@ -29,7 +29,7 @@
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
-extern "C" {void init_disasm(const char *triple);}
+void init_disasm(const char *triple);
 
 NPCState npc_state = { .state = NPC_STOP };
 
@@ -644,7 +644,7 @@ void inst_get(int inst){
 }
 
 #ifndef CONFIG_ISA_loongarch32r
-extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
 /* let CPU conduct current command and renew PC */
