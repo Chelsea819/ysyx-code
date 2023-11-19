@@ -624,10 +624,11 @@ void inst_get(int inst){
   s.isa.inst.val = inst;
 }
 
-
+#ifndef CONFIG_ISA_loongarch32r
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+#endif
 
 /* let CPU conduct current command and renew PC */
-extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 static void exec_once(vaddr_t pc)
 {
   s.pc = pc;
