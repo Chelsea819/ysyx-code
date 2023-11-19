@@ -656,6 +656,14 @@ static void exec_once(vaddr_t pc)
 
   // s.isa.inst.val = dut.inst;
 
+  if(ifbreak && dut.clk == 0){
+    printf("\nebreak!\n");
+    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+    NPCTRAP(dut.pc, 0);
+  }
+
+  if(dut.clk == 0) return;
+
   s.snpc += 4;
 
   #ifdef CONFIG_ITRACE
@@ -676,6 +684,11 @@ static void exec_once(vaddr_t pc)
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+  printf("111\n");
+  printf("s->buf:%s\n",s.logbuf);
+  printf("s->pc:0x%08x\n",s.pc);
+  printf("s->spc:0x%08x\n",s.snpc);
+
 
 #ifndef CONFIG_ISA_loongarch32r
   
@@ -686,11 +699,6 @@ static void exec_once(vaddr_t pc)
 #endif
 #endif
 
-if(ifbreak && dut.clk == 0){
-    printf("\nebreak!\n");
-    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    NPCTRAP(dut.pc, 0);
-  }
 }
 
 /* stimulate the way CPU works ,get commands constantly */
