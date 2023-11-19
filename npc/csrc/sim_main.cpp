@@ -29,7 +29,7 @@
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
-extern "C" void init_disasm(const char *triple);
+extern "C" {void init_disasm(const char *triple);}
 
 NPCState npc_state = { .state = NPC_STOP };
 
