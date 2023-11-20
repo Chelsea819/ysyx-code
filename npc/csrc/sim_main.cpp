@@ -72,9 +72,9 @@ typedef word_t vaddr_t;
 
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
-#define CONFIG_ITRACE_COND 1
-#define CONFIG_ITRACE 1
-#define CONFIG_TRACE 1
+#define CONFIG_ITRACE_COND 0
+#define CONFIG_ITRACE 0
+#define CONFIG_TRACE 0
 #define __GUEST_ISA__ riscv32
 
 vluint64_t sim_time = 0;
