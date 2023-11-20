@@ -54,6 +54,9 @@ LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-fram
 
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  #--batch
+override ARGS += $(ARGS_DIFF) --ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
+
+
 
 
 $(BIN):$(SRCS) $(VSRCS) 
