@@ -279,7 +279,9 @@ static void pmem_write_npc(paddr_t addr, int len, word_t data) {
 
 
 static vaddr_t load_mem_npc(paddr_t addr,int len) {
-	if (likely(in_pmem(addr))) return pmem_read_npc(addr,len);
+  bool b = in_pmem(addr);
+  if(b) printf("ok\n");
+	if (likely(b)) {return pmem_read_npc(addr,len);}
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
