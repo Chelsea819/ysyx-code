@@ -294,9 +294,7 @@ void mem_write_npc(vaddr_t addr, int len, word_t data) {
   // bool b = in_pmem(addr);
   // printf("addr = 0x%08x\n",addr);
   // if(b) printf("ok\n");
-  if (likely(in_pmem(addr))) {
-    printf("ook\n");
-    pmem_write_npc(addr, len, data);}
+  if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
