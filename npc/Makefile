@@ -17,7 +17,7 @@ VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
 # -CFLAGS -D_GLIBCXX_DEBUG
 
 WORK_DIR  = $(shell pwd)
-BUILD_DIR = $(WORK_DIR)/build
+BUILD_DIR ?= $(WORK_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
