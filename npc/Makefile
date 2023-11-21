@@ -52,7 +52,7 @@ CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
-override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
+override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  --ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
 override ARGS += $(ARGS_DIFF) #--batch
 
 

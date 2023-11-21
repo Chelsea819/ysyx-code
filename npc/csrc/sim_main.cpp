@@ -210,8 +210,8 @@ void init_log(const char *log_file) {
     log_fp = fp;
     //如果文件打开成功,则将log_fp指向这个文件
   }
-  printf("log_file:%s\n",log_file);
-  printf("log_fp:%s\n",log_fp);
+  // printf("log_file:%s\n",log_file);
+  // printf("log_fp:%s\n",log_fp);
   Log("Log is written to %s", log_file ? log_file : "stdout");
   //调用Log函数,打印日志初始化信息
   //如果log_file为空,则日志输出到stdout
@@ -584,7 +584,7 @@ Elf32_Xword str_size;
 Elf32_Xword sym_size;
 int sym_num;
 char *strtab = NULL;
-// #define CONFIG_FTRACE 0
+#define CONFIG_FTRACE 1
 
 #ifdef CONFIG_FTRACE
 int init_ftrace(const char *ftrace_file)
@@ -977,7 +977,7 @@ static void exec_once(vaddr_t pc)
         func_cur->next = func;
         func_cur = func;
       }
-      printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+      printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, dut.pc, name, s.dnpc);
       index++;
     }
     else
@@ -989,7 +989,7 @@ static void exec_once(vaddr_t pc)
         int flag = 0;
         if (strcmp(func_cur->func_name, name) == 0)
           flag = 1;
-        printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+        printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, dut.pc, func_cur->func_name);
         index++;
 
         free(func_cur->func_name);
