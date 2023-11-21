@@ -731,9 +731,9 @@ void inst_get(int inst){
   printf("get inst! \n");
 }
 
-// #ifndef CONFIG_ISA_loongarch32r
-// void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-// #endif
+#ifndef CONFIG_ISA_loongarch32r
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+#endif
 
 #ifdef CONFIG_FTRACE
 struct func_call
@@ -810,13 +810,13 @@ static void exec_once(vaddr_t pc)
   printf("s->pc:0x%08x\n",s.pc);
   printf("s->spc:0x%08x\n",s.snpc);
 
-// #ifndef CONFIG_ISA_loongarch32r
+#ifndef CONFIG_ISA_loongarch32r
   
-//   disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
-//               MUXDEF(CONFIG_ISA_x86, s.snpc, s.pc), (uint8_t *)&s.isa.inst.val, ilen);
-// #else
-//   p[0] = '\0'; // the upstream llvm does not support loongarch32r
-// #endif
+  disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
+              MUXDEF(CONFIG_ISA_x86, s.snpc, s.pc), (uint8_t *)&s.isa.inst.val, ilen);
+#else
+  p[0] = '\0'; // the upstream llvm does not support loongarch32r
+#endif
 #endif
 
 #ifdef CONFIG_FTRACE
