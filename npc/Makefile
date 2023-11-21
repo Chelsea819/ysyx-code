@@ -43,10 +43,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-# #XXX: Use another .mk to set the source code path
-# CSRCS += $(shell find $(abspath ./utils) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 SRCS = $(CXXSRC) $(CSRCS)
-# OBJS = $(CXXSRC:%.cc=$(OBJ_DIR)/%.o) $(CSRCS:%.cpp=$(OBJ_DIR)/%.o)
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
