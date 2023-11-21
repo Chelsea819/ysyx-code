@@ -729,9 +729,9 @@ char *convertTo_2(char args){
 
 void inst_get(int inst){
   s.isa.inst.val = inst;
-  printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
+  // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
   printf("inst:0x%08x\n",inst);
-  printf("get inst! \n");
+  // printf("get inst! \n");
 }
 
 #ifndef CONFIG_ISA_loongarch32r
