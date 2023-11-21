@@ -77,6 +77,7 @@ typedef word_t vaddr_t;
 #define CONFIG_ITRACE 1
 #define CONFIG_TRACE 1
 #define __GUEST_ISA__ riscv32
+#define CONFIG_TARGET_NATIVE_ELF 1
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
