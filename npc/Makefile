@@ -3,8 +3,8 @@ DIR = ./obj_dir
 EXE = $(BUILD_DIR)/$(TOPNAME)
 WAVE = waveform.vcd
 
-SO = -so
-NAME = riscv32-npc
+# SO = -so
+# NAME = riscv32-npc
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
@@ -69,23 +69,6 @@ $(BIN):$(SRCS) $(VSRCS)
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	
-
-
-# $(OBJ_DIR)/%.o: %.cc
-# 	@echo + CXX $<
-# 	@mkdir -p $(dir $@)
-# 	@$(CXX) $(CFLAGS) -c -o $@ $<
-# 	$(call call_fixdep, $(@:.o=.d), $@)
-
-# $(OBJ_DIR)/%.o: %.cpp
-# 	@echo + CXX $<
-# 	@mkdir -p $(dir $@)
-# 	@$(CXX) $(CFLAGS) $(LDFLAGS) -c -o $@ $<
-# 	$(call call_fixdep, $(@:.o=.d), $@)
-
-# $(BINARY): $(OBJS) 
-# 	@echo + LD $@
-# 	@$(LD) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
 
 
 $(shell mkdir -p $(BUILD_DIR))
