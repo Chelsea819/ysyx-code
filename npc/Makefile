@@ -23,7 +23,7 @@ BIN = $(BUILD_DIR)/$(TOPNAME)
 CXXSRC = $(NPC_HOME)/utils/disasm.cc
 # --cxxflags 选项表示获取与 C++ 相关的编译器选项，输出使用LLVM头文件所需要的C++编译选项
 # llvm-config 让使用LLVM构建的应用程序变得很容易，他可以打印链接LLVM所需的编译器标志，编译器标志和对象库
-CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE 
+CXXFLAGS += $(shell llvm-config --cxxflags) #-fPIE 
 # --libs 打印链接指定LLVM 组件所需的所有库 ，包括任何依赖项。
 LIBS += $(shell llvm-config --libs)
 
