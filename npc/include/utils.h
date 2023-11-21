@@ -58,11 +58,9 @@ uint64_t get_time();
 
 #define log_write(...) IFDEF(CONFIG_TARGET_NATIVE_ELF, \
   do { \
-  printf("enter log_enable1!\n"); \
     extern FILE* log_fp; \
     extern bool log_enable(); \
     if (log_enable()) { \
-      printf("enter log_enable2!\n"); \
       fprintf(log_fp, __VA_ARGS__); \
       fflush(log_fp); \
     } \
@@ -71,7 +69,6 @@ uint64_t get_time();
 
 #define _Log(...) \
   do { \
-  printf("enter _Log!\n"); \
     printf(__VA_ARGS__); \
     log_write(__VA_ARGS__); \
   } while (0)
