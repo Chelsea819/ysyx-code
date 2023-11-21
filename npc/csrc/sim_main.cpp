@@ -436,7 +436,7 @@ static int parseArgs(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break; 
       case 'p': break;
-      case 'l': log_file = optarg; break;
+      case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
       case 'd': break;
       case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; return 0;
