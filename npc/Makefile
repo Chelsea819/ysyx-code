@@ -73,6 +73,7 @@ $(shell mkdir -p $(BUILD_DIR))
 
 run:$(BIN)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
+	$(info $(ARGS))
 	$(EXE) $(IMG) $(ARGS)
 
 .PHONY:wave clean sim default all run 
