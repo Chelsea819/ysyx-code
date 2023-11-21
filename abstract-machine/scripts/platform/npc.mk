@@ -13,7 +13,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 						 --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
-NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/npc-log.txt 
+NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt 
 # NPCFLAGS += -f $(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
 
