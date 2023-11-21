@@ -209,6 +209,7 @@ void init_log(const char *log_file) {
     log_fp = fp;
     //如果文件打开成功,则将log_fp指向这个文件
   }
+  printf("log_fp:%s\n",log_fp);
   Log("Log is written to %s", log_file ? log_file : "stdout");
   //调用Log函数,打印日志初始化信息
   //如果log_file为空,则日志输出到stdout

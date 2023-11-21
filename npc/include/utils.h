@@ -71,7 +71,7 @@ uint64_t get_time();
 
 #define _Log(...) \
   do { \
-  printf("enter _Log!\n");
+  printf("enter _Log!\n"); \
     printf(__VA_ARGS__); \
     log_write(__VA_ARGS__); \
   } while (0)
