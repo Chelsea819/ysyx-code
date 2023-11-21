@@ -439,7 +439,7 @@ static int parseArgs(int argc, char *argv[]) {
       case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
       case 'd': break;
       case 'f': ftrace_file = optarg; break;
-      case 1: img_file = optarg; return 0;
+      case 1: img_file = optarg; printf("img_file oparg = %s\n",optarg); return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
