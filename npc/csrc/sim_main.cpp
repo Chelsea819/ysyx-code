@@ -725,8 +725,6 @@ char *convertTo_2(char args){
 }
 
 void inst_get(int inst){
-  printf("get inst!\n");
-  
   s.isa.inst.val = inst;
   printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
   printf("inst:0x%08x\n",inst);
@@ -755,7 +753,10 @@ static void exec_once(vaddr_t pc)
 
   //上升沿取指令
   if(dut.clk == 1) {
-    if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+    if(dut.memWrite == 1) {
+      printf("memWrite\n");
+      mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+    }
     dut.inst = load_mem_npc(dut.pc,4);
     dut.eval();
     printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
@@ -802,15 +803,15 @@ static void exec_once(vaddr_t pc)
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  printf("111\n");
-  printf("s->buf:%s\n",s.logbuf);
-  printf("s.logbuf :%p\n",s.logbuf);
-  printf("sizeof(s.logbuf) :%ld\n",sizeof(s.logbuf));
-  printf("p:%p\n",p);
-  printf("s.logbuf + sizeof(s.logbuf) - p:0x%08lx\n",s.logbuf + sizeof(s.logbuf) - p);
-  printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
-  printf("s->pc:0x%08x\n",s.pc);
-  printf("s->spc:0x%08x\n",s.snpc);
+  // printf("111\n");
+  // printf("s->buf:%s\n",s.logbuf);
+  // printf("s.logbuf :%p\n",s.logbuf);
+  // printf("sizeof(s.logbuf) :%ld\n",sizeof(s.logbuf));
+  // printf("p:%p\n",p);
+  // printf("s.logbuf + sizeof(s.logbuf) - p:0x%08lx\n",s.logbuf + sizeof(s.logbuf) - p);
+  // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
+  // printf("s->pc:0x%08x\n",s.pc);
+  // printf("s->spc:0x%08x\n",s.snpc);
 
 #ifndef CONFIG_ISA_loongarch32r
   
