@@ -865,7 +865,6 @@ static void exec_once(vaddr_t pc)
   uint32_t m = s.isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  printf("11111111111111111111111111111111111\n");
 
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal,  rd = x1, imm = ***
@@ -917,8 +916,6 @@ static void exec_once(vaddr_t pc)
     }
   }
 
-printf("22222222222222222222222222222222\n");
-
   if (if_conduct)
   {
     // 3.找到是哪个函数
@@ -940,6 +937,8 @@ printf("22222222222222222222222222222222\n");
         perror("Read error");
       }
 
+      printf("444444444444444444444444444\n");
+
       printf("name2:[%p]   strtab:[%p] ",name,strtab);
 
       // 3.2找到对应的一行
@@ -957,6 +956,7 @@ printf("22222222222222222222222222222222\n");
         Assert(0, "Fail in searching!");
       }
     }
+    printf("8888888888888888888888\n");
 
     printf("name1:[%p]   strtab:[%p] ",name,strtab);
     // 取出函数名称
