@@ -763,6 +763,7 @@ static void exec_once(vaddr_t pc)
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
+  printf("s.logbuf = %s\n",s.logbuf);
 
   for (i = ilen - 1; i >= 0; i--)
   {
