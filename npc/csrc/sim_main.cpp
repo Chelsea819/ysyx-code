@@ -756,18 +756,20 @@ static void exec_once(vaddr_t pc)
   s.dnpc = dut.pc;
 
   #ifdef CONFIG_ITRACE
-  printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
+  printf("s.logbuf1 = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
   char *p = s.logbuf;
   p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.dnpc);
-  printf("s.logbuf = %s\n",s.logbuf);
+  printf("s.logbuf2 = %s\n",s.logbuf);
   int ilen = s.snpc - s.dnpc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
-  printf("s.logbuf = %s\n",s.logbuf);
+  printf("s.logbuf3 = %s\n",s.logbuf);
+  printf("\ns.isa.inst.val:0x%08x\n",s.isa.inst.val);
 
   for (i = ilen - 1; i >= 0; i--)
   {
     p += snprintf(p, 4, " %02x", inst[i]);
+    printf("inst[%d] = %d\n",i,inst[i]);
   }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
