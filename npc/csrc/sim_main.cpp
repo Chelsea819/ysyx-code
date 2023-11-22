@@ -73,6 +73,7 @@ typedef word_t vaddr_t;
 
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
+#define CONFIG_FTRACE 1
 #define CONFIG_ITRACE_COND 1
 #define CONFIG_ITRACE 1
 #define CONFIG_TRACE 1
@@ -482,9 +483,9 @@ void init_npc(int argc,char *argv[]){
     /* Initialize the simple debugger.初始化简单调试器 */
     init_sdb();
 
-    // #ifdef CONFIG_FTRACE
+    #ifdef CONFIG_FTRACE
     init_ftrace(ftrace_file);
-    // #endif
+    #endif
 
     #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(
@@ -547,7 +548,7 @@ Elf32_Xword str_size;
 Elf32_Xword sym_size;
 int sym_num;
 char *strtab = NULL;
-#define CONFIG_FTRACE 1
+
 
 #ifdef CONFIG_FTRACE
 int init_ftrace(const char *ftrace_file)
@@ -718,8 +719,6 @@ struct func_call
 static void exec_once(vaddr_t pc)
 {
   s.pc = pc;
-  s.snpc = pc;
-  s.dnpc = s.snpc;
 
   //上升沿取指令
   if(dut.clk == 1) {
@@ -754,6 +753,7 @@ static void exec_once(vaddr_t pc)
   if(dut.clk == 0) return;
 
   s.snpc += 4;
+  s.dnpc = dut.pc;
 
   #ifdef CONFIG_ITRACE
   char *p = s.logbuf;
