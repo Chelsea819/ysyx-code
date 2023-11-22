@@ -173,6 +173,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   if (ITRACE_COND)
   {
     log_write("%s\n", _this->logbuf);
+    printf("trace_and_difftest s.logbuf = %s len = %ld\n",_this->logbuf,sizeof(_this->logbuf));
   }
 #endif
   if (g_print_step)
@@ -512,6 +513,7 @@ static void execute(uint64_t n)
   Decode s;
   for (; n > 0; n--)
   {
+    printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
     exec_once(&s, cpu.pc);
     g_nr_guest_inst++; // 记录客户指令的计时器
     trace_and_difftest(&s, cpu.pc);
