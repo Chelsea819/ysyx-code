@@ -937,8 +937,6 @@ static void exec_once(vaddr_t pc)
         perror("Read error");
       }
 
-      printf("444444444444444444444444444\n");
-
       printf("name2:[%p]   strtab:[%p] ",name,strtab);
 
       // 3.2找到对应的一行
@@ -959,6 +957,7 @@ static void exec_once(vaddr_t pc)
     printf("8888888888888888888888\n");
 
     printf("name1:[%p]   strtab:[%p] ",name,strtab);
+    printf("444444444444444444444444444\n");
     // 取出函数名称
     strncpy(name, strtab + sym.st_name, 19);
 
