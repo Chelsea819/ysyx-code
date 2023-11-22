@@ -93,6 +93,7 @@ VerilatedVcdC *m_trace = new VerilatedVcdC;
 uint32_t convert_16(char *args);
 uint32_t convert_ten(char *args);
 static void watchPoints_display();
+int init_ftrace(const char *ftrace_file);
 
 #define NR_WP 32
 
@@ -481,9 +482,9 @@ void init_npc(int argc,char *argv[]){
     /* Initialize the simple debugger.初始化简单调试器 */
     init_sdb();
 
-    #ifdef CONFIG_FTRACE
+    // #ifdef CONFIG_FTRACE
     init_ftrace(ftrace_file);
-    #endif
+    // #endif
 
     #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(
@@ -559,7 +560,7 @@ int init_ftrace(const char *ftrace_file)
   fp = fopen(ftrace_file, "r");
 
   printf("ftrace_file :%s\n",ftrace_file);
-  
+
   Assert(fp, "Can not open '%s'", ftrace_file);
 
   ftrace_fp = fp;
