@@ -170,6 +170,7 @@ void device_update();
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
 #ifdef CONFIG_ITRACE_COND
+printf("trace_and_difftest s.logbuf = %s len = %ld\n",_this->logbuf,sizeof(_this->logbuf));
   if (ITRACE_COND)
   {
     log_write("%s\n", _this->logbuf);
@@ -517,6 +518,7 @@ static void execute(uint64_t n)
     printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
     exec_once(&s, cpu.pc);
     g_nr_guest_inst++; // 记录客户指令的计时器
+    printf("before trace_and_difftest s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
     trace_and_difftest(&s, cpu.pc);
     // 当nemu_state.state被设置为NEMU_STOP时，nemu停止执行指令
     if (nemu_state.state != NEMU_RUNNING)
