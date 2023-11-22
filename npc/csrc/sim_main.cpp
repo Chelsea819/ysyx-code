@@ -532,44 +532,6 @@ void invalid_inst(vaddr_t thispc) {
 }
 
 /* ------------------------------------cpu-exe.c------------------------------------ */
-
-// static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
-// {
-// #ifdef CONFIG_ITRACE_COND
-//   if (ITRACE_COND)
-//   {
-//     log_write("%s\n", _this->logbuf);
-//   }
-// #endif
-//   if (g_print_step)
-//   {
-//     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
-//   }
-//   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-//   // #ifdef CONFIG_WATCHPOINT
-//   bool success = true;
-//   uint32_t addr = 0;
-
-//   WP *index = get_head();
-//   while (index != NULL)
-//   {
-//     addr = expr(index->target, &success);
-//     Assert(success,"Make_token fail!");
-//     if(addr != index->data){
-//       npc_state.state = NPC_STOP;
-//       index->times += 1;
-//       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
-//       printf("Old value = %d\n", index->data);
-//       printf("New value = %d\n\n", addr);
-//       index->data = addr;
-//       return;
-//     }
-//     index = index->next;
-//     return;
-
-//   }
-//   // #endif
-// }
 word_t expr(char *e, bool *success);
 Decode s;
 
@@ -595,6 +557,9 @@ int init_ftrace(const char *ftrace_file)
   Assert(ftrace_file, "ftrace_file is NULL!\n");
 
   fp = fopen(ftrace_file, "r");
+
+  printf("ftrace_file :%s\n",ftrace_file);
+  
   Assert(fp, "Can not open '%s'", ftrace_file);
 
   ftrace_fp = fp;
@@ -923,9 +888,6 @@ static void exec_once(vaddr_t pc)
     int ret = 0;
     char *name = (char *)malloc(20);
     memset(name, 0, 20);
-
-    // printf("s->logbuf: %s\n",s->logbuf);
-    printf("333333333333333333333333333333333\n");
 
     for (int n = sym_num - 1; n >= 0; n--)
     {
