@@ -756,7 +756,7 @@ static void exec_once(vaddr_t pc)
   s.dnpc = dut.pc;
 
   #ifdef CONFIG_ITRACE
-  printf("s.logbuf = %s\n",s.logbuf);
+  printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
   char *p = s.logbuf;
   p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.pc);
   printf("s.logbuf = %s\n",s.logbuf);
