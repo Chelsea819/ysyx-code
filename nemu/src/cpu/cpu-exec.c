@@ -269,6 +269,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->pc = pc;
   s->snpc = pc;
   // 取指和译码
+  printf("before s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 
