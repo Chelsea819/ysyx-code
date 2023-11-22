@@ -936,6 +936,8 @@ static void exec_once(vaddr_t pc)
         perror("Read error");
       }
 
+      printf("name2:[%p]   strtab:[%p] ",name,strtab);
+
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
       if (if_return && (sym.st_value <= s.pc && sym.st_value + sym.st_size >= s.pc) && sym.st_info == 18)
@@ -952,7 +954,7 @@ static void exec_once(vaddr_t pc)
       }
     }
 
-    printf("name:[%p]   strtab:[%p] ",name,strtab);
+    printf("name1:[%p]   strtab:[%p] ",name,strtab);
     // 取出函数名称
     strncpy(name, strtab + sym.st_name, 19);
 
