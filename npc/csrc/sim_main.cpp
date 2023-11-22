@@ -759,6 +759,7 @@ static void exec_once(vaddr_t pc)
   printf("s.logbuf = %s\n",s.logbuf);
   char *p = s.logbuf;
   p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.pc);
+  printf("s.logbuf = %s\n",s.logbuf);
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
@@ -778,7 +779,7 @@ static void exec_once(vaddr_t pc)
   // printf("s->buf:%s\n",s.logbuf);
   // printf("s.logbuf :%p\n",s.logbuf);
   printf("sizeof(s.logbuf) :%ld\n",sizeof(s.logbuf));
-  // printf("p:%p\n",p);
+  printf("p:%p\n",p);
   // printf("s.logbuf + sizeof(s.logbuf) - p:0x%08lx\n",s.logbuf + sizeof(s.logbuf) - p);
   // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
   // printf("s->pc:0x%08x\n",s.pc);
