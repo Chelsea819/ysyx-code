@@ -865,6 +865,7 @@ static void exec_once(vaddr_t pc)
   uint32_t m = s.isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
+  printf("11111111111111111111111111111111111\n");
 
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal,  rd = x1, imm = ***
@@ -916,6 +917,8 @@ static void exec_once(vaddr_t pc)
     }
   }
 
+printf("22222222222222222222222222222222\n");
+
   if (if_conduct)
   {
     // 3.找到是哪个函数
@@ -925,6 +928,7 @@ static void exec_once(vaddr_t pc)
     memset(name, 0, 20);
 
     // printf("s->logbuf: %s\n",s->logbuf);
+    printf("333333333333333333333333333333333\n");
 
     for (int n = sym_num - 1; n >= 0; n--)
     {
