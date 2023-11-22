@@ -780,7 +780,7 @@ static void exec_once(vaddr_t pc)
   printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
   printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
   printf("s->pc:0x%08x\n",s.pc);
-  printf("s->spc:0x%08x\n",s.snpc);
+  printf("s->dpc:0x%08x\n",s.dnpc);
 
 #ifndef CONFIG_ISA_loongarch32r
   disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
