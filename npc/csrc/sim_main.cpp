@@ -952,6 +952,7 @@ static void exec_once(vaddr_t pc)
       }
     }
 
+    printf("name:[%p]   strtab:[%p] ",name,strtab);
     // 取出函数名称
     strncpy(name, strtab + sym.st_name, 19);
 
