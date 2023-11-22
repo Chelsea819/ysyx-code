@@ -303,6 +303,8 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 #endif
 
+printf("CONFIG_ISA_loongarch32r s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
+
 #ifdef CONFIG_FTRACE
   //   static int j = 0;
   // if(j < 100){
