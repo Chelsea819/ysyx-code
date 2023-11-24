@@ -768,6 +768,7 @@ static void exec_once(vaddr_t pc)
 
   for (i = ilen - 1; i >= 0; i--)
   {
+    printf("very good\n");
     p += snprintf(p, 4, " %02x", inst[i]);
     printf("inst[%d] = %d\n",i,inst[i]);
   }
