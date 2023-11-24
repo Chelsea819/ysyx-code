@@ -270,7 +270,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->pc = pc;
   s->snpc = pc;
   // 取指和译码
-  printf("before s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
 
   //更新了snpc，给dnpc赋值
   isa_exec_once(s);
@@ -279,22 +278,16 @@ static void exec_once(Decode *s, vaddr_t pc)
   //到此为止pc指向了本次执行的指令 snpc指向了静态npc dnpc指向了动态npc
 
 #ifdef CONFIG_ITRACE
-  printf("s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
-  printf("s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
   int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
 
-  printf("CONFIG_ISA_loongarch32r s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
-
-
   for (i = ilen - 1; i >= 0; i--)
   {
-    printf("very good\n");
     p += snprintf(p, 4, " %02x", inst[i]);
-    printf("inst[%d] = %d\n",i,inst[i]);  }
+  }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0)
@@ -303,7 +296,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
 
-  printf("CONFIG_ISA_loongarch32r s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
 
 
 #ifndef CONFIG_ISA_loongarch32r
@@ -315,7 +307,6 @@ static void exec_once(Decode *s, vaddr_t pc)
 #endif
 #endif
 
-printf("CONFIG_ISA_loongarch32r s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
 
 #ifdef CONFIG_FTRACE
   //   static int j = 0;
@@ -529,10 +520,8 @@ static void execute(uint64_t n)
   Decode s;
   for (; n > 0; n--)
   {
-    printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
     exec_once(&s, cpu.pc);
     g_nr_guest_inst++; // 记录客户指令的计时器
-    printf("before trace_and_difftest s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
     trace_and_difftest(&s, cpu.pc);
     // 当nemu_state.state被设置为NEMU_STOP时，nemu停止执行指令
     if (nemu_state.state != NEMU_RUNNING)
