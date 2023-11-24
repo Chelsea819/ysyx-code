@@ -84,7 +84,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
-    always @(posedge clk)
+    always @(*)
         dpi_instGet(inst);
 
     task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
