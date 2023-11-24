@@ -698,7 +698,7 @@ char *convertTo_2(char args){
 void inst_get(int inst){
   s.isa.inst.val = inst;
   // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
-  printf("inst:0x%08x\n",inst);
+  // printf("inst:0x%08x\n",inst);
   // printf("get inst! \n");
 }
 
@@ -731,7 +731,7 @@ static void exec_once()
 	}
   dut.inst = load_mem_npc(dut.pc,4);
   dut.eval();
-  // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+  printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 
 	m_trace->dump(sim_time);
 	sim_time++;
