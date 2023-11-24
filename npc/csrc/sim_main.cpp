@@ -731,7 +731,7 @@ static void exec_once()
 	}
   dut.inst = load_mem_npc(dut.pc,4);
   dut.eval();
-  printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+  // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 
 	m_trace->dump(sim_time);
 	sim_time++;
@@ -887,8 +887,6 @@ static void exec_once()
       {
         perror("Read error");
       }
-
-      printf("name2:[%p]   strtab:[%p] ",name,strtab);
 
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
