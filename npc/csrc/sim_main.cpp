@@ -747,8 +747,7 @@ static void exec_once()
     printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
     NPCTRAP(dut.pc, 0);
   }
-  // int n = 0;
-  // if(dut.clk == 0) { if(!(n++)) return;}
+  if(dut.clk == 0)    return; 
 
   s.pc = dut.pc;
   s.snpc = s.pc + 4;
