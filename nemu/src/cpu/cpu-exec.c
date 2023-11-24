@@ -174,7 +174,6 @@ printf("trace_and_difftest s.logbuf = %s len = %ld\n",_this->logbuf,sizeof(_this
   if (ITRACE_COND)
   {
     log_write("%s\n", _this->logbuf);
-    printf("trace_and_difftest s.logbuf = %s len = %ld\n",_this->logbuf,sizeof(_this->logbuf));
   }
 #endif
   if (g_print_step)
