@@ -716,25 +716,23 @@ struct func_call
 #endif
 
 /* let CPU conduct current command and renew PC */
-static void exec_once(vaddr_t pc)
+static void exec_once()
 {
-  s.pc = pc;
-
   //上升沿取指令
   if(dut.clk == 1) {
     if(dut.memWrite == 1) {
       printf("memWrite\n");
       mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-    }
-    dut.inst = load_mem_npc(dut.pc,4);
-    dut.eval();
-    printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    
+    } 
   }
   if(dut.memToReg == 1){
 			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
 			dut.eval();
-		}
+	}
+  dut.inst = load_mem_npc(dut.pc,4);
+  dut.eval();
+  printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+
 	m_trace->dump(sim_time);
 	sim_time++;
 		
@@ -752,15 +750,16 @@ static void exec_once(vaddr_t pc)
   int n = 0;
   if(dut.clk == 0) { if(!(n++)) return;}
 
-  s.snpc += 4;
-  s.dnpc = dut.pc;
+  s.pc = dut.pc;
+  s.snpc = s.pc + 4;
+  s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
 
   #ifdef CONFIG_ITRACE
   printf("s.logbuf1 = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
   char *p = s.logbuf;
-  p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.dnpc);
+  p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.pc);
   printf("s.logbuf2 = %s\n",s.logbuf);
-  int ilen = s.snpc - s.dnpc;
+  int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
   printf("s.logbuf3 = %s\n",s.logbuf);
@@ -995,7 +994,7 @@ static void execute(uint64_t n)
 {
   for (; n > 0; n--)
   {
-    exec_once(dut.pc);
+    exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
     trace_and_difftest(dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令

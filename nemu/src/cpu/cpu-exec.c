@@ -271,8 +271,12 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   // 取指和译码
   printf("before s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
+
+  //更新了snpc，给dnpc赋值
   isa_exec_once(s);
   cpu.pc = s->dnpc;
+
+  //到此为止pc指向了本次执行的指令 snpc指向了静态npc dnpc指向了动态npc
 
 #ifdef CONFIG_ITRACE
   printf("s.logbuf = %s len = %ld\n",s->logbuf,sizeof(s->logbuf));
