@@ -754,21 +754,15 @@ static void exec_once()
   s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
 
   #ifdef CONFIG_ITRACE
-  printf("s.logbuf1 = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
   char *p = s.logbuf;
   p += snprintf(p, sizeof(s.logbuf), FMT_WORD ":", s.pc);
-  printf("s.logbuf2 = %s\n",s.logbuf);
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
-  printf("s.logbuf3 = %s\n",s.logbuf);
-  printf("\ns.isa.inst.val:0x%08x\n",s.isa.inst.val);
 
   for (i = ilen - 1; i >= 0; i--)
   {
-    printf("very good\n");
     p += snprintf(p, 4, " %02x", inst[i]);
-    printf("inst[%d] = %d\n",i,inst[i]);
   }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
@@ -777,11 +771,6 @@ static void exec_once()
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
-  printf("s.logbuf = %s len = %ld\n",s.logbuf,sizeof(s.logbuf));
-  printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
-  printf("s->pc:0x%08x\n",s.pc);
-  printf("s->dpc:0x%08x\n",s.dnpc);
 
 #ifndef CONFIG_ISA_loongarch32r
   disassemble(p, s.logbuf + sizeof(s.logbuf) - p,
@@ -916,10 +905,7 @@ static void exec_once()
         Assert(0, "Fail in searching!");
       }
     }
-    printf("8888888888888888888888\n");
-
-    printf("name1:[%p]   strtab:[%p] ",name,strtab);
-    printf("444444444444444444444444444\n");
+ 
     // 取出函数名称
     strncpy(name, strtab + sym.st_name, 19);
 
