@@ -77,7 +77,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(*)
         dpi_inst(inst);
 
-    task dpi_inst(input reg [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
         /* verilator no_inline_task */
         ifebreak_func(inst_bnk);
     endtask
@@ -87,7 +87,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(posedge clk)
         dpi_instGet(inst);
 
-    task dpi_instGet(input reg [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
         /* verilator no_inline_task */
         inst_get(inst_bnk);
     endtask
