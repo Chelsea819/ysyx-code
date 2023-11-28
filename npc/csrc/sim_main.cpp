@@ -84,6 +84,7 @@ vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 bool ifbreak = false;
 
+CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;

@@ -2,21 +2,22 @@
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
-	input	reg		[DATA_LEN - 1:0]	inst,
+	input			[DATA_LEN - 1:0]	inst,
 	input  			[DATA_LEN - 1:0]	ReadData	, //no
 	output			[ADDR_LEN - 1:0]	pc			,
 	output			[DATA_LEN - 1:0]	ALUResult	,
 	output    		[DATA_LEN - 1:0]	storeData	,
 	output 			[1:0]				DataLen 	,  // 0 1 3
 	output								memWrite	,						
-	output			[1:0]				memToReg	
+	output			[1:0]				memToReg	,
+	output								invalid
 );
 	//my_counter
 	wire			[ADDR_LEN - 1:0]	pc_tmp		;
 	wire			[ADDR_LEN - 1:0]	pc_next		;
 	wire			[ADDR_LEN - 1:0]	pcPlus		;
 	wire			[ADDR_LEN - 1:0]	pcBranch	;
-	wire								pcSrc		;
+	wire			[1:0]				pcSrc		;
 
 	//registerFile
 	wire			[DATA_LEN - 1:0]	reg_data1	;
@@ -29,7 +30,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
 	wire								regWrite	;
-	wire								jmp			;
+	wire			[1:0]				jmp			;
 
 	//immGet
 	wire			[DATA_LEN - 1:0]	imm			;
@@ -58,21 +59,45 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign ReadData_tmp = (DataSign == 1'b0) ? ReadData : 
 						  (DataLen_tmp == 2'b00) ? {{24{ReadData[7]}},ReadData[7:0]}:				//0--1 8bits
 						  (DataLen_tmp == 2'b01) ? {{16{ReadData[15]}},ReadData[15:0]}: 32'b0;		//1--2 16bits
+
+	assign invalid = ~((inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
+					 (inst[6:0] == 7'b1101111) | 	 					     //jal
+				     ({inst[14:12],inst[6:0]} == 10'b0001100111) |			 //I-jalr
+					 ({inst[14:12],inst[6:0]} == 10'b0001100011) |			 //B-beq
+					 ((inst[6:0] == 7'b0000011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b001 | inst[14:12] == 3'b010 | inst[14:12] == 3'b100 | inst[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
+					 ((inst[6:0] == 7'b0100011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b001 | inst[14:12] == 3'b010))	|		//S-sb sh sw
+					 ((inst[6:0] == 7'b0010011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b010 | inst[14:12] == 3'b011 | inst[14:12] == 3'b100 | inst[14:12] == 3'b110 | inst[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
+					 (inst[6:0] == 7'b0110011) | //R
+					 (inst == 32'b00000000000100000000000001110011));
+
 						  
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
-    always @(posedge clk)
+    always @(*)
         dpi_inst(inst);
 
-    task dpi_inst(input reg [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
         /* verilator no_inline_task */
         ifebreak_func(inst_bnk);
     endtask
+
+	// 为ITRACE提供指令
+    import "DPI-C" context function void inst_get(int inst);
+    always @(*)
+        dpi_instGet(inst);
+
+    task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+        /* verilator no_inline_task */
+        inst_get(inst_bnk);
+    endtask
+
+
 	
-	ysyx_22041211_MuxKey #(2,1,32) PCSrc_choosing (pc_next ,pcSrc ,{
-		1'b1, pcBranch,
-		1'b0, pcPlus
+	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
+		2'b01, pcBranch,
+		2'b00, pcPlus,
+		2'b10, ALUResult_bnk & ~1
 	});
 
 	ysyx_22041211_counter my_counter(
