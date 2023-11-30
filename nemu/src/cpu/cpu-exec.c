@@ -262,10 +262,6 @@ struct func_call
 };
 #endif
 
-void pr(){
-  printf("111\n");
-}
-
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
@@ -307,6 +303,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
+
 #endif
 
 
@@ -511,8 +508,24 @@ static void exec_once(Decode *s, vaddr_t pc)
   {
     curre->rbuf = malloc(sizeof(char) * 50);
   }
-  IFDEF(CONFIG_ITRACE, pr());
-  strcpy(curre->rbuf, s->logbuf);
+  // strcpy(curre->rbuf, s->logbuf);
+  #ifndef CONFIG_ITRACE
+    char ir_logbuf[128] = {0};
+    char *ir = ir_logbuf;
+    ir += snprintf(ir, sizeof(ir_logbuf), FMT_WORD ":", s->pc);
+    int ilen = s->snpc - s->pc;
+    int i;
+    uint8_t *inst_ir = (uint8_t *)&s->isa.inst.val;
+
+    for (i = ilen - 1; i >= 0; i--)
+    {
+      ir += snprintf(ir, 4, " %02x", inst_ir[i]);
+    }
+    strcpy(curre->rbuf, ir_logbuf);
+  
+  #else
+    strcpy(curre->rbuf, s->logbuf);
+  #endif
   curre = curre->next;
 }
 
