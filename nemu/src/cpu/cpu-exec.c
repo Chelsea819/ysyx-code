@@ -262,6 +262,10 @@ struct func_call
 };
 #endif
 
+void pr(){
+  printf("111\n");
+}
+
 /* let CPU conduct current command and renew PC */
 static void exec_once(Decode *s, vaddr_t pc)
 {
@@ -507,6 +511,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   {
     curre->rbuf = malloc(sizeof(char) * 50);
   }
+  IFDEF(CONFIG_ITRACE, pr());
   strcpy(curre->rbuf, s->logbuf);
   curre = curre->next;
 }
