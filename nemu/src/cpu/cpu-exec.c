@@ -269,7 +269,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   s->snpc = pc;
   // 取指和译码
 
-  //更新了snpc，给dnpc赋值
+  //更新了snpc dnpc
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 
