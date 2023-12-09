@@ -2,7 +2,7 @@
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
-	input	reg		[DATA_LEN - 1:0]	inst,
+	input			[DATA_LEN - 1:0]	inst,
 	input  			[DATA_LEN - 1:0]	ReadData	, //no
 	output			[ADDR_LEN - 1:0]	pc			,
 	output			[DATA_LEN - 1:0]	ALUResult	,
@@ -55,7 +55,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign memToReg = memToReg_tmp;
 	
 
-
 	assign ReadData_tmp = (DataSign == 1'b0) ? ReadData : 
 						  (DataLen_tmp == 2'b00) ? {{24{ReadData[7]}},ReadData[7:0]}:				//0--1 8bits
 						  (DataLen_tmp == 2'b01) ? {{16{ReadData[15]}},ReadData[15:0]}: 32'b0;		//1--2 16bits
@@ -74,13 +73,25 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
-    always @(posedge clk)
+    always @(*)
         dpi_inst(inst);
 
-    task dpi_inst(input reg [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
         /* verilator no_inline_task */
         ifebreak_func(inst_bnk);
     endtask
+
+	// 为ITRACE提供指令
+    import "DPI-C" context function void inst_get(int inst);
+    always @(*)
+        dpi_instGet(inst);
+
+    task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+        /* verilator no_inline_task */
+        inst_get(inst_bnk);
+    endtask
+
+
 	
 	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
 		2'b01, pcBranch,

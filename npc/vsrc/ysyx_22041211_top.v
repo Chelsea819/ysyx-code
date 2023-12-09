@@ -55,7 +55,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign memToReg = memToReg_tmp;
 	
 
-
 	assign ReadData_tmp = (DataSign == 1'b0) ? ReadData : 
 						  (DataLen_tmp == 2'b00) ? {{24{ReadData[7]}},ReadData[7:0]}:				//0--1 8bits
 						  (DataLen_tmp == 2'b01) ? {{16{ReadData[15]}},ReadData[15:0]}: 32'b0;		//1--2 16bits
