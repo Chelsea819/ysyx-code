@@ -1,6 +1,8 @@
 #include <am.h>
 #include <nemu.h>
 
+//支撑程序运行在TRM上的API
+
 extern char _heap_start;
 int main(const char *args);
 
