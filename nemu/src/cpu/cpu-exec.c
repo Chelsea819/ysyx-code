@@ -508,7 +508,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   {
     curre->rbuf = malloc(sizeof(char) * 50);
   }
-  // strcpy(curre->rbuf, s->logbuf);
   #ifndef CONFIG_ITRACE
     char ir_logbuf[128] = {0};
     char *ir = ir_logbuf;
