@@ -115,9 +115,20 @@ void *memmove(void *dst, const void *src, size_t n) {
   return dst;
 }
 
+//这里检查区间重叠不太会做
+//如果发生了区间重叠，用一个相同的数组来作为src
 void *memcpy(void *out, const void *in, size_t n) {
-  for(int k = 0; k < n; k ++){
-    ((unsigned char *)out)[k] = ((unsigned char *)in)[k];
+  unsigned char *dst = (unsigned char *)out;
+  unsigned char *src = (unsigned char *)in;
+  if(src <= dst && (src + n) >= dst){
+    for(int k = n-1; k >= 0; k --){
+      dst[k] = src[k];
+    }
+  }
+  else{
+    for(int k = 0; k < n; k ++){
+      dst[k] = src[k];
+    }
   }
   return out;
   //panic("Not implemented");
