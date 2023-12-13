@@ -6,6 +6,7 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...) {
+  putch('a');
   panic("Not implemented");
 }
 
@@ -18,7 +19,6 @@ void convert(int num,int* numAdd,char *arr_tmp){
   int tmp = num % 10;
   arr_tmp[(*numAdd) --] = tmp + 48; 
 }
-
 
 
 //碰到%后，指示%的指针不变 pCurrent先前跑 找到格式化输出的格式
