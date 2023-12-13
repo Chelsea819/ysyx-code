@@ -115,8 +115,8 @@ void *memmove(void *dst, const void *src, size_t n) {
   return dst;
 }
 
-//这里检查区间重叠不太会做
-//如果发生了区间重叠，用一个相同的数组来作为src
+//根据两个区间之间的关系，选择合适的copy方式
+//区间关系不同，copy方向不同
 void *memcpy(void *out, const void *in, size_t n) {
   unsigned char *dst = (unsigned char *)out;
   unsigned char *src = (unsigned char *)in;
