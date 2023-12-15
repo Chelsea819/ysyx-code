@@ -26,28 +26,36 @@ void convert(int num,int* numAdd,char *arr_tmp){
 int sprintf(char *out, const char *fmt, ...) {
   
   va_list ap;
-  va_start(ap,fmt);
+  va_start(ap,fmt); //初始化ap
 
   int percent = 0; //检测%
   int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
 
   for(int i = 0; *(fmt + i) != '\0'; i++){
-    if(fmt[i] == '%') {percent^=1; tmp = i;}
+    if(fmt[i] == '%') {percent ^= 1; tmp = i;}
 
-    //当percent为1时进入循环
+    //当percent为1时进入循环,即出现奇数个`%`
+    //匹配到`%`后面的格式化输出标识符
     else if(percent == 1 && i == tmp + 1){
       // %d
       if(fmt[i] == 'd'){
         char arr_tmp[20] = {0};  //存放数字转换成的字符
-        int numAdd = 18;  //数组的下标
+        int numAdd = 18;  //数组的下标 从后往前存
         int num = va_arg(ap,int); //要替换的数字
-        int flag = 1;  //位数
-        while(num/flag != 0){
-          convert(num/flag,&numAdd,arr_tmp);
+        //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
+        //va_arg(ap,type) 这个type是为了初始化一个指向目标的指针
+        //如果type不匹配或者没有下一个参数，会出现随机错误
+        
+        int flag = 1;  //辅助确定数字的位数
+        while(num / flag != 0){
+          //将整型数字转换成字符串类型
+          convert(num / flag, &numAdd, arr_tmp);
           flag *= 10;
         }   
         numAdd ++;
+
+        //将数字存入out数组
         for( ;numAdd < 19 ; k++,numAdd ++){
           out[k] = arr_tmp[numAdd];
         }
