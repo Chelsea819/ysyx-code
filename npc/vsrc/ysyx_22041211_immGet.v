@@ -6,7 +6,6 @@ module ysyx_22041211_immGet #(parameter DATA_LEN = 32)(
 //     wire    [2:0]                   key_opcode;
 //     wire    [2:0]                   key_certain;
 //     wire    [31:0]                  key_tmp;
-
  
     //imm 
     assign imm = inst[6:0] == 7'b0010011 ? {{20{inst[31]}},inst[31:20]} :         // 3'b000  I addi sltiu srai andi 
