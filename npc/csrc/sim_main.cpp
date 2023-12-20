@@ -73,7 +73,7 @@ typedef word_t vaddr_t;
 
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
-#define CONFIG_FTRACE 0
+// #define CONFIG_FTRACE 1
 #define CONFIG_ITRACE_COND 1
 #define CONFIG_ITRACE 1
 #define CONFIG_TRACE 1
