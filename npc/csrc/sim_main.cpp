@@ -725,7 +725,7 @@ static void exec_once()
       printf("memWrite\n");
       mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
     } 
-    printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+    // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
   }
   if(dut.memToReg == 1){
 			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
