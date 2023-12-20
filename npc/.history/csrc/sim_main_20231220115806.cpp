@@ -724,8 +724,6 @@ static void exec_once()
     if(dut.memWrite == 1) {
       printf("memWrite\n");
       mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-      printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-
     } 
   }
   if(dut.memToReg == 1){
@@ -747,7 +745,7 @@ static void exec_once()
 
   if(ifbreak && dut.clk == 0){
     printf("\nebreak!\n");
-    // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+    printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
     NPCTRAP(dut.pc, 0);
   }
   if(dut.clk == 0)    return; 
