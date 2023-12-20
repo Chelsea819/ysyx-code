@@ -1070,7 +1070,7 @@ const char *regs[] = {
 
 void isa_reg_display() {
   for(int i = 0; i < 32; i++){
-    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),gpr(i));
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",dut.pc);
   return;
@@ -1085,7 +1085,7 @@ word_t isa_reg_str2val(char *s, bool *success) {
       return dut.pc;
   }  
   for(int i = 0; i < 32; i++){
-    if(strcmp(regs[i],s) == 0){
+    if(strcmp(reg_name(i),s) == 0){
       *success = true;
       free(s);
       return gpr(i);
