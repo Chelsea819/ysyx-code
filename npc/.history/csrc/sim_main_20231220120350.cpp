@@ -751,7 +751,7 @@ static void exec_once()
     // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
     NPCTRAP(dut.pc, 0);
   }
-  if(dut.clk == 0 && !ifbreak)    return; 
+  if(dut.clk == 0 && ~ifbreak)    return; 
 
   s.pc = dut.pc;
   s.snpc = s.pc + 4;
