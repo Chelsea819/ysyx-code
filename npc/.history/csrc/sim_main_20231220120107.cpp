@@ -290,8 +290,8 @@ static vaddr_t load_mem_npc(paddr_t addr,int len) {
 }
 
 void ifebreak_func(int inst){
-	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst)
-	if(inst == 1048691) {ifbreak = true; } 
+	// printf("while key = 0x%08x\n",inst);
+	if(inst == 1048691) {ifbreak = true; printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);} 
 }
 
 void mem_write_npc(vaddr_t addr, int len, word_t data) {
