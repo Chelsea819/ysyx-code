@@ -61,7 +61,7 @@ override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$
 
 $(BIN):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
-	@rm -rf $(OBJ_DIR)
+# @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CFLAGS , $(CFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
