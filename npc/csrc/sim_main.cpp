@@ -1832,7 +1832,7 @@ int main(int argc, char** argv, char** env) {
 	engine_start();
 
   // std::cout << dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1] << std::endl;
-  printf("register:0x%08x",dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1]);
+  // printf("register:0x%08x",dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1]);
 
 	// while(1){
 	// 	switch (npc_state.state){
