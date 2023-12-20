@@ -21,6 +21,7 @@ void putch(char ch) {
 void halt(int code) {
   //htif_poweroff();
   //exit(0);
+  // asm volatile：这个关键字告诉编译器，嵌入的汇编代码不要对内联汇编代码进行优化
   asm volatile ("ebreak");
   while (1);
 }

@@ -26,6 +26,7 @@ CXXSRC = $(NPC_HOME)/utils/disasm.cc
 # llvm-config 让使用LLVM构建的应用程序变得很容易，他可以打印链接LLVM所需的编译器标志，编译器标志和对象库
 #CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE 
 # --libs 打印链接指定LLVM 组件所需的所有库 ，包括任何依赖项。
+
 LIBS += $(shell llvm-config --libs)
 
 all:default
@@ -52,8 +53,8 @@ CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
-override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  --ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
-override ARGS += $(ARGS_DIFF) #--batch
+override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
+#override ARGS += $(ARGS_DIFF) #--batch
 
 
 

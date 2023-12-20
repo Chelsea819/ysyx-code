@@ -733,7 +733,8 @@ static void exec_once()
 	}
   dut.inst = load_mem_npc(dut.pc,4);
   dut.eval();
-  
+  // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+
 	m_trace->dump(sim_time);
 	sim_time++;
 		
