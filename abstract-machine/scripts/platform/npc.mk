@@ -30,7 +30,7 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 endif
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt 
-NPCFLAGS += -f $(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
+NPCFLAGS += --frace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 NPCFLAGS += $(ARGS_DIFF)
 
 
