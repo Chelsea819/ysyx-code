@@ -67,13 +67,11 @@ void init_mem() {
     p[i] = rand();
   }
 #endif
-assert(0);
   /*打印日志,输出初始化的内存区域的地址范围,
   FMT_PADDR是地址格式化的宏*/
   /*PMEM_LEFT和PMEM_RIGHT应该是
   预定义的内存区域起始和结束地址*/
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
-  assert(0);
 }
 
 word_t paddr_read(paddr_t addr, int len) {
