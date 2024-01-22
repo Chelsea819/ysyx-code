@@ -24,7 +24,6 @@ uint32_t convert_ten(char *args);
 
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
-  assert(0);
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
 #else
