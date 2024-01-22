@@ -24,7 +24,7 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
   // assert(0);
 
   if(direction == DIFFTEST_TO_REF){
-    paddr_write(addr, *((word_t*)buf), n);
+    memcpy((paddr_t*)(&addr) ,(const paddr_t*)buf ,n);
   } else {
     memcpy((paddr_t*)buf ,(const paddr_t*)(&addr) ,n);
     // assert(0);
