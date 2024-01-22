@@ -29,13 +29,13 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 # endif
 endif
 
-NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt 
+NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
 NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
 
 
-.PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
+.PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c $(DIFF_REF_SO)
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
@@ -46,4 +46,5 @@ gdb: image
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdb ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
 
 run: image
+	$(info $(ARGS_DIFF))
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
