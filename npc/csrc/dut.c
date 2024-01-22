@@ -91,6 +91,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   ref_difftest_init(port);
   //将DUT的guest memory拷贝到REF中
   printf("buf = 0x%08x\n",RESET_VECTOR);
+  printf("img_size = %ld\n",img_size);
   ref_difftest_memcpy(RESET_VECTOR, (paddr_t* )RESET_VECTOR, img_size, DIFFTEST_TO_REF);
   //将DUT的寄存器状态拷贝到REF中
   assert(0);
