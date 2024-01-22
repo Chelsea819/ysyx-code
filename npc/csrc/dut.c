@@ -88,7 +88,6 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
       "If it is not necessary, you can turn it off in menuconfig.", ref_so_file);
   
   //对REF的DIffTest功能进行初始化
-  assert(0);
   ref_difftest_init(port);
   assert(0);
   //将DUT的guest memory拷贝到REF中
