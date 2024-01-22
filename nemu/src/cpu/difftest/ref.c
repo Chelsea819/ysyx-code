@@ -59,13 +59,8 @@ __EXPORT void difftest_raise_intr(word_t NO) {
 
 //// 初始化REF的DiffTest功能
 __EXPORT void difftest_init(int port) {
-  printf("\n\n\n");
   void init_mem();
-  assert(0);
-  printf("\n\n\n");
   init_mem();
   /* Perform ISA dependent initialization. */
-  // assert(0);
   init_isa();
-  assert(0);
 }
