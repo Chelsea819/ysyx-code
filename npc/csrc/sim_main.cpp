@@ -36,6 +36,7 @@ NPCState npc_state = { .state = NPC_STOP };
 
 static char *img_file = NULL;
 static char *ftrace_file = NULL;
+CPU_state cpu = {};
 
 #define MAX_SIM_TIME 100
 #define PG_ALIGN __attribute((aligned(4096)))
@@ -751,6 +752,7 @@ static void exec_once()
   s.pc = dut.pc;
   s.snpc = s.pc + 4;
   s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
+  cpu.pc = s.dnpc;
 
   #ifdef CONFIG_ITRACE
   char *p = s.logbuf;

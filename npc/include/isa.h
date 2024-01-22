@@ -24,6 +24,11 @@
 typedef concat(__GUEST_ISA__, _CPU_state) CPU_state;  //寄存器结构体
 typedef concat(__GUEST_ISA__, _ISADecodeInfo) ISADecodeInfo;
 
+// reg
+extern CPU_state cpu;
+void isa_reg_display();
+word_t isa_reg_str2val(char *name, bool *success);
+
 // exec
 struct Decode;
 // int isa_exec_once(struct Decode *s);
