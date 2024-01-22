@@ -53,11 +53,23 @@ CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
+ifdef CONFIG_DIFFTEST
+GUEST_ISA = riscv32
+CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
+DIFF_REF_PATH = $(NEMU_HOME)
+DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
+# MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
+ARGS_DIFF = --diff=$(DIFF_REF_SO)
+
+# ifndef CONFIG_DIFFTEST_REF_NEMU
+# $(DIFF_REF_SO):
+# 	$(MAKE) -s -C $(DIFF_REF_PATH) $(MKFLAGS)
+# endif
+
+endif
+
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
-#override ARGS += $(ARGS_DIFF) #--batch
-
-
-
+override ARGS += $(ARGS_DIFF) #--batch
 
 $(BIN):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
@@ -78,7 +90,7 @@ run:$(BIN)
 	$(info $(BUILD_DIR))
 	$(EXE)  $(ARGS) $(IMG)
 
-.PHONY:wave clean sim default all run 
+.PHONY:wave clean sim default all run $(DIFF_REF_SO)
 
 wave:
 	gtkwave $(WAVE)

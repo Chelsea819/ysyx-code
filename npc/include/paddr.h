@@ -13,26 +13,25 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __RISCV_REG_H__
-#define __RISCV_REG_H__
+#ifndef __MEMORY_PADDR_H__
+#define __MEMORY_PADDR_H__
 
-#include "common.h"
+#include <common.h>
+#define CONFIG_MSIZE 0x8000000
+#define CONFIG_MBASE 0x80000000
+#define CONFIG_PC_RESET_OFFSET 0x0
 
-/*check register index*/
-static inline int check_reg_idx(int idx) {
-  /* if index in certain range */
-  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < MUXDEF(CONFIG_RVE, 16, 32)));
-  return idx;
+#define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
+#define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
+#define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
+
+/* convert the guest physical address in the guest program to host virtual address in NEMU */
+uint8_t* guest_to_host_npc(paddr_t paddr);
+
+//判断 addr 是否在 内存区域中
+static inline bool in_pmem(paddr_t addr) {
+  return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
 
-#define R(idx) (dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[check_reg_idx(idx)])
-
-// #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-
-
-static inline const char* reg_name(int idx) {
-  extern const char* regs[];
-  return regs[check_reg_idx(idx)];
-}
 
 #endif

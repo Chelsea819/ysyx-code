@@ -27,16 +27,20 @@
 #include "cpu.h"
 #include "decode.h"
 #include <elf.h>
+#include "difftest-def.h"
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
 void init_disasm(const char *triple);
+void init_difftest(char *ref_so_file, long img_size, int port);
+void difftest_step(vaddr_t pc, vaddr_t npc);
 
 NPCState npc_state = { .state = NPC_STOP };
 
 static char *img_file = NULL;
 static char *ftrace_file = NULL;
-CPU_state cpu = {};
+static int difftest_port = 1234;
+static char *diff_so_file = NULL;
 
 #define MAX_SIM_TIME 100
 #define PG_ALIGN __attribute((aligned(4096)))
@@ -52,6 +56,7 @@ CPU_state cpu = {};
 #define CONFIG_PC_RESET_OFFSET 0x0
 #define CONFIG_RT_CHECK 1
 #define CONFIG_ISA_riscv 1
+#define CONFIG_DIFFTEST 1
 
 #define CHOOSE2nd(a, b, ...) b
 #define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
@@ -445,7 +450,7 @@ static int parseArgs(int argc, char *argv[]) {
       case 'b': sdb_set_batch_mode(); break; 
       case 'p': break;
       case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
-      case 'd': break;
+      case 'd': diff_so_file = optarg; break;
       case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; printf("img_file oparg = %s\n",optarg); return 0;
       default:
@@ -481,6 +486,9 @@ void init_npc(int argc,char *argv[]){
 
     //load certain program to memory
     long img_size = load_img();
+
+    /* Initialize differential testing. */
+    init_difftest(diff_so_file, img_size, difftest_port);
 
     /* Initialize the simple debugger.初始化简单调试器 */
     init_sdb();
@@ -639,6 +647,14 @@ static void trace_and_difftest(vaddr_t dnpc)
   {
     IFDEF(CONFIG_ITRACE, puts(s.logbuf));
   }
+
+#ifdef CONFIG_DIFFTEST
+  for(int i = 0; i < RISCV_GPR_NUM; i ++){
+    cpu.gpr[i] = R(i);
+  }
+
+#endif
+
   IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
   bool success = true;
   uint32_t addr = 0;
@@ -1072,7 +1088,7 @@ const char *regs[] = {
 
 void isa_reg_display() {
   for(int i = 0; i < 32; i++){
-    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),gpr(i));
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),R(i));
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",dut.pc);
   return;
@@ -1090,7 +1106,7 @@ word_t isa_reg_str2val(char *s, bool *success) {
     if(strcmp(reg_name(i),s) == 0){
       *success = true;
       free(s);
-      return gpr(i);
+      return R(i);
     }
   } 
   return 0;
