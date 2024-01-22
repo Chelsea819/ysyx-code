@@ -30,8 +30,9 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 endif
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt 
-NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 NPCFLAGS += $(ARGS_DIFF)
+NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
+
 
 
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
