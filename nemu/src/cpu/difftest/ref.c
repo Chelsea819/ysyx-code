@@ -21,12 +21,13 @@
 // 在DUT host memory的`buf`和REF guest memory的`addr`之间拷贝`n`字节,
 // `direction`指定拷贝的方向, `DIFFTEST_TO_DUT`表示往DUT拷贝, `DIFFTEST_TO_REF`表示往REF拷贝
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  // assert(0);
-
   if(direction == DIFFTEST_TO_REF){
-    memcpy((paddr_t*)(&addr) ,(const paddr_t*)buf ,n);
+    printf("n = %ld\n",n);
+    printf("addr = %lu\n",*((paddr_t*)(addr)));
+    memcpy((paddr_t*)(addr) ,(const paddr_t*)buf ,n);
+
   } else {
-    memcpy((paddr_t*)buf ,(const paddr_t*)(&addr) ,n);
+    memcpy((paddr_t*)buf ,(const paddr_t*)(addr) ,n);
     // assert(0);
   }
 }
