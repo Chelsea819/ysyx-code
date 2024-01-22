@@ -72,6 +72,7 @@ void init_mem() {
   /*PMEM_LEFT和PMEM_RIGHT应该是
   预定义的内存区域起始和结束地址*/
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
+  assert(0);
 }
 
 word_t paddr_read(paddr_t addr, int len) {
