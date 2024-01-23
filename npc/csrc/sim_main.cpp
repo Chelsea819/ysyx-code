@@ -299,18 +299,24 @@ static vaddr_t paddr_read(paddr_t addr,int len) {
   return 0;
 }
 
-void paddr_write(vaddr_t addr, int len, word_t data) {
+void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
 
-void vaddr_read(vaddr_t addr, int len, vaddr_t* dst) {
-  *dst = paddr_read(addr, len);
-}
+// void vaddr_read(vaddr_t addr, vaddr_t len, vaddr_t* dst) {
+//   *dst = paddr_read(addr, len);
+// }
 
-void vaddr_write(vaddr_t addr, int len, word_t data) {
-  paddr_write(addr, len, data);
+// void vaddr_write(vaddr_t addr, int len, word_t data) {
+//   paddr_write(addr, len, data);
+// }
+extern "C" int vaddr_read(int addr, int len) {
+  return paddr_read((paddr_t)addr, len);
+}
+extern "C" void vaddr_write(int addr, int len, int data) {
+  paddr_write((vaddr_t)addr, (vaddr_t)len, (word_t)data);
 }
 
 void ifebreak_func(int inst){

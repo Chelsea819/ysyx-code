@@ -1,4 +1,3 @@
-
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
@@ -45,7 +44,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	//dataMem
 	wire			[DATA_LEN - 1:0]	ReadData_tmp	;
-	wire 			[7:0]				DataLen			;
+	wire 			[2:0]				DataLen			;
 	wire								DataSign		;
 	reg			[DATA_LEN - 1:0]		ReadData		;
 	// wire			[1:0]				DataLen			;	
@@ -56,9 +55,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign memToReg = memToReg_tmp;
 	
 	// // 做位拓展 ReadData_tmp是处理好的最终读取到的数据
-	assign ReadData_tmp = (DataSign == 1'b0 || DataLen == 8'b00000100) ? ReadData : 
-						  (DataLen == 8'b00000001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
-						  (DataLen == 8'b00000010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
+	assign ReadData_tmp = (DataSign == 1'b0 || DataLen == 3'b100) ? ReadData : 
+						  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
+						  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
 	assign invalid = ~((inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
 					 (inst[6:0] == 7'b1101111) | 	 					     //jal
@@ -83,33 +82,38 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     endtask
 
 	//访存指令
-	import "DPI-C" function void vaddr_read(input int raddr,input byte DataLen, output int ReadData);
-	import "DPI-C" function void vaddr_write(input int waddr, input int wdata, input byte wmask);
+	wire	[31:0]	len;
+	assign len = {{29{1'b0}},DataLen};
 
-	// always @(*) begin
-  	// 	if (valid) begin // 有读写请求时
-    // 		pmem_read(ALUResult, ReadData);
-    // 		if (wen) begin // 有写请求时
-    //  			pmem_write(waddr, wdata, DataLen);
-    // 		end
-  	// 	end
-  	// 	else begin
-    // 		ReadData = 0;
-  	// 	end
-	// end
+	// import "DPI-C" function void vaddr_read(input int raddr,input int DataLen, output int ReadData);
+	// import "DPI-C" function void vaddr_write(input int waddr, input int wdata, input int wmask);
+	import "DPI-C" context function int vaddr_read(int ALUResult, int len);
+	import "DPI-C" context function void vaddr_write(int ALUResult, int len, int reg_data2);
 
 	always @(*) begin
-  		if (memToReg[0])  // 有读请求时
-    		vaddr_read(ALUResult, DataLen, ReadData);	
+  		// 有读请求时
+    	if (memToReg[0])  // 有读请求时
+    		ReadData = vaddr_read(ALUResult, len);	
   		else 
-    		ReadData = 32'b0;
+    		ReadData = 0;
+	end
+	always @(*) begin
+		// 有写请求时
+     	if (memWrite) // 有写请求时
+     		vaddr_write(ALUResult, len, reg_data2);
 	end
 
-	always @(*) begin
-		if (memWrite) begin // 有写请求时
-     		vaddr_write(ALUResult, reg_data2, DataLen);
-    	end
-	end
+	// task dpi_vaddr_read(input [31:0] addr,input [31:0] lenth);
+	// 	if (memToReg[0])  // 有读请求时
+    // 		ReadData = dpi_vaddr_read(addr, lenth);	
+  	// 	else 
+    // 		ReadData = 0;
+	// endtask
+
+	// task dpi_vaddr_write(input [31:0] addr, input [31:0] lenth, input [31:0] data);
+	// 	if (memWrite) // 有写请求时
+    //  		vaddr_write(addr, lenth, data);
+	// endtask
 
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
