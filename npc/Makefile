@@ -92,7 +92,7 @@ run:$(BIN)
 
 gdb:$(BIN)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
-	gdb -s $(EXE) --args $(ARGS) $(IMG)
+	gdb -s $(EXE) --args $(EXE) $(ARGS) $(IMG)
 
 .PHONY:wave clean sim default all run $(DIFF_REF_SO)
 
