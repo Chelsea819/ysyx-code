@@ -82,38 +82,41 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     endtask
 
 	//访存指令
-	wire	[31:0]	len;
-	assign len = {{29{1'b0}},DataLen};
 
 	// import "DPI-C" function void vaddr_read(input int raddr,input int DataLen, output int ReadData);
 	// import "DPI-C" function void vaddr_write(input int waddr, input int wdata, input int wmask);
-	import "DPI-C" context function int vaddr_read(int ALUResult, int len);
-	import "DPI-C" context function void vaddr_write(int ALUResult, int len, int reg_data2);
+	// import "DPI-C" context function int vaddr_read(int ALUResult, int len);
+	// import "DPI-C" context function void vaddr_write(int ALUResult, int len, int reg_data2);
 
-	always @(*) begin
-  		// 有读请求时
-    	if (memToReg[0])  // 有读请求时
-    		ReadData = vaddr_read(ALUResult, len);	
-  		else 
-    		ReadData = 0;
-	end
-	always @(*) begin
-		// 有写请求时
-     	if (memWrite) // 有写请求时
-     		vaddr_write(ALUResult, len, reg_data2);
-	end
-
-	// task dpi_vaddr_read(input [31:0] addr,input [31:0] lenth);
-	// 	if (memToReg[0])  // 有读请求时
-    // 		ReadData = dpi_vaddr_read(addr, lenth);	
+	// always @(*) begin
+  	// 	// 有读请求时
+    // 	if (memToReg[0])  // 有读请求时
+    // 		ReadData = vaddr_read(ALUResult, len);	
   	// 	else 
     // 		ReadData = 0;
-	// endtask
-
-	// task dpi_vaddr_write(input [31:0] addr, input [31:0] lenth, input [31:0] data);
-	// 	if (memWrite) // 有写请求时
-    //  		vaddr_write(addr, lenth, data);
-	// endtask
+	// end
+	// always @(*) begin
+	// 	// 有写请求时
+    //  	if (memWrite) // 有写请求时
+    //  		vaddr_write(ALUResult, len, reg_data2);
+	// end
+	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
+	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
+	wire [7:0]	wmask;
+	assign wmask = ((DataLen == 3'b001)? 8'b00000001: 
+				   (DataLen == 3'b010)? 8'b00000011:
+				   (DataLen == 3'b100)? 8'b00001111: 8'b11111111);
+	always @(*) begin
+  		if (memWrite | memToReg[0]) begin // 有读写请求时
+   			pmem_read(ALUResult, ReadData);
+    		if (memWrite) begin // 有写请求时
+      			pmem_write(ALUResult, reg_data2, wmask);
+    		end
+  		end
+  		else begin
+    		ReadData = 0;
+  		end
+	end
 
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
