@@ -1002,6 +1002,10 @@ static void exec_once()
 
 #endif
 
+printf("dut.pc = 0x%08x\n",s.pc);
+  printf("s.dnpc = 0x%08x\n",s.dnpc);
+  printf("s.snpc = 0x%08x\n",s.snpc);
+
 }
 
 /* stimulate the way CPU works ,get commands constantly */
