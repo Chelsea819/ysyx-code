@@ -772,11 +772,11 @@ static void exec_once()
 	// 		dut.ReadData = paddr_read(dut.ALUResult,dut.DataLen + 1);
 	// 		dut.eval();
 	// }
-  dut.inst = paddr_read(dut.pc,4);
-  dut.eval();
-  
-	m_trace->dump(sim_time);
-	sim_time++;
+
+  // dut.inst = paddr_read(dut.pc,4);
+  // dut.eval();  
+	// m_trace->dump(sim_time);
+	// sim_time++;
 		
   if(dut.invalid == 1){
     invalid_inst(dut.pc);

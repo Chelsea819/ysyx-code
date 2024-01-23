@@ -1,7 +1,7 @@
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
-	input			[DATA_LEN - 1:0]	inst,
+	// input			[DATA_LEN - 1:0]	inst,
 	output			[ADDR_LEN - 1:0]	pc			,
 	output								memWrite	,						
 	output			[1:0]				memToReg	,
@@ -20,6 +20,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire	        [DATA_LEN - 1:0]    WriteData	;
 
 	//control
+	wire			[DATA_LEN - 1:0]	inst		;
 	wire			[1:0]				memToReg_tmp;	
 	wire								branch		;
 	wire			[3:0]				ALUcontrol	;
@@ -62,23 +63,21 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 					 ((inst[6:0] == 7'b0010011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b010 | inst[14:12] == 3'b011 | inst[14:12] == 3'b100 | inst[14:12] == 3'b110 | inst[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
 					 (inst[6:0] == 7'b0110011) | //R
 					 (inst == 32'b00000000000100000000000001110011));
+	
+	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
+	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
+	
 	//取指令
-
-						  
+	always @(posedge clk) begin
+        pmem_read(pc_next, inst);
+	end
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
     always @(*)
         ifebreak_func(inst);
 
-    // task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
-    //     /* verilator no_inline_task */
-    //     ifebreak_func(inst_bnk);
-    // endtask
-
 	//访存指令
-	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
-	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 	wire [7:0]	wmask;
 	assign wmask = ((DataLen == 3'b001)? 8'b00000001: 
 				   (DataLen == 3'b010)? 8'b00000011:
@@ -99,13 +98,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     import "DPI-C" context function void inst_get(int inst);
     always @(*)
         inst_get(inst);
-
-    // task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
-    //     /* verilator no_inline_task */
-    //     inst_get(inst_bnk);
-    // endtask
-
-
 	
 	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
 		2'b01, pcBranch,
