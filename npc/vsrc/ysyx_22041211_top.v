@@ -70,8 +70,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//取指令
 	always @(posedge clk) begin
 		if(~rst)
-        	pmem_read(pc_next, inst);
+        	pmem_read(inst_pc, inst);
 	end
+	wire	[31:0]	inst_pc;
+	assign inst_pc = ((pc_tmp < 32'h80000000) : 32'h80000000 : pc_next);
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
