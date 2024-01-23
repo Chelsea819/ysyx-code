@@ -90,6 +90,10 @@ run:$(BIN)
 	$(info $(BUILD_DIR))
 	$(EXE)  $(ARGS) $(IMG)
 
+gdb:$(BIN)
+	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
+	gdb -s $(EXE) --args $(ARGS) $(IMG)
+
 .PHONY:wave clean sim default all run $(DIFF_REF_SO)
 
 wave:
