@@ -70,7 +70,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//取指令
 	always @(posedge clk) begin
 		if(~rst)
-        	pmem_read(pc_next, inst);
+        	pmem_read(pc, inst);
 	end
 
 	// 检测到ebreak
@@ -100,11 +100,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(*)
         inst_get(inst);
 	
-	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
-		2'b01, pcBranch,
-		2'b00, pcPlus,
-		2'b10, ALUResult & ~1
-	});
+	// ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
+	// 	2'b01, pcBranch,
+	// 	2'b00, pcPlus,
+	// 	2'b10, ALUResult & ~1
+	// });
+
+	assign pc_next = ((pcSrc == 2'b01) ? pcBranch :
+					 (pcSrc == 2'b00) ? pcPlus :
+					 (pcSrc == 2'b10) ? ALUResult & ~1 : 32'h80000000);
 
 	ysyx_22041211_counter my_counter(
 		.clk		(clk),
