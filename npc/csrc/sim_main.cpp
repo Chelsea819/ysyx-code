@@ -246,7 +246,13 @@ void init_mem_npc(){
 	return ;
 }
 
-uint8_t* guest_to_host_npc(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host_npc(paddr_t paddr) { 
+  printf("pmem: 0x%08x\n",pmem);
+  printf("paddr: 0x%08x\n",paddr);
+  printf("CONFIG_MBASE: 0x%08x\n",CONFIG_MBASE);
+
+  return pmem + paddr - CONFIG_MBASE; 
+}
 
 void init_isa() {
   /* Load built-in image. */
