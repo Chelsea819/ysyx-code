@@ -663,7 +663,6 @@ static void trace_and_difftest(vaddr_t dnpc){
     Assert(success,"Make_token fail!");
 
     if(addr != index->data){
-      // printf("Different!\n");
       npc_state.state = NPC_STOP;
       index->times += 1;
 
@@ -1009,7 +1008,11 @@ static void execute(uint64_t n)
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
     isa_reg_display();
+
+    //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
+    //所以这里要整个往后延迟一个周期
     if(cpu.pc != 0x80000000 && dut.clk == 1) trace_and_difftest(s.dnpc);
+    
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
@@ -1031,27 +1034,6 @@ static void statistic()
   else
     Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
-
-// void iringbuf_display(){
-//   for(int i = 0;i <12 ; i++){
-//     Assert(&(irbuf[i]) != NULL,"irbuf exists NULL!");
-//     if(irbuf[i].rbuf == NULL) break;
-//     if(irbuf + i == curre->past){
-//       printf(" --->\t%s\n",irbuf[i].rbuf);
-//       continue;
-//     }
-//     printf("\t%s\n",irbuf[i].rbuf);
-//   }
-// }
-
-// void assert_fail_msg()
-// {
-//   iringbuf_display();
-//   isa_reg_display();
-//   statistic();
-// }
-
-
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n)
