@@ -781,7 +781,7 @@ static void exec_once()
   cpu.pc = s.dnpc;
   printf("dut.pc = 0x%08x\n",s.pc);
   printf("s.dnpc = 0x%08x\n",s.dnpc);
-  printf("s.snpc = 0x%08x\n",s.snpc);
+  printf("s.snpc = 0x%08x\n",s.dnpc);
 
 
 
@@ -1002,10 +1002,6 @@ static void exec_once()
 
 #endif
 
-printf("dut.pc = 0x%08x\n",s.pc);
-  printf("s.dnpc = 0x%08x\n",s.dnpc);
-  printf("s.snpc = 0x%08x\n",s.snpc);
-
 }
 
 /* stimulate the way CPU works ,get commands constantly */
@@ -1015,7 +1011,7 @@ static void execute(uint64_t n)
   {
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    if(dut.clk == 1) trace_and_difftest(dut.pc);
+    if(dut.clk == 1) trace_and_difftest(s.dnpc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
