@@ -780,6 +780,8 @@ static void exec_once()
   // printf("")
   dut.clk ^= 1;
   dut.eval();
+  m_trace->dump(sim_time);
+	sim_time++;
 		
   if(dut.invalid == 1){
     invalid_inst(dut.pc);
