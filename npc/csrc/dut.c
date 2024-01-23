@@ -6,6 +6,15 @@
 #include <utils.h>
 #include <difftest-def.h>
 #include <debug.h>
+#include "reg.h"
+
+#include "svdpi.h"
+#include "Vysyx_22041211_top__Dpi.h"
+#include <verilated.h>
+#include <verilated_vcd_c.h>
+#include "Vysyx_22041211_top.h"
+#include "Vysyx_22041211_top___024root.h"
+
 // #define CONFIG_DIFFTEST 1
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
@@ -16,6 +25,7 @@ void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 extern CPU_state cpu;
+extern TOP_NAME dut;
 
 #ifdef CONFIG_DIFFTEST
 
@@ -105,7 +115,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     for(int i = 0; i < 32; i++){
-        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs1[i],cpu.gpr[i]);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs1[i],R(i));
     }
     printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     Assert(0,"Catch difference!\n");
