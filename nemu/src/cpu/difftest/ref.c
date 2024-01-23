@@ -23,8 +23,6 @@
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   assert(0);
   if(direction == DIFFTEST_TO_REF){
-    printf("n = %ld\n",n);
-    printf("addr = %lu\n",*((paddr_t*)(addr)));
     memcpy((paddr_t*)(addr) ,(const paddr_t*)buf ,n);
 
   } else {
