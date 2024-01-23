@@ -1011,7 +1011,7 @@ static void execute(uint64_t n)
   {
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    if(dut.clk == 1) trace_and_difftest(s.dnpc);
+    if(dut.clk == 0) trace_and_difftest(s.dnpc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
