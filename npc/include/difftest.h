@@ -18,7 +18,6 @@
 
 #include <common.h>
 #include <difftest-def.h>
-#define CONFIG_DIFFTEST 1
 
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
