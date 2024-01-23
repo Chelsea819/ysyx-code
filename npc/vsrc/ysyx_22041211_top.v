@@ -70,7 +70,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//取指令
 	always @(posedge clk) begin
 		if(~rst)
-        	pmem_read(pc, inst);
+        	pmem_read(pc_next, inst);
 	end
 
 	// 检测到ebreak
