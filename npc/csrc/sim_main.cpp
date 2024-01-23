@@ -56,7 +56,7 @@ static char *diff_so_file = NULL;
 #define CONFIG_PC_RESET_OFFSET 0x0
 #define CONFIG_RT_CHECK 1
 #define CONFIG_ISA_riscv 1
-#define CONFIG_DIFFTEST 1
+// #define CONFIG_DIFFTEST 1
 
 #define CHOOSE2nd(a, b, ...) b
 #define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
@@ -1011,7 +1011,7 @@ static void execute(uint64_t n)
   {
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    if(dut.clk == 0) trace_and_difftest(s.dnpc);
+    if(dut.clk == 1) trace_and_difftest(s.dnpc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;

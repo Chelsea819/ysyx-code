@@ -6,7 +6,7 @@
 #include <utils.h>
 #include <difftest-def.h>
 #include <debug.h>
-#define CONFIG_DIFFTEST 1
+// #define CONFIG_DIFFTEST 1
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
