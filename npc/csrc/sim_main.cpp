@@ -305,19 +305,6 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   out_of_bound(addr);
 }
 
-// void vaddr_read(vaddr_t addr, vaddr_t len, vaddr_t* dst) {
-//   *dst = paddr_read(addr, len);
-// }
-
-// void vaddr_write(vaddr_t addr, int len, word_t data) {
-//   paddr_write(addr, len, data);
-// }
-// extern "C" int vaddr_read(int addr, int len) {
-//   return paddr_read((paddr_t)addr, len);
-// }
-// extern "C" void vaddr_write(int addr, int len, int data) {
-//   paddr_write((vaddr_t)addr, (vaddr_t)len, (word_t)data);
-// }
 extern "C" void pmem_read(int raddr, int *rdata) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
   *rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
@@ -326,10 +313,10 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  printf("pc = 0x%08x\n",dut.pc);
-  printf("wmask = 0x%01u\n",wmask);
-  printf("waddr = 0x%08x\n",(paddr_t)waddr);
-  printf("wdata = 0x%08x\n",(paddr_t)wdata);
+  // printf("pc = 0x%08x\n",dut.pc);
+  // printf("wmask = 0x%01u\n",wmask);
+  // printf("waddr = 0x%08x\n",(paddr_t)waddr);
+  // printf("wdata = 0x%08x\n",(paddr_t)wdata);
   int len = 0;
   switch (wmask){
     case 0x1: len = 1; break;

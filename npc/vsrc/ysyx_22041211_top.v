@@ -2,11 +2,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
 	input			[DATA_LEN - 1:0]	inst,
-	// input  			[DATA_LEN - 1:0]	ReadData	, //no
 	output			[ADDR_LEN - 1:0]	pc			,
-	// output			[DATA_LEN - 1:0]	ALUResult	,
-	// output    		[DATA_LEN - 1:0]	storeData	,
-	// output 			[1:0]				DataLen 	,  // 0 1 3
 	output								memWrite	,						
 	output			[1:0]				memToReg	,
 	output								invalid
@@ -47,14 +43,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire 			[2:0]				DataLen			;
 	wire								DataSign		;
 	reg			[DATA_LEN - 1:0]		ReadData		;
-	// wire			[1:0]				DataLen			;	
 
 	
 	assign pc = pc_tmp;
-	// assign storeData = reg_data2;
 	assign memToReg = memToReg_tmp;
 	
-	// // 做位拓展 ReadData_tmp是处理好的最终读取到的数据
+	// 做位拓展 ReadData_tmp是处理好的最终读取到的数据
 	assign ReadData_tmp = (DataSign == 1'b0 || DataLen == 3'b100) ? ReadData : 
 						  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
 						  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
@@ -68,38 +62,21 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 					 ((inst[6:0] == 7'b0010011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b010 | inst[14:12] == 3'b011 | inst[14:12] == 3'b100 | inst[14:12] == 3'b110 | inst[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
 					 (inst[6:0] == 7'b0110011) | //R
 					 (inst == 32'b00000000000100000000000001110011));
+	//取指令
 
 						  
 
 	// 检测到ebreak
     import "DPI-C" context function void ifebreak_func(int inst);
     always @(*)
-        dpi_inst(inst);
+        ifebreak_func(inst);
 
-    task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
-        /* verilator no_inline_task */
-        ifebreak_func(inst_bnk);
-    endtask
+    // task dpi_inst(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    //     /* verilator no_inline_task */
+    //     ifebreak_func(inst_bnk);
+    // endtask
 
 	//访存指令
-
-	// import "DPI-C" function void vaddr_read(input int raddr,input int DataLen, output int ReadData);
-	// import "DPI-C" function void vaddr_write(input int waddr, input int wdata, input int wmask);
-	// import "DPI-C" context function int vaddr_read(int ALUResult, int len);
-	// import "DPI-C" context function void vaddr_write(int ALUResult, int len, int reg_data2);
-
-	// always @(*) begin
-  	// 	// 有读请求时
-    // 	if (memToReg[0])  // 有读请求时
-    // 		ReadData = vaddr_read(ALUResult, len);	
-  	// 	else 
-    // 		ReadData = 0;
-	// end
-	// always @(*) begin
-	// 	// 有写请求时
-    //  	if (memWrite) // 有写请求时
-    //  		vaddr_write(ALUResult, len, reg_data2);
-	// end
 	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
 	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 	wire [7:0]	wmask;
@@ -121,12 +98,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
     always @(*)
-        dpi_instGet(inst);
+        inst_get(inst);
 
-    task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
-        /* verilator no_inline_task */
-        inst_get(inst_bnk);
-    endtask
+    // task dpi_instGet(input [31:0] inst_bnk);  // 在任务中使用 input reg 类型
+    //     /* verilator no_inline_task */
+    //     inst_get(inst_bnk);
+    // endtask
 
 
 	
