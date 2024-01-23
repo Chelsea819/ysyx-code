@@ -106,7 +106,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// 	2'b10, ALUResult & ~1
 	// });
 
-	assign pc_next = ((pcSrc == 2'b01) ? pcBranch :
+	assign pc_next = ((pc_tmp < 32'h80000000) ? 32'h80000000 :
+					 (pcSrc == 2'b01) ? pcBranch :
 					 (pcSrc == 2'b00) ? pcPlus :
 					 (pcSrc == 2'b10) ? ALUResult & ~1 : 32'h80000000);
 
