@@ -1105,7 +1105,7 @@ const char *regs[] = {
 void isa_reg_display() {
   if(cpu.pc == 0) return;
   for(int i = 0; i < 32; i++){
-    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),cpu.gpr[i]);
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),R(i));
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
   return;
