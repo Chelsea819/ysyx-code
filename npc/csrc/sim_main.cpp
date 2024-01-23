@@ -641,11 +641,8 @@ void free_strtab()
 }
 #endif
 
-static void trace_and_difftest(vaddr_t dnpc)
-{
-  if(dnpc == 0){
-    return;
-  }
+static void trace_and_difftest(vaddr_t dnpc){
+  
 #ifdef CONFIG_ITRACE_COND
   if (CONFIG_ITRACE_COND)
   {
@@ -1012,7 +1009,7 @@ static void execute(uint64_t n)
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
     isa_reg_display();
-    if(dut.clk == 0) trace_and_difftest(s.dnpc);
+    if(cpu.pc != 0x80000000 && dut.clk == 1) trace_and_difftest(s.dnpc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
