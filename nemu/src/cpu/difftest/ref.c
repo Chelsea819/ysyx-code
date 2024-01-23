@@ -21,23 +21,16 @@
 // 在DUT host memory的`buf`和REF guest memory的`addr`之间拷贝`n`字节,
 // `direction`指定拷贝的方向, `DIFFTEST_TO_DUT`表示往DUT拷贝, `DIFFTEST_TO_REF`表示往REF拷贝
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  // assert(0);
-  // paddr_t * ref = NULL;
-  // ref = host_to_guest(addr);
   if(direction == DIFFTEST_TO_REF){
     memcpy(guest_to_host(addr) ,(const paddr_t*)buf ,n);
-
   } else {
     memcpy((paddr_t*)buf ,(const paddr_t*)(guest_to_host(addr)) ,n);
-    // assert(0);
   }
 }
 
 // `direction`为`DIFFTEST_TO_DUT`时, 获取REF的寄存器状态到`dut`;
 // `direction`为`DIFFTEST_TO_REF`时, 设置REF的寄存器状态为`dut`;
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
-  //  assert(0);
-
   CPU_state *ref = &cpu;
 
   if (direction == DIFFTEST_TO_REF) {
@@ -50,10 +43,8 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
 
 // 让REF执行`n`条指令
 __EXPORT void difftest_exec(uint64_t n) {
-  //  assert(0);
   cpu_exec(n);
 }
-
 
 __EXPORT void difftest_raise_intr(word_t NO) {
   assert(0);

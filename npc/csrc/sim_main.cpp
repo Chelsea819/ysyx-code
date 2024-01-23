@@ -250,14 +250,12 @@ uint8_t* guest_to_host_npc(paddr_t paddr) {
   // printf("pmem: 0x%08x\n",pmem);
   // printf("paddr: 0x%08x\n",paddr);
   // printf("CONFIG_MBASE: 0x%08x\n",CONFIG_MBASE);
-
   return pmem + paddr - CONFIG_MBASE; 
 }
 
 void init_isa() {
   /* Load built-in image. */
   memcpy(guest_to_host_npc(RESET_VECTOR), img, sizeof(img));
-
 }
 
 static inline word_t host_read_npc(void *addr, int len) {
@@ -294,25 +292,30 @@ static void pmem_write_npc(paddr_t addr, int len, word_t data) {
 }
 
 
-static vaddr_t load_mem_npc(paddr_t addr,int len) {
+static vaddr_t paddr_read(paddr_t addr,int len) {
 	if (likely(in_pmem(addr))) {return pmem_read_npc(addr,len);}
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
 }
 
-void ifebreak_func(int inst){
-	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst)
-	if(inst == 1048691) {ifbreak = true; } 
-}
-
-void mem_write_npc(vaddr_t addr, int len, word_t data) {
-  // bool b = in_pmem(addr);
-  // printf("addr = 0x%08x\n",addr);
-  // if(b) printf("ok\n");
+void paddr_write(vaddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
+}
+
+void vaddr_read(vaddr_t addr, int len, vaddr_t* dst) {
+  *dst = paddr_read(addr, len);
+}
+
+void vaddr_write(vaddr_t addr, int len, word_t data) {
+  paddr_write(addr, len, data);
+}
+
+void ifebreak_func(int inst){
+	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst)
+	if(inst == 1048691) {ifbreak = true; } 
 }
 
 
@@ -529,8 +532,8 @@ __attribute__((noinline))
 void invalid_inst(vaddr_t thispc) {
   uint32_t temp[2];
   vaddr_t pc = thispc;
-  temp[0] = load_mem_npc(pc, 4);
-  temp[1] = load_mem_npc(pc, 4);
+  temp[0] = paddr_read(pc, 4);
+  temp[1] = paddr_read(pc, 4);
 
   uint8_t *p = (uint8_t *)temp;
   printf("invalid opcode(PC = " FMT_WORD "):\n"
@@ -743,18 +746,18 @@ struct func_call
 static void exec_once()
 {
   //上升沿取指令
-  if(dut.clk == 1) {
-    if(dut.memWrite == 1) {
-      printf("memWrite\n");
-      mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-    } 
-    // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-  }
-  if(dut.memToReg == 1){
-			dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
-			dut.eval();
-	}
-  dut.inst = load_mem_npc(dut.pc,4);
+  // if(dut.clk == 1) {
+  //   if(dut.memWrite == 1) {
+  //     printf("memWrite\n");
+  //     paddr_write(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+  //   } 
+  //   // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+  // }
+  // if(dut.memToReg == 1){
+	// 		dut.ReadData = paddr_read(dut.ALUResult,dut.DataLen + 1);
+	// 		dut.eval();
+	// }
+  dut.inst = paddr_read(dut.pc,4);
   dut.eval();
   
 	m_trace->dump(sim_time);
@@ -1326,7 +1329,7 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     //printf("before main finding\n");
     if(tokens[p].type == DEREF){
-      return load_mem_npc(convert_16(tokens[p + 1].str),4);
+      return paddr_read(convert_16(tokens[p + 1].str),4);
     }
     op = find_main(p,q);
     op_type1 = op_type;
@@ -1644,7 +1647,7 @@ static int cmd_x(char *args){
   printf("addr = %08x\n",addr);
 
   for (int i = 0;i < len;i ++){
-    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,load_mem_npc(addr + i,4));
+    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,paddr_read(addr + i,4));
   }
   return 0; 
 }
@@ -1856,15 +1859,15 @@ int main(int argc, char** argv, char** env) {
 		
 	// 	//上升沿取指令
 	// 	if(dut.clk == 1) {
-	// 		if(dut.memWrite) mem_write_npc(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-	// 		dut.inst = load_mem_npc(dut.pc,4);
+	// 		if(dut.memWrite) paddr_write(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+	// 		dut.inst = paddr_read(dut.pc,4);
 	// 		dut.eval();
   //     printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
 			
 	// 	}
 		
 	// 	if(dut.memToReg == 1){
-	// 		dut.ReadData = load_mem_npc(dut.ALUResult,dut.DataLen + 1);
+	// 		dut.ReadData = paddr_read(dut.ALUResult,dut.DataLen + 1);
 	// 		dut.eval();
 	// 	}
 	// 	m_trace->dump(sim_time);

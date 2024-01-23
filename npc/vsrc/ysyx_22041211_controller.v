@@ -10,7 +10,7 @@ module ysyx_22041211_controller(
     output          [1:0]                         jmp,
     output          [3:0]                         ALUcontrol,
     output                                        regWrite,
-    output 			[1:0]				          DataLen 	,  // 0 1 3
+    output 			[7:0]				          DataLen 	,  // 0 1 3
 	output								          DataSign	,
     output                                        ALUSrc
 );
@@ -56,9 +56,9 @@ module ysyx_22041211_controller(
     assign DataSign = (opcode == 7'b00000011 && (func3 == 3'b000 || func3 == 3'b001)) ? 1'b1 : 1'b0;
 
     //0-1 1-2 3-4
-    assign DataLen = (func3 == 3'b000 || func3 == 3'b100) ? 2'b00 : 
-                     (func3 == 3'b001 || func3 == 3'b101) ? 2'b01 : 
-                     (func3 == 3'b010 ) ? 2'b11 : 2'b10;
+    assign DataLen = (func3 == 3'b000 || func3 == 3'b100) ? 8'b00000001 : 
+                     (func3 == 3'b001 || func3 == 3'b101) ? 8'b00000010 : 
+                     (func3 == 3'b010 ) ? 8'b00000100 : 8'b00000000;
  
     //ALUop
     //00 +

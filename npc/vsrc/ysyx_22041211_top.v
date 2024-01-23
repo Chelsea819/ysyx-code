@@ -3,11 +3,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
 	input			[DATA_LEN - 1:0]	inst,
-	input  			[DATA_LEN - 1:0]	ReadData	, //no
+	// input  			[DATA_LEN - 1:0]	ReadData	, //no
 	output			[ADDR_LEN - 1:0]	pc			,
-	output			[DATA_LEN - 1:0]	ALUResult	,
-	output    		[DATA_LEN - 1:0]	storeData	,
-	output 			[1:0]				DataLen 	,  // 0 1 3
+	// output			[DATA_LEN - 1:0]	ALUResult	,
+	// output    		[DATA_LEN - 1:0]	storeData	,
+	// output 			[1:0]				DataLen 	,  // 0 1 3
 	output								memWrite	,						
 	output			[1:0]				memToReg	,
 	output								invalid
@@ -38,26 +38,27 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//ALU
 	wire			[DATA_LEN - 1:0]	srcB		;
 	wire								zero	 	;
+	wire			[DATA_LEN - 1:0]	ALUResult	;
 
 	//ALUSrc
 	wire								ALUSrc		;
-	wire			[DATA_LEN - 1:0]	ALUResult_bnk	;
 
 	//dataMem
 	wire			[DATA_LEN - 1:0]	ReadData_tmp	;
-	wire 			[1:0]				DataLen_tmp		;
-	wire								DataSign	;
+	wire 			[7:0]				DataLen			;
+	wire								DataSign		;
+	reg			[DATA_LEN - 1:0]		ReadData		;
+	// wire			[1:0]				DataLen			;	
+
 	
 	assign pc = pc_tmp;
-	assign storeData = reg_data2;
-	assign ALUResult = ALUResult_bnk;
-	assign DataLen = DataLen_tmp;
+	// assign storeData = reg_data2;
 	assign memToReg = memToReg_tmp;
 	
-
-	assign ReadData_tmp = (DataSign == 1'b0) ? ReadData : 
-						  (DataLen_tmp == 2'b00) ? {{24{ReadData[7]}},ReadData[7:0]}:				//0--1 8bits
-						  (DataLen_tmp == 2'b01) ? {{16{ReadData[15]}},ReadData[15:0]}: 32'b0;		//1--2 16bits
+	// // 做位拓展 ReadData_tmp是处理好的最终读取到的数据
+	assign ReadData_tmp = (DataSign == 1'b0 || DataLen == 8'b00000100) ? ReadData : 
+						  (DataLen == 8'b00000001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
+						  (DataLen == 8'b00000010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
 	assign invalid = ~((inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
 					 (inst[6:0] == 7'b1101111) | 	 					     //jal
@@ -81,6 +82,35 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         ifebreak_func(inst_bnk);
     endtask
 
+	//访存指令
+	import "DPI-C" function void vaddr_read(input int raddr,input byte DataLen, output int ReadData);
+	import "DPI-C" function void vaddr_write(input int waddr, input int wdata, input byte wmask);
+
+	// always @(*) begin
+  	// 	if (valid) begin // 有读写请求时
+    // 		pmem_read(ALUResult, ReadData);
+    // 		if (wen) begin // 有写请求时
+    //  			pmem_write(waddr, wdata, DataLen);
+    // 		end
+  	// 	end
+  	// 	else begin
+    // 		ReadData = 0;
+  	// 	end
+	// end
+
+	always @(*) begin
+  		if (memToReg[0])  // 有读请求时
+    		vaddr_read(ALUResult, DataLen, ReadData);	
+  		else 
+    		ReadData = 32'b0;
+	end
+
+	always @(*) begin
+		if (memWrite) begin // 有写请求时
+     		vaddr_write(ALUResult, reg_data2, DataLen);
+    	end
+	end
+
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
     always @(*)
@@ -96,7 +126,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
 		2'b01, pcBranch,
 		2'b00, pcPlus,
-		2'b10, ALUResult_bnk & ~1
+		2'b10, ALUResult & ~1
 	});
 
 	ysyx_22041211_counter my_counter(
@@ -138,7 +168,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.jmp		(jmp),
 		.ALUcontrol	(ALUcontrol),
 		.regWrite	(regWrite),
-		.DataLen	(DataLen_tmp),
+		.DataLen	(DataLen),
 		.DataSign	(DataSign),
 		.ALUSrc		(ALUSrc)
 	);
@@ -161,7 +191,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.src1		(reg_data1),
 		.src2		(srcB),
 		.alu_control(ALUcontrol),
-		.result		(ALUResult_bnk),
+		.result		(ALUResult),
 		.zero		(zero)
 	);
 
@@ -171,7 +201,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	});
 
 	ysyx_22041211_MuxKey #(4,2,32) memToReg_choosing (WriteData, memToReg_tmp, {
-		2'b00, ALUResult_bnk,
+		2'b00, ALUResult,
 		2'b01, ReadData_tmp	,
 		2'b10, pcPlus	,
 		2'b11, pcBranch
