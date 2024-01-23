@@ -777,6 +777,9 @@ static void exec_once()
   // dut.eval();  
 	// m_trace->dump(sim_time);
 	// sim_time++;
+  // printf("")
+  dut.clk ^= 1;
+  dut.eval();
 		
   if(dut.invalid == 1){
     invalid_inst(dut.pc);
@@ -1029,8 +1032,6 @@ static void execute(uint64_t n)
     if (npc_state.state != NPC_RUNNING)
       break;
 
-    dut.clk ^= 1;
-    dut.eval();
     // IFDEF(CONFIG_DEVICE, device_update());
   }
 }
