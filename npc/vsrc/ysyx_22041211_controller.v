@@ -86,7 +86,7 @@ module ysyx_22041211_controller(
                         ({ALUop,func3,func7} == 12'b111010100000)? 4'b0111:  //R >>s sra
                         ({ALUop,func3,func7} == 12'b111100000000)? 4'b1000:  //R | or
                         ({ALUop,func3,func7} == 12'b111110000000)? 4'b1001:  //R & and
-                        ({ALUop,branch,func3} == 6'b100000)? 4'b0001:  //I + addi
+                        ({ALUop,branch,func3} == 6'b100000)? 4'b0000:  //I + addi
                         ({ALUop,branch,func3} == 6'b100010)? 4'b0011:  //I <s slti
                         ({ALUop,branch,func3} == 6'b100011)? 4'b0100:  //I <u sltiu
                         ({ALUop,branch,func3} == 6'b100100)? 4'b0101:  //I ^ xori
