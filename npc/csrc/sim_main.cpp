@@ -333,8 +333,8 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   int len = 0;
   switch (wmask){
     case 0x1: len = 1; break;
-    case 0x2: len = 2; break;
-    case 0x4: len = 4; break;
+    case 0x3: len = 2; break;
+    case 0xf: len = 4; break;
     IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
     IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
