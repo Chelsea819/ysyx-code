@@ -778,7 +778,7 @@ static void exec_once()
   s.pc = dut.pc;
   s.snpc = s.pc + 4;
   s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
-  cpu.pc = s.dnpc;
+  cpu.pc = s.pc;
   printf("dut.pc = 0x%08x\n",s.pc);
   printf("s.dnpc = 0x%08x\n",s.dnpc);
   printf("s.snpc = 0x%08x\n",s.dnpc);
@@ -1103,8 +1103,9 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  if(cpu.pc == 0) return;
   for(int i = 0; i < 32; i++){
-    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),R(i));
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),cpu.gpr[i]);
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
   return;

@@ -146,7 +146,11 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     is_skip_ref = false;
     return;
   }
+// ref 0x8000 0x8004 0x8008 0x800c
+// dut 0x8000 0x8000 0x8004 0x8008
 
+// ref 0x8004 0x8008 0x800c 0x800f
+// dut 0x8004 0x8008 0x800c 0x800f
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
 
