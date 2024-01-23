@@ -35,6 +35,7 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+#ifdef CONFIG_IRINGBUF
 typedef struct iringbuf_state
 {
   char *rbuf;
@@ -46,6 +47,7 @@ iringbuf irbuf[12] = {};
 static iringbuf *header = NULL;
 static iringbuf *curre = NULL;
 static iringbuf *bottom = NULL;
+#endif
 
 FILE *ftrace_fp = NULL;
 
@@ -132,8 +134,9 @@ void free_strtab()
 }
 #endif
 
-void init_iringbuf()
-{
+
+#ifdef CONFIG_IRINGBUF
+void init_iringbuf(){
   int i;
   for (i = 0; i < 12; i++)
   {
@@ -149,6 +152,7 @@ iringbuf *get_head_iringbuf()
 {
   return irbuf;
 }
+#endif
 
 void device_update();
 
@@ -499,6 +503,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
 #endif
 
+#ifdef CONFIG_IRINGBUF
   if (curre == header && curre->rbuf != NULL)
   {
     header = header->next;
@@ -508,6 +513,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   {
     curre->rbuf = malloc(sizeof(char) * 50);
   }
+
   #ifndef CONFIG_ITRACE
     char ir_logbuf[128] = {0};
     char *ir = ir_logbuf;
@@ -523,9 +529,14 @@ static void exec_once(Decode *s, vaddr_t pc)
     strcpy(curre->rbuf, ir_logbuf);
   
   #else
+
+  
     strcpy(curre->rbuf, s->logbuf);
+
   #endif
+
   curre = curre->next;
+#endif
 }
 
 /* stimulate the way CPU works ,get commands constantly */
@@ -557,8 +568,8 @@ static void statistic()
     Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-void iringbuf_display()
-{
+#ifdef CONFIG_IRINGBUF
+void iringbuf_display(){
   for (int i = 0; i < 12; i++)
   {
     Assert(&(irbuf[i]) != NULL, "irbuf exists NULL!");
@@ -572,10 +583,13 @@ void iringbuf_display()
     printf("\t%s\n", irbuf[i].rbuf);
   }
 }
+#endif
 
 void assert_fail_msg()
 {
+#ifdef CONFIG_IRINGBUF
   iringbuf_display();
+#endif
   isa_reg_display();
   statistic();
 }

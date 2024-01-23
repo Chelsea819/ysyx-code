@@ -174,7 +174,6 @@ config FTRACE_COND
   string "Only trace function when the condition is true"
   default "default"
 
-
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
   bool "Enable differential testing"
@@ -186,6 +185,10 @@ config DIFFTEST
 config WATCHPOINT
   bool "Enable examining watchpoints"
   default n
+
+config IRINGBUF
+  bool "Enable iringbuf"
+  default y
 
 choice
   prompt "Reference design"

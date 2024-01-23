@@ -45,7 +45,11 @@ void init_wp_pool();
 WP* new_wp(char *args);
 // WP* get_head();
 void free_wp(WP *wp);
+
+#ifdef CONFIG_IRINGBUF
 void init_iringbuf();
+#endif
+
 extern WP *head;
 extern WP *wp_pool;
 
@@ -362,6 +366,8 @@ void init_sdb()
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 
+#ifdef CONFIG_IRINGBUF
   /* Initialize the iringbuf. */
   init_iringbuf();
+#endif
 }
