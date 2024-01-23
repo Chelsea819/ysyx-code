@@ -643,6 +643,9 @@ void free_strtab()
 
 static void trace_and_difftest(vaddr_t dnpc)
 {
+  if(dnpc == 0){
+    return;
+  }
 #ifdef CONFIG_ITRACE_COND
   if (CONFIG_ITRACE_COND)
   {
