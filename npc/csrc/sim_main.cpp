@@ -654,20 +654,11 @@ static void trace_and_difftest(vaddr_t dnpc)
     IFDEF(CONFIG_ITRACE, puts(s.logbuf));
   }
 
-#ifdef CONFIG_DIFFTEST
-  for(int i = 0; i < RISCV_GPR_NUM; i ++){
-    cpu.gpr[i] = R(i);
-  }
-
-#endif
-
-  IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
   bool success = true;
   uint32_t addr = 0;
 
   WP *index = head;
-  while (index != NULL)
-  {
+  while (index != NULL){
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
 
@@ -685,8 +676,18 @@ static void trace_and_difftest(vaddr_t dnpc)
     }
 
     index = index->next;
-    }
-    return;
+  }
+
+#ifdef CONFIG_DIFFTEST
+  for(int i = 0; i < RISCV_GPR_NUM; i ++){
+    cpu.gpr[i] = R(i);
+  }
+
+#endif
+
+  IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
+
+  return;
 }
 
 char *convertTo_2(char args){
@@ -1002,7 +1003,7 @@ static void execute(uint64_t n)
   {
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-    trace_and_difftest(dut.pc);
+    if(dut.clk == 1) trace_and_difftest(dut.pc);
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
