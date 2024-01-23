@@ -775,11 +775,6 @@ static void exec_once()
   s.snpc = s.pc + 4;
   s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
   cpu.pc = s.pc;
-  printf("dut.pc = 0x%08x\n",s.pc);
-  printf("s.dnpc = 0x%08x\n",s.dnpc);
-  printf("s.snpc = 0x%08x\n",s.dnpc);
-
-
 
   #ifdef CONFIG_ITRACE
   char *p = s.logbuf;
