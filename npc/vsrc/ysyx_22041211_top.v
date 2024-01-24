@@ -102,7 +102,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(*)
         inst_get(inst);
 	
-	ysyx_22041211_MuxKey #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,{
+	ysyx_22041211_MuxKeyWithDefault #(3,2,32) PCSrc_choosing (pc_next ,pcSrc ,32'h80000000,{
 		2'b01, pcBranch,
 		2'b00, pcPlus,
 		2'b10, ALUResult & ~1
