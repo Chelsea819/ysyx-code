@@ -781,6 +781,7 @@ static void exec_once()
 	// m_trace->dump(sim_time);
 	// sim_time++;
   // printf("")
+  
   dut.clk ^= 1;
   dut.eval();
   m_trace->dump(sim_time);
@@ -1503,7 +1504,6 @@ void free_wp(WP *wp){
   //printf("ADD it to %d in free_",wp->NO);
   return;
 
-
 }
 
 void init_wp_pool() {
@@ -1519,8 +1519,6 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-
-
 
 
 /* ------------------------------------sdb.c------------------------------------ */
@@ -1580,7 +1578,6 @@ uint32_t convert_ten(char *args){
   while(flag_neg --) n = n * (-1);
   return n;
 }
-//0x80008ffc
 
 uint32_t convert_16(char *args){
   uint32_t addr = 0;
@@ -1655,7 +1652,6 @@ static int cmd_pcount(char *args){
   return 0;
 }
 
-
 static int cmd_x(char *args){
   if(too_lessArg(args) == 1) return 0;
 
@@ -1673,8 +1669,6 @@ static int cmd_x(char *args){
   return 0; 
 }
 
-
-
 static int cmd_info(char *args){
   if (too_lessArg(args) == 1) return 0; 
   else if (*args == 'r')  isa_reg_display();
@@ -1682,7 +1676,6 @@ static int cmd_info(char *args){
   else Log("Unknown command '%s'", args);
   return 0;
 }
-
 
 static int cmd_help(char *args);
 
@@ -1840,7 +1833,6 @@ void engine_start() {
 
 int main(int argc, char** argv, char** env) {
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
-	
 
 	init_npc(argc, argv);
 
@@ -1860,73 +1852,13 @@ int main(int argc, char** argv, char** env) {
   dut.rst = 0;
 	dut.eval();
 
-  // m_trace->dump(sim_time);
-	// sim_time++;
+  m_trace->dump(sim_time);
+	sim_time++;
 
   // dut.rootp->ysyx_22041211_top__DOT__pc_next = 
 
   /* Start engine. */
 	engine_start();
-
-  // std::cout << dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1] << std::endl;
-  // printf("register:0x%08x",dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[1]);
-
-	// while(1){
-	// 	switch (npc_state.state){
-	// 		case NPC_END:
-	// 		case NPC_ABORT:
-	// 			printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-	// 			dut.final();
-  //       m_trace->close();	//关闭波形跟踪文件
-  //       exit(EXIT_SUCCESS);
-	// 		default:
-	// 		npc_state.state = NPC_RUNNING;
-	// 	}		
-		
-	// 	//上升沿取指令
-	// 	if(dut.clk == 1) {
-	// 		if(dut.memWrite) paddr_write(dut.ALUResult,dut.DataLen + 1,dut.storeData);
-	// 		dut.inst = paddr_read(dut.pc,4);
-	// 		dut.eval();
-  //     printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-			
-	// 	}
-		
-	// 	if(dut.memToReg == 1){
-	// 		dut.ReadData = paddr_read(dut.ALUResult,dut.DataLen + 1);
-	// 		dut.eval();
-	// 	}
-	// 	m_trace->dump(sim_time);
-	// 	sim_time++;
-		
-	// 	if(dut.invalid == 1){
-	// 		invalid_inst(dut.pc);
-	// 	}
-	// 	if(ifbreak && dut.clk == 0){
-	// 		printf("\nebreak!\n");
-  //     printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-	// 		NPCTRAP(dut.pc, 0);
-	// 	}
-
-	// 	switch (npc_state.state){
-	// 		case NPC_RUNNING:
-	// 			npc_state.state = NPC_STOP;
-	// 			break;
-
-	// 		case NPC_END:
-	// 		case NPC_ABORT:
-	// 			Log("npc: %s at pc = " FMT_WORD,
-	// 				(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-	// 				npc_state.halt_pc);
-	// 		case NPC_QUIT:
-	// 			Log("quit!\n");
-	// 	}
-  //   printf("\n");
-    
-  //   dut.clk ^= 1;
-	// 	dut.eval();
-
-	// }
 
 	dut.final();
 	m_trace->close();	//关闭波形跟踪文件
