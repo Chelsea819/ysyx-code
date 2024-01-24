@@ -1857,6 +1857,9 @@ int main(int argc, char** argv, char** env) {
   dut.rst = 0;
 	dut.eval();
 
+  m_trace->dump(sim_time);
+	sim_time++;
+
   // dut.rootp->ysyx_22041211_top__DOT__pc_next = 
 
   /* Start engine. */
