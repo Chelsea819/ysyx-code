@@ -166,6 +166,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	ysyx_22041211_branchJmp my_branchJmp(
 		.zero		(zero),
 		.branch		(branch),
+		.invalid	(invalid),
 		.jmp		(jmp),
 		.PCSrc		(pcSrc)
 	);
