@@ -283,6 +283,7 @@ static inline bool in_pmem(paddr_t addr) {
 }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
+  printf("read!\n");
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
   return ret;
 }
