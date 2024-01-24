@@ -702,10 +702,10 @@ static void trace_and_difftest(vaddr_t dnpc){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
-
+ IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
 #endif
 
-  IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
+ 
 
   return;
 }
