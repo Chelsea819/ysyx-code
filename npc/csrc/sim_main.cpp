@@ -283,7 +283,6 @@ static inline bool in_pmem(paddr_t addr) {
 }
 
 static word_t pmem_read_npc(paddr_t addr,int len) {
-  printf("read!\n");
   word_t ret = host_read_npc(guest_to_host_npc(addr), len);
   return ret;
 }
@@ -308,7 +307,10 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
 
 extern "C" void pmem_read(int raddr, int *rdata) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
+  printf("read!\n");
+  printf("raddr = 0x%08x\n",raddr);
   *rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
+  printf("*rdata = 0x%08x\n",*rdata);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
