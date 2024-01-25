@@ -52,13 +52,6 @@ static char *diff_so_file = NULL;
 //符号扩展
 #define SEXT(x, len) ({ struct { int64_t n : len; } __x = { .n = x }; (uint64_t)__x.n; })
 
-#define CONFIG_MSIZE 0x8000000
-#define CONFIG_MBASE 0x80000000
-#define CONFIG_PC_RESET_OFFSET 0x0
-#define CONFIG_RT_CHECK 1
-#define CONFIG_ISA_riscv 1
-// #define CONFIG_DIFFTEST 1
-
 #define CHOOSE2nd(a, b, ...) b
 #define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
 #define MUX_MACRO_PROPERTY(p, macro, a, b) MUX_WITH_COMMA(concat(p, macro), a, b)
@@ -80,12 +73,7 @@ typedef word_t vaddr_t;
 
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
-// #define CONFIG_FTRACE 1
-#define CONFIG_ITRACE_COND 1
-#define CONFIG_ITRACE 1
-#define CONFIG_TRACE 1
 #define __GUEST_ISA__ riscv32
-#define CONFIG_TARGET_NATIVE_ELF 1
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -207,8 +195,6 @@ void init_rand() {
 /* ------------------------------------log.c------------------------------------ */
 FILE *log_fp = NULL;
 static char *log_file = NULL;
-#define CONFIG_TRACE_START 0
-#define CONFIG_TRACE_END 10000
 
 void init_log(const char *log_file) {
   log_fp = stdout;

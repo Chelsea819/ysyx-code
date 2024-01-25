@@ -7,6 +7,7 @@
 #include <difftest-def.h>
 #include <debug.h>
 #include "reg.h"
+#include "config.h"
 
 #include "svdpi.h"
 #include "Vysyx_22041211_top__Dpi.h"
@@ -14,8 +15,6 @@
 #include <verilated_vcd_c.h>
 #include "Vysyx_22041211_top.h"
 #include "Vysyx_22041211_top___024root.h"
-
-// #define CONFIG_DIFFTEST 1
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
