@@ -776,7 +776,7 @@ static void exec_once()
 	// 		dut.eval();
 	// }
 
-  dut.inst = paddr_read(dut.pc,4);
+  if(dut.clk == 1) dut.inst = paddr_read(dut.pc,4);
   dut.eval();  
 	m_trace->dump(sim_time);
 	sim_time++;
