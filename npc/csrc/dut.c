@@ -9,8 +9,8 @@
 #include "reg.h"
 #include "config.h"
 #include "sim.h"
-extern TOP_NAME dut;
-extern VerilatedVcdC *m_trace;
+// extern TOP_NAME dut;
+// extern VerilatedVcdC *m_trace;
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
@@ -110,8 +110,8 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
         printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs1[i],R(i));
     }
     printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
-    dut.final();
-    m_trace->close();
+    // dut.final();
+    // m_trace->close();
     Assert(0,"Catch difference!\n");
   }
 }
