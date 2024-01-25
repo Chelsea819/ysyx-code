@@ -187,7 +187,7 @@ config WATCHPOINT
   default n
 
 config IRINGBUF
-  depends on TARGET_SHARE
+  depends on !TARGET_SHARE
   bool "Enable iringbuf"
   default y
 
