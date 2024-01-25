@@ -69,7 +69,7 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 endif
 
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
-override ARGS += $(ARGS_DIFF) #--batch
+override ARGS += $(ARGS_DIFF) --batch
 
 $(BIN):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
