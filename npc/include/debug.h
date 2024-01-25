@@ -20,7 +20,8 @@
 #include <stdio.h>
 #include "utils.h"
 #include "sim.h"
-
+extern CPU_state cpu;
+extern TOP_NAME dut;
 
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
