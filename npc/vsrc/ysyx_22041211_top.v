@@ -3,8 +3,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								rst	,
 	// input			[DATA_LEN - 1:0]	inst,
 	output			[ADDR_LEN - 1:0]	pc			,
-	output								memWrite	,						
-	output			[1:0]				memToReg	,
 	output								invalid
 );
 	//my_counter
@@ -27,6 +25,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire								ALUSrc		;
 	wire								regWrite	;
 	wire			[1:0]				jmp			;
+	wire								memWrite	;						
+	wire			[1:0]				memToReg	;
 
 	//immGet
 	wire			[DATA_LEN - 1:0]	imm			;
@@ -63,21 +63,20 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 					 ((inst[6:0] == 7'b0010011) & (inst[14:12] == 3'b000 | inst[14:12] == 3'b010 | inst[14:12] == 3'b011 | inst[14:12] == 3'b100 | inst[14:12] == 3'b110 | inst[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
 					 (inst[6:0] == 7'b0110011) | //R
 					 (inst == 32'b00000000000100000000000001110011));
-	
+	// 检测到ebreak
+    import "DPI-C" context function void ifebreak_func(int inst);
+    always @(*)
+        ifebreak_func(inst);
+
 	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
 	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
-	
+
 	//取指令
 	always @(posedge clk) begin
         	pmem_read(pc_next, inst);
 	end
 	// wire	[31:0]	inst_pc;
 	// assign inst_pc = ((pc_tmp < 32'h80000000) ? 32'h80000000 : pc_next);
-
-	// 检测到ebreak
-    import "DPI-C" context function void ifebreak_func(int inst);
-    always @(*)
-        ifebreak_func(inst);
 
 	//访存指令
 	wire [7:0]	wmask;
