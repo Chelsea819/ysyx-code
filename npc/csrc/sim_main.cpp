@@ -778,7 +778,6 @@ static void exec_once()
   // dut.eval();  
 	// m_trace->dump(sim_time);
 	// sim_time++;
-  // printf("")
 
   dut.clk ^= 1;
   dut.eval();
@@ -1035,7 +1034,6 @@ static void execute(uint64_t n)
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
-    // dut.clk ^= 1;
     // IFDEF(CONFIG_DEVICE, device_update());
   }
 }
@@ -1852,8 +1850,6 @@ int main(int argc, char** argv, char** env) {
 
   m_trace->dump(sim_time);
 	sim_time++;
-
-  // dut.rootp->ysyx_22041211_top__DOT__pc_next = 
 
   /* Start engine. */
 	engine_start();
