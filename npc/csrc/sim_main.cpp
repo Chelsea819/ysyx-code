@@ -28,6 +28,7 @@
 #include "decode.h"
 #include <elf.h>
 #include "difftest-def.h"
+#include "config.h"
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
@@ -293,6 +294,9 @@ static void pmem_write_npc(paddr_t addr, int len, word_t data) {
 
 
 static vaddr_t paddr_read(paddr_t addr,int len) {
+  #ifdef CONFIG_MTRACE
+  Log("paddr_read ---  [addr: 0x%08x len: %d]",addr,len);
+  #endif
 	if (likely(in_pmem(addr))) {return pmem_read_npc(addr,len);}
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
@@ -300,6 +304,9 @@ static vaddr_t paddr_read(paddr_t addr,int len) {
 }
 
 void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
+  #ifdef CONFIG_MTRACE
+  Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
+  #endif
   if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);

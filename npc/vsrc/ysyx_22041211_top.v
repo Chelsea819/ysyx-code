@@ -76,8 +76,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         inst <= pmem_read(pc_next);
 	end
 
-
-
 	// wire	[31:0]	inst_pc;
 	// assign inst_pc = ((pc_tmp < 32'h80000000) ? 32'h80000000 : pc_next);
 
