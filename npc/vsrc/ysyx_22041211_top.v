@@ -1,7 +1,7 @@
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								clk ,
 	input								rst	,
-	input			[DATA_LEN - 1:0]	inst,
+	// input			[DATA_LEN - 1:0]	inst,
 	output			[ADDR_LEN - 1:0]	pc			,
 	output								invalid
 );
@@ -18,7 +18,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire	        [DATA_LEN - 1:0]    WriteData	;
 
 	//control
-	// wire			[DATA_LEN - 1:0]	inst		;
+	wire			[DATA_LEN - 1:0]	inst		;
 	wire			[1:0]				memToReg_tmp;	
 	wire								branch		;
 	wire			[3:0]				ALUcontrol	;
@@ -72,9 +72,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 
 	//取指令
-	// always @(posedge clk) begin
-    //     	pmem_read(pc_next, inst);
-	// end
+	always @(posedge clk) begin
+        pmem_read(pc_next, inst);
+	end
+
+
+
 	// wire	[31:0]	inst_pc;
 	// assign inst_pc = ((pc_tmp < 32'h80000000) ? 32'h80000000 : pc_next);
 

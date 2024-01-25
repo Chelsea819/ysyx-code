@@ -776,16 +776,16 @@ static void exec_once()
 	// 		dut.eval();
 	// }
 
-  if(dut.clk == 1) dut.inst = paddr_read(dut.pc,4);
-  dut.eval();  
-	m_trace->dump(sim_time);
-	sim_time++;
+  // if(dut.clk == 1) dut.inst = paddr_read(dut.pc,4);
+  // dut.eval();  
+	// m_trace->dump(sim_time);
+	// sim_time++;
   // printf("")
 
-  // dut.clk ^= 1;
-  // dut.eval();
-  // m_trace->dump(sim_time);
-	// sim_time++;
+  dut.clk ^= 1;
+  dut.eval();
+  m_trace->dump(sim_time);
+	sim_time++;
 		
   if(dut.invalid == 1){
     invalid_inst(dut.pc);
@@ -1037,7 +1037,7 @@ static void execute(uint64_t n)
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
-    dut.clk ^= 1;
+    // dut.clk ^= 1;
     // IFDEF(CONFIG_DEVICE, device_update());
   }
 }
@@ -1852,8 +1852,8 @@ int main(int argc, char** argv, char** env) {
   dut.rst = 0;
 	dut.eval();
 
-  // m_trace->dump(sim_time);
-	// sim_time++;
+  m_trace->dump(sim_time);
+	sim_time++;
 
   // dut.rootp->ysyx_22041211_top__DOT__pc_next = 
 
