@@ -9,8 +9,9 @@
 #include "reg.h"
 #include "config.h"
 #include "sim.h"
-// extern TOP_NAME dut;
-// extern VerilatedVcdC *m_trace;
+
+extern TOP_NAME dut;
+extern VerilatedVcdC *m_trace;
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
@@ -20,11 +21,8 @@ void (*ref_difftest_regcpy)(void *duti, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 extern CPU_state cpu;
-extern TOP_NAME dut;
 
 #ifdef CONFIG_DIFFTEST
-
-
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
 
