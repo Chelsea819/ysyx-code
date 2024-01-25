@@ -8,13 +8,9 @@
 #include <debug.h>
 #include "reg.h"
 #include "config.h"
-
-#include "svdpi.h"
-#include "Vysyx_22041211_top__Dpi.h"
-#include <verilated.h>
-#include <verilated_vcd_c.h>
-#include "Vysyx_22041211_top.h"
-#include "Vysyx_22041211_top___024root.h"
+#include "sim.h"
+extern TOP_NAME dut;
+extern VerilatedVcdC *m_trace;
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
