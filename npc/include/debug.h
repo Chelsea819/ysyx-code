@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include "utils.h"
 #include "sim.h"
-extern CPU_state cpu;
-extern TOP_NAME dut;
+// extern CPU_state cpu;
+// extern TOP_NAME dut;
 
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
@@ -46,7 +46,6 @@ extern TOP_NAME dut;
     if (!(cond)) { \
       MUXDEF(CONFIG_TARGET_AM, printf(ANSI_FMT(format, ANSI_FG_RED) "\n", ## __VA_ARGS__), \
         (fflush(stdout), fprintf(stderr, ANSI_FMT(format, ANSI_FG_RED) "\n", ##  __VA_ARGS__))); \
-      dut.final(); m_trace->close(); \
       assert(cond); \
     } \
   } while (0)
