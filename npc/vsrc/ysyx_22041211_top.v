@@ -18,7 +18,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire	        [DATA_LEN - 1:0]    WriteData	;
 
 	//control
-	wire			[DATA_LEN - 1:0]	inst		;
+	reg			[DATA_LEN - 1:0]	inst		;
 	wire			[1:0]				memToReg_tmp;	
 	wire								branch		;
 	wire			[3:0]				ALUcontrol	;
@@ -68,12 +68,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(*)
         ifebreak_func(inst);
 
-	import "DPI-C" function void pmem_read(input int raddr, output int rdata);
+	import "DPI-C" function int pmem_read(input int raddr);
 	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 
 	//取指令
 	always @(posedge clk) begin
-        pmem_read(pc_next, inst);
+        inst <= pmem_read(pc_next);
 	end
 
 
@@ -88,7 +88,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 				   (DataLen == 3'b100)? 8'b00001111: 8'b11111111);
 	always @(*) begin
   		if (memWrite | (memToReg[0] & ~memToReg[1])) begin // 有读写请求时
-   			pmem_read(ALUResult, ReadData);
+   			ReadData = pmem_read(ALUResult);
     		if (memWrite) begin // 有写请求时
       			pmem_write(ALUResult, reg_data2, wmask);
     		end
