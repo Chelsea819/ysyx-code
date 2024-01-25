@@ -20,7 +20,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	//control
 	reg			[DATA_LEN - 1:0]	inst		;
 	wire			[1:0]				memToReg_tmp;	
-	wire								branch		;
+	wire			[2:0]				branch		;
 	wire			[3:0]				ALUcontrol	;
 	wire								ALUSrc		;
 	wire								regWrite	;
@@ -35,6 +35,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[DATA_LEN - 1:0]	srcB		;
 	wire								zero	 	;
 	wire			[DATA_LEN - 1:0]	ALUResult	;
+	wire								SF			;
 
 	//ALUSrc
 	wire								ALUSrc		;
@@ -164,6 +165,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	ysyx_22041211_branchJmp my_branchJmp(
 		.zero		(zero),
+		.SF			(SF),
 		.branch		(branch),
 		.invalid	(invalid),
 		.jmp		(jmp),
@@ -176,7 +178,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.src2		(srcB),
 		.alu_control(ALUcontrol),
 		.result		(ALUResult),
-		.zero		(zero)
+		.zero		(zero),
+		.SF			(SF)
 	);
 
 	ysyx_22041211_MuxKey #(2,1,32) ALUSrc_choosing (srcB,ALUSrc, {

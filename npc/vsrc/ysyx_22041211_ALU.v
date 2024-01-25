@@ -10,23 +10,31 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src2,
 	input 		[3:0]					alu_control,
 	output		[DATA_LEN - 1:0]		result,
-	output								zero
+	output								zero,
+	output								SF		//符号标志
+	// output								OF,		//溢出标志
+	// output								CF		//进/借位标志
 );
 
 	wire signed [31:0] signed_a  ;
 	wire signed [31:0] signed_b  ;
 	wire		[DATA_LEN - 1:0]		result_tmp;
+	// wire				cout;
+	// wire				sub;
 
 	assign signed_a = src1;
 	assign signed_b = src2;
-	assign result = result_tmp;
+	assign SF = result_tmp[DATA_LEN - 1];
+	assign result = (alu_control == 4'b0011 || alu_control == 4'b0100) ? {32{SF}} : result_tmp;
+
+	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
 	ysyx_22041211_MuxKeyWithDefault #(11,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
-		4'b0011, signed_a < signed_b ? 32'b1 : 32'b0,
-		4'b0100, src1 < src2 ? 32'b1 : 32'b0,
+		4'b0011, signed_a + (~signed_b + 1),        //signed_a < signed_b ? 32'b1 : 32'b0,
+		4'b0100, src1 + (~src2 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
 		4'b0101, src1 ^ src2,
 		4'b0110, src1 >> src2,
 		4'b0111, src1 >>> src2,
@@ -36,6 +44,9 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	});
 
 	assign zero = (result_tmp == 32'b0) ;
+	
+	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
+	// assign CF = cout ^ sub;
 
 
 endmodule

@@ -6,7 +6,7 @@ module ysyx_22041211_controller(
     input           [6:0]                         func7,
     output          [1:0]                         memToReg,
     output                                        memWrite, //写内存操作
-    output                                        branch,
+    output          [2:0]                         branch,
     output          [1:0]                         jmp,
     output          [3:0]                         ALUcontrol,
     output                                        regWrite,
@@ -39,8 +39,18 @@ module ysyx_22041211_controller(
     //branch
     //指令跳转
     //B 
-    ysyx_22041211_MuxKeyWithDefault #(1, 7, 1) mux_branch (branch, opcode, 1'b0, {
-        7'b1100011, 1'b1   //B
+    //000 no branch
+    //001 equal
+    //010 unequal
+    //011 <
+    //100 >=
+    ysyx_22041211_MuxKeyWithDefault #(6, 10, 3) mux_branch (branch, {opcode,func3}, 3'b0, {
+        10'b1100011000, 3'b001,   //B-beq =
+        10'b1100011001, 3'b010,   //B-bne =/
+        10'b1100011100, 3'b011,   //B-blt <
+        10'b1100011101, 3'b100,   //B-bge >=
+        10'b1100011110, 3'b011,   //B-bltu <
+        10'b1100011111, 3'b100    //B-beq >=
     });
 
     //jmp
@@ -67,9 +77,9 @@ module ysyx_22041211_controller(
     //11 func3 + func7
     ysyx_22041211_MuxKeyWithDefault #(5, 7, 2) mux_ALUop (ALUop, opcode, 2'b00, {
         7'b0000011, 2'b00,      //I lb lh lw lbu lhu
-        7'b0010011, 2'b10,      //I addi
         7'b0100011, 2'b00,      //S sb sh sw
-        7'b1100011, 2'b10,      //B beq
+        7'b1100011, 2'b01,      //B beq
+        7'b0010011, 2'b10,      //I addi
         7'b0110011, 2'b11       //R ok
     });
 
@@ -86,13 +96,12 @@ module ysyx_22041211_controller(
                         ({ALUop,func3,func7} == 12'b111010100000)? 4'b0111:  //R >>s sra
                         ({ALUop,func3,func7} == 12'b111100000000)? 4'b1000:  //R | or
                         ({ALUop,func3,func7} == 12'b111110000000)? 4'b1001:  //R & and
-                        ({ALUop,branch,func3} == 6'b100000)? 4'b0000:  //I + addi
-                        ({ALUop,branch,func3} == 6'b100010)? 4'b0011:  //I <s slti
-                        ({ALUop,branch,func3} == 6'b100011)? 4'b0100:  //I <u sltiu
-                        ({ALUop,branch,func3} == 6'b100100)? 4'b0101:  //I ^ xori
-                        ({ALUop,branch,func3} == 6'b100110)? 4'b1000:  //I | ori
-                        ({ALUop,branch,func3} == 6'b100111)? 4'b1001:  //I & andi
-                        ({ALUop,branch,func3} == 6'b101000)? 4'b0001:  //B ==(-) beq
+                        ({ALUop,branch,func3} == 8'b10_000_000)? 4'b0000:  //I + addi
+                        ({ALUop,branch,func3} == 8'b10_000_010)? 4'b0011:  //I <s slti
+                        ({ALUop,branch,func3} == 8'b10_000_011)? 4'b0100:  //I <u sltiu
+                        ({ALUop,branch,func3} == 8'b10_000_100)? 4'b0101:  //I ^ xori
+                        ({ALUop,branch,func3} == 8'b10_000_110)? 4'b1000:  //I | ori
+                        ({ALUop,branch,func3} == 8'b10_000_111)? 4'b1001:  //I & andi
                         (opcode == 7'b0110111) ? 4'b1010 : 4'b1111;  //U lui src2 
 
 

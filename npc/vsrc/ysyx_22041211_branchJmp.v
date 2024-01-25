@@ -1,6 +1,7 @@
 module ysyx_22041211_branchJmp(
 	input		                		zero,
-	input		                        branch,
+    input		                		SF,
+	input		  [2:0]                 branch,
 	input 		  [1:0]                 jmp,
     input                               invalid,
 	output		  [1:0]                 PCSrc
@@ -12,7 +13,18 @@ module ysyx_22041211_branchJmp(
     //J---              01  jmp 01
     //jalr              10  jmp 10
 
-assign PCSrc = ({zero,branch,jmp} == 4'b1100) ? 2'b01 : 
+//branch
+    //指令跳转
+    //B 
+    //000 no branch 
+    //001 equal
+    //010 unequal
+    //011 <
+    //100 >=
+assign PCSrc = ({zero,branch,jmp} == 6'b1_001_00) ? 2'b01 : //001 equal
+               ({zero,branch,jmp} == 6'b0_010_00) ? 2'b01 : //010 equal
+               ({zero,SF,branch,jmp} == 7'b0_1_010_00) ? 2'b01 : //011 <
+               ({SF,branch,jmp} == 6'b0_010_00) ? 2'b01 : //100 >=
                (jmp == 2'b01) ? 2'b01 : 
                (jmp == 2'b10) ? 2'b10 : 
                (invalid == 1'b0 ) ? 2'b00 : 2'b11; 
