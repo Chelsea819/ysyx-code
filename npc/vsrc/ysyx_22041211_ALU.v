@@ -25,7 +25,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign signed_a = src1;
 	assign signed_b = src2;
 	assign SF = (alu_control == 4'b0011 || alu_control == 4'b0111 || alu_control == 4'b1101) ? result_tmp[31] : ~cout ;
-	assign result = (alu_control == 4'b0011) ? {{31{1'b0}}, {(SF & ({cout,result_tmp} != 33'h080000000)) | ({cout,result_tmp} == 33'h180000000)} } : 
+	assign result = (alu_control == 4'b0011) ? {{31{1'b0}}, SF} : 
 					(alu_control == 4'b0100) ? {{31{1'b0}}, ~cout} : result_tmp;
 	wire [31:0] tmp;
 	// wire [31:0] src2_tmp;
@@ -51,14 +51,15 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1101, signed_a >>> src2[4:0]
 	});
 
-	assign zero = (alu_control == 4'b0011 || alu_control == 4'b0111 || alu_control == 4'b1101) ? (result_tmp[31:0] == 31'b0) : (result_tmp == 32'b0) ;
+	assign zero = result_tmp == 32'b0 ;
 	assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
 						(alu_control == 4'b0001) ? (({1'b0,src1} + {1'b0,~src2} + 1)) :
 				 		(alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 
 						(alu_control == 4'b0011) ? (({1'b0,signed_a} + {1'b0,~signed_b} + 1)) : 33'b0);
-	
-	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
-	// assign CF = cout ^ sub;
+
+	assign {SF,cout,tmp} = ((alu_control == 4'b0100) ? (({2'b0,src1} + {2'b0,~src2} + 34'b1)) : 
+						   (alu_control == 4'b0011) ? (({src1[31],1'b0,src1[30:0]} + {src1[31],1'b0,~src1[30:0]} + 1)) : 33'b0);
+
 
 
 endmodule
