@@ -25,7 +25,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign signed_a = src1;
 	assign signed_b = src2;
 	assign SF = result_tmp[DATA_LEN - 1];
-	assign result = (alu_control == 4'b0011 || alu_control == 4'b0100) ? {32{SF}} : result_tmp;
+	assign result = (alu_control == 4'b0011 || alu_control == 4'b0100) ? {{31{1'b0}},{SF}} : result_tmp;
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
