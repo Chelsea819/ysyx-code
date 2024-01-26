@@ -55,7 +55,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
 						(alu_control == 4'b0001) ? (({1'b0,src1} + {1'b0,~src2} + 1)) :
 				 		(alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 
-						(alu_control == 4'b0011) ? (({signed_a[31],signed_a} + {signed_b[31],~signed_b} + 1)) : 33'b0);
+						(alu_control == 4'b0011) ? (({1'b0,signed_a} + {1'b0,~signed_b} + 1)) : 33'b0);
 	
 	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
 	// assign CF = cout ^ sub;
