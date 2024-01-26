@@ -48,8 +48,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	});
 
 	assign zero = (result_tmp == 32'b0) ;
-	assign cout = (alu_control == 4'b0000) ? ((src1 + src2)[32]) :
-				  (alu_control == 4'b0100) ? ((src1 + (~src2 + 1))[32]) : 1'b0;
+	assign cout = (alu_control == 4'b0000) ? ((src1 + src2) >> 2'h20) :
+				  (alu_control == 4'b0100) ? ((src1 + (~src2 + 1)) >> 2'h20) : 1'b0;
 	
 	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
 	// assign CF = cout ^ sub;
