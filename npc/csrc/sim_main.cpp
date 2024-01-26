@@ -1758,8 +1758,8 @@ void sdb_mainloop()
     //return;
   }
   #ifdef AUTO_Q
-
-  cmd_q("q");
+  char* arr = "q";
+  cmd_q(arr);
   return;
 
   #endif
