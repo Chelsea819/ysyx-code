@@ -30,7 +30,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
-	ysyx_22041211_MuxKeyWithDefault #(14,4,33) ALUmode ({cout,result_tmp}, alu_control, 33'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(14,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
@@ -48,6 +48,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	});
 
 	assign zero = (result_tmp == 32'b0) ;
+	assign cout = (alu_control == 4'b0000) ?  : (src1 + src2)[32] :
+				  (alu_control == 4'b0100) ? (src1 + (~src2 + 1))[32] : 1'b0;
 	
 	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
 	// assign CF = cout ^ sub;
