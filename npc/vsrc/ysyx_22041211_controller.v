@@ -87,8 +87,8 @@ module ysyx_22041211_controller(
 
     assign ALUcontrol = (ALUop == 2'b00)? 4'b0000:                             //根据op判断加法
                         (ALUop == 2'b01)? 4'b0001:                             //根据op判断减法
-                        ({ALUop,func3,func7} == 12'b110000000000)? 4'b0000:  //R + add
-                        ({ALUop,func3,func7} == 12'b110000000001)? 4'b0001:  //R - sub
+                        ({ALUop,func3,func7} == 12'b11_000_0000000)? 4'b0000:  //R + add
+                        ({ALUop,func3,func7} == 12'b11_000_0100000)? 4'b0001:  //R - sub
                         ({ALUop,func3,func7} == 12'b110010000000)? 4'b0110:  //R << sll
                         ({ALUop,func3,func7} == 12'b110100000000)? 4'b0011:  //R <s slt
                         ({ALUop,func3,func7} == 12'b110110000000)? 4'b0100:  //R <u sltu
