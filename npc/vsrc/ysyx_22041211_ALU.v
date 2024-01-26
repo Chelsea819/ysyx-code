@@ -31,7 +31,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire [31:0] tmp;
 	wire [31:0] src2_tmp;
 	wire 		c_tmp;
-	assign {c_tmp,src2_tmp} = ~src2 + 1;
+	assign {c_tmp,src2_tmp} = {1'b0,~src2} + 1;
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
