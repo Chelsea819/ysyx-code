@@ -19,17 +19,18 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire signed [31:0] signed_a  ;
 	wire signed [31:0] signed_b  ;
 	wire		[DATA_LEN - 1:0]		result_tmp;
-	// wire				cout;
+	wire				cout;
 	// wire				sub;
 
 	assign signed_a = src1;
 	assign signed_b = src2;
 	assign SF = result_tmp[DATA_LEN - 1];
-	assign result = (alu_control == 4'b0011 || alu_control == 4'b0100) ? {{31{1'b0}},{SF}} : result_tmp;
+	assign result = (alu_control == 4'b0011) ? {{31{1'b0}},{SF}} : 
+					(alu_control == 4'b0100) ? {{31{1'b0}},{(~cout & zero)}} : result_tmp;
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
-	ysyx_22041211_MuxKeyWithDefault #(14,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(14,4,33) ALUmode (result_tmp, {cout,alu_control}, 33'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
