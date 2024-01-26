@@ -1757,7 +1757,12 @@ void sdb_mainloop()
     cmd_c(NULL);
     //return;
   }
+  #ifdef AUTO_Q
 
+  cmd_q();
+  return;
+
+  #endif
   for (char *str; (str = rl_gets()) != NULL;)
   {
     char *str_end = str + strlen(str);

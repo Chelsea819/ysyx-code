@@ -18,4 +18,6 @@
 #define CONFIG_TRACE_START 0
 #define CONFIG_TRACE_END 10000
 
+#define ANTO_Q
+
 #endif
