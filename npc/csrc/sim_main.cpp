@@ -326,7 +326,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
     IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
-  paddr_write((vaddr_t)(waddr & ~0x3u), (vaddr_t)len, (word_t)wdata);
+  paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
 }
 
 void ifebreak_func(int inst){
