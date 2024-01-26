@@ -58,7 +58,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	// 					(alu_control == 4'b0011) ? (({1'b0,signed_a} + {1'b0,~signed_b} + 1)) : 33'b0);
 
 	assign {SF,cout,tmp} = ((alu_control == 4'b0100) ? (({2'b0,src1} + {2'b0,~src2} + 34'b1)) : 
-						   (alu_control == 4'b0011) ? (({src1[31],1'b0,src1[30:0]} + {src1[31],1'b0,~src1[30:0]} + 1)) : 33'b0);
+						   (alu_control == 4'b0011) ? (({src1[31],1'b0,src1[30:0]} + {src1[31],1'b1,~src1[30:0]} + 1)) : 33'b0);
 
 
 
