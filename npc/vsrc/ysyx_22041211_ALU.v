@@ -11,8 +11,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src2,
 	input 		[3:0]					alu_control,
 	output		[DATA_LEN - 1:0]		result,
-	output								zero,
-	output								SF		//符号标志
+	output								zero
 	// output								OF,		//溢出标志
 	// output								CF		//进/借位标志
 );
@@ -21,7 +20,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire signed [31:0] signed_b  ;
 	wire		[DATA_LEN - 1:0]		result_tmp;
 	wire				cout;
-	// wire				sub;
+	wire				SF;
 
 	assign signed_a = src1;
 	assign signed_b = src2;
