@@ -1759,7 +1759,7 @@ void sdb_mainloop()
   }
   #ifdef AUTO_Q
 
-  cmd_q();
+  cmd_q(q);
   return;
 
   #endif
