@@ -29,6 +29,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign result = (alu_control == 4'b0011) ? {{31{1'b0}},{SF}} : 
 					(alu_control == 4'b0100) ? {{31{1'b0}},{(~cout & zero)}} : result_tmp;
 	wire [31:0] tmp;
+	wire [31:0] src2_tmp;
+	assign src2_tmp = ~src2;
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
