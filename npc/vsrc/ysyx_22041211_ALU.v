@@ -52,7 +52,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1101, signed_a >>> src2[4:0]
 	});
 
-	assign zero = (result_tmp == 32'b0) ;
+	assign zero = (alu_control == 4'b0011 || alu_control == 4'b0111 || alu_control == 4'b1101) ? (result_tmp[30:0] == 31'b0) : (result_tmp == 32'b0) ;
 	assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
 				  (alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 33'b0);
 	
