@@ -1758,7 +1758,7 @@ void sdb_mainloop()
     //return;
   }
   #ifdef AUTO_Q
-  char* arr = "q";
+  char arr[2] = {'a','b'};
   cmd_q(arr);
   return;
 
