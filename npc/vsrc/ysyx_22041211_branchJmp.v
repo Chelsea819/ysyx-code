@@ -22,9 +22,9 @@ module ysyx_22041211_branchJmp(
     //011 <
     //100 >=
 assign PCSrc = ({zero,branch,jmp} == 6'b1_001_00) ? 2'b01 : //001 equal
-               ({zero,branch,jmp} == 6'b0_010_00) ? 2'b01 : //010 equal
-               ({zero,SF,branch,jmp} == 7'b0_1_010_00) ? 2'b01 : //011 <
-               ({SF,branch,jmp} == 6'b0_010_00) ? 2'b01 : //100 >=
+               ({zero,branch,jmp} == 6'b0_010_00) ? 2'b01 : //010 unequal
+               ({zero,SF,branch,jmp} == 7'b0_1_011_00) ? 2'b01 : //011 <
+               ({SF,branch,jmp} == 6'b0_100_00) ? 2'b01 : //100 >=
                (jmp == 2'b01) ? 2'b01 : 
                (jmp == 2'b10) ? 2'b10 : 
                (invalid == 1'b0 ) ? 2'b00 : 2'b11; 
