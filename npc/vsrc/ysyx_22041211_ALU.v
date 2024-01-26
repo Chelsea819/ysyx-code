@@ -43,7 +43,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b1010, src2,
 		4'b1011, src1 >> src2[4:0],
 		4'b1100, src1 << src2[4:0],
-		4'b1101, src1 >>> src2[4:0]
+		4'b1101, signed_a >>> src2[4:0]
 	});
 
 	assign zero = (result_tmp == 32'b0) ;
