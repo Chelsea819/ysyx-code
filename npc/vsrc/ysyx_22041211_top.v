@@ -51,7 +51,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	assign memToReg = memToReg_tmp;
 	
 	// 做位拓展 ReadData_tmp是处理好的最终读取到的数据
-	assign ReadData_tmp = (DataSign == 1'b0 || DataLen == 3'b100) ? ReadData : 
+	assign ReadData_tmp = (DataLen == 3'b100) ? ReadData : 
+						  (DataSign == 1'b0 && DataLen == 3'b001) ? {{24{1'b0}}, ReadData[7:0]} : 
+						  (DataSign == 1'b0 && DataLen == 3'b010) ? {{16{1'b0}}, ReadData[15:0]} : 
 						  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
 						  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
