@@ -4,6 +4,7 @@ module ysyx_22041211_controller(
     input           [6:0]                         opcode,
     input           [2:0]                         func3,
     input           [6:0]                         func7,
+    input           [5:0]                         shamt_F,
     output          [1:0]                         memToReg,
     output                                        memWrite, //写内存操作
     output          [2:0]                         branch,
@@ -102,6 +103,9 @@ module ysyx_22041211_controller(
                         ({ALUop,branch,func3} == 8'b10_000_100)? 4'b0101:  //I ^ xori
                         ({ALUop,branch,func3} == 8'b10_000_110)? 4'b1000:  //I | ori
                         ({ALUop,branch,func3} == 8'b10_000_111)? 4'b1001:  //I & andi
+                        ({ALUop,branch,func3,shamt_F} == 14'b10_000_001_000000)? 4'b1100:  //I << slli-shamt
+                        ({ALUop,branch,func3,shamt_F} == 14'b10_000_101_000000)? 4'b1011:  //I >> srli-shamt
+                        ({ALUop,branch,func3,shamt_F} == 14'b10_000_101_010000)? 4'b1101:  //I >>> srai-shamt
                         (opcode == 7'b0110111) ? 4'b1010 : 4'b1111;  //U lui src2 
 
 
