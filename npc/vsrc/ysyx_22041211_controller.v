@@ -89,7 +89,7 @@ module ysyx_22041211_controller(
                         (ALUop == 2'b01)? 4'b0001:                             //根据op判断减法
                         ({ALUop,func3,func7} == 12'b11_000_0000000)? 4'b0000:  //R + add
                         ({ALUop,func3,func7} == 12'b11_000_0100000)? 4'b0001:  //R - sub
-                        ({ALUop,func3,func7} == 12'b110010000000)? 4'b0110:  //R << sll
+                        ({ALUop,func3,func7} == 12'b110010000000)? 4'b0010:  //R << sll
                         ({ALUop,func3,func7} == 12'b110100000000)? 4'b0011:  //R <s slt
                         ({ALUop,func3,func7} == 12'b110110000000)? 4'b0100:  //R <u sltu
                         ({ALUop,func3,func7} == 12'b111000000000)? 4'b0101:  //R ^ xor
