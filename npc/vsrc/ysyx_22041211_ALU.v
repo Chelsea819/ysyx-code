@@ -28,10 +28,10 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign SF = result_tmp[DATA_LEN - 1];
 	assign result = (alu_control == 4'b0011) ? {{31{1'b0}},{SF}} : 
 					(alu_control == 4'b0100) ? {{31{1'b0}},{(~cout & zero)}} : result_tmp;
-	wire [31:0] tmp;
-	wire [31:0] src2_tmp;
-	wire 		c_tmp;
-	assign {c_tmp,src2_tmp} = {1'b0,~src2} + 1;
+	// wire [31:0] tmp;
+	// wire [31:0] src2_tmp;
+	// wire 		c_tmp;
+	// assign {c_tmp,src2_tmp} = {1'b0,~src2} + 1;
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
@@ -53,8 +53,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	});
 
 	assign zero = (result_tmp == 32'b0) ;
-	assign {cout,tmp} = ((alu_control == 4'b0000) ? ((src1 + src2)) :
-				  (alu_control == 4'b0100) ? ((src1 + ~src2 + 1)) : 33'b0);
+	assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
+				  (alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 33'b0);
 	
 	// assign OF = ~src1[DATA_LEN - 1] & ~src2[DATA_LEN - 1] & ~src1[DATA_LEN - 1]
 	// assign CF = cout ^ sub;
