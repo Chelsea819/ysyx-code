@@ -4,8 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
-/* verilator lint_off WIDTHEXPAND */
-/* verilator lint_off WIDTHTRUNC */
+/* verilator lint_off UNUSEDSIGNAL */
 module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1,
 	input		[DATA_LEN - 1:0]		src2,
@@ -58,5 +57,4 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 
 endmodule
-/* verilator lint_on WIDTHEXPAND */
-/* verilator lint_on WIDTHTRUNC */
+/* verilator lint_on UNUSEDSIGNAL */
