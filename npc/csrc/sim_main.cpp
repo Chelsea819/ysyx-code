@@ -305,10 +305,10 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
 extern "C" int pmem_read(int raddr) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
   // printf("read!\n");
-  // printf("raddr = 0x%08x\n",raddr);
+  // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
   // printf("rdata = 0x%08x\n",rdata);
-  return paddr_read((paddr_t)(raddr & ~0x3u), 4);
+  return paddr_read((paddr_t)raddr, 4);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
