@@ -37,7 +37,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b0100, src1 + (~src2 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
 		4'b0101, src1 ^ src2,
 		4'b0110, src1 >> src2,
-		4'b0111, src1 >>> src2,
+		4'b0111, signed_a >>> src2,
 		4'b1000, src1 | src2,
 		4'b1001, src1 & src2,
 		4'b1010, src2,
