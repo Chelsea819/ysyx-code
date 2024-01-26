@@ -35,7 +35,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	wire			[DATA_LEN - 1:0]	srcB		;
 	wire								zero	 	;
 	wire			[DATA_LEN - 1:0]	ALUResult	;
-	wire								SF			;
+	// wire								SF			;
 
 	//ALUSrc
 	wire								ALUSrc		;
