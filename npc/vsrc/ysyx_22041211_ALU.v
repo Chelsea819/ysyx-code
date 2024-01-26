@@ -29,7 +29,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	// assign sub = (alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100);
 
-	ysyx_22041211_MuxKeyWithDefault #(11,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(14,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
@@ -40,7 +40,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		4'b0111, src1 >>> src2,
 		4'b1000, src1 | src2,
 		4'b1001, src1 & src2,
-		4'b1010, src2
+		4'b1010, src2,
 		4'b1011, src1 >> src2[4:0],
 		4'b1100, src1 << src2[4:0],
 		4'b1101, src1 >>> src2[4:0]
