@@ -169,7 +169,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	ysyx_22041211_branchJmp my_branchJmp(
 		.zero		(zero),
-		.SF			(SF),
+		.SF			(ALUResult[0]),
 		.branch		(branch),
 		.invalid	(invalid),
 		.jmp		(jmp),
@@ -182,8 +182,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		.src2		(srcB),
 		.alu_control(ALUcontrol),
 		.result		(ALUResult),
-		.zero		(zero),
-		.SF			(SF)
+		.zero		(zero)
 	);
 
 	ysyx_22041211_MuxKey #(2,1,32) ALUSrc_choosing (srcB,ALUSrc, {

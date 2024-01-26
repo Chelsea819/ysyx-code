@@ -79,7 +79,7 @@ module ysyx_22041211_controller(
     ysyx_22041211_MuxKeyWithDefault #(5, 7, 2) mux_ALUop (ALUop, opcode, 2'b00, {
         7'b0000011, 2'b00,      //I lb lh lw lbu lhu
         7'b0100011, 2'b00,      //S sb sh sw
-        7'b1100011, 2'b01,      //B beq
+        7'b1100011, 2'b10,      //B beq
         7'b0010011, 2'b10,      //I addi
         7'b0110011, 2'b11       //R ok
     });
@@ -97,6 +97,12 @@ module ysyx_22041211_controller(
                         ({ALUop,func3,func7} == 12'b111010100000)? 4'b0111:  //R >>s sra
                         ({ALUop,func3,func7} == 12'b111100000000)? 4'b1000:  //R | or
                         ({ALUop,func3,func7} == 12'b111110000000)? 4'b1001:  //R & and
+                        ({ALUop,branch,func3} == 8'b10_001_000)? 4'b0001:  //B + beq
+                        ({ALUop,branch,func3} == 8'b10_010_001)? 4'b0001:  //B + bne
+                        ({ALUop,branch,func3} == 8'b10_011_100)? 4'b0011:  //B + blt
+                        ({ALUop,branch,func3} == 8'b10_100_101)? 4'b0011:  //B + bge
+                        ({ALUop,branch,func3} == 8'b10_011_110)? 4'b0100:  //B + bltu
+                        ({ALUop,branch,func3} == 8'b10_100_111)? 4'b0100:  //B + bgeu
                         ({ALUop,branch,func3} == 8'b10_000_000)? 4'b0000:  //I + addi
                         ({ALUop,branch,func3} == 8'b10_000_010)? 4'b0011:  //I <s slti
                         ({ALUop,branch,func3} == 8'b10_000_011)? 4'b0100:  //I <u sltiu
