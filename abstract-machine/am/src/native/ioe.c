@@ -48,6 +48,7 @@ static void *lut[128] = {
   [AM_NET_CONFIG  ] = __am_net_config,
 };
 
+// 进行IOE相关的初始化操作
 bool ioe_init() {
   panic_on(cpu_current() != 0, "call ioe_init() in other CPUs");
   panic_on(ioe_init_done, "double-initialization");
@@ -74,6 +75,12 @@ static void do_io(int reg, void *buf) {
   }
   ((handler_t)lut[reg])(buf);
 }
-
+// 从编号为reg的寄存器中读出内容到缓冲区buf中
 void ioe_read (int reg, void *buf) { do_io(reg, buf); }
+// 往编号为reg寄存器中写入缓冲区buf中的内容
 void ioe_write(int reg, void *buf) { do_io(reg, buf); }
+
+
+/*这里的reg寄存器并不是上文讨论的设备寄存器, 因为设备寄存器的编号是架构相关的. 
+  在IOE中, 我们希望采用一种架构无关的"抽象寄存器", 
+  这个reg其实是一个功能编号, 我们约定在不同的架构中, 同一个功能编号的含义也是相同的, 这样就实现了设备寄存器的抽象*/
