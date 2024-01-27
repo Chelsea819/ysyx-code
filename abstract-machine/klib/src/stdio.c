@@ -65,6 +65,12 @@ int printf(const char *fmt, ...) {
           // out[k] = str[j];
         }
       }
+      // %c
+      if(fmt[i] == 'c'){
+        char c = va_arg(ap,int);
+        putch(c);
+        k ++;
+      }
       percent = 0;
     }
     else {
@@ -137,6 +143,13 @@ int sprintf(char *out, const char *fmt, ...) {
         for(int j = 0; str[j] != '\0'; j++,k++){
           out[k] = str[j];
         }
+      }
+
+      // %c
+      if(fmt[i] == 'c'){
+        char c = va_arg(ap,int);
+        out[k] = c;
+        k ++;
       }
       percent = 0;
     }
