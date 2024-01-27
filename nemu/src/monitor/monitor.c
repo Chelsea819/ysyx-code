@@ -90,7 +90,6 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
     //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
-    printf("\no = %d\n",o);
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
