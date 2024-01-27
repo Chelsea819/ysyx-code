@@ -101,7 +101,7 @@ int sprintf(char *out, const char *fmt, ...) {
 
   for(int i = 0; *(fmt + i) != '\0'; i++){
     if(fmt[i] == '%') {percent ^= 1; tmp = i;}
-
+    
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1 && i == tmp + 1){
