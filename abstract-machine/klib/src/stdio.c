@@ -36,8 +36,8 @@ int printf(const char *fmt, ...) {
     else if(percent == 1 && i == tmp + 1){
       // %d
       if(fmt[i] == 'd'){
-        char arr_tmp[100] = {0};  //存放数字转换成的字符
-        int numAdd = 98;  //数组的下标 从后往前存
+        char arr_tmp[20] = {0};  //存放数字转换成的字符
+        int numAdd = 18;  //数组的下标 从后往前存
 
         int num = va_arg(ap,int); //要替换的数字
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
@@ -60,7 +60,7 @@ int printf(const char *fmt, ...) {
         }   
         numAdd ++;
         //将数字存入out数组
-        for( ;numAdd < 99 ; k++,numAdd ++){
+        for( ;numAdd < 19 ; k++,numAdd ++){
           //负数      
           if(neg) { putch('-'); neg = 0;}
           putch(arr_tmp[numAdd]);
@@ -69,13 +69,12 @@ int printf(const char *fmt, ...) {
 
       //%s
       if(fmt[i] == 's'){
-        putch('m');
         char *str_s = va_arg(ap,char*);
-        putch(str_s[0]);
-        putch('m');
-        putch(str_s[0]);
+        // putch(str_s[0]);
+        // putch('m');
+        // putch(str_s[0]);
         for(int j = 0; str_s[j] != '\0'; j++,k++){
-          putch('m');
+          // putch('m');
           putch(str_s[j]);
           // out[k] = str[j];
         }
