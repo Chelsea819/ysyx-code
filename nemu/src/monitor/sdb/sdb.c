@@ -348,12 +348,15 @@ void sdb_mainloop()
     index = index->next;
   }
   free(wp_pool);
+
+  #ifdef CONFIG_IRINGBUF
   iringbuf *head_i = get_head_iringbuf();
   while(head_i != NULL && head_i->rbuf != NULL){
     free(head_i->rbuf);
     head_i->rbuf = NULL;
     head_i = head_i->next;
   }
+  #endif
   
 }
 
