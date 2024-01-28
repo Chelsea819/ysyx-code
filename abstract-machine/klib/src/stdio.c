@@ -5,10 +5,14 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+// -2147483648
 void convert(int num,int* numAdd,char *arr_tmp){
-  int tmp = num % 10;
+  int tmp = num % 10; //-8
   if(tmp < 0){tmp *= -1;}
-  arr_tmp[(*numAdd) --] = tmp + 48; 
+  arr_tmp[(*numAdd)] = tmp + 48; 
+  putch(arr_tmp[(*numAdd)]);
+  putch('\n');
+  (*numAdd) --;
 }
 
 
@@ -42,12 +46,13 @@ int printf(const char *fmt, ...) {
         if(num < 0){
           neg = 1;
         }  
+        // -2147483648
         while(num != 0){
           //判断这个负数是否可以直接转换为正数
           if(num < 0 && num >= -2147483647) num *= -1;
           //将整型数字转换成字符串类型
           convert(num, &numAdd, arr_tmp);
-          num /= flag;
+          num /= flag; // -214748364
         }   
         numAdd ++;
         //将数字存入out数组
@@ -81,7 +86,6 @@ int printf(const char *fmt, ...) {
   }
   va_end(ap);
   return k + 1;
-
 
   // panic("Not implemented");
 }
