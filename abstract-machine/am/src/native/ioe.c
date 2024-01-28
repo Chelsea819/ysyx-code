@@ -62,17 +62,20 @@ void __am_ioe_init() {
   for (int i = 0; i < LENGTH(lut); i++)
     if (!lut[i]) lut[i] = fail;
   __am_timer_init();
-  __am_gpu_init();
+  __am_gpu_init();putch('\n');
   __am_input_init();
   __am_audio_init();
   __am_disk_init();
   ioe_init_done = true;
+  putch('\n');
 }
 
 static void do_io(int reg, void *buf) {
+  putch('\n');
   if (!ioe_init_done) {
     __am_ioe_init();
   }
+  putch('\n');
   ((handler_t)lut[reg])(buf);
 }
 // 从编号为reg的寄存器中读出内容到缓冲区buf中

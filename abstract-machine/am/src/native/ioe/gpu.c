@@ -27,8 +27,8 @@ static Uint32 texture_sync(Uint32 interval, void *param) {
   return interval;
 }
 
-void __am_gpu_init() {
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+void __am_gpu_init() {putch('g');
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);putch('g');
   window = SDL_CreateWindow("Native Application",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 #ifdef MODE_800x600
@@ -36,10 +36,11 @@ void __am_gpu_init() {
 #else
       W * 2, H * 2,
 #endif
-      SDL_WINDOW_OPENGL);
+      SDL_WINDOW_OPENGL);putch('g');
   surface = SDL_CreateRGBSurface(SDL_SWSURFACE, W, H, 32,
       RMASK, GMASK, BMASK, AMASK);
   SDL_AddTimer(1000 / FPS, texture_sync, NULL);
+  putch('g');
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
