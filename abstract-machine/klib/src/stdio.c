@@ -72,6 +72,7 @@ int printf(const char *fmt, ...) {
         putch('m');
         char *str = va_arg(ap,char*);
         putch('m');
+        putch(str[0]);
         for(int j = 0; str[j] != '\0'; j++,k++){
           putch('m');
           putch(str[j]);
