@@ -56,12 +56,12 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
   IOMap *dev = fetch_mmio_map(addr);
-  Log("Read device %s\n",dev->name);
+  // Log("Read device %s\n",dev->name);
   return map_read(addr, len, dev);
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
   IOMap *dev = fetch_mmio_map(addr);
-  Log("Write device %s\n",dev->name);
+  // Log("Write device %s\n",dev->name);
   map_write(addr, len, data, dev);
 }
