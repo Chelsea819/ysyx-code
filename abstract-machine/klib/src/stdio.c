@@ -59,7 +59,7 @@ int printf(const char *fmt, ...) {
         for( ;numAdd < 99 ; k++,numAdd ++){
           //负数      
           if(neg) { putch('-'); neg = 0;}
-          else {putch(arr_tmp[numAdd]); }
+          putch(arr_tmp[numAdd]);
         }
       } 
 
