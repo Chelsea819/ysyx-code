@@ -71,6 +71,7 @@ int printf(const char *fmt, ...) {
       if(fmt[i] == 's'){
         putch('m');
         char *str_s = va_arg(ap,char*);
+        putch(str_s[0]);
         putch('m');
         putch(str_s[0]);
         for(int j = 0; str_s[j] != '\0'; j++,k++){
