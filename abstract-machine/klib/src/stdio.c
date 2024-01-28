@@ -10,14 +10,17 @@ void convert(int num,int* numAdd,char *arr_tmp){
   int tmp = num % 10; //-8
   if(tmp < 0){tmp *= -1;}
   arr_tmp[(*numAdd)] = tmp + 48; 
-  putch(arr_tmp[(*numAdd)]);
-  putch('\n');
+  // putch(arr_tmp[(*numAdd)]);
+  // putch('\n');
   (*numAdd) --;
 }
 
 
 int printf(const char *fmt, ...) {
   // panic("Not implemented");
+  putch('\n');
+  putch('P');
+  putch('\n');
   va_list ap;
   va_start(ap,fmt); //初始化ap
 
@@ -25,6 +28,7 @@ int printf(const char *fmt, ...) {
   int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
   for(int i = 0; *(fmt + i) != '\0'; i++){
+    putch(fmt[i]);
     if(fmt[i] == '%') {percent ^= 1; tmp = i;}
 
     //当percent为1时进入循环,即出现奇数个`%`
