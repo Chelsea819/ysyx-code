@@ -11,7 +11,9 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src2,
 	input 		[3:0]					alu_control,
 	output		[DATA_LEN - 1:0]		result,
-	output								zero	
+	output								zero
+	// output								OF,		//溢出标志
+	// output								CF		//进/借位标志
 );
 
 	wire signed [31:0] signed_a  ;
@@ -19,19 +21,13 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire		[DATA_LEN - 1:0]		result_tmp;
 	wire				cout;
 	wire				SF;
-	wire				OF; //溢出标志
-	wire				CF; //进/借位标志
 
 	assign signed_a = src1;
 	assign signed_b = src2;
-	assign SF = result_tmp[31];
-	assign OF = src1[31] & ((alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100) ? ~(src2[31]) : src2[31]) & ~result_tmp[31] |
-				~src1[31] & ~((alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100) ? ~(src2[31]) : src2[31]) & result_tmp[31];
-	assign CF = cout ^ ((alu_control == 4'b0001 || alu_control == 4'b0011 || alu_control == 4'b0100) ? 1'b1 : 1'b0);
-	// 1assign SF = (alu_control == 4'b0011 || alu_control == 4'b0111 || alu_control == 4'b1101) ? ((signed_a[31] ^ signed_b[31] == 1'b1 && signed_a[31] == 1'b1) ? 1'b1 : 
-	// 																							(signed_a[3] ^ signed_b[31] == 1'b1 && signed_b[31] == 1'b1) ? 1'b0 : result_tmp[31]) : ~cout ;
-	assign result = (alu_control == 4'b0011) ? {{31{1'b0}}, (OF == SF)} : 
-					(alu_control == 4'b0100) ? {{31{1'b0}}, (CF == 0)} : result_tmp;
+	assign SF = (alu_control == 4'b0011 || alu_control == 4'b0111 || alu_control == 4'b1101) ? ((signed_a[31] ^ signed_b[31] == 1'b1 && signed_a[31] == 1'b1) ? 1'b1 : 
+																								(signed_a[31] ^ signed_b[31] == 1'b1 && signed_b[31] == 1'b1) ? 1'b0 : result_tmp[31]) : ~cout ;
+	assign result = (alu_control == 4'b0011) ? {{31{1'b0}}, SF} : 
+					(alu_control == 4'b0100) ? {{31{1'b0}}, ~cout} : result_tmp;
 	wire [31:0] tmp;
 	// wire [31:0] src2_tmp;
 	// wire 		c_tmp;
@@ -41,10 +37,10 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	ysyx_22041211_MuxKeyWithDefault #(14,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
-		4'b0001, src2 + (~src1 + 1),
+		4'b0001, src1 + (~src2 + 1),
 		4'b0010, src1 << src2,
-		4'b0011, signed_b + (~signed_a + 1),        //signed_a < signed_b ? 32'b1 : 32'b0,
-		4'b0100, src2 + (~src1 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
+		4'b0011, signed_a + (~signed_b + 1),        //signed_a < signed_b ? 32'b1 : 32'b0,
+		4'b0100, src1 + (~src2 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
 		4'b0101, src1 ^ src2,
 		4'b0110, src1 >> src2,
 		4'b0111, signed_a >>> src2,
