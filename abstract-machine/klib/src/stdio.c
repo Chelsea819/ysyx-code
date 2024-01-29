@@ -18,9 +18,9 @@ void convert(int num,int* numAdd,char *arr_tmp){
 
 int printf(const char *fmt, ...) {
   // panic("Not implemented");
-  // putch('\n');
-  // putch('P');
-  // putch('\n');
+  putch('\n');
+  putch('P');
+  putch('\n');
   va_list ap;
   va_start(ap,fmt); //初始化ap
 
