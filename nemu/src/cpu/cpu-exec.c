@@ -471,6 +471,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       while (1)
       {
         Assert(func_cur, "func_cur NULL!");
+        Assert(func_cur->func_name, "func_cur->func_name NULL!");
         int flag = 0;
         if (strcmp(func_cur->func_name, name) == 0)
           flag = 1;
