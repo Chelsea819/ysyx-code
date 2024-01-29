@@ -470,6 +470,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 函数返回，将函数名所在链表节点抽出
       while (1)
       {
+        printf("111111111\n");
         Assert(func_cur, "func_cur NULL!");
         Assert(func_cur->func_name, "func_cur->func_name NULL!");
         Assert(name, "name NULL!");
