@@ -71,9 +71,11 @@ static inline void update_screen() {
 #endif
 
 void vga_update_screen() {
-  if(*(volatile bool *)(CONFIG_VGA_CTL_MMIO + 4)) {
+  if(mmio_read(CONFIG_VGA_CTL_MMIO + 4, 4)) {
     update_screen();
-    *(volatile bool *)(CONFIG_VGA_CTL_MMIO + 4) = false;  }
+    mmio_write(CONFIG_VGA_CTL_MMIO + 4, 4, 0);
+    // io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), false);
+  }
 
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
