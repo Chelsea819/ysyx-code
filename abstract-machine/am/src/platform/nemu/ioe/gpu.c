@@ -38,7 +38,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int k = 0;
   for(int i = x; i < x + w; i ++){
     for(int j = y; j < y + h; j ++){
-        fb[i*sizeof(uint32_t)+j] = p[k++];
+        fb[i*sizeof(uint32_t)+j*sizeof(uint32_t)] = p[k++];
     }
   }
   outl(SYNC_ADDR, 1);
