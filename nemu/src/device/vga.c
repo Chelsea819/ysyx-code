@@ -72,6 +72,7 @@ static inline void update_screen() {
 
 void vga_update_screen() {
   if(mmio_read(CONFIG_VGA_CTL_MMIO + 4, 4)) {
+    printf("mmio_read(CONFIG_VGA_CTL_MMIO + 4, 4) %d\n",mmio_read(CONFIG_VGA_CTL_MMIO + 4, 4));
     update_screen();
     mmio_write(CONFIG_VGA_CTL_MMIO + 4, 4, 0);
     // io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), false);
