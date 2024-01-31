@@ -71,6 +71,10 @@ static inline void update_screen() {
 #endif
 
 void vga_update_screen() {
+  if(*(volatile bool *)(CONFIG_FB_ADDR + 4)) {
+    update_screen();
+    *(volatile bool *)(CONFIG_FB_ADDR + 4) = false;  }
+
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
 }
