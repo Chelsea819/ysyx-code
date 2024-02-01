@@ -134,13 +134,13 @@ int sprintf(char *out, const char *fmt, ...) {
         if(num < 0){
           neg = 1;
         }  
-        while(num != 0){
+        do{
           //判断这个负数是否可以直接转换为正数
           if(num < 0 && num >= -2147483647) num *= -1;
           //将整型数字转换成字符串类型
           convert(num, &numAdd, arr_tmp);
           num /= flag;
-        }   
+        }while(num != 0);   
         numAdd ++;
         //将数字存入out数组
         for( ;numAdd < 99 ; k++,numAdd ++){
