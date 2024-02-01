@@ -38,8 +38,7 @@ void *malloc(size_t size) {
 // #endif
 //   return NULL;
   if(!size) return NULL;
-  char *hbrk = (void *)ROUNDUP(heap.start, 8);
-  size = (size_t)ROUNDUP(size, 8);
+  char *hbrk = (char *)heap.start;
   char *addr = hbrk;
   hbrk += size;
   assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
