@@ -38,12 +38,12 @@ void *malloc(size_t size) {
 // #endif
 //   return NULL;
   if(!size) return NULL;
-  // size = (size_t)ROUNDUP(size, 8);
-  Area addr = RANGE(heap.start, heap.start + size);
-  // Area *addr = (char*)(heap.start);
-  // heap = RANGE(heap.start, heap.start + size);
-  assert((uintptr_t)heap.start <= (uintptr_t)addr.start && (uintptr_t)addr.end < (uintptr_t)heap.end);
-  return addr.start;
+  char *hbrk = (void *)ROUNDUP(heap.start, 8);
+  size = (size_t)ROUNDUP(size, 8);
+  char *addr = hbrk;
+  hbrk += size;
+  assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
+  return addr;
 }
 
 void free(void *ptr) {
