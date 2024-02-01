@@ -4,6 +4,9 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
+#if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
+  static void * addr = NULL;
+#endif
 
 int rand(void) {
   // RAND_MAX assumed to be 32767
@@ -35,7 +38,8 @@ void *malloc(size_t size) {
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   if(!size) return NULL;
-  char *addr = (char *)heap.start;
+  if(!addr)
+    addr = (char *)heap.start;
   char *hbrk = addr + size;
   assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
   return addr;
