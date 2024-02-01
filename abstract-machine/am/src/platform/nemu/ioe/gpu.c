@@ -34,12 +34,12 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
     uint32_t *p = (uint32_t *)ctl->pixels;
     int k = 0;
-    for(int i = x; i < x + w; i ++){
-      for(int j = y; j < y + h; j ++){
-        fb[W*j+i] = p[k++];
+    for(int i = y; i < y + h; i ++){
+      for(int j = x; j < x + w; j ++){
+        fb[W*i+j] = p[k++];
       }
     }
-    outl(SYNC_ADDR, 1);
+    outl(SYNC_ADDR, 0);
   }
   
 }
