@@ -39,10 +39,11 @@ void *malloc(size_t size) {
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   if(!size) return NULL;
   if(!addr)
-    addr = (void *)heap.start;
-  char *hbrk = (char *)addr + size;
-  assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
-  return addr;
+    addr = heap.start;
+  void *hbrk = addr;
+  addr = (char *)heap.start + size;
+  assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
+  return hbrk;
 #endif
   return NULL;
 }
