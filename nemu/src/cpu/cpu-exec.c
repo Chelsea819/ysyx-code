@@ -49,6 +49,7 @@ static iringbuf *curre = NULL;
 static iringbuf *bottom = NULL;
 #endif
 
+#ifdef CONFIG_FTRACE
 FILE *ftrace_fp = NULL;
 
 Elf32_Ehdr Elf_header;
@@ -62,7 +63,7 @@ int sym_num;
 extern WP *head;
 char *strtab = NULL;
 
-#ifdef CONFIG_FTRACE
+
 int init_ftrace(const char *ftrace_file)
 {
   FILE *fp = NULL;
@@ -155,21 +156,6 @@ iringbuf *get_head_iringbuf()
 #endif
 
 void device_update();
-
-// typedef struct watchpoint
-// {
-//   int NO;
-//   int times;
-//   uint32_t data;
-//   char target[100];
-//   struct watchpoint *next;
-//   struct watchpoint *past;
-
-//   /* TODO: Add more members if necessary */
-
-// } WP;
-
-// WP *get_head();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 {
