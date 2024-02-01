@@ -49,22 +49,24 @@ int printf(const char *fmt, ...) {
         int neg = 0;
         if(num < 0){
           neg = 1;
-        }  
-        // -2147483648
-        while(num != 0){
-          //判断这个负数是否可以直接转换为正数
-          if(num < 0 && num >= -2147483647) num *= -1;
-          //将整型数字转换成字符串类型
-          convert(num, &numAdd, arr_tmp);
-          num /= flag; // -214748364
-        }   
-        numAdd ++;
-        //将数字存入out数组
+        } 
+
+          // -2147483648
+          do{
+            //判断这个负数是否可以直接转换为正数
+            if(num < 0 && num >= -2147483647) num *= -1;
+            //将整型数字转换成字符串类型
+            convert(num, &numAdd, arr_tmp);
+            num /= flag; // -214748364
+          }while(num != 0);   
+          numAdd ++;
+          //将数字存入out数组
+        
         for( ;numAdd < 19 ; k++,numAdd ++){
-          //负数      
-          if(neg) { putch('-'); neg = 0;}
-          putch(arr_tmp[numAdd]);
-        }
+            //负数      
+            if(neg) { putch('-'); neg = 0;}
+            putch(arr_tmp[numAdd]);
+          }
       } 
 
       //%s
