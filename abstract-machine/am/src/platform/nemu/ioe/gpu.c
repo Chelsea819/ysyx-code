@@ -39,7 +39,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
         fb[W*j+i] = p[k++];
       }
     }
-    outl(SYNC_ADDR, 1);
+    outl(SYNC_ADDR, 0);
   }
   
 }
