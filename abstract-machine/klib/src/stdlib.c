@@ -39,10 +39,11 @@ void *malloc(size_t size) {
 //   return NULL;
   if(!size) return NULL;
   // size = (size_t)ROUNDUP(size, 8);
-  char *addr = (char*)(heap.start);
-  heap = RANGE(heap.start, heap.start + size);
-  assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
-  return addr;
+  Area addr = RANGE(heap.start, heap.start + size);
+  // Area *addr = (char*)(heap.start);
+  // heap = RANGE(heap.start, heap.start + size);
+  assert((uintptr_t)heap.start <= (uintptr_t)addr.start && (uintptr_t)addr.end < (uintptr_t)heap.end);
+  return addr.start;
 }
 
 void free(void *ptr) {
