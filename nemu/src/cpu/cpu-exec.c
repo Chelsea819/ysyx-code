@@ -589,6 +589,7 @@ void assert_fail_msg()
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n)
 {
+    // printf("1111111111\n");
 
   g_print_step = (n < MAX_INST_TO_PRINT);
   switch (nemu_state.state)
@@ -604,9 +605,12 @@ void cpu_exec(uint64_t n)
   uint64_t timer_start = get_time();
 
   execute(n);
+    // printf("222222222222222\n");
 
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
+      // printf("333333333333333333\n");
+
   switch (nemu_state.state)
   {
   case NEMU_RUNNING:
