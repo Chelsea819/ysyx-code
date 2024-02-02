@@ -16,6 +16,32 @@ void convert(int num,int* numAdd,char *arr_tmp,int flag){
   (*numAdd) --;
 }
 
+void intHandel(int *neg, int *num, int *numAdd, int flag, char *arr_tmp){
+  //负数
+  if(*num < 0){
+    *neg = 1;
+  }  
+  do{
+    //判断这个负数是否可以直接转换为正数
+    if(*num < 0 && *num >= -2147483647) *num *= -1;
+    //将整型数字转换成字符串类型
+    convert(*num, numAdd, arr_tmp,flag);
+    *num /= flag;
+  }while(*num != 0);   
+  (*numAdd) ++;
+}
+
+void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out, int *k){
+  if(*if_wid && NUM_BUF - numAdd - 1 < *width){
+    for(int i = *width - (NUM_BUF - numAdd - 1); i > 0 ; i --, (*k) ++)
+      if(*if_for) out[*k] = '0';
+      else out[*k] = ' ';
+    *if_for = false;
+    *if_wid = false;
+    *width = 0;
+  }
+}
+
 // void convertTo16(int num,int* numAdd,char *arr_tmp){
 //   int tmp = num % 10; //-8
 //   if(tmp < 0){tmp *= -1;}
@@ -32,6 +58,10 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
   int flag = 0;
+  int width = 0;
+  int neg = 0;
+  bool if_wid = false;
+  bool if_for = false;
 
   for(int i = 0; k < n-1 && *(fmt + i) != '\0'; i++){
     if(fmt[i] == '%') {percent ^= 1; tmp = i;}
@@ -39,8 +69,21 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1 && i == tmp + 1){
+      if(fmt[i] == '0' && !if_for && !if_wid){
+        if_for = true;
+      }
+      else if(fmt[i] >= '0' && fmt[i] <= '9' && !if_wid){
+        if(!if_wid)
+          width = fmt[i] - '0';
+        else
+          width = width * 10 + (fmt[i] - '0');
+        if_wid = true;
+      }
+      else if(if_for && !if_wid)
+        panic("Invalid format");
+      
       // %d
-      if(fmt[i] == 'd'){
+      else if(fmt[i] == 'd'){
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
@@ -48,21 +91,32 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
         //va_arg(ap,type) 这个type是为了初始化一个指向目标的指针
         //如果type不匹配或者没有下一个参数，会出现随机错误
-
         flag = 10; 
-        //负数
-        int neg = 0;
-        if(num < 0){
-          neg = 1;
-        }  
-        do{
-          //判断这个负数是否可以直接转换为正数
-          if(num < 0 && num >= -2147483647) num *= -1;
-          //将整型数字转换成字符串类型
-          convert(num, &numAdd, arr_tmp,flag);
-          num /= flag;
-        }while(num != 0);   
-        numAdd ++;
+        neg = 0;
+        intHandel(&neg, &num, &numAdd, flag, arr_tmp);
+        // //负数
+        // int neg = 0;
+        // if(num < 0){
+        //   neg = 1;
+        // }  
+        // do{
+        //   //判断这个负数是否可以直接转换为正数
+        //   if(num < 0 && num >= -2147483647) num *= -1;
+        //   //将整型数字转换成字符串类型
+        //   convert(num, &numAdd, arr_tmp,flag);
+        //   num /= flag;
+        // }while(num != 0);   
+        // numAdd ++;
+        // if(if_wid && NUM_BUF - numAdd - 1 < width){
+        //   for(int i = width - (NUM_BUF - numAdd - 1); i > 0 ; i --, k ++)
+        //     if(if_for) out[k] = '0';
+        //     else out[k] = ' ';
+        //   if_for = false;
+        //   if_wid = false;
+        //   width = 0;
+        // }
+        
+        formatHandel(&if_wid, &if_for, numAdd, &width, out, &k);
         //将数字存入out数组
         for( ; k < n-1 && numAdd < NUM_BUF - 1 ; k++,numAdd ++){
           //负数      
@@ -97,18 +151,22 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
 
         flag = 16; 
         //负数
-        int neg = 0;
-        if(num < 0){
-          neg = 1;
-        }  
-        do{
-          //判断这个负数是否可以直接转换为正数
-          if(num < 0 && num >= -2147483647) num *= -1;
-          //将整型数字转换成字符串类型
-          convert(num, &numAdd, arr_tmp,flag);
-          num /= flag;
-        }while(num != 0);   
-        numAdd ++;
+        neg = 0;
+        intHandel(&neg, &num, &numAdd, flag, arr_tmp);
+
+        // if(num < 0){
+        //   neg = 1;
+        // }  
+        // do{
+        //   //判断这个负数是否可以直接转换为正数
+        //   if(num < 0 && num >= -2147483647) num *= -1;
+        //   //将整型数字转换成字符串类型
+        //   convert(num, &numAdd, arr_tmp,flag);
+        //   num /= flag;
+        // }while(num != 0);   
+        // numAdd ++;
+        formatHandel(&if_wid, &if_for, numAdd, &width, out, &k);
+
         //将数字存入out数组
         for( ; k < n-1 && numAdd < NUM_BUF - 1 ; k++,numAdd ++){
           //负数      
