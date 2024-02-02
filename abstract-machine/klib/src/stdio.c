@@ -117,6 +117,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         }
       }
       else {
+        putch(fmt[i]);
         panic("Not completed format");
         return -1;
       }
