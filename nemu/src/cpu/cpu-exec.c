@@ -589,7 +589,6 @@ void assert_fail_msg()
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n)
 {
-    printf("1111111111\n");
 
   g_print_step = (n < MAX_INST_TO_PRINT);
   switch (nemu_state.state)
