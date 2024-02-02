@@ -42,15 +42,6 @@ void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out,
   }
 }
 
-// void convertTo16(int num,int* numAdd,char *arr_tmp){
-//   int tmp = num % 10; //-8
-//   if(tmp < 0){tmp *= -1;}
-//   arr_tmp[(*numAdd)] = tmp + 48; 
-//   // putch(arr_tmp[(*numAdd)]);
-//   // putch('\n');
-//   (*numAdd) --;
-// }
-
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   // panic("Not implemented");
 
@@ -62,6 +53,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int neg = 0;
   bool if_wid = false;
   bool if_for = false;
+  bool if_long = false;
 
   for(int i = 0; k < n-1 && *(fmt + i) != '\0'; i++){
     if(fmt[i] == '%') {percent ^= 1; tmp = i;}
@@ -81,7 +73,9 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       }
       else if(if_for && !if_wid)
         panic("Invalid format");
-      
+      else if(fmt[i] == 'l'){
+        if_long = true;
+      }
       // %d
       else if(fmt[i] == 'd'){
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
@@ -123,6 +117,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           if(neg) {out[k] = '-'; neg = 0;}
           else {out[k] = arr_tmp[numAdd]; }
         }
+        if(if_long) if_long = false;
       } 
 
       //%s
@@ -173,6 +168,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           if(neg) {out[k] = '-'; neg = 0;}
           else {out[k] = arr_tmp[numAdd]; }
         }
+        if(if_long) if_long = false;
       }
       else {
         putch(fmt[i]);
