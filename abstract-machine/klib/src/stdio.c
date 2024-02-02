@@ -16,50 +16,6 @@ void convert(int num,int* numAdd,char *arr_tmp){
   (*numAdd) --;
 }
 
-
-int printf(const char *fmt, ...) {
-  va_list ap;
-  va_start(ap,fmt); //初始化ap
-  char out[MAX_SIZE];
-  int ret = sprintf(out, fmt, ap);
-  assert(ret <= MAX_SIZE && ret >= 0);
-  for(int i = 0; i <= ret; i ++){
-    putch(out[i]);
-  }
-  va_end(ap);
-  return ret;
-  // panic("Not implemented");
-}
-
-int vsprintf(char *out, const char *fmt, va_list ap) {
-  // panic("Not implemented");
-  int ret = vsnprintf(out, MAX_SIZE, fmt, ap);
-  return ret;
-}
-
-//碰到%后，指示%的指针不变 pCurrent先前跑 找到格式化输出的格式
-
-int sprintf(char *out, const char *fmt, ...) {
-  va_list ap;
-  va_start(ap,fmt); //初始化ap
-
-  int ret = vsprintf(out, fmt, ap);
-
-  va_end(ap);
-  return ret;
-}
-
-int snprintf(char *out, size_t n, const char *fmt, ...) {
-  // panic("Not implemented");
-  va_list ap;
-  va_start(ap,fmt); //初始化ap
-
-  int ret = vsnprintf(out, n, fmt, ap);
-
-  va_end(ap);
-  return ret;
-}
-
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   // panic("Not implemented");
 
@@ -134,5 +90,49 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   va_end(ap);
   return k;
 }
+
+int printf(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap,fmt); //初始化ap
+  char out[MAX_SIZE];
+  int ret = sprintf(out, fmt, ap);
+  assert(ret <= MAX_SIZE && ret >= 0);
+  for(int i = 0; i <= ret; i ++){
+    putch(out[i]);
+  }
+  va_end(ap);
+  return ret;
+  // panic("Not implemented");
+}
+
+int vsprintf(char *out, const char *fmt, va_list ap) {
+  // panic("Not implemented");
+  int ret = vsnprintf(out, MAX_SIZE, fmt, ap);
+  return ret;
+}
+
+//碰到%后，指示%的指针不变 pCurrent先前跑 找到格式化输出的格式
+
+int sprintf(char *out, const char *fmt, ...) {
+  va_list ap;
+  va_start(ap,fmt); //初始化ap
+
+  int ret = vsprintf(out, fmt, ap);
+
+  va_end(ap);
+  return ret;
+}
+
+int snprintf(char *out, size_t n, const char *fmt, ...) {
+  // panic("Not implemented");
+  va_list ap;
+  va_start(ap,fmt); //初始化ap
+
+  int ret = vsnprintf(out, n, fmt, ap);
+
+  va_end(ap);
+  return ret;
+}
+
 
 #endif
