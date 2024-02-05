@@ -30,6 +30,9 @@
 #include "difftest-def.h"
 #include "config.h"
 #include "device-def.h"
+#include "device/map.h"
+#include "device/mmio.h"
+
 
 void init_device();
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
