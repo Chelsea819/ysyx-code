@@ -29,6 +29,7 @@
 #include <elf.h>
 #include "difftest-def.h"
 #include "config.h"
+#include "device-def.h"
 
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
@@ -308,6 +309,7 @@ extern "C" int pmem_read(int raddr) {
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
   // printf("rdata = 0x%08x\n",rdata);
+  if(raddr == CONFIG_RTC_MMIO) return pmem_read_npc(raddr,4);
   return paddr_read((paddr_t)raddr, 4);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
@@ -318,15 +320,19 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // printf("wmask = 0x%01u\n",wmask);
   // printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
-  int len = 0;
-  switch (wmask){
-    case 0x1: len = 1; break;
-    case 0x3: len = 2; break;
-    case 0xf: len = 4; break;
-    IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
-    IFDEF(CONFIG_RT_CHECK, default: assert(0));
+  if(waddr == CONFIG_SERIAL_MMIO) 
+    putchar(wdata);
+  else {
+    int len = 0;
+    switch (wmask){
+      case 0x1: len = 1; break;
+      case 0x3: len = 2; break;
+      case 0xf: len = 4; break;
+      IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
+      IFDEF(CONFIG_RT_CHECK, default: assert(0));
+    }
+    paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
   }
-  paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
 }
 
 void ifebreak_func(int inst){
