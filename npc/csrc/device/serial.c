@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NEMU is licensed under Mulan PSL v2.
+* NPC is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -31,7 +31,7 @@ static void serial_putc(char ch) {
 static void serial_io_handler(uint32_t offset, int len, bool is_write) {
   assert(len == 1);
   switch (offset) {
-    /* We bind the serial port with the host stderr in NEMU. */
+    /* We bind the serial port with the host stderr in NPC. */
     case CH_OFFSET:
       if (is_write) serial_putc(serial_base[0]);
       else panic("do not support read");

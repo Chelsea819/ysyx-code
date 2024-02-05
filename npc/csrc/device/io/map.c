@@ -50,7 +50,7 @@ static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_wr
 
 // 初始化
 void init_map() {
-  io_space = malloc(IO_SPACE_MAX);
+  io_space = (uint8_t *)malloc(IO_SPACE_MAX);
   assert(io_space);
   p_space = io_space;
 }
