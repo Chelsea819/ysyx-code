@@ -310,7 +310,7 @@ extern "C" int pmem_read(int raddr) {
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
   // printf("rdata = 0x%08x\n",rdata);
-  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) return pmem_read_npc(raddr,4);
+  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { printf("111111\n"); return pmem_read_npc(raddr,4);}
   return paddr_read((paddr_t)raddr, 4);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
