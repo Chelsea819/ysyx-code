@@ -71,8 +71,6 @@ endif
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
 override ARGS += $(ARGS_DIFF) --batch
 
-SRCS += ./csrc/device/serial.c
-SRCS += $(shell find $(abspath ./csrc/device/io) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 # SRCS += ./csrc/device/timer.c
 
 $(BIN):$(SRCS) $(VSRCS) 
