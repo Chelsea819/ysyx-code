@@ -514,6 +514,9 @@ void init_npc(int argc,char *argv[]){
     //init memory
     init_mem_npc();
 
+    /* Initialize devices. */
+    IFDEF(CONFIG_DEVICE, init_device());
+
     //load img to memory
     init_isa();
 

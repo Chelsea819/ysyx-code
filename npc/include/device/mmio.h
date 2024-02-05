@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NPC is licensed under Mulan PSL v2.
+* NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -13,35 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __NPC_COMMON_H__
-#define __NPC_COMMON_H__
+#ifndef __DEVICE_MMIO_H__
+#define __DEVICE_MMIO_H__
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <malloc.h>
+#include "../common.h"
 
-#include "macro.h"
-#include "debug.h"
-
-#include <assert.h>
-#include <stdlib.h>
-#include "config.h"
-
-#if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul
-#define PMEM64 1
-#endif
-
-
-typedef uint32_t word_t;
-typedef int32_t  sword_t;
-#define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
-
-typedef word_t vaddr_t;
-typedef uint32_t paddr_t;
-#define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
-typedef uint16_t ioaddr_t;
-
+word_t mmio_read(paddr_t addr, int len);
+void mmio_write(paddr_t addr, int len, word_t data);
 
 #endif

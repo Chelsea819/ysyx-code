@@ -8,7 +8,7 @@ WAVE = waveform.vcd
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include 
+INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
@@ -70,6 +70,10 @@ endif
 
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
 override ARGS += $(ARGS_DIFF) --batch
+
+SRCS += ./csrc/device/serial.c
+SRCS += $(shell find $(abspath ./csrc/device/io) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+# SRCS += ./csrc/device/timer.c
 
 $(BIN):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
