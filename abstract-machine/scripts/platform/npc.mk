@@ -31,7 +31,7 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
-#NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
+NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
 
 
