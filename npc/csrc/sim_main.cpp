@@ -31,6 +31,7 @@
 #include "config.h"
 #include "device-def.h"
 
+void init_device();
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
 void init_disasm(const char *triple);
