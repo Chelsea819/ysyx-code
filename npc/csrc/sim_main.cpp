@@ -321,6 +321,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
   if(waddr == CONFIG_SERIAL_MMIO) 
+    Log("Write device --- [addr: 0x%08x data: 0x%08x]",waddr,wdata);
     putchar(wdata);
   else {
     int len = 0;
