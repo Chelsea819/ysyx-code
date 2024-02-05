@@ -290,7 +290,7 @@ static vaddr_t paddr_read(paddr_t addr,int len) {
     #endif
     return rdata;
   }
-  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
 }
@@ -300,7 +300,7 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
   #endif
   if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
-  // IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
 
@@ -310,7 +310,9 @@ extern "C" int pmem_read(int raddr) {
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
   // printf("rdata = 0x%08x\n",rdata);
-  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { printf("111111\n"); return pmem_read_npc(raddr,4);}
+  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
+    Log("Read device --- [addr: 0x%08x]",raddr);  
+  }
   return paddr_read((paddr_t)raddr, 4);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
