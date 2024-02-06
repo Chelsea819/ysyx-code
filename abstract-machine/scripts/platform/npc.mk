@@ -49,5 +49,5 @@ run: image
 # $(info DIFF_REF_PATH:$(DIFF_REF_PATH))
 # $(info DIFF_REF_SO:$(DIFF_REF_SO))
 # $(info ARGS_DIFF:$(ARGS_DIFF))
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NEMU_HOME) ISA=riscv32 ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
