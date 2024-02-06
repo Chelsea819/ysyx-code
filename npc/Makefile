@@ -10,7 +10,7 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH := /usr/local/share/verilator/include /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
+INC_PATH := /usr/local/share/verilator/include /usr/local/share/verilator/include/vltstd /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
