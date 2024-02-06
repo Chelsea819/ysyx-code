@@ -2,7 +2,7 @@
 #include <difftest.h>
 #include "reg.h"
 
-#include "svdpi.h"
+#include <svdpi.h>
 #include "Vysyx_22041211_top__Dpi.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
