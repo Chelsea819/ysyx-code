@@ -102,7 +102,7 @@ gdb:$(BINARY)
 .PHONY:wave clean sim default all run $(DIFF_REF_SO)
 
 # ifdef CONFIG_TARGET_AM
-# include $(AM_HOME)/Makefile
+include $(AM_HOME)/Makefile
 # LINKAGE += $(ARCHIVES)
 # endif
 
