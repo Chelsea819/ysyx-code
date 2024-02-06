@@ -19,8 +19,8 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "
 SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
-INCFLAGS += $(addprefix -I, $(INC_PATHNPC))
-CFLAGS += $(INCFLAGS) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" 
+INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
+CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS)
 LDFLAGS += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
@@ -76,11 +76,11 @@ override ARGS += $(ARGS_DIFF) --batch
 
 
 $(BINARY):$(SRCS) $(VSRCS) 
-	$(warning CFLAGS = $(CFLAGS))
+	$(warning CFLAGS = $(CFLAGS_NPC))
 	$(warning INC_PATH = $(INC_PATH))
 # @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CFLAGS , $(CFLAGS)) \
+		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS_NPC)) $(addprefix -CFLAGS , $(CFLAGS_NPC)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
