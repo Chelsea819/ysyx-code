@@ -39,7 +39,7 @@ NPCFLAGS += $(ARGS_DIFF)
 NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
-CFLAGS += -I$(AM_HOME)/am/src/platform/npc/include
+CFLAGS += -I$(AM_HOME)/am/include
 
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c $(DIFF_REF_SO)
 
