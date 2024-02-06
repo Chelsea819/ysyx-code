@@ -19,7 +19,7 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "
 SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
-INCFLAGS = $(addprefix -I, $(INC_PATH))
+INCFLAGS += $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" 
 LDFLAGS += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
