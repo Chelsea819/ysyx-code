@@ -76,7 +76,7 @@ override ARGS += $(ARGS_DIFF) --batch
 
 
 $(BINARY):$(SRCS) $(VSRCS) 
-	$(info CFLAGS = $(CFLAGS))
+	$(warning CFLAGS = $(CFLAGS))
 	$(warning INC_PATH = $(INC_PATH))
 # @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
