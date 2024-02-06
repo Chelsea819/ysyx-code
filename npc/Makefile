@@ -10,7 +10,19 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH ?= /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device
+INC_PATH := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
+
+# project source
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+#HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
+CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+SRCS = $(CXXSRC) $(CSRCS)
+
+# rules for verilator
+INCFLAGS = $(addprefix -I, $(INC_PATH))
+CFLAGS += $(INCFLAGS) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" 
+LDFLAGS += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
+
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
@@ -21,7 +33,7 @@ VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
 WORK_DIR  = $(shell pwd)
 override BUILD_DIR ?= $(WORK_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
-BIN = $(BUILD_DIR)/$(TOPNAME)
+BINARY = $(BUILD_DIR)/$(TOPNAME)
 
 CXXSRC = $(NPC_HOME)/utils/disasm.cc
 # --cxxflags 选项表示获取与 C++ 相关的编译器选项，输出使用LLVM头文件所需要的C++编译选项
@@ -33,7 +45,7 @@ LIBS += $(shell llvm-config --libs)
 
 all:default
 
-default: $(BIN)
+default: $(BINARY)
 
 
 $(shell mkdir -p $(BUILD_DIR))
@@ -42,17 +54,6 @@ $(shell mkdir -p $(BUILD_DIR))
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 $(SRC_AUTO_BIND): $(NXDC_FILES)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
-
-# project source
-VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-#HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS = $(CXXSRC) $(CSRCS)
-
-# rules for verilator
-INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" 
-LDFLAGS += -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
 ifdef CONFIG_DIFFTEST
@@ -74,26 +75,26 @@ override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$
 override ARGS += $(ARGS_DIFF) --batch
 
 
-$(BIN):$(SRCS) $(VSRCS) 
+$(BINARY):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
 # @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CFLAGS , $(CFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
 	
 
 
 $(shell mkdir -p $(BUILD_DIR))
 
-run:$(BIN)
+run:$(BINARY)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(info $(ARGS))
 	$(info $(BUILD_DIR))
 	$(EXE)  $(ARGS) $(IMG)
 
-gdb:$(BIN)
+gdb:$(BINARY)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	gdb -s $(EXE) --args $(EXE) $(ARGS) $(IMG)
 
