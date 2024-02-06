@@ -10,7 +10,7 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH := /usr/local/share/verilator/include /usr/local/share/verilator/include/vltstd /home/chelsea/ysyx-workbench/npc/build/obj_dir /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
+INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
@@ -19,7 +19,7 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "
 SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
-INCFLAGS += $(addprefix -I, $(INC_PATH))
+INCFLAGS += $(addprefix -I, $(INC_PATHNPC))
 CFLAGS += $(INCFLAGS) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" 
 LDFLAGS += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
