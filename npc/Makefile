@@ -89,13 +89,13 @@ $(BINARY):$(SRCS) $(VSRCS)
 
 $(shell mkdir -p $(BUILD_DIR))
 
-run:$(BINARY)
+sim:$(BINARY)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(info $(ARGS))
 	$(info $(BUILD_DIR))
 	$(EXE)  $(ARGS) $(IMG)
 
-gdb:$(BINARY)
+gdb-sim:$(BINARY)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	gdb -s $(EXE) --args $(EXE) $(ARGS) $(IMG)
 
