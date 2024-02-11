@@ -15,12 +15,12 @@ INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workb
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS = $(CXXSRC) $(CSRCS)
+CSRCS_NPC = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+SRCS_NPC = $(CXXSRC_NPC) $(CSRCS_NPC)
 
 # rules for verilator
 INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
-CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS)
+CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS_NPC)
 LDFLAGS_NPC += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
@@ -33,9 +33,9 @@ VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
 WORK_DIR  = $(shell pwd)
 override BUILD_DIR ?= $(WORK_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
-BINARY = $(BUILD_DIR)/$(TOPNAME)
+BINARY_NPC = $(BUILD_DIR)/$(TOPNAME)
 
-CXXSRC = $(NPC_HOME)/utils/disasm.cc
+CXXSRC_NPC = $(NPC_HOME)/utils/disasm.cc
 # --cxxflags 选项表示获取与 C++ 相关的编译器选项，输出使用LLVM头文件所需要的C++编译选项
 # llvm-config 让使用LLVM构建的应用程序变得很容易，他可以打印链接LLVM所需的编译器标志，编译器标志和对象库
 CXXFLAGS_NPC += $(shell llvm-config --cxxflags) -fPIE 
@@ -45,7 +45,7 @@ LIBS += $(shell llvm-config --libs)
 
 all:default
 
-default: $(BINARY)
+default: $(BINARY_NPC)
 
 
 $(shell mkdir -p $(BUILD_DIR))
@@ -75,27 +75,27 @@ override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$
 override ARGS += $(ARGS_DIFF) --batch
 
 
-$(BINARY):$(SRCS) $(VSRCS) 
+$(BINARY_NPC):$(SRCS_NPC) $(VSRCS) 
 	$(warning CFLAGS = $(CFLAGS_NPC))
-	$(warning INC_PATH = $(INC_PATH))
+	$(warning INC_PATH = $(INC_PATHNPC))
 # @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS_NPC)) $(addprefix -CFLAGS , $(CFLAGS_NPC)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS_NPC)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS_NPC))	\
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY_NPC))
 	
 
 
 $(shell mkdir -p $(BUILD_DIR))
 
-sim:$(BINARY)
+sim:$(BINARY_NPC)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(info $(ARGS))
 	$(info $(BUILD_DIR))
 	$(EXE)  $(ARGS) $(IMG)
 
-gdb-sim:$(BINARY)
+gdb-sim:$(BINARY_NPC)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	gdb -s $(EXE) --args $(EXE) $(ARGS) $(IMG)
 
