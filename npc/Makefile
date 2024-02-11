@@ -10,7 +10,7 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(AM_HOME)/am/include $(INC_PATH)
+INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device /home/chelsea/ysyx-workbench/abstract-machine/am/include $(INC_PATH)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
@@ -20,7 +20,7 @@ SRCS = $(CXXSRC_NPC) $(CSRCS_NPC)
 
 # rules for verilator
 INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
-CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS)
+CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" #$(CFLAGS)
 LDFLAGS_NPC += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
