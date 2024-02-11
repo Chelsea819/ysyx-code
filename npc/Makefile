@@ -103,7 +103,7 @@ gdb-sim:$(BINARY)
 
 # ifdef CONFIG_TARGET_AM
 include $(AM_HOME)/Makefile
-# LINKAGE += $(ARCHIVES)
+LINKAGE += $(ARCHIVES)
 # endif
 
 wave:
