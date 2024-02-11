@@ -17,6 +17,7 @@
 #define __RISCV_REG_H__
 
 #include "common.h"
+#include "sim.h"
 
 /*check register index*/
 static inline int check_reg_idx(int idx) {
