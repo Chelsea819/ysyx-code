@@ -2,7 +2,7 @@
 #include <difftest.h>
 #include "reg.h"
 
-#include "sim.h"
+// #include "sim.h"
 
 extern CPU_state cpu;
 extern TOP_NAME dut;
