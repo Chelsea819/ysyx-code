@@ -30,6 +30,7 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 # endif
 
 CFLAGS    += -fdata-sections -ffunction-sections
+LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 # LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 #              --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
