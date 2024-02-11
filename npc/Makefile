@@ -20,7 +20,7 @@ SRCS = $(CXXSRC_NPC) $(CSRCS_NPC)
 
 # rules for verilator
 INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
-CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" #$(CFLAGS)
+CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS)
 LDFLAGS_NPC += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
@@ -41,7 +41,7 @@ CXXSRC_NPC = $(NPC_HOME)/utils/disasm.cc
 CXXFLAGS_NPC += $(shell llvm-config --cxxflags) -fPIE 
 # --libs 打印链接指定LLVM 组件所需的所有库 ，包括任何依赖项。
 
-# LIBS += $(shell llvm-config --libs)
+LIBS += $(shell llvm-config --libs)
 
 all:default
 
