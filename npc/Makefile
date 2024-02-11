@@ -21,7 +21,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 # rules for verilator
 INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
 CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" $(CFLAGS)
-LDFLAGS += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
+LDFLAGS_NPC += -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
 
 
 VERILATOR = verilator
@@ -81,7 +81,7 @@ $(BINARY):$(SRCS) $(VSRCS)
 # @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS_NPC)) $(addprefix -CFLAGS , $(CFLAGS_NPC)) \
-		$(addprefix -LDFLAGS , $(LDFLAGS)) \
+		$(addprefix -LDFLAGS , $(LDFLAGS_NPC)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
 	
