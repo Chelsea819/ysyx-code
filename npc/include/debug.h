@@ -19,7 +19,7 @@
 #include "common.h"
 #include <stdio.h>
 #include "utils.h"
-#include "sim.h"
+// #include "sim.h"
 // extern CPU_state cpu;
 // extern TOP_NAME dut;
 
