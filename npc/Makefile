@@ -10,7 +10,7 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(INC_PATH)
+INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device $(AM_HOME)/am/include $(INC_PATH)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
