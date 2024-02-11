@@ -16,7 +16,7 @@
 #include <utils.h>
 #include <device/alarm.h>
 #include "config.h"
-#include <am.h>
+bool     ioe_init    (void);
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 #endif
