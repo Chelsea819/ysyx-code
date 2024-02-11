@@ -16,7 +16,7 @@ INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workb
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CSRCS_NPC = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS_NPC = $(CXXSRC_NPC) $(CSRCS_NPC)
+SRCS = $(CXXSRC_NPC) $(CSRCS_NPC)
 
 # rules for verilator
 INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
@@ -75,7 +75,7 @@ override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$
 override ARGS += $(ARGS_DIFF) --batch
 
 
-$(BINARY_NPC):$(SRCS_NPC) $(VSRCS) 
+$(BINARY_NPC):$(SRCS) $(VSRCS) 
 	$(warning CFLAGS = $(CFLAGS_NPC))
 	$(warning INC_PATH = $(INC_PATHNPC))
 # @rm -rf $(OBJ_DIR)
