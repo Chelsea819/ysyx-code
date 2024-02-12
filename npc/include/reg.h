@@ -17,7 +17,8 @@
 #define __RISCV_REG_H__
 
 #include "common.h"
-#include "sim.h"
+// #include "sim.h"
+extern TOP_NAME dut;
 
 /*check register index*/
 static inline int check_reg_idx(int idx) {
