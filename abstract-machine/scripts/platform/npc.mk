@@ -8,6 +8,8 @@ AM_SRCS := riscv/npc/start.S \
            platform/dummy/vme.c \
            platform/dummy/mpe.c
 
+AM_NPC_SRCS := $(AM_HOME)/am/src/riscv/npc/ioe.c
+
 BUILD_DIR = $(shell dirname $(IMAGE).elf)
 CFLAGS    += -fdata-sections -ffunction-sections
 LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
@@ -56,5 +58,5 @@ run: image
 # $(info DIFF_REF_PATH:$(DIFF_REF_PATH))
 # $(info DIFF_REF_SO:$(DIFF_REF_SO))
 # $(info ARGS_DIFF:$(ARGS_DIFF))
-	$(MAKE) -C $(NEMU_HOME) ISA=riscv32 ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+# $(MAKE) -C $(NEMU_HOME) ISA=riscv32 ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) sim ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
