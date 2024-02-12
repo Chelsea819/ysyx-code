@@ -16,7 +16,7 @@ INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workb
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CSRCS_NPC := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS := $(CXXSRC_NPC) $(CSRCS_NPC)
+SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(SRCS)
 
 # rules for verilator
 INCFLAGS_NPC := $(addprefix -I, $(INC_PATHNPC))
