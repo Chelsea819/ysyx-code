@@ -1,4 +1,4 @@
-[#pragma once](){"sa":"re_dqa_zy","icon":1}
+#pragma once
 
 #ifndef __SIM_H__
 #define __SIM_H__ 1
