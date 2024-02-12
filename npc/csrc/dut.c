@@ -8,7 +8,7 @@
 #include <debug.h>
 #include "reg.h"
 #include "config.h"
-#include "sim.h"
+// #include "sim.h"
 
 extern TOP_NAME dut;
 extern VerilatedVcdC *m_trace;
