@@ -41,7 +41,7 @@ CXXSRC_NPC = $(NPC_HOME)/utils/disasm.cc
 CXXFLAGS_NPC += $(shell llvm-config --cxxflags) -fPIE 
 # --libs 打印链接指定LLVM 组件所需的所有库 ，包括任何依赖项。
 
-LIBS := $(shell llvm-config --libs)
+LIBS += $(shell llvm-config --libs)
 
 all:default
 
