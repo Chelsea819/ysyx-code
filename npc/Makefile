@@ -12,14 +12,15 @@ TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device /home/chelsea/ysyx-workbench/abstract-machine/am/include
 
-include $(AM_HOME)/Makefile
-
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CXXSRC_NPC = $(NPC_HOME)/utils/disasm.cc
 CSRCS_NPC := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_SRCS)
+
+include $(AM_HOME)/Makefile
+SRCS += $(AM_SRCS)
 
 # rules for verilator
 INCFLAGS_NPC := $(addprefix -I, $(INC_PATHNPC))
