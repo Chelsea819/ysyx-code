@@ -20,7 +20,8 @@ CSRCS_NPC := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -n
 SRCS := $(CXXSRC_NPC) $(CSRCS_NPC)
 
 include $(AM_HOME)/Makefile
-# SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_SRCS)
+AM_C_SRCS := $(filter %.c,$(AM_SRCS))
+SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_C_SRCS)
 
 # rules for verilator
 INCFLAGS_NPC := $(addprefix -I, $(INC_PATHNPC))
