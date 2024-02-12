@@ -17,10 +17,10 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CXXSRC_NPC = $(NPC_HOME)/utils/disasm.cc
 CSRCS_NPC := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_SRCS)
+SRCS := $(CXXSRC_NPC) $(CSRCS_NPC)
 
 include $(AM_HOME)/Makefile
-SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_SRCS)
+# SRCS := $(CXXSRC_NPC) $(CSRCS_NPC) $(AM_SRCS)
 
 # rules for verilator
 INCFLAGS_NPC := $(addprefix -I, $(INC_PATHNPC))
