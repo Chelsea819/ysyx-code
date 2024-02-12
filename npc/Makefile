@@ -10,19 +10,18 @@ NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device /home/chelsea/ysyx-workbench/abstract-machine/am/include $(INC_PATH)
+INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device /home/chelsea/ysyx-workbench/abstract-machine/am/include
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
-CSRCS_NPC = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS = $(CXXSRC_NPC) $(CSRCS_NPC)
+CSRCS_NPC := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+SRCS := $(CXXSRC_NPC) $(CSRCS_NPC)
 
 # rules for verilator
-INCFLAGS_NPC = $(addprefix -I, $(INC_PATHNPC))
-CFLAGS_NPC = $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" #$(CFLAGS)
-LDFLAGS := -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LIBS)
-
+INCFLAGS_NPC := $(addprefix -I, $(INC_PATHNPC))
+CFLAGS_NPC := $(INCFLAGS_NPC) -fPIC -DTOP_NAME="\"V$(TOPNAME)\"" #$(CFLAGS)
+LDFLAGS := -shared -fPIC -lSDL2 -lSDL2_image -lreadline -ldl -fsanitize=address -fno-omit-frame-pointer -pie $(LDFLAGS)
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
