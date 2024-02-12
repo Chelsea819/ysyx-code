@@ -7,7 +7,7 @@
  ************************************************************************/
 
 #include "sim.h"
-#include <verilated.h>
+// #include <verilated.h>
 #include<iostream>
 
 #include <readline/readline.h>
