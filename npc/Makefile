@@ -12,6 +12,8 @@ TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATHNPC := /home/chelsea/ysyx-workbench/npc/include /home/chelsea/ysyx-workbench/npc/include/device /home/chelsea/ysyx-workbench/abstract-machine/am/include
 
+include $(AM_HOME)/Makefile
+
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 #HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
@@ -104,7 +106,6 @@ gdb-sim:$(BINARY_NPC)
 .PHONY:wave clean sim default all run $(DIFF_REF_SO)
 
 # ifdef CONFIG_TARGET_AM
-include $(AM_HOME)/Makefile
 # LINKAGE += $(ARCHIVES)
 # endif
 
