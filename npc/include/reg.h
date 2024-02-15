@@ -13,8 +13,8 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __RISCV_REG_H__
-#define __RISCV_REG_H__
+#ifndef __NPC_REG_H__
+#define __NPC_REG_H__
 
 #include "common.h"
 #include "sim.h"

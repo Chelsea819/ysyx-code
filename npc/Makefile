@@ -10,7 +10,7 @@ ENGINE ?= interpreter
 NAME    = $(GUEST_ISA)-npc-$(ENGINE)
 
 # Include all filelist.mk to merge file lists
-FILELIST_MK = $(shell find -L ./src -name "filelist.mk")
+FILELIST_MK = $(shell find -L ./utils -name "filelist.mk")
 include $(FILELIST_MK)
 
 
