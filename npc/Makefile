@@ -17,13 +17,14 @@ include $(FILELIST_MK)
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS := $(CXXSRC) $(CSRCS)
+SRCS = $(CXXSRC) $(CSRCS)
 
 include $(AM_HOME)/Makefile
 LINKAGE += $(ARCHIVES)
+
+WORK_DIR := $(shell pwd)
 INC_PATH := $(WORK_DIR)/include $(INC_PATH)
 
-WORK_DIR  = $(shell pwd)
 override BUILD_DIR ?= $(WORK_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BINARY := $(BUILD_DIR)/$(TOPNAME)
