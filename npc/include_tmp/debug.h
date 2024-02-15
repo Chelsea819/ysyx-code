@@ -28,18 +28,6 @@ extern VerilatedVcdC *m_trace;
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
-// //Assert宏用于调试检查,如果条件不满足则打印信息并退出
-// #define Assert(cond, format, ...) \
-//   do { \
-//     if (!(cond)) { \
-//       MUXDEF(CONFIG_TARGET_AM, printf(ANSI_FMT(format, ANSI_FG_RED) "\n", ## __VA_ARGS__), \
-//         (fflush(stdout), fprintf(stderr, ANSI_FMT(format, ANSI_FG_RED) "\n", ##  __VA_ARGS__))); \
-//       IFNDEF(CONFIG_TARGET_AM, extern FILE* log_fp; fflush(log_fp)); \
-//       extern void assert_fail_msg(); \
-//       assert_fail_msg(); \
-//       assert(cond); \
-//     } \
-//   } while (0)
 
   //Assert宏用于调试检查,如果条件不满足则打印信息并退出
 #define Assert(cond, format, ...) \
