@@ -19,10 +19,10 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS := $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 SRCS = $(CXXSRC) $(CSRCS)
 
-include $(AM_HOME)/Makefile
-LINKAGE += $(ARCHIVES)
+# include $(AM_HOME)/Makefile
+# LINKAGE += $(ARCHIVES)
 
-WORK_DIR := $(shell pwd)
+WORK_DIR = $(shell pwd)
 INC_PATH := $(WORK_DIR)/include $(INC_PATH)
 
 override BUILD_DIR ?= $(WORK_DIR)/build
