@@ -16,6 +16,7 @@
 # ifneq ($(CONFIG_ITRACE)$(CONFIG_IQUEUE),)
 CXXSRC = $(shell find $(abspath ./utils) -name "*.cc")
 # CXXSRC = utils/disasm.cc
-CXXFLAGS := $(shell llvm-config --cxxflags) -fPIE
+CXXFLAGS = $(shell llvm-config --cxxflags) -fPIE
+# CXXFLAGS += $(filter-out -D__STDC_FORMAT_MACROS, $(CXXFLAGS_N))
 LIBS += $(shell llvm-config --libs)
 # endif

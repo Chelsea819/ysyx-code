@@ -33,7 +33,9 @@ void init_device();
 void set_npc_state(int state, vaddr_t pc, int halt_ret);
 void invalid_inst(vaddr_t thispc);
 void init_disasm(const char *triple);
+#ifdef CONFIG_DIFFTEST
 void init_difftest(char *ref_so_file, long img_size, int port);
+#endif
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
 NPCState npc_state = { .state = NPC_STOP };
@@ -524,8 +526,10 @@ void init_npc(int argc,char *argv[]){
     //load certain program to memory
     long img_size = load_img();
 
+#ifdef CONFIG_DIFFTEST
     /* Initialize differential testing. */
     init_difftest(diff_so_file, img_size, difftest_port);
+#endif
 
     /* Initialize the simple debugger.初始化简单调试器 */
     init_sdb();
