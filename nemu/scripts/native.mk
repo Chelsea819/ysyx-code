@@ -36,6 +36,15 @@ run-env:  $(BINARY) $(DIFF_REF_SO)
 run: run-env
 	$(call git_commit, "run NEMU")
 	$(info $(ARGS))
+	$(info SRCS = $(SRCS))
+	$(info INC_PATH = $(INC_PATH))
+	$(info ARCHIVES = $(ARCHIVES))
+	$(info LIBS = $(LIBS))
+	$(info CFLAGS = $(CFLAGS))
+	$(info CXXFLAGS = $(CXXFLAGS))
+	$(info INCLUDES = $(INCLUDES))
+	$(info LINKAGE = $(LINKAGE))
+	$(info LDFLAGS = $(LDFLAGS))
 	$(NEMU_EXEC)
 	
 gdb: run-env
