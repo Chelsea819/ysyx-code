@@ -5,9 +5,9 @@ html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
-## 1. Basic Setup and Checks
+## 1. Basic Setup and Checks 基本设置与检查
 
-### Default to create a bare-metal kernel image
+### Default to create a bare-metal kernel image 默认创造一个裸机内核镜像
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image

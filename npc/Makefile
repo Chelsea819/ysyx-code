@@ -7,7 +7,7 @@ WAVE = waveform.vcd
 
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH += $(AM_HOME)/am/include/arch $(AM_HOME)/am/include /home/chelsea/ysyx-workbench/npc/include 
+INC_PATH += /home/chelsea/ysyx-workbench/npc/include 
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
@@ -47,13 +47,9 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "
 SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
-# LINKAGE = $(AM_HOME)/am/build/am-riscv32e-npc.a
-LINKAGE +=  $(shell find $(AM_HOME)/am/build/riscv32e-npc/src/riscv/npc -name "*.o")  $(shell find $(AM_HOME)/am/build/riscv32e-npc/src/riscv/npc/libgcc -name "*.o")
-
-ARCH_H := arch/riscv.h
 INCLUDES += $(addprefix -I, $(INC_PATH))
 CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" 
-LDFLAGS += -lreadline -ldl -fsanitize=address -pie $(LINKAGE) $(LIBS)
+LDFLAGS += -lreadline -ldl -fsanitize=address -pie $(LIBS)
 
 
 ifdef CONFIG_DIFFTEST
@@ -76,7 +72,6 @@ override ARGS += $(ARGS_DIFF) --batch
 
 $(BIN):$(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
-# @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
