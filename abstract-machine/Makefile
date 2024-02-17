@@ -16,10 +16,10 @@ endif
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
-### Print build info message
+### Print build info message 打印信息
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
-### Check: environment variable `$AM_HOME` looks sane
+### Check: environment variable `$AM_HOME` looks sane 检查环境变量是否正确
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
@@ -93,10 +93,10 @@ LDFLAGS  += -z noexecstack
 
 ## 4. Arch-Specific Configurations
 
-### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
+### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`) 设置了CFLAGS LDFLAGS等参数 设置了ARCH_H run
 -include $(AM_HOME)/scripts/$(ARCH).mk
 
-### Fall back to native gcc/binutils if there is no cross compiler
+### Fall back to native gcc/binutils if there is no cross compiler 交叉编译
 ifeq ($(wildcard $(shell which $(CC))),)
   $(info #  $(CC) not found; fall back to default gcc and binutils)
   CROSS_COMPILE :=

@@ -19,6 +19,7 @@
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 #endif
+bool     ioe_init    (void);
 void init_map();
 void init_serial();
 // void init_timer();

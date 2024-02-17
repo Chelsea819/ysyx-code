@@ -39,6 +39,7 @@ run: run-env
 	$(info SRCS = $(SRCS))
 	$(info INC_PATH = $(INC_PATH))
 	$(info ARCHIVES = $(ARCHIVES))
+	$(info ARCHIVE = $(ARCHIVE))
 	$(info LIBS = $(LIBS))
 	$(info CFLAGS = $(CFLAGS))
 	$(info CXXFLAGS = $(CXXFLAGS))
