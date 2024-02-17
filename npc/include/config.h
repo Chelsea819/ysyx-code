@@ -20,7 +20,6 @@
 #define CONFIG_TRACE_END 10000
 
 
-#define CONFIG_TARGET_AM 1
 #define CONFIG_HAS_SERIAL 1
 
 #define ANTO_Q 1

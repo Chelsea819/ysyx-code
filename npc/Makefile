@@ -49,7 +49,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 # rules for verilator
 INCLUDES += $(addprefix -I, $(INC_PATH))
 CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" 
-LDFLAGS += -lreadline -ldl -fsanitize=address -pie $(LIBS) $(ARCHIVE)
+LDFLAGS += -lreadline -ldl -lSDL2 -fsanitize=address -pie $(LIBS)
 
 
 ifdef CONFIG_DIFFTEST
