@@ -42,7 +42,6 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-#HSRCS = $(shell find $(abspath ./csrc) -name "*.h")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 SRCS = $(CXXSRC) $(CSRCS)
 
