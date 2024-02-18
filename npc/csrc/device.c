@@ -74,6 +74,6 @@ void init_device() {
   init_map();  // 初始化
 
   IFDEF(CONFIG_HAS_SERIAL, init_serial());
-  // IFDEF(CONFIG_HAS_TIMER, init_timer());
+  IFDEF(CONFIG_HAS_TIMER, init_timer());
 
 }
