@@ -89,15 +89,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 				   (DataLen == 3'b010)? 8'b00000011:
 				   (DataLen == 3'b100)? 8'b00001111: 8'b11111111);
 	always @(*) begin
-  		if (memWrite | (memToReg[0] & ~memToReg[1])) begin // 有读写请求时
+  		if ((memToReg[0] & ~memToReg[1])) // 有读写请求时
    			ReadData = pmem_read(ALUResult, wmask);
-    		if (memWrite) begin // 有写请求时
-      			pmem_write(ALUResult, reg_data2, wmask);
-    		end
-  		end
-  		else begin
+  		else
     		ReadData = 0;
-  		end
+	end
+
+	always @(*) begin
+  		if (memWrite) // 有写请求时
+      		pmem_write(ALUResult, reg_data2, wmask);
 	end
 
 	// 为ITRACE提供指令
