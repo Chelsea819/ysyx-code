@@ -16,7 +16,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
-ifdef CONFIG_DIFFTEST
+# ifdef CONFIG_DIFFTEST
 GUEST_ISA = riscv32
 CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
 DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
@@ -28,7 +28,7 @@ ARGS_DIFF = --diff=$(DIFF_REF_SO)
 # $(DIFF_REF_SO):
 # 	$(MAKE) -s -C $(DIFF_REF_PATH) $(MKFLAGS)
 # endif
-endif
+# endif
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
@@ -47,7 +47,6 @@ gdb: image
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdb-sim ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
 
 run: image
-	$(info ARCHIVE:$(ARCHIVE))
 	$(info ARCHIVES:$(ARCHIVES))
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
 	$(info ARGS_DIFF:$(ARGS_DIFF))
