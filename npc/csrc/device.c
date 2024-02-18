@@ -22,7 +22,7 @@
 // bool     ioe_init    (void);
 void init_map();
 void init_serial();
-// void init_timer();
+void init_timer();
 
 void send_key(uint8_t, bool);
 void vga_update_screen();
