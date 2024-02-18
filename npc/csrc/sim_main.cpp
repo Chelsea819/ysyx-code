@@ -318,9 +318,10 @@ extern "C" int pmem_read(int raddr, char wmask) {
       IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
-  // if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
-  //   Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
-  // }
+  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
+    // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
+    
+  }
   return paddr_read((paddr_t)raddr, len);
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
