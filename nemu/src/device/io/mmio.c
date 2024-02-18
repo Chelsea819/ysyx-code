@@ -56,6 +56,7 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
   IOMap *dev = fetch_mmio_map(addr);
+  printf("addr = 0x8%08x\n",addr);
 #ifdef CONFIG_DTRACE
   Log("Read device %s\n",dev->name);
 #endif
