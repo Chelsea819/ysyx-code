@@ -17,12 +17,12 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
 # ifdef CONFIG_DIFFTEST
-GUEST_ISA = riscv32
-CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
-DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
-DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
-MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
-ARGS_DIFF = --diff=$(DIFF_REF_SO)
+# GUEST_ISA = riscv32
+# CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
+# DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
+# DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
+# MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
+# ARGS_DIFF = --diff=$(DIFF_REF_SO)
 
 # ifndef CONFIG_DIFFTEST_REF_NEMU
 # $(DIFF_REF_SO):
