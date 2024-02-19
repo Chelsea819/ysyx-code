@@ -55,17 +55,17 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   bool if_long = false;
 
   for(int i = 0; k < n-1 && *(fmt + i) != '\0'; i++){
-    if(fmt[i] == '%') {putch('%');percent ^= 1; tmp = i;}
+    if(fmt[i] == '%') {putch(fmt[i]);percent ^= 1; tmp = i;}
 
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1 && i == tmp + 1){
       if(fmt[i] == '0' && !if_for && !if_wid){
-        putch('f');
+        putch(fmt[i]);
         if_for = true;
       }
       else if(fmt[i] >= '0' && fmt[i] <= '9' && !if_wid){
-        putch('w');
+        putch(fmt[i]);
         if(!if_wid)
           width = fmt[i] - '0';
         else
@@ -79,6 +79,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       }
       // %d
       else if(fmt[i] == 'd'){
+        putch(fmt[i]);
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
@@ -103,12 +104,14 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       else if(fmt[i] == 's'){
         char *str = va_arg(ap,char*);
         for(int j = 0; k < n-1 && str[j] != '\0'; j++,k++){
+          putch(fmt[i]);
           out[k] = str[j];
         }
       }
 
       // %c
       else if(fmt[i] == 'c'){
+        putch(fmt[i]);
         char c = va_arg(ap,int);
         out[k] = c;
         k ++;
@@ -145,6 +148,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       percent = 0;
     }
     else {
+      putch(fmt[i]);
       out[k] = fmt[i];
       k++;
     } 
