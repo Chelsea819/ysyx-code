@@ -320,7 +320,10 @@ extern "C" int pmem_read(int raddr, char wmask) {
     }
   if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
     // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
-    return 0;
+    time_t current_time;
+    time(&current_time); // 获取系统时间戳
+    printf("系统时间戳：%ld\n", current_time);
+    return current_time;
   }
   return paddr_read((paddr_t)raddr, len);
 }
