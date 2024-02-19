@@ -319,7 +319,7 @@ extern "C" int pmem_read(int raddr, char wmask) {
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
   if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
-    // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
+    Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
     time_t current_time;
     time(&current_time); // 获取系统时间戳
     printf("系统时间戳：%ld\n", current_time);
