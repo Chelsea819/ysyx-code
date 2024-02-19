@@ -45,7 +45,7 @@ void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out,
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   // panic("Not implemented");
   int percent = 0; //检测%
-  int tmp = 0;     //存放%的下标
+  // int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
   int flag = 0;
   int width = 0;
@@ -55,17 +55,17 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   bool if_long = false;
 
   for(int i = 0; k < n-1 && *(fmt + i) != '\0'; i++){
-    if(fmt[i] == '%') {putch(fmt[i]);percent ^= 1; tmp = i;}
+    if(fmt[i] == '%') {putch(fmt[i]);percent ^= 1;}
 
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
-    else if(percent == 1 && i == tmp + 1){
+    else if(percent == 1){
       if(fmt[i] == '0' && !if_for && !if_wid){
-        putch(fmt[i]);
+        // putch(fmt[i]);
         if_for = true;
       }
       else if(fmt[i] >= '0' && fmt[i] <= '9' && !if_wid){
-        putch(fmt[i]);
+        // putch('2');
         if(!if_wid)
           width = fmt[i] - '0';
         else
@@ -79,7 +79,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       }
       // %d
       else if(fmt[i] == 'd'){
-        putch(fmt[i]);
+        // putch(fmt[i]);
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
@@ -104,14 +104,14 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       else if(fmt[i] == 's'){
         char *str = va_arg(ap,char*);
         for(int j = 0; k < n-1 && str[j] != '\0'; j++,k++){
-          putch(fmt[i]);
+          // putch(fmt[i]);
           out[k] = str[j];
         }
       }
 
       // %c
       else if(fmt[i] == 'c'){
-        putch(fmt[i]);
+        // putch(fmt[i]);
         char c = va_arg(ap,int);
         out[k] = c;
         k ++;
@@ -141,14 +141,14 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         if(if_long) if_long = false;
       }
       else {
-        putch(fmt[i]);
+        // putch(fmt[i]);
         panic("Not completed format");
         return -1;
       }
       percent = 0;
     }
     else {
-      putch(fmt[i]);
+      // putch(fmt[i]);
       out[k] = fmt[i];
       k++;
     } 
