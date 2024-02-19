@@ -61,6 +61,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1){
+      if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
+        percent = 0;
       if(fmt[i] == '0' && !if_for && !if_wid){
         putch('f');
         if_for = true;
@@ -146,7 +148,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         panic("Not completed format");
         return -1;
       }
-      percent = 0;
+      
     }
     else {
       putch(fmt[i]);
