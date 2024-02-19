@@ -55,15 +55,17 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   bool if_long = false;
 
   for(int i = 0; k < n-1 && *(fmt + i) != '\0'; i++){
-    if(fmt[i] == '%') {percent ^= 1; tmp = i;}
+    if(fmt[i] == '%') {putch('%');percent ^= 1; tmp = i;}
 
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1 && i == tmp + 1){
       if(fmt[i] == '0' && !if_for && !if_wid){
+        putch('f');
         if_for = true;
       }
       else if(fmt[i] >= '0' && fmt[i] <= '9' && !if_wid){
+        putch('w');
         if(!if_wid)
           width = fmt[i] - '0';
         else
