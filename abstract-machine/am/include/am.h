@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "arch/riscv.h" // this macro is defined in $CFLAGS
+#include ARCH_H // this macro is defined in $CFLAGS
                 // examples: "arch/x86-qemu.h", "arch/native.h", ...
 // Memory protection flags
 #define MMAP_NONE  0x00000000 // no access
