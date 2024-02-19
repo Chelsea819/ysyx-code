@@ -44,6 +44,7 @@ void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out,
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   // panic("Not implemented");
+
   int percent = 0; //检测%
   int tmp = 0;     //存放%的下标
   int k = 0;       //out数组的下标
