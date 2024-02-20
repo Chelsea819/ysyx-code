@@ -31,7 +31,7 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 # endif
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
-NPCFLAGS += $(ARGS_DIFF)
+# NPCFLAGS += $(ARGS_DIFF)
 NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
 CFLAGS += -I$(AM_HOME)/am/include -I$(AM_HOME)/am/src/riscv/npc/libgcc
