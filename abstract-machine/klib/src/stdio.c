@@ -62,10 +62,11 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1){
       // putch(fmt[i]);
-      if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
-        percent = 0;
+      // if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
+      //   percent = 0;
       //%s
       if(fmt[i] == 's'){
+        percent = 0;
         char *str = va_arg(ap,char*);
         for(int j = 0; k < n-1 && str[j] != '\0'; j++,k++){
           // putch(fmt[i]);
@@ -76,6 +77,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       // %c
       else if(fmt[i] == 'c'){
         // putch(fmt[i]);
+        percent = 0;
         char c = va_arg(ap,int);
         out[k] = c;
         k ++;
@@ -100,6 +102,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       // %d
       else if(fmt[i] == 'd'){
         // putch(fmt[i]);
+        percent = 0;
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
@@ -123,6 +126,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       
 
       else if(fmt[i] == 'x'){
+        percent = 0;
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
