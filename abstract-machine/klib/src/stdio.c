@@ -146,7 +146,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         if(if_long) if_long = false;
       }
       else {
-        // putch(fmt[i]);
+        putch(fmt[i]);
         panic("Not completed format");
         return -1;
       }
