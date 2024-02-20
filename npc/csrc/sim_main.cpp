@@ -686,6 +686,8 @@ void free_strtab()
 }
 #endif
 
+void device_update();
+
 static void trace_and_difftest(vaddr_t dnpc){
   
 #ifdef CONFIG_ITRACE_COND
@@ -1060,7 +1062,7 @@ static void execute(uint64_t n)
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;
-    // IFDEF(CONFIG_DEVICE, device_update());
+    IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
