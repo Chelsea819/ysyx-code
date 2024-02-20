@@ -338,7 +338,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     // Log("Write device --- [addr: 0x%08x data: 0x%08x]",waddr,wdata);
     // putchar(wdata);
   }
-  else {
+  // else {
     int len = 0;
     switch (wmask){
       case 0x1: len = 1; break;
@@ -348,7 +348,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
     paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
-  }
+  // }
 }
 
 void ifebreak_func(int inst){
