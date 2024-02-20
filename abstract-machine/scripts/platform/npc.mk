@@ -3,6 +3,7 @@ AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
            riscv/npc/ioe.c \
            riscv/npc/timer.c \
+		   riscv/npc/gpu.c \
            riscv/npc/input.c \
            riscv/npc/cte.c \
            riscv/npc/trap.S \
@@ -34,7 +35,7 @@ NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
 NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
 
-CFLAGS += -I$(AM_HOME)/am/include -I$(AM_HOME)/am/src/riscv/npc/libgcc
+CFLAGS += -I$(AM_HOME)/am/include -I$(AM_HOME)/am/src/riscv/npc/libgcc -I$(AM_HOME)/am/src/riscv/npc/include
 
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c $(DIFF_REF_SO)
 

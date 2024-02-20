@@ -17,11 +17,9 @@
 // }
 
 #include <am.h>
-#include <riscv/riscv.h>
+#include <npc.h>
 
 static uint64_t boot_time = 0;
-# define DEVICE_BASE 0xa0000000
-#define RTC_ADDR        (DEVICE_BASE + 0x0000048)
 
 static uint64_t read_time() {
   uint32_t hi = inl(RTC_ADDR + 4);
