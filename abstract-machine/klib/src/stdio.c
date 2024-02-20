@@ -62,8 +62,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1){
       // putch(fmt[i]);
-      // if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
-      //   percent = 0;
       //%s
       if(fmt[i] == 's'){
         percent = 0;
