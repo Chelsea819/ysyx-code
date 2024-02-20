@@ -64,7 +64,23 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       putch(fmt[i]);
       if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
         percent = 0;
-      if(fmt[i] == '0' && !if_for && !if_wid){
+      //%s
+      if(fmt[i] == 's'){
+        char *str = va_arg(ap,char*);
+        for(int j = 0; k < n-1 && str[j] != '\0'; j++,k++){
+          // putch(fmt[i]);
+          out[k] = str[j];
+        }
+      }
+
+      // %c
+      else if(fmt[i] == 'c'){
+        // putch(fmt[i]);
+        char c = va_arg(ap,int);
+        out[k] = c;
+        k ++;
+      }
+      else if(fmt[i] == '0' && !if_for && !if_wid){
         // putch('f');
         if_for = true;
       }
@@ -104,22 +120,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         if(if_long) if_long = false;
       } 
 
-      //%s
-      else if(fmt[i] == 's'){
-        char *str = va_arg(ap,char*);
-        for(int j = 0; k < n-1 && str[j] != '\0'; j++,k++){
-          // putch(fmt[i]);
-          out[k] = str[j];
-        }
-      }
-
-      // %c
-      else if(fmt[i] == 'c'){
-        // putch(fmt[i]);
-        char c = va_arg(ap,int);
-        out[k] = c;
-        k ++;
-      }
+      
 
       else if(fmt[i] == 'x'){
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
