@@ -5,6 +5,7 @@ WAVE = waveform.vcd
 # SO = -so
 # NAME = riscv32-npc
 
+GUEST_ISA ?= riscv32e
 TOPNAME = ysyx_22041211_top
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATH += /home/chelsea/ysyx-workbench/npc/include 
@@ -47,7 +48,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
 INCLUDES += $(addprefix -I, $(INC_PATH))
-CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" 
+CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -lSDL2 -fsanitize=address -pie $(LIBS)
 
 
