@@ -61,7 +61,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     //当percent为1时进入循环,即出现奇数个`%`
     //匹配到`%`后面的格式化输出标识符
     else if(percent == 1){
-      putch(fmt[i]);
+      // putch(fmt[i]);
       if(fmt[i] == 'd' || fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'x' )
         percent = 0;
       //%s
