@@ -48,7 +48,7 @@ SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
 INCLUDES += $(addprefix -I, $(INC_PATH))
-CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" -D__GUEST_ISA__=$(GUEST_ISA)
+CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" #-D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -lSDL2 -fsanitize=address -pie $(LIBS)
 
 

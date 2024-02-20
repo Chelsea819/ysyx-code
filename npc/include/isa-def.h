@@ -17,7 +17,7 @@
 #define __ISA_RISCVNPC_H__
 
 #include "common.h"
-#define __GUEST_ISA__ riscv32
+// #define __GUEST_ISA__ riscv32
 
 typedef struct {
   word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];

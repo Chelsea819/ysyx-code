@@ -75,7 +75,7 @@ typedef word_t vaddr_t;
 
 #define NPCTRAP(thispc, code) set_npc_state(NPC_END, thispc, code)
 
-#define __GUEST_ISA__ riscv32
+// #define __GUEST_ISA__ riscv32
 
 vluint64_t sim_time = 0;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};

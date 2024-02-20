@@ -28,6 +28,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#define __GUEST_ISA__ riscv32
+
 #if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul
 #define PMEM64 1
 #endif
