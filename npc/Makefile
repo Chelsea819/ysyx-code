@@ -11,8 +11,9 @@ NXDC_FILES = constr/ysyx_22041211_top.nxdc
 INC_PATH += /home/chelsea/ysyx-workbench/npc/include 
 
 VERILATOR = verilator
-VERILATOR_CFLAGS += -MMD --cc --trace -Wall --build -j 0  \
-				-O3 --x-assign fast --x-initial fast --noassert
+VERILATOR_CFLAGS += -MMD --cc  -Wall --build -j 0  \
+				-O3 --x-assign fast --x-initial fast --noassert #--trace
+
 #-ggdb -LDFLAGS -ggdb -CFLAGS -DVL_DEBUG=1 
 # -CFLAGS -D_GLIBCXX_DEBUG
 
