@@ -36,7 +36,7 @@ void device_update() {
   }
   last = now;
 
-  // IFDEF(CONFIG_HAS_VGA, vga_update_screen());
+  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
 // 进一步检查是否有按键按下/释放，以及是否点击了窗口的X按钮
 #ifndef CONFIG_TARGET_AM
