@@ -30,12 +30,13 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) { 
   // if(ctl->sync){
-    putch('1');
+    
     int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
     uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
     uint32_t *p = (uint32_t *)ctl->pixels;
     int k = 0;
     for(int i = y; i < y + h; i ++){
+      putch('1');
       for(int j = x; j < x + w; j ++){
         fb[W*i+j] = p[k++];
       }
