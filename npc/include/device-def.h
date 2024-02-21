@@ -12,4 +12,5 @@
 #define CONFIG_HAS_SERIAL 1 //"Enable serial"
 #define CONFIG_HAS_TIMER 1  //"Enable timer"
 #define CONFIG_HAS_VGA 1  //"Enable VGA"
+#define CONFIG_VGA_SIZE_800x600 1 //"Screen Size 800 x 600"
 #endif
