@@ -36,7 +36,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     uint32_t *p = (uint32_t *)ctl->pixels;
     int k = 0;
     for(int i = y; i < y + h; i ++){
-      putch('1');
+      // putch('1');
       for(int j = x; j < x + w; j ++){
         fb[W*i+j] = p[k++];
       }
