@@ -1,6 +1,7 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
+#include <stdio.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
@@ -43,6 +44,9 @@ void *malloc(size_t size) {
     addr = (char *)heap.start;
   void *hbrk = addr;
   addr = addr + size;
+  printf("heap.start = 0x%08x\n",heap.start);
+  printf("addr = 0x%08x\n",addr);
+  printf("heap.end = 0x%08x\n",heap.end);
   assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
   return hbrk;
 #endif
