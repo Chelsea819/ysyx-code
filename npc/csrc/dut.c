@@ -109,7 +109,9 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     }
     printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     dut.final();
+  #ifdef CONFIG_WAVE
     m_trace->close();
+  #endif
     Assert(0,"Catch difference!\n");
   }
 }
