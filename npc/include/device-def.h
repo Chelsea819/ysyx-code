@@ -6,7 +6,7 @@
 // #define CONFIG_HAS_PORT_IO 0xa1000000
 // #define CONFIG_VGA_CTL_MMIO 0xa0000100
 #define CONFIG_FB_ADDR 0xa1000000
-// #define CONFIG_VGA_SHOW_SCREEN 1    //"Enable SDL SCREEN"
+#define CONFIG_VGA_SHOW_SCREEN 1    //"Enable SDL SCREEN"
 
 
 #define CONFIG_HAS_SERIAL 1 //"Enable serial"
