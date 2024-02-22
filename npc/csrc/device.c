@@ -36,7 +36,7 @@ void device_update() {
   }
   last = now;
 
-  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
+  // IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
 // 进一步检查是否有按键按下/释放，以及是否点击了窗口的X按钮
 #ifndef CONFIG_TARGET_AM
@@ -75,6 +75,6 @@ void init_device() {
 
   IFDEF(CONFIG_HAS_SERIAL, init_serial());
   IFDEF(CONFIG_HAS_TIMER, init_timer());
-  IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
+  // IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
 
 }
