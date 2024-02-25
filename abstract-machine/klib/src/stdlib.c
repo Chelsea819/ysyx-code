@@ -7,7 +7,7 @@
 static unsigned long int next = 1;
 
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  static char * addr = NULL;
+  static void * addr = NULL;
 #endif
 
 int rand(void) {
@@ -41,9 +41,9 @@ void *malloc(size_t size) {
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   if(!size) return NULL;
   if(addr == NULL)
-    addr = (char *)heap.start;
-  void *hbrk = (void *)addr;
-  addr = addr + size;
+    addr = heap.start;
+  void *hbrk = addr;
+  addr = (char *)addr + size;
   assert((uintptr_t)heap.start <= (uintptr_t)addr);
   assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
   return hbrk;
