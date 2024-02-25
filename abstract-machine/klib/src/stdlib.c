@@ -1,13 +1,11 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
-#include <stdio.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
-
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  static char * addr = NULL;
+  static void * addr = NULL;
 #endif
 
 int rand(void) {
@@ -39,15 +37,13 @@ void *malloc(size_t size) {
   // Therefore do not call panic() here, else it will yield a dead recursion:
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  if(!size) return NULL;
-  if(addr == NULL)
-    addr = (char *)heap.start;
-  void *hbrk = addr;
-  addr = addr + size;
-  assert(size >= 0);
-  assert((uintptr_t)heap.start <= (uintptr_t)addr);
-  assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
-  return hbrk;
+  if(addr == NULL){
+    addr = heap.start;
+  }
+  void * ptr = addr;
+  addr = (char*)addr + size;
+  
+  return ptr;
 #endif
   return NULL;
 }
