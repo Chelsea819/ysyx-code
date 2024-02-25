@@ -101,6 +101,7 @@ void *memset(void *s, int c, size_t n) {
   unsigned char val = (unsigned char)c;
   for(int i = 0; i < n; i++){
     *(sp + i) = val;
+    putch('.');
   }
   // printf("---memset end---\n");
   char arr2[5] = "end";
