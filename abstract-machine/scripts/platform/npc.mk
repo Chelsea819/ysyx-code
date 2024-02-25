@@ -18,12 +18,12 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
 # ifdef CONFIG_DIFFTEST
-# GUEST_ISA = riscv32
-# CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
-# DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
-# DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
-# MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
-# ARGS_DIFF = --diff=$(DIFF_REF_SO)
+GUEST_ISA = riscv32
+CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
+DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
+DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
+MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
+ARGS_DIFF = --diff=$(DIFF_REF_SO)
 
 # ifndef CONFIG_DIFFTEST_REF_NEMU
 # $(DIFF_REF_SO):
@@ -52,6 +52,6 @@ run: image
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
 	$(info ARGS_DIFF:$(ARGS_DIFF))
 # $(MAKE) -C $(NEMU_HOME) ISA=riscv32 ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
-# $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
+	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 

@@ -10,7 +10,9 @@
 #include "config.h"
 
 extern TOP_NAME dut;
+#ifdef CONFIG_WAVE
 extern VerilatedVcdC *m_trace;
+#endif
 extern CPU_state cpu;
 
 #ifdef CONFIG_DIFFTEST
