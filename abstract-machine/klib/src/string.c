@@ -1,7 +1,7 @@
 #include <klib.h>
 #include <klib-macros.h>
 #include <stdint.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
@@ -92,13 +92,21 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 /* The memset() function returns a pointer 
       to the memory area s. */
 void *memset(void *s, int c, size_t n) {
-  printf("---memset begin [size:%d]---\n",n);
+  // printf("---memset begin [size:%d]---\n",n);
+  char arr1[10] = "memset";
+  for(int i = 0; i < 7; i ++)
+    putch(arr1[i]);
+  putch('\n');
   unsigned char *sp = (unsigned char *)s;
   unsigned char val = (unsigned char)c;
   for(int i = 0; i < n; i++){
     *(sp + i) = val;
   }
-  printf("---memset end---\n");
+  // printf("---memset end---\n");
+  char arr2[5] = "end";
+  for(int i = 0; i < 5; i ++)
+    putch(arr2[i]);
+  putch('\n');
   return s;
   //panic("Not implemented");
 }
