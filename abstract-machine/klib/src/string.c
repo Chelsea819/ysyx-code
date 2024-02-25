@@ -91,12 +91,14 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 /* fill memory with a constant byte */
 /* The memset() function returns a pointer 
       to the memory area s. */
-void *memset(void *s, int c, size_t n) { //test done.
-  unsigned char *p = (unsigned char *)s;
-  for(size_t i=0;i<n;i++){
-    *(p+i) = c;
+void *memset(void *s, int c, size_t n) {
+  unsigned char *sp = (unsigned char *)s;
+  unsigned char val = (unsigned char)c;
+  for(size_t i = 0; i < n; i++){
+    *(sp + i) = val;
   }
   return s;
+  //panic("Not implemented");
 }
 
 /* The  memmove() function copies n bytes from memory area src to memory area dest.
