@@ -75,6 +75,6 @@ void init_device() {
 
   IFDEF(CONFIG_HAS_SERIAL, init_serial());
   IFDEF(CONFIG_HAS_TIMER, init_timer());
-  // IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
+  IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
 
 }
