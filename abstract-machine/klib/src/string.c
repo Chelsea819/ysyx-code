@@ -97,6 +97,7 @@ void *memset(void *s, int c, size_t n) {
   for(int i = 0; i < 7; i ++)
     putch(arr1[i]);
   putch('\n');
+  putch('[');
   putch(n);
   unsigned char *sp = (unsigned char *)s;
   unsigned char val = (unsigned char)c;
