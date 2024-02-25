@@ -99,9 +99,9 @@ void *memset(void *s, int c, size_t n) {
   putch('\n');
   unsigned char *sp = (unsigned char *)s;
   unsigned char val = (unsigned char)c;
-  for(int i = 0; i < n; i++){
+  for(size_t i = 0; i < n; i++){
     *(sp + i) = val;
-    putch('.');
+    // putch('.');
   }
   // printf("---memset end---\n");
   char arr2[5] = "end";
