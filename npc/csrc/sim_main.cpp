@@ -189,7 +189,7 @@ static const uint32_t img [] = {
   0x00000297,  // auipc t0,0
   0x00100093,  // addi    x[1] = 0 + 1
   0x00000297,  // auipc t0,0
-  0x00100073,  // ebreak (used as npc_trap)
+  0x00100073,  // ebreak (used ass npc_trap)
   0x00100093,  // addi    x[1] = 0 + 1
 };
 
@@ -1876,7 +1876,11 @@ void engine_start() {
 }
 
 int main(int argc, char** argv, char** env) {
-	Verilated::traceEverOn(false); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
+#ifdef CONFIG_WAVE
+	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
+#elif	
+	Verilated::traceEverOn(false); 
+#endif
 	init_npc(argc, argv);
 
 #ifdef CONFIG_WAVE
