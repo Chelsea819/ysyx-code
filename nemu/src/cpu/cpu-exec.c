@@ -417,16 +417,16 @@ static void exec_once(Decode *s, vaddr_t pc)
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
 
-      if ((sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
-      {
-        // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-        if_same = true;
-        break;
-      } 
+      // if ((sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
+      // {
+      //   // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+      //   if_same = true;
+      //   break;
+      // } 
       if (n == 0)
       {
-        
-        Assert(0, "Fail in searching!");
+        if_same = true;
+        // Assert(0, "Fail in searching!");
       }
     }
     if(!if_same){
