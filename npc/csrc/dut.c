@@ -24,16 +24,16 @@ void (*ref_difftest_regcpy)(void *duti, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
-static struct is_skip_ref{
+struct is_skip_ref{
   bool is_skip_ref_bool;
   vaddr_t is_skip_ref_pc;
   struct is_skip_ref *next;
   struct is_skip_ref *past;
 };
 #define NR_SKIP 2
-struct is_skip_ref *head = NULL;
-struct is_skip_ref *tail = NULL;
-struct is_skip_ref skip_pool[2];
+static struct is_skip_ref *head = NULL;
+static struct is_skip_ref *tail = NULL;
+static struct is_skip_ref skip_pool[2];
 
 static int skip_dut_nr_inst = 0;
 
