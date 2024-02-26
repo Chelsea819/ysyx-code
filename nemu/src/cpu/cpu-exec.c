@@ -336,7 +336,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-
+  bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal,  rd = x1, imm = ***
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
@@ -406,8 +406,12 @@ static void exec_once(Decode *s, vaddr_t pc)
       {
         perror("Read error");
       }
-      if(sym.st_value <= 0x800001b0 && sym.st_info == 18 && if_return) printf("sym.st_value = 0x%08x sym.st_size = 0x%08x \n",sym.st_value,sym.st_value + sym.st_size);
-      // 3.2找到对应的一行
+      if ((sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
+      {
+        // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        if_same = true;
+        break;
+      }      // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
       if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
       {
@@ -423,73 +427,75 @@ static void exec_once(Decode *s, vaddr_t pc)
         Assert(0, "Fail in searching!");
       }
     }
+    if(!if_same){
+      // 取出函数名称
+      strncpy(name, strtab + sym.st_name, 19);
 
-    // 取出函数名称
-    strncpy(name, strtab + sym.st_name, 19);
+      // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+      static int index = 1;
+      struct func_call *func;
+      static struct func_call *func_cur = NULL;
 
-    // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-    static int index = 1;
-    struct func_call *func;
-    static struct func_call *func_cur = NULL;
-
-    if (!if_return)
-    {
-      // 函数调用，将函数名放入链表
-      func = malloc(sizeof(struct func_call));
-      func->func_name = malloc(20);
-      strcpy(func->func_name, name);
-      func->past = func_cur;
-      func->next = NULL;
-      if (!func_cur)
+      if (!if_return)
       {
-        func_cur = func;
-      }
-      else
-      {
-        func_cur->next = func;
-        func_cur = func;
-      }
-      printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
-      index++;
-    }
-    else
-    {
-      // 函数返回，将函数名所在链表节点抽出
-      while (1)
-      {
-        // printf("1111111111111\n");
-        printf("name:%s\n",name);
-        Assert(func_cur, "func_cur NULL!");
-        Assert(func_cur->func_name, "func_cur->func_name NULL!");
-        Assert(name, "name NULL!");
-        int flag = 0;
-        if (strcmp(func_cur->func_name, name) == 0)
-          flag = 1;
-        printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-        index++;
-        printf("name:%s\n",name);
-
-        free(func_cur->func_name);
-
-        // 抽出节点
-        if (func_cur->past == NULL)
+        // 函数调用，将函数名放入链表
+        func = malloc(sizeof(struct func_call));
+        func->func_name = malloc(20);
+        strcpy(func->func_name, name);
+        func->past = func_cur;
+        func->next = NULL;
+        if (!func_cur)
         {
-          free(func_cur);
+          func_cur = func;
         }
         else
         {
-          func_cur = func_cur->past;
-          free(func_cur->next);
-          func_cur->next = NULL;
+          func_cur->next = func;
+          func_cur = func;
         }
-
-        if (flag) break;
-
-        printf("flag = %d\n",flag);
+        printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+        index++;
       }
+      else
+      {
+        // 函数返回，将函数名所在链表节点抽出
+        while (1)
+        {
+          // printf("1111111111111\n");
+          printf("name:%s\n",name);
+          Assert(func_cur, "func_cur NULL!");
+          Assert(func_cur->func_name, "func_cur->func_name NULL!");
+          Assert(name, "name NULL!");
+          int flag = 0;
+          if (strcmp(func_cur->func_name, name) == 0)
+            flag = 1;
+          printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          index++;
+          printf("name:%s\n",name);
+
+          free(func_cur->func_name);
+
+          // 抽出节点
+          if (func_cur->past == NULL)
+          {
+            free(func_cur);
+          }
+          else
+          {
+            func_cur = func_cur->past;
+            free(func_cur->next);
+            func_cur->next = NULL;
+          }
+
+          if (flag) break;
+
+          printf("flag = %d\n",flag);
+        }
+      }
+      Assert(func_cur, "func_cur NULL!");
+      free(name);
     }
-    Assert(func_cur, "func_cur NULL!");
-    free(name);
+    
   }
   free(opcode);
   free(ins);
