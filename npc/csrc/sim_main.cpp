@@ -1878,7 +1878,7 @@ void engine_start() {
 int main(int argc, char** argv, char** env) {
 #ifdef CONFIG_WAVE
 	Verilated::traceEverOn(true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
-#elif	
+#else	
 	Verilated::traceEverOn(false); 
 #endif
 	init_npc(argc, argv);
