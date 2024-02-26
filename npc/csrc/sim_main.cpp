@@ -600,7 +600,7 @@ void invalid_inst(vaddr_t thispc) {
 /* ------------------------------------cpu-exe.c------------------------------------ */
 word_t expr(char *e, bool *success);
 Decode s;
-
+Decode diff;
 FILE *ftrace_fp = NULL;
 
 Elf32_Ehdr Elf_header;
@@ -731,7 +731,7 @@ static void trace_and_difftest(vaddr_t dnpc){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
- IFDEF(CONFIG_DIFFTEST, difftest_step(s.pc, dnpc));
+ IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, dnpc));
 #endif
 
  
@@ -1064,8 +1064,12 @@ static void execute(uint64_t n)
     //所以这里要整个往后延迟一个周期
     if(cpu.pc != 0x80000000 && dut.clk == 1) {
       // printf("cpu.pc = 0x%08x dut.pc = 0x%08x s.npc = 0x%08x\n",cpu.pc,dut.pc,s.dnpc);
-      trace_and_difftest(s.dnpc);
+      trace_and_difftest(diff.dnpc);
     }
+
+    diff.pc = s.pc;
+    diff.snpc = s.snpc;
+    diff.dnpc = s.dnpc;
     
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
