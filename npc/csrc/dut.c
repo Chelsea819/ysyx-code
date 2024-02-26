@@ -24,7 +24,7 @@ void (*ref_difftest_regcpy)(void *duti, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
-
+static vaddr_t is_skip_ref_pc = 0;
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
 
@@ -32,6 +32,7 @@ static int skip_dut_nr_inst = 0;
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
   is_skip_ref = true;
+  is_skip_ref_pc = cpu.pc;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
@@ -55,6 +56,7 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
     ref_difftest_exec(1);
   }
 }
+//difftest_skip_dut还需要修改，因为nemu和npc错位的问题
 
 const char *regs1[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -136,11 +138,12 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   }
 
   //该指令的执行结果以NEMU的状态为准
-  if (is_skip_ref) {
+  if (is_skip_ref && is_skip_ref_pc == pc) {
     printf("pc = 0x%08x npc = 0x%08x\n",pc,npc);
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
+    is_skip_ref_pc = 0;
     return;
   }
 // ref 0x8000 0x8004 0x8008 0x800c
