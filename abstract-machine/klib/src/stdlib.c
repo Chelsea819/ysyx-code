@@ -42,10 +42,6 @@ void *malloc(size_t size) {
   // if(!size) return NULL;
   if(addr == NULL){
     addr = (char *)heap.start;
-    putch('m');putch('\n');
-  }
-  else{
-    putch('e');putch('\n');
   }
   void *hbrk = addr;
   addr = addr + size;
