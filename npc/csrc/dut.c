@@ -140,7 +140,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   //该指令的执行结果以NEMU的状态为准
   if (is_skip_ref && is_skip_ref_pc == pc) {
-    printf("pc = 0x%08x npc = 0x%08x\n",pc,npc);
+    Log("pc = 0x%08x npc = 0x%08x\n",pc,npc);
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
