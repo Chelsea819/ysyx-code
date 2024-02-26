@@ -406,12 +406,12 @@ static void exec_once(Decode *s, vaddr_t pc)
       {
         perror("Read error");
       }
-
+      printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
       if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
       {
-        printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
       }
       // 3.2.2 函数调用 是跳转到一个新函数的头部
@@ -419,7 +419,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       if (n == 0)
       {
-        printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+        
         Assert(0, "Fail in searching!");
       }
     }
