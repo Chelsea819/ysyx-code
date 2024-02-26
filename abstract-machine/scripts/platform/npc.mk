@@ -1,4 +1,4 @@
-include $(AM_HOME)/scripts/isa/riscv.mk
+# include $(AM_HOME)/scripts/isa/riscv.mk
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
            riscv/npc/ioe.c \
