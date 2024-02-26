@@ -1,7 +1,7 @@
 #ifndef __NPC_CONFIG_H__
 #define __NPC_CONFIG_H__
 
-// #define CONFIG_MTRACE 1
+#define CONFIG_MTRACE 1
 // #define CONFIG_FTRACE 1
 #define CONFIG_DIFFTEST 1
 // #define CONFIG_ITRACE_COND 1
