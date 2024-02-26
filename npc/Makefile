@@ -12,7 +12,7 @@ INC_PATH += /home/chelsea/ysyx-workbench/npc/include
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc  -Wall --build -j 0  \
-				-O3 --x-assign fast --x-initial fast --noassert #--trace
+				-O3 --x-assign fast --x-initial fast --noassert --trace
 
 #-ggdb -LDFLAGS -ggdb -CFLAGS -DVL_DEBUG=1 
 # -CFLAGS -D_GLIBCXX_DEBUG

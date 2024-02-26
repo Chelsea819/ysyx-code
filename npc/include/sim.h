@@ -1,6 +1,6 @@
 #ifndef __SIM_H__
 #define __SIM_H__ 1
-
+#include "config.h"
 #include "svdpi.h"
 #include "Vysyx_22041211_top__Dpi.h"
 #include <verilated.h>

@@ -185,7 +185,7 @@ unsigned char isa_logo[] = {
 };
 
 static const uint32_t img [] = {
-  0x00000297,  // auipc t0,0
+  0x00010537,  // lui	a0,0x10
   0x00000297,  // auipc t0,0
   0x00100093,  // addi    x[1] = 0 + 1
   0x00000297,  // auipc t0,0
