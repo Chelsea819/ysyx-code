@@ -130,13 +130,13 @@ printf("pc = 0x%08x npc = 0x%08x\n",pc,npc);
       return;
     }
     skip_dut_nr_inst --;
-    if (skip_dut_nr_inst == 0 && pc == is_skip_ref_pc)
+    if (skip_dut_nr_inst == 0)
       panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
     return;
   }
 
   //该指令的执行结果以NEMU的状态为准
-  if (is_skip_ref) {
+  if (is_skip_ref && pc == is_skip_ref_pc) {
     printf("pc = 0x%08x npc = 0x%08x\n",pc,npc);
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
