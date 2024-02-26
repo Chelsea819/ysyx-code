@@ -44,6 +44,9 @@ void *malloc(size_t size) {
     addr = (char *)heap.start;
     putch('m');putch('\n');
   }
+  else{
+    putch('e');putch('\n');
+  }
   void *hbrk = addr;
   addr = addr + size;
   // assert(size >= 0);
