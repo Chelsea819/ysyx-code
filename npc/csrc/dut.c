@@ -32,7 +32,7 @@ typedef static struct is_skip_ref{
 }skip;
 #define NR_SKIP 2
 skip *head = NULL;
-skip *end = NULL;
+skip *tail = NULL;
 skip skip_pool[2];
 
 static int skip_dut_nr_inst = 0;
@@ -40,11 +40,11 @@ static int skip_dut_nr_inst = 0;
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
-  end->is_skip_ref_bool = true;
-  end->is_skip_ref_pc = dut.pc;
-  printf("end->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",end->is_skip_ref_pc,cpu.pc,dut.pc);
+  tail->is_skip_ref_bool = true;
+  tail->is_skip_ref_pc = dut.pc;
+  printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut.pc);
 
-  end = end->next;
+  tail = tail->next;
   // is_skip_ref = true;
   // is_skip_ref_pc = dut.pc;
   // If such an instruction is one of the instruction packing in QEMU
@@ -79,14 +79,14 @@ const char *regs1[] = {
 };
 
 void init_skip_pool(){
-  for (i = 0; i < NR_SKIP; i ++) {
+  for (int i = 0; i < NR_SKIP; i ++) {
     skip_pool[i].is_skip_ref_bool = false;
     skip_pool[i].is_skip_ref_pc = 0;
     skip_pool[i].next = (i == NR_SKIP - 1 ? skip_pool : &skip_pool[i + 1]);
     skip_pool[i].past = (i == 0 ? &skip_pool[NR_SKIP - 1] : &skip_pool[i - 1]);
   }
   head = skip_pool;
-  end = skip_pool;
+  tail = skip_pool;
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
