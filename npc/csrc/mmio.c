@@ -66,6 +66,7 @@ word_t mmio_read(paddr_t addr, int len) {
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
+  printf("mmio_write(); --[addr:0x%08x]--\n");
   IOMap *dev = fetch_mmio_map(addr);
 #ifdef CONFIG_DTRACE
   Log("Write device %s\n",dev->name);
