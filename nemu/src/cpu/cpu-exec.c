@@ -419,6 +419,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       if (n == 0)
       {
+        printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         Assert(0, "Fail in searching!");
       }
     }
