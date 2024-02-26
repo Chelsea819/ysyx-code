@@ -25,6 +25,7 @@ void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
 static bool is_skip_ref = false;
+static bool is_skip_ref_pc = false;
 static int skip_dut_nr_inst = 0;
 
 // this is used to let ref skip instructions which
@@ -129,7 +130,7 @@ printf("pc = 0x%08x npc = 0x%08x\n",pc,npc);
       return;
     }
     skip_dut_nr_inst --;
-    if (skip_dut_nr_inst == 0)
+    if (skip_dut_nr_inst == 0 && pc == is_skip_ref_pc)
       panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
     return;
   }
