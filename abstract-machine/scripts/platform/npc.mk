@@ -48,7 +48,6 @@ gdb: image
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdb ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
 
 run: image
-	$(info ARCHIVES:$(ARCHIVES))
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
 	$(info ARGS_DIFF:$(ARGS_DIFF))
 	-$(MAKE) -C $(NEMU_HOME) ISA=riscv32 run ARGS="$(NEMUFLAGS)"  IMG=$(IMAGE).bin
