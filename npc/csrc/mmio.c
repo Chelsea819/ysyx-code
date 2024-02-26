@@ -23,6 +23,7 @@ static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
 static IOMap* fetch_mmio_map(paddr_t addr) {
+  printf("fetch_mmio_map(); --[addr:0x%08x]--\n");
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
   return (mapid == -1 ? NULL : &maps[mapid]);
 }
@@ -56,6 +57,7 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
+  printf("mmio_read(); --[addr:0x%08x]--\n");
   IOMap *dev = fetch_mmio_map(addr);
 #ifdef CONFIG_DTRACE
   Log("Read device %s len: %d\n",dev->name,len);
