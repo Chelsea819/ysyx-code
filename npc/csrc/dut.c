@@ -143,6 +143,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
+    is_skip_ref_pc = 0;
     return;
   }
 // ref 0x8000 0x8004 0x8008 0x800c
