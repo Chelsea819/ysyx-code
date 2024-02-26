@@ -24,16 +24,29 @@ void (*ref_difftest_regcpy)(void *duti, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
-static bool is_skip_ref = false;
-static vaddr_t is_skip_ref_pc = false;
+typedef static struct is_skip_ref{
+  bool is_skip_ref_bool;
+  vaddr_t is_skip_ref_pc;
+  struct is_skip_ref *next;
+  struct is_skip_ref *past;
+}skip;
+#define NR_SKIP 2
+skip *head = NULL;
+skip *end = NULL;
+skip skip_pool[2];
+
 static int skip_dut_nr_inst = 0;
 
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
-  is_skip_ref = true;
-  is_skip_ref_pc = dut.pc;
-  printf("is_skip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",is_skip_ref_pc,cpu.pc,dut.pc);
+  end->is_skip_ref_bool = true;
+  end->is_skip_ref_pc = dut.pc;
+  printf("end->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",end->is_skip_ref_pc,cpu.pc,dut.pc);
+
+  end = end->next;
+  // is_skip_ref = true;
+  // is_skip_ref_pc = dut.pc;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
@@ -64,6 +77,17 @@ const char *regs1[] = {
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
+
+void init_skip_pool(){
+  for (i = 0; i < NR_SKIP; i ++) {
+    skip_pool[i].is_skip_ref_bool = false;
+    skip_pool[i].is_skip_ref_pc = 0;
+    skip_pool[i].next = (i == NR_SKIP - 1 ? skip_pool : &skip_pool[i + 1]);
+    skip_pool[i].past = (i == 0 ? &skip_pool[NR_SKIP - 1] : &skip_pool[i - 1]);
+  }
+  head = skip_pool;
+  end = skip_pool;
+}
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
@@ -102,6 +126,9 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   
   //将DUT的寄存器状态拷贝到REF中
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+
+  init_skip_pool();
+
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
@@ -118,6 +145,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   #endif
     Assert(0,"Catch difference!\n");
   }
+  skip_pool[0].
 }
 
 //进行逐条指令执行后的状态对比
@@ -138,12 +166,13 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   }
 
   //该指令的执行结果以NEMU的状态为准
-  if (is_skip_ref && pc == is_skip_ref_pc) {
+  if (head->is_skip_ref_bool && pc == head->is_skip_ref_pc) {
     // Log("pc = 0x%08x npc = 0x%08x\n",pc,npc);
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-    is_skip_ref = false;
-    is_skip_ref_pc = 0;
+    head->is_skip_ref_bool = false;
+    head->is_skip_ref_pc = 0;
+    head = head->next;
     return;
   }
 // ref 0x8000 0x8004 0x8008 0x800c
