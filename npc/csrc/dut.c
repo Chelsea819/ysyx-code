@@ -145,7 +145,6 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   #endif
     Assert(0,"Catch difference!\n");
   }
-  skip_pool[0].
 }
 
 //进行逐条指令执行后的状态对比
