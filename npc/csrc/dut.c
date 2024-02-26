@@ -33,7 +33,7 @@ static int skip_dut_nr_inst = 0;
 void difftest_skip_ref() {
   is_skip_ref = true;
   is_skip_ref_pc = cpu.pc;
-  printf("is_skip_ref_pc = 0x%08x\n",is_skip_ref_pc);
+  printf("is_skip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",is_skip_ref_pc,cpu.pc,dut.pc);
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
