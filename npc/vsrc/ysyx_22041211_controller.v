@@ -87,6 +87,7 @@ module ysyx_22041211_controller(
 
     assign ALUcontrol = (ALUop == 2'b00)? 4'b0000:                             //根据op判断加法
                         (ALUop == 2'b01)? 4'b0001:                             //根据op判断减法
+                        (opcode == 7'b0110111) ? 4'b1010 :                     //U lui src2
                         ({ALUop,func3,func7} == 12'b11_000_0000000)? 4'b0000:  //R + add
                         ({ALUop,func3,func7} == 12'b11_000_0100000)? 4'b0001:  //R - sub
                         ({ALUop,func3,func7} == 12'b110010000000)? 4'b0010:  //R << sll
@@ -111,8 +112,8 @@ module ysyx_22041211_controller(
                         ({ALUop,branch,func3} == 8'b10_000_111)? 4'b1001:  //I & andi
                         ({ALUop,branch,func3,shamt_F} == 14'b10_000_001_000000)? 4'b1100:  //I << slli-shamt
                         ({ALUop,branch,func3,shamt_F} == 14'b10_000_101_000000)? 4'b1011:  //I >> srli-shamt
-                        ({ALUop,branch,func3,shamt_F} == 14'b10_000_101_010000)? 4'b1101:  //I >>> srai-shamt
-                        (opcode == 7'b0110111) ? 4'b1010 : 4'b1111;  //U lui src2 
+                        ({ALUop,branch,func3,shamt_F} == 14'b10_000_101_010000)? 4'b1101: 4'b1111;  //I >>> srai-shamt
+                         
 
 
 
