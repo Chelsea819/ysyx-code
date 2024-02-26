@@ -406,7 +406,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       {
         perror("Read error");
       }
-      if(sym.st_value <= 0x800001b0 && sym.st_info == 18) printf("sym.st_value = 0x%08x sym.st_size = 0x%08x \n",sym.st_value,sym.st_value + sym.st_size);
+      if(sym.st_value <= 0x800001b0 && sym.st_info == 18 && if_return) printf("sym.st_value = 0x%08x sym.st_size = 0x%08x \n",sym.st_value,sym.st_value + sym.st_size);
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
       if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
