@@ -75,7 +75,6 @@ static long load_img() {
   return size;
 }
 
-
 //解析命令行参数
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
@@ -137,7 +136,6 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
-
 
   /* Initialize the simple debugger.初始化简单调试器 */
   init_sdb();
