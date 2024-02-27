@@ -17,15 +17,6 @@
 
 #define NR_WP 32
 
-<<<<<<< HEAD
-typedef struct watchpoint {
-  int NO;
-  int times;
-  uint32_t data;
-  char *target;
-  struct watchpoint *next;
-  struct watchpoint *past;
-=======
 // typedef struct watchpoint {
 //   int NO;
 //   int times;
@@ -33,20 +24,14 @@ typedef struct watchpoint {
 //   char *target;
 //   struct watchpoint *next;
 //   struct watchpoint *past;
->>>>>>> pa2
 
 //   /* TODO: Add more members if necessary */
 
 // } WP;
 
-<<<<<<< HEAD
-static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
-=======
 WP *wp_pool = NULL;
 WP *free_ = NULL;
 WP *head = NULL;
->>>>>>> pa2
 //static int gap = 31;
 
 WP* new_wp(char *args){
@@ -65,20 +50,6 @@ WP* new_wp(char *args){
 
   //find ava point
   WP* get_wp = free_;
-<<<<<<< HEAD
-  while(get_wp != NULL){
-    if(get_wp->next == NULL){
-      break;
-    }
-    get_wp = get_wp->next;
-  }
-
-  //cut it from free_
-  get_wp->past->next = NULL;
-  get_wp->next = NULL;
-  get_wp->times = 0;
-  get_wp->target = malloc(strlen(args)+1);
-=======
   free_ = free_->next;
   // while(get_wp != NULL){
   //   if(get_wp->next == NULL){
@@ -91,7 +62,6 @@ WP* new_wp(char *args){
   // get_wp->past->next = NULL;
   get_wp->times = 0;
   get_wp->target = (char *)malloc(strlen(args)+1);
->>>>>>> pa2
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
   Assert(success,"Make_token fail!");
