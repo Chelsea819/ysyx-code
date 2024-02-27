@@ -117,8 +117,8 @@ static bool make_token(char *e) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        //Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            //i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -232,24 +232,30 @@ bool check_parentheses(int p, int q){
   int left = 0;
   int right = 0;
   int fake_false = 0;
-  if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)
-    {
-      return false;}
+  if(tokens[p].type != TK_LEFT_BRA  || tokens[q].type != TK_RIGHT_BRA)      return false;
   else {
-    for(int i = p; i < q ; i ++){
-      if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
+    for(int i = p; i <= q ; i ++){
+      // if(left == 1 && right == 0 && tokens[i].type == TK_RIGHT_BRA) {
+      //   fake_false = 1;
+      // }
+      if(left == right && left!=0  && i != q ) {
         fake_false = 1;
+        //printf("fake_false = 1\n");
       }
       if(tokens[i].type == TK_RIGHT_BRA) {
         right += 1;
-        if(right > left)  Assert(0,"Bad expression--too much right brackets");
+        //printf("right = %d  i = %d \n",right,i);
+        if(right > left)  {
+          //printf("right = %d left = %d i = %d \n",right,left,i);
+          Assert(0,"Bad expression--too much right brackets");}
         }
       else if(tokens[i].type == TK_LEFT_BRA) {
         left += 1;
+        //printf("left = %d  i = %d \n",left,i);
       }
 
     }
-    if(left != right + 1) Assert(0,"Bad expression--too much left brackets,left = %d right = %d\n",left,right);
+    if(left != right ) Assert(0,"Bad expression--too much left brackets,left = %d right = %d\n",left,right);
   }
   if(fake_false) return false;
   return true;
@@ -265,7 +271,6 @@ uint32_t eval(int p, int q){
   int op_type1 = 0;
   int op = 0;
   bool success = false;
-  
   //int error = 0;
   //printf("initial p = %d ,q = %d\n",p,q);
   if (p > q) {
@@ -281,9 +286,14 @@ uint32_t eval(int p, int q){
 
     case TK_NUM: return convert_ten(tokens[p].str);
 
-    //寄存器里的值
+    //寄存器 or pc 里的值
     case TK_REG: 
-      return isa_reg_str2val(tokens[p].str, &success);
+      //printf("pc current\n");
+      char *arr1 = malloc(3*sizeof(char));
+      memset(arr1,0,3*sizeof(char));
+      strncpy(arr1,tokens[p].str,2);
+      
+      return isa_reg_str2val(arr1, &success);
 
     //十六进制数 
     case TK_HEXA: 
@@ -310,9 +320,9 @@ uint32_t eval(int p, int q){
     op = find_main(p,q);
     op_type1 = op_type;
     val1 = eval(p, op - 1);
-    //printf("val1 = %d\n",val1);
+    //printf("val1 = 0x%08x\n",val1);
     val2 = eval(op + 1, q);
-    //printf("val2 = %d\n",val2);
+    //printf("val2 = 0x%08x\n",val2);
     //printf("find_main op_type: %d\n",op_type);
 
     switch (op_type1) {

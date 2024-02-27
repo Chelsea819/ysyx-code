@@ -17,28 +17,42 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "sdb.h"
+#include <sdb.h>
 #include <memory/vaddr.h>
 
 static int is_batch_mode = false;
 
-typedef struct watchpoint {
-  int NO;
-  int times;
-  uint32_t data;
-  char *target;
-  struct watchpoint *next;
-  struct watchpoint *past;
+// typedef struct watchpoint {
+//   int NO;
+//   int times;
+//   uint32_t data;
+//   char *target;
+//   struct watchpoint *next;
+//   struct watchpoint *past;
 
-  /* TODO: Add more members if necessary */
+//   /* TODO: Add more members if necessary */
 
-} WP;
+// } WP;
+
+typedef struct iringbuf_state{
+  char *rbuf;
+  struct iringbuf_state *next;
+  struct iringbuf_state *past;
+}iringbuf;
 
 void init_regex();
 void init_wp_pool();
 WP* new_wp(char *args);
-WP* get_head();
+// WP* get_head();
 void free_wp(WP *wp);
+
+#ifdef CONFIG_IRINGBUF
+void init_iringbuf();
+#endif
+
+extern WP *head;
+extern WP *wp_pool;
+
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets()
@@ -65,7 +79,7 @@ static char too_lessArg(char *args){
   if(args == NULL) {
     Log("Without necessary arguments!");
     return 1;
-  }
+  } 
   return 0;
 }
 
@@ -93,12 +107,17 @@ uint32_t convert_ten(char *args){
   while(flag_neg --) n = n * (-1);
   return n;
 }
-
+//0x80008ffc
 uint32_t convert_16(char *args){
   uint32_t addr = 0;
-  int flag = 1;
+  uint32_t flag = 1;
   for(int i = strlen(args) - 1;i >= 2;i --){
-    addr += ((int)args[i] - (int)'0') * flag;
+    if(args[i] >= 'a' && args[i] <= 'f'){
+      addr += ((int)args[i] - (int)'a' + 10) * flag;
+    }
+    else {
+      addr += ((int)args[i] - (int)'0') * flag;
+  }
     flag *= 16;
   }
   return addr;
@@ -131,11 +150,15 @@ static int cmd_help(char *args);
 static int cmd_w(char *args){
   if(too_lessArg(args) == 1) return 0;
   WP* ret =new_wp(args);
-  if(ret==NULL) printf("%s already in wp_pool!\n",args); 
+  if(ret==NULL) printf("%s already in wp_pool!\n",args);
+  // if(head != NULL) printf("\n head \nNO:%d  target:%s   %p   data: %x\n",head->NO,head->target,head->target,head->data);
+  watchPoints_display();
+// printf("printf address of head target:%p\n",head->target);
   return 0;
 }
 
 static int cmd_pcount(char *args){
+  watchPoints_display();
   bool success = true;
   if(too_lessArg(args) == 1) {
     return 0;
@@ -155,24 +178,26 @@ static int cmd_x(char *args){
   if(too_lessArg(arg2) == 1) return 0;
   int len = convert_ten(arg1);
   vaddr_t addr = convert_16(arg2);
+  printf("addr = %08x\n",addr);
   for (int i = 0;i < len;i ++){
     printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,vaddr_read(addr + i, 4));
   }
   return 0; 
 }
 
-static void watchPoints_display(){
-  WP *index = get_head();
+void watchPoints_display(){
+  // WP *index = get_head();
+  WP *index = head;
   if(index == NULL ) {
-    printf("no WP in watchPool\n");
+    printf("Now, no WP in watchPool!\n");
     return;
   }
   printf("head : %p\n",index);
-  printf("head->next : %p\n",index->next);
-  printf("Num \tTYpe \tDisp \tEnb \tAddress \t What\n");
+  //printf("head->next : %p\n",index->next);
+  printf("\033[92m Num \tTYpe \tDisp \tEnb \tAddress \t What \033[m \n");
   while(index != NULL){
-    printf("%d \thw watchpoint \tkeep \ty \t %s\n",index->NO,index->target);
-    printf(" \tbreakpoint already hit %d time\n",index->times);
+    printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n",index->NO,index->target);
+    printf("\033[96m \tbreakpoint already hit %d time \033[m \n",index->times);
     index = index->next;
   }
   return;
@@ -188,15 +213,18 @@ static int cmd_info(char *args){
 
 static int cmd_d(char *args){
   if(too_lessArg(args) == 1) return 0;
-  WP *index = get_head();
+  // WP *index = get_head();
+  WP *index = head;
   while(index != NULL){
-    if(strcmp(args,index->target) == 0){
+    if(convert_ten(args) == index->NO){
       free_wp(index);
+      watchPoints_display();
       return 0;;
     }
     index = index->next;
   }
   printf("No %s in watchpool!\n",args);
+  watchPoints_display();
   return 0;
 }
 
@@ -256,15 +284,17 @@ void sdb_set_batch_mode()
   is_batch_mode = true;
 }
 
+iringbuf* get_head_iringbuf();
+
 /* Receive commands from user. */
 void sdb_mainloop()
 {
   if (is_batch_mode)
   {
     cmd_c(NULL);
-    return;
+    //return;
   }
-
+  cmd_q(NULL);return;
   for (char *str; (str = rl_gets()) != NULL;)
   {
     char *str_end = str + strlen(str);
@@ -308,11 +338,26 @@ void sdb_mainloop()
       printf("Unknown command '%s'\n", cmd);
     }
   }
-  WP *head = get_head();
-  while(head != NULL){
-    free(head->target);
-    head = head->next;
+
+  printf("start free!\n\n");
+  // WP *head = get_head();
+  WP *index = head;
+  while(index != NULL){
+    free(index->target);
+    index->target = NULL;
+    index = index->next;
   }
+  free(wp_pool);
+
+  #ifdef CONFIG_IRINGBUF
+  iringbuf *head_i = get_head_iringbuf();
+  while(head_i != NULL && head_i->rbuf != NULL){
+    free(head_i->rbuf);
+    head_i->rbuf = NULL;
+    head_i = head_i->next;
+  }
+  #endif
+  
 }
 
 void init_sdb()
@@ -323,4 +368,9 @@ void init_sdb()
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+#ifdef CONFIG_IRINGBUF
+  /* Initialize the iringbuf. */
+  init_iringbuf();
+#endif
 }

@@ -17,8 +17,13 @@
 #include <cpu/difftest.h>
 #include "../local-include/reg.h"
 
+// 把通用寄存器和PC与从DUT中读出的寄存器的值进行比较.
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  return false;
+  if(cpu.pc!= ref_r->pc) return false;
+  for(int i = 0; i < 32; i++){
+    if(ref_r->gpr[i] != gpr(i)) return false;
+  } 
+  return true;
 }
 
 void isa_difftest_attach() {

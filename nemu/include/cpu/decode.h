@@ -17,11 +17,12 @@
 #define __CPU_DECODE_H__
 
 #include <isa.h>
+// #define CONFIG_ITRACE 1
 
 typedef struct Decode {
   vaddr_t pc;
-  vaddr_t snpc; // static next pc
-  vaddr_t dnpc; // dynamic next pc
+  vaddr_t snpc; // static next pc 静态指令是指程序代码中的指令
+  vaddr_t dnpc; // dynamic next pc 动态指令是指程序运行过程中的指令
   ISADecodeInfo isa; //用于存放ISA相关的译码信息
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;   //译码信息结构体Decode
@@ -43,6 +44,9 @@ static inline void pattern_decode(const char *str, int len,
       __shift = (c == '?' ? __shift + 1 : 0); \
     } \
   }
+  //将模式字符串中的0和1抽取到整型变量key中
+  //mask表示key的掩码
+  //shift则表示opcode距离最低位的比特数量, 用于帮助编译器进行优化
 
 #define macro2(i)  macro(i);   macro((i) + 1)
 #define macro4(i)  macro2(i);  macro2((i) + 2)
@@ -75,6 +79,7 @@ static inline void pattern_decode_hex(const char *str, int len,
       __shift = (c == '?' ? __shift + 4 : 0); \
     } \
   }
+  
 
   macro16(0);
   panic("pattern too long");
@@ -87,6 +92,7 @@ finish:
 
 
 // --- pattern matching wrappers for decode ---
+//用于定义一条模式匹配规则
 #define INSTPAT(pattern, ...) do { \
   uint64_t key, mask, shift; \
   pattern_decode(pattern, STRLEN(pattern), &key, &mask, &shift); \

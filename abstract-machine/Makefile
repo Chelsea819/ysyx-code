@@ -5,9 +5,9 @@ html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
-## 1. Basic Setup and Checks
+## 1. Basic Setup and Checks 基本设置与检查
 
-### Default to create a bare-metal kernel image
+### Default to create a bare-metal kernel image 默认创造一个裸机内核镜像
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
@@ -16,10 +16,10 @@ endif
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
-### Print build info message
+### Print build info message 打印信息
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
-### Check: environment variable `$AM_HOME` looks sane
+### Check: environment variable `$AM_HOME` looks sane 检查环境变量是否正确
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
@@ -93,10 +93,10 @@ LDFLAGS  += -z noexecstack
 
 ## 4. Arch-Specific Configurations
 
-### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
+### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`) 设置了CFLAGS LDFLAGS等参数 设置了ARCH_H run
 -include $(AM_HOME)/scripts/$(ARCH).mk
 
-### Fall back to native gcc/binutils if there is no cross compiler
+### Fall back to native gcc/binutils if there is no cross compiler 交叉编译
 ifeq ($(wildcard $(shell which $(CC))),)
   $(info #  $(CC) not found; fall back to default gcc and binutils)
   CROSS_COMPILE :=
@@ -125,7 +125,7 @@ $(DST_DIR)/%.o: %.S
 	@$(AS) $(ASFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
-$(LIBS): %:
+$(LIBS): %: 
 	@$(MAKE) -s -C $(AM_HOME)/$* archive
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)

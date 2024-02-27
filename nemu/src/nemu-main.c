@@ -14,11 +14,11 @@
 ***************************************************************************************/
 
 #include <common.h>
-
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
+void free_strtab();
 word_t expr(char *e, bool *success);
 uint32_t convert_ten(char *args);
 
@@ -27,9 +27,11 @@ int main(int argc, char *argv[]) {
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
 #else
+  
   init_monitor(argc, argv);
 #endif
 
+#ifdef TEST_EXPR
   FILE * fp = fopen("/home/chelsea/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
   if(fp == NULL){
     Assert(0,"Can not open 'input' !");
@@ -40,21 +42,24 @@ int main(int argc, char *argv[]) {
   word_t result_exp = 0;
   word_t result_before = 0;
   while(fscanf(fp,"%d %s",&result_before,exp) != EOF){
-    Log("Begin test!!!");
-
     if(strlen(exp) >= 31)  continue;
 
     result_exp = expr(exp,&success);
 
     if(result_exp != result_before) Log("result_exp != result_before");
     memset(exp,0,32 * sizeof(char));
-    printf("result_exp == result_before!\n");
+    Log("result_exp == result_before!");
   }
   fclose(fp);
   free(exp);
+#endif
 
   /* Start engine. */
   engine_start();
+
+#ifdef CONFIG_FTRACE
+  free_strtab();
+#endif
 
   return is_exit_status_bad();
 }

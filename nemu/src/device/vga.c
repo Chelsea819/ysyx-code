@@ -71,6 +71,15 @@ static inline void update_screen() {
 #endif
 
 void vga_update_screen() {
+  // printf("vgactl_port_base[1] %d\n",vgactl_port_base[1]);
+  if(vgactl_port_base[1]) {
+    // printf("enter vgactl_port_base[1] %d\n",vgactl_port_base[1]);
+    update_screen();
+    vgactl_port_base[1] = 0;
+    // io_write(CONFIG_VGA_CTL_MMIO + 4, 0);
+    // io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), false);
+  }
+
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
 }
@@ -83,7 +92,6 @@ void init_vga() {
 #else
   add_mmio_map("vgactl", CONFIG_VGA_CTL_MMIO, vgactl_port_base, 8, NULL);
 #endif
-
   vmem = new_space(screen_size());
   add_mmio_map("vmem", CONFIG_FB_ADDR, vmem, screen_size(), NULL);
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());

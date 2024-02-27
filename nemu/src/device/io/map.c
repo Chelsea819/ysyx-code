@@ -32,6 +32,7 @@ uint8_t* new_space(int size) {
   return p;
 }
 
+// 查看地址空间是否合法
 static void check_bound(IOMap *map, paddr_t addr) {
   if (map == NULL) {
     Assert(map != NULL, "address (" FMT_PADDR ") is out of bound at pc = " FMT_WORD, addr, cpu.pc);
@@ -46,12 +47,18 @@ static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_wr
   if (c != NULL) { c(offset, len, is_write); }
 }
 
+
+// 初始化
 void init_map() {
   io_space = malloc(IO_SPACE_MAX);
   assert(io_space);
   p_space = io_space;
 }
 
+
+
+// 将地址addr映射到map所指示的目标空间，并进行访问   addr和目标空间是指什么？addr是内存空间map是访问的内存
+// 访问时可能会触发相应的回调函数，对设备和目标空间的状态进行更新
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);

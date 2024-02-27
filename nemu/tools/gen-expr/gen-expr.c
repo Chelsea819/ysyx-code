@@ -40,16 +40,20 @@ static char *code_format2 =
 "#include <stdio.h>\n"
 "#include <signal.h>\n"
 "#include <sys/types.h>\n"
-"void handler(int signo) {"
-    // 处理 SIGFPE 信号
-    "printf(\"Got floating point exception!\");"
-"}"
+"#include <math.h>\n"
+"int flag = 0;"
 "int main() { "
-"  signal(SIGFPE, handler);"
 "  float result = %s; "
+"  if(isnan(result)) result = -1;"
 "  printf(\"%%f\", result); "
 "  return 0; "
 "}";
+
+static int safe_assure(){
+  if(index_buf >= 32)
+    return 1;
+  return 0;
+}
 
 uint32_t choose(uint32_t n){
   return rand()%n;
@@ -77,16 +81,18 @@ char gen_rand_op(){
   return 0;
 }
 
-static void gen_rand_expr() {
+static int gen_rand_expr() {
   uint32_t i = 0;
   i = choose(3);
+  if(safe_assure()) return -1;
  
   //printf("choose(3) = %d\n",i);
   switch (i) {
     case 0: {gen_num(); break;}
     case 1: {gen('('); gen_rand_expr(); gen(')'); break;}
     default: {gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;}
-  } 
+  }
+  return 0; 
  
 }
 
@@ -105,11 +111,10 @@ int main(int argc, char *argv[]) {
     //while(result){  
       memset(buf,0,strlen(buf));
       index_buf = 0;
-      gen_rand_expr();
 
       //count_debug
 
-      if(strlen(buf) > 31) {
+      if(gen_rand_expr() == -1 || strlen(buf) > 31) {
         i-=1;
         continue;
       }

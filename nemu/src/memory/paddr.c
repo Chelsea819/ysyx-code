@@ -29,11 +29,18 @@ uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
+  
   word_t ret = host_read(guest_to_host(addr), len);
+  #ifdef CONFIG_MTRACE
+      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,ret);
+  #endif
   return ret;
 }
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
+  #ifdef CONFIG_MTRACE
+  Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
+  #endif
   host_write(guest_to_host(addr), len, data);
 }
 
@@ -69,8 +76,8 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
-  if (likely(in_pmem(addr))) return pmem_read(addr, len);
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  if (likely(in_pmem(addr))) return pmem_read(addr, len); // 地址落在物理内存空间
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));  // 地址落在设备空间
   out_of_bound(addr);
   return 0;
 }

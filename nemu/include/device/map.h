@@ -22,12 +22,12 @@ typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
 
 typedef struct {
-  const char *name;
+  const char *name;   //映射的名字
   // we treat ioaddr_t as paddr_t here
-  paddr_t low;
-  paddr_t high;
-  void *space;
-  io_callback_t callback;
+  paddr_t low; //映射的起始地址
+  paddr_t high; //映射的结束地址
+  void *space;  //映射的目标空间
+  io_callback_t callback;  //回调函数
 } IOMap;
 
 static inline bool map_inside(IOMap *map, paddr_t addr) {
@@ -53,4 +53,6 @@ void add_mmio_map(const char *name, paddr_t addr,
 word_t map_read(paddr_t addr, int len, IOMap *map);
 void map_write(paddr_t addr, int len, word_t data, IOMap *map);
 
+word_t mmio_read(paddr_t addr, int len);
+void mmio_write(paddr_t addr, int len, word_t data);
 #endif

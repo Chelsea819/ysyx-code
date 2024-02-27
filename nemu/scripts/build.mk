@@ -27,11 +27,16 @@ LDFLAGS := -O2 $(LDFLAGS)
 
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
 
+# fixdep:一个聪明的小工具
+## 通过分析文件中的CONFIG_XX宏将对autoconf.h的以来分成若干空文件的依赖
+## Kconfig更新配置选项时，更新相应空文件的时间戳
+
 # Compilation patterns
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c -o $@ $<
+# @$(CC) $(CFLAGS) -E -o $@.i $<
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 $(OBJ_DIR)/%.o: %.cc
@@ -39,6 +44,11 @@ $(OBJ_DIR)/%.o: %.cc
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CFLAGS) $(CXXFLAGS) -c -o $@ $<
 	$(call call_fixdep, $(@:.o=.d), $@)
+
+# $(OBJ_DIR)/%.i: %.c
+# 	@echo + CC $<
+# 	@mkdir -p $(dir $@)
+# 	@$(CC) $(CFLAGS) -E -o $@.i $<
 
 # Depencies
 -include $(OBJS:.o=.d)

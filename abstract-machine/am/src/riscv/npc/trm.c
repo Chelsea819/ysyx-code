@@ -1,12 +1,9 @@
 #include <am.h>
-#include <klib-macros.h>
+#include <npc.h>
+#include "../spike/htif.h"
 
 extern char _heap_start;
 int main(const char *args);
-
-extern char _pmem_start;
-#define PMEM_SIZE (128 * 1024 * 1024)
-#define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
 
 Area heap = RANGE(&_heap_start, PMEM_END);
 #ifndef MAINARGS
@@ -15,9 +12,14 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch) {
+    *(volatile uint8_t  *)SERIAL_PORT = ch;
 }
 
 void halt(int code) {
+  //htif_poweroff();
+  //exit(0);
+  // asm volatile：这个关键字告诉编译器，嵌入的汇编代码不要对内联汇编代码进行优化
+  asm volatile ("ebreak");
   while (1);
 }
 
