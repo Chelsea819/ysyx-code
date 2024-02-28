@@ -130,7 +130,6 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, R(rd) = src1 / src2 );
   
   
-
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
 
@@ -147,6 +146,6 @@ int isa_exec_once(Decode *s) {
   //读取指令
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   int ret = decode_exec(s);
-  if(s->isa.inst.val == 0x30571073) printf("C(773) = 0x%08x\n",C(773));
+  if((s->isa.inst.val & 0x0000007f)== 115) printf("C(773) = 0x%08x\n",C(773));
   return ret;
 }
