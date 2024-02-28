@@ -70,7 +70,6 @@ const char *regs1[] = {
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
-  cpu.csr[CSR_MSTATUS] = 0x1800;
 
   //打开传入的动态库文件
   void *handle;
