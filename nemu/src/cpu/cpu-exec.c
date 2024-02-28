@@ -463,7 +463,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         while (1)
         {
           // printf("1111111111111\n");
-          printf("name:%s\n",name);
+          // printf("name:%s\n",name);
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
@@ -472,7 +472,7 @@ static void exec_once(Decode *s, vaddr_t pc)
             flag = 1;
           printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
           index++;
-          printf("name:%s\n",name);
+          // printf("name:%s\n",name);
 
           free(func_cur->func_name);
 
