@@ -147,7 +147,7 @@ int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   int ret = decode_exec(s);
   // if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));
-  printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
+  printf("s->pc = 0x%08x\n",s->pc);
   
   return ret;
 }
