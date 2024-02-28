@@ -5,6 +5,7 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
+  putch('a');putch('\n');
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
     switch (c->mcause) {
