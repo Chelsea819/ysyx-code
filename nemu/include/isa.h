@@ -24,6 +24,10 @@
 typedef concat(__GUEST_ISA__, _CPU_state) CPU_state;  //寄存器结构体
 typedef concat(__GUEST_ISA__, _ISADecodeInfo) ISADecodeInfo;
 
+#define CSR_MEPC 0x341
+#define CSR_MCAUSE 0x342
+#define CSR_MTVEC 0x305
+
 // monitor
 extern unsigned char isa_logo[];
 void init_isa();
