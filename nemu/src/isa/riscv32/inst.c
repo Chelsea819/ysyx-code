@@ -146,8 +146,8 @@ int isa_exec_once(Decode *s) {
   //读取指令
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   int ret = decode_exec(s);
-  if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));
-  printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",csr(773));}
+  // if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));
+  // printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",csr(773));}
   
   return ret;
 }
