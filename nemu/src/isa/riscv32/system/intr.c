@@ -30,7 +30,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",cpu.csr[CSR_MTVEC]);
   // printf("cpu.csr[773] = 0x%08x\n",csr(773));
 
-  return cpu.pc;
+  return cpu.csr[CSR_MTVEC];
 }
 
 word_t isa_query_intr() {
