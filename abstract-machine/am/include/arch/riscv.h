@@ -3,9 +3,8 @@
 
 struct Context {
   // TODO: fix the order of these members to match trap.S
-  void *pdir;
   uintptr_t gpr[32], mcause, mstatus, mepc;
-  
+  void *pdir;
 };
 
 #ifdef __riscv_e
