@@ -21,7 +21,7 @@ void convert_u(unsigned int num,int* numAdd,char *arr_tmp,int flag){
   if(tmp >= 0 && tmp <= 9)
     arr_tmp[(*numAdd)] = tmp + 48; 
   else
-    arr_tmp[(*numAdd)] = tmp + 'a'; 
+    arr_tmp[(*numAdd)] = tmp + 'a' - 10; 
   // putch(arr_tmp[(*numAdd)]);
   // putch('\n');
   (*numAdd) --;
