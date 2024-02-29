@@ -14,6 +14,12 @@
 ***************************************************************************************/
 
 #include <isa.h>
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
@@ -22,6 +28,10 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // SR[mepc] <- PC
   // SR[mcause] <- 一个描述失败原因的号码
   // PC <- SR[mtvec]
+  for(int i = 0; i < 32; i++){
+    printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],cpu.gpr[i]);
+  }
+  printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
 
   cpu.csr[CSR_MEPC] = epc;
   cpu.csr[CSR_MCAUSE] = NO;
