@@ -28,6 +28,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.pc = cpu.csr[CSR_MTVEC];
   // printf("cpu.pc = 0x%08x\n",cpu.pc);
   printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",cpu.csr[CSR_MTVEC]);
+  printf("cpu.csr[CSR_MEPC]: 0x%08x\n",cpu.csr[CSR_MEPC]);
+  printf("cpu.csr[CSR_MCAUSE]: 0x%08x\n",cpu.csr[CSR_MCAUSE]);
   // printf("cpu.csr[773] = 0x%08x\n",csr(773));
 
   return cpu.csr[CSR_MTVEC];

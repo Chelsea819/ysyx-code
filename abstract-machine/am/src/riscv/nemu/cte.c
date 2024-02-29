@@ -14,6 +14,7 @@ const char *regs[] = {
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
+    printf("c->mcause: 0x%08x\n",c->mcause);
     switch (c->mcause) {
       default: ev.event = EVENT_ERROR; break;
     }
