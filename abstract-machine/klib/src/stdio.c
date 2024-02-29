@@ -18,7 +18,10 @@ void convert(int num,int* numAdd,char *arr_tmp,int flag){
 
 void convert_u(unsigned int num,int* numAdd,char *arr_tmp,int flag){
   unsigned int tmp = num % flag; //-8
-  arr_tmp[(*numAdd)] = tmp + 48; 
+  if(tmp >= 0 && tmp <= 9)
+    arr_tmp[(*numAdd)] = tmp + 48; 
+  else
+    arr_tmp[(*numAdd)] = tmp + 'a'; 
   // putch(arr_tmp[(*numAdd)]);
   // putch('\n');
   (*numAdd) --;
@@ -102,7 +105,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         // putch('f');
         if_for = true;
       }
-      else if(fmt[i] >= '0' && fmt[i] <= '9' && !if_wid){
+      else if(fmt[i] >= '0' && fmt[i] <= '9'){
         // putch('w');
         if(!if_wid)
           width = fmt[i] - '0';
