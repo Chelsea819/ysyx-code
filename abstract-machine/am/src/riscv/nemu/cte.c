@@ -4,8 +4,14 @@
 
 static Context* (*user_handler)(Event, Context*) = NULL;
 
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+
 Context* __am_irq_handle(Context *c) {
-  putch('a');putch('\n');
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
     switch (c->mcause) {
@@ -13,6 +19,12 @@ Context* __am_irq_handle(Context *c) {
     }
 
     c = user_handler(ev, c); // 根据不同事件进行不同操作
+    for(int i = 0; i < 32; i++){
+      printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
+    }
+    printf("c->mcause: 0x%08x\n",c->mcause);
+    printf("c->mstatus: 0x%08x\n",c->mstatus);
+    printf("c->mepc: 0x%08x\n",c->mepc);
     assert(c != NULL);
   }
 
