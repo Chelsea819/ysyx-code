@@ -16,6 +16,14 @@ void convert(int num,int* numAdd,char *arr_tmp,int flag){
   (*numAdd) --;
 }
 
+void convert_u(unsigned int num,int* numAdd,char *arr_tmp,int flag){
+  unsigned int tmp = num % flag; //-8
+  arr_tmp[(*numAdd)] = tmp + 48; 
+  // putch(arr_tmp[(*numAdd)]);
+  // putch('\n');
+  (*numAdd) --;
+}
+
 void intHandel(int *neg, int *num, int *numAdd, int flag, char *arr_tmp){
   //负数
   if(*num < 0){
@@ -31,6 +39,15 @@ void intHandel(int *neg, int *num, int *numAdd, int flag, char *arr_tmp){
   (*numAdd) ++;
 }
 
+void u_intHandel(unsigned int *num, int *numAdd,unsigned int flag, char *arr_tmp){
+  do{
+    //将整型数字转换成字符串类型
+    convert_u(*num, numAdd, arr_tmp,flag);
+    *num /= flag;
+  }while(*num != 0);   
+  (*numAdd) ++;
+}
+
 void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out, int *k){
   if(*if_wid && NUM_BUF - numAdd - 1 < *width){
     for(int i = *width - (NUM_BUF - numAdd - 1); i > 0 ; i --, (*k) ++)
@@ -41,6 +58,7 @@ void formatHandel(bool *if_wid, bool *if_for, int numAdd, int *width, char *out,
     *width = 0;
   }
 }
+
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   // panic("Not implemented");
@@ -121,29 +139,25 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         if(if_long) if_long = false;
       } 
 
-      
-
       else if(fmt[i] == 'x'){
         percent = 0;
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
-        int num = va_arg(ap,int); //要替换的数字
+        unsigned int num = va_arg(ap,unsigned int); //要替换的数字
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
         //va_arg(ap,type) 这个type是为了初始化一个指向目标的指针
         //如果type不匹配或者没有下一个参数，会出现随机错误
 
         flag = 16; 
-        //负数
         neg = 0;
-        intHandel(&neg, &num, &numAdd, flag, arr_tmp);
+
+        u_intHandel(&num, &numAdd, flag, arr_tmp);
         formatHandel(&if_wid, &if_for, numAdd, &width, out, &k);
 
         //将数字存入out数组
-        for( ; k < n-1 && numAdd < NUM_BUF - 1 ; k++,numAdd ++){
-          //负数      
-          if(neg) {out[k] = '-'; neg = 0;}
-          else {out[k] = arr_tmp[numAdd]; }
+        for( ; k < n-1 && numAdd < NUM_BUF - 1 ; k++,numAdd ++){     
+          out[k] = arr_tmp[numAdd];
         }
         if(if_long) if_long = false;
       }
