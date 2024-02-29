@@ -17,14 +17,13 @@ Context* __am_irq_handle(Context *c) {
     switch (c->mcause) {
       default: ev.event = EVENT_ERROR; break;
     }
-
-    c = user_handler(ev, c); // 根据不同事件进行不同操作
     for(int i = 0; i < 32; i++){
       printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
     }
     printf("c->mcause: 0x%08x\n",c->mcause);
     printf("c->mstatus: 0x%08x\n",c->mstatus);
     printf("c->mepc: 0x%08x\n",c->mepc);
+    c = user_handler(ev, c); // 根据不同事件进行不同操作
     assert(c != NULL);
   }
 
