@@ -52,6 +52,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内核线程的上下文
   Context *con = (Context *)kstack.end - 1;
   con->mepc = (uintptr_t)entry;
+  con->mstatus = 0x1800;
   return con;
 }
 
