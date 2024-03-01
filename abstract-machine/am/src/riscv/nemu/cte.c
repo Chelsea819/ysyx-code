@@ -51,7 +51,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 // yield-os会调用kcontext()来创建上下文, 并把返回的指针记录到PCB的cp中
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内核线程的上下文
   Context *con = (Context *)kstack.end - 1;
-  con->pdir = entry;
+  con->mepc = (uintptr_t)entry;
   return con;
 }
 
