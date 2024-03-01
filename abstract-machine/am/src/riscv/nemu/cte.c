@@ -28,7 +28,7 @@ Context* __am_irq_handle(Context *c) {
     assert(c != NULL);
   }
 
-  return c;
+  return NULL;
 }
 
 extern void __am_asm_trap(void);
