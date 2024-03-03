@@ -105,6 +105,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         percent = 0;
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
+        if_for = true;
+        if_wid = true;
 
         unsigned int num = (unsigned int)va_arg(ap, void*); //要替换的数字
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
@@ -115,6 +117,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         neg = 0;
 
         u_intHandel(&num, &numAdd, flag, arr_tmp);
+        out[k ++] = '0';
+        out[k ++] = 'x';
         formatHandel(&if_wid, &if_for, numAdd, &width, out, &k);
 
         //将数字存入out数组
