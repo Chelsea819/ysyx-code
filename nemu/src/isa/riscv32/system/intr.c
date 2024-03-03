@@ -33,7 +33,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // }
   // printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
 
-  cpu.csr[CSR_MEPC] = epc + 4;
+  cpu.csr[CSR_MEPC] = epc;
   cpu.csr[CSR_MCAUSE] = NO;
   cpu.pc = cpu.csr[CSR_MTVEC];
   // printf("cpu.pc = 0x%08x\n",cpu.pc);
