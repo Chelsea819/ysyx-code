@@ -69,6 +69,12 @@ void __am_switch(Context *c) {
 void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
+// as用于限制用户进程可以访问的内存，kstack是内核栈，用于分配上下文结构
+// entry则是用户进程的入口
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-  return NULL;
+  Context *con = (Context *)kstack.end - 1;
+  // printf("entry = 0x%08x\n",(uintptr_t)entry);
+  con->mepc = (uintptr_t)entry;
+  con->mstatus = 0x1800;
+  return con;
 }

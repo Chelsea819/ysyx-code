@@ -21,6 +21,7 @@
 #include <cpu/decode.h>
 
 #define R(i) gpr(i)
+#define C(i) csr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
 
@@ -114,8 +115,13 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 101 ????? 01100 11", sra    , R, R(rd) = (signed)src1 >> (BITS((signed)src2, 4, 0)));
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or      ,R, R(rd) = src1 | src2 ); 
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, R(rd) = src1 & src2 ); 
-  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
-  
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(0xb, s->pc));
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , I, s->dnpc = C(CSR_MEPC));
+
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = C(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) |= src1);
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = C(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) = src1);
+
   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(rd) = src1 * src2 ); 
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = (signed)src1 / (signed)src2 ); 
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, R(rd) = (signed)src1 % (signed)src2 );
@@ -125,7 +131,6 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, R(rd) = src1 / src2 );
   
   
-
   //非法指令
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
 
@@ -141,5 +146,9 @@ static int decode_exec(Decode *s) {
 int isa_exec_once(Decode *s) {
   //读取指令
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
+  // int ret = decode_exec(s);
+  // if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));}
+  // if(s->pc != 0x800000a0 && s->pc != 0x800000a4 && s->pc != 0x80000098 && s->pc != 0x800000a8 && s->pc != 0x8000009c) printf("s->pc = 0x%08x s->dnpc = 0x%08x\n",s->pc,s->dnpc);
+  // if(s->pc == 0x800013d0) assert(0);
   return decode_exec(s);
 }

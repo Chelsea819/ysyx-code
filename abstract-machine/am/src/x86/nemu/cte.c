@@ -29,11 +29,11 @@ Context* __am_irq_handle(Context *c) {
 }
 
 bool cte_init(Context*(*handler)(Event, Context*)) {
-  static GateDesc32 idt[NR_IRQ];
+  static GateDesc32 idt[NR_IRQ]; // 每一个元素是一个门描述符结构体
 
   // initialize IDT
   for (unsigned int i = 0; i < NR_IRQ; i ++) {
-    idt[i]  = GATE32(STS_TG, KSEL(SEG_KCODE), __am_vecnull, DPL_KERN);
+    idt[i]  = GATE32(STS_TG, KSEL(SEG_KCODE), __am_vecnull, DPL_KERN);  // 在相应的数组元素中填写有意义的门描述符
   }
 
   // ----------------------- interrupts ----------------------------
@@ -42,7 +42,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   idt[0x80] = GATE32(STS_TG, KSEL(SEG_KCODE), __am_vecsys,  DPL_USER);
   idt[0x81] = GATE32(STS_TG, KSEL(SEG_KCODE), __am_vectrap, DPL_KERN);
 
-  set_idt(idt, sizeof(idt));
+  set_idt(idt, sizeof(idt)); // 通过lidt指令在IDTR中设置idt的首地址和长度
 
   // register event handler
   user_handler = handler;
