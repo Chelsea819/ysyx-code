@@ -147,8 +147,8 @@ int isa_exec_once(Decode *s) {
   //读取指令
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   // int ret = decode_exec(s);
-  if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));}
-  // if(s->pc != 0x800000a0 && s->pc != 0x800000a4 && s->pc != 0x80000098 && s->pc != 0x800000a8 && s->pc != 0x8000009c) printf("s->pc = 0x%08x s->dnpc = 0x%08x\n",s->pc,s->dnpc);
+  // if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));}
+  if(s->pc != 0x800000a0 && s->pc != 0x800000a4 && s->pc != 0x80000098 && s->pc != 0x800000a8 && s->pc != 0x8000009c) printf("s->pc = 0x%08x s->dnpc = 0x%08x\n",s->pc,s->dnpc);
   // if(s->pc == 0x800013d0) assert(0);
   return decode_exec(s);
 }
