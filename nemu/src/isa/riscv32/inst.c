@@ -116,7 +116,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or      ,R, R(rd) = src1 | src2 ); 
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, R(rd) = src1 & src2 ); 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)));
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8, s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(0xb, s->pc));
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , I, s->dnpc = C(CSR_MEPC));
 
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = C(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) |= src1);
