@@ -1,6 +1,8 @@
 // 进程调度
 #include <proc.h>
 
+void naive_uload(PCB *pcb, const char *filename);
+
 #define MAX_NR_PROC 4
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
@@ -32,6 +34,7 @@ void init_proc() {
 
   Log("Initializing processes...");
 
+  naive_uload(NULL, NULL); // 调用加载的第一个用户程序，然后跳转到用户程序中执行
   // load program here
 
 }
