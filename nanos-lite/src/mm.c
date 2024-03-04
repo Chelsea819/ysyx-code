@@ -1,3 +1,4 @@
+// 存储管理
 #include <memory.h>
 
 static void *pf = NULL;

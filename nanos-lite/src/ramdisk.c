@@ -1,3 +1,4 @@
+// ramdisk驱动程序
 #include <common.h>
 
 extern uint8_t ramdisk_start;
