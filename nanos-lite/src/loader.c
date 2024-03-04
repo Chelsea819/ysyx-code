@@ -53,7 +53,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       ramdisk_read(buf, Elf_proc.p_offset, Elf_proc.p_filesz);
       if(Elf_proc.p_memsz > Elf_proc.p_filesz)  
         memset(buf + Elf_proc.p_filesz, 0, Elf_proc.p_memsz - Elf_proc.p_filesz);
-      
+      printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
+      printf("Elf_proc.p_memsz: 0x%08x\n",Elf_proc.p_memsz);
       ramdisk_write(buf, Elf_proc.p_vaddr, Elf_proc.p_memsz);
 
       free(buf);
