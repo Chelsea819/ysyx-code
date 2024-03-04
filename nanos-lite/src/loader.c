@@ -45,7 +45,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // 读段
   for(int n = 0; n < Elf_header.e_phnum; n ++){
     // 读程序头
-    ramdisk_read(&Elf_proc, Elf_header.e_phentsize, sizeof(Elf_Phdr));
+    ramdisk_read(&Elf_proc, Elf_header.e_phoff + n * Elf_header.e_phentsize, sizeof(Elf_Phdr));
     // 是否需要加载
     if (Elf_proc.p_type == PT_LOAD){
       buf = malloc(Elf_proc.p_memsz);
