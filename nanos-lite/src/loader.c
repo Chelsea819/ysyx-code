@@ -9,7 +9,7 @@
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 
-#ifndef __LP64__
+#ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
 # define Elf_Phdr Elf64_Phdr
 #else
@@ -55,8 +55,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         memset(buf + Elf_proc.p_filesz, 0, Elf_proc.p_memsz - Elf_proc.p_filesz);
       printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
       printf("Elf_proc.p_memsz: 0x%08x\n",Elf_proc.p_memsz);
-      ramdisk_write(buf, Elf_proc.p_vaddr, Elf_proc.p_memsz);
-
+      // ramdisk_write(buf, Elf_proc.p_vaddr, Elf_proc.p_memsz);
+      memcpy((uintptr_t*)Elf_proc.p_vaddr, buf, Elf_proc.p_memsz);
       free(buf);
       buf = NULL;
     }
