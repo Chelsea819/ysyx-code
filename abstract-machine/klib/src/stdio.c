@@ -16,8 +16,8 @@ void convert(int num,int* numAdd,char *arr_tmp,int flag){
   (*numAdd) --;
 }
 
-void convert_u(unsigned int num,int* numAdd,char *arr_tmp,int flag){
-  unsigned int tmp = num % flag; //-8
+void convert_u(unsigned long num,int* numAdd,char *arr_tmp,int flag){
+  unsigned long tmp = num % flag; //-8
   if(tmp >= 0 && tmp <= 9)
     arr_tmp[(*numAdd)] = tmp + 48; 
   else
@@ -42,7 +42,7 @@ void intHandel(int *neg, int *num, int *numAdd, int flag, char *arr_tmp){
   (*numAdd) ++;
 }
 
-void u_intHandel(unsigned int *num, int *numAdd,unsigned int flag, char *arr_tmp){
+void u_intHandel(unsigned long *num, int *numAdd,unsigned long flag, char *arr_tmp){
   do{
     //将整型数字转换成字符串类型
     convert_u(*num, numAdd, arr_tmp,flag);
@@ -108,7 +108,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         if_for = true;
         if_wid = true;
 
-        unsigned int num = (unsigned int)va_arg(ap, void*); //要替换的数字
+        unsigned long num = (unsigned long)va_arg(ap, void*); //要替换的数字
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
         //va_arg(ap,type) 这个type是为了初始化一个指向目标的指针
         //如果type不匹配或者没有下一个参数，会出现随机错误
@@ -173,7 +173,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         char arr_tmp[NUM_BUF] = {0};  //存放数字转换成的字符
         int numAdd = NUM_BUF - 2;  //数组的下标 从后往前存
 
-        unsigned int num = va_arg(ap,unsigned int); //要替换的数字
+        unsigned long num = va_arg(ap,unsigned long); //要替换的数字
         //每一次调用va_arg()都会修改ap，这样下一次调用 就会返回下一个参数
         //va_arg(ap,type) 这个type是为了初始化一个指向目标的指针
         //如果type不匹配或者没有下一个参数，会出现随机错误
