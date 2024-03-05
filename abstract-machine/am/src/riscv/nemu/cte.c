@@ -25,8 +25,10 @@ Context* __am_irq_handle(Context *c) {
     // }
     // printf("c->mcause: 0x%08x\n",c->mcause);
     // printf("c->mstatus: 0x%08x\n",c->mstatus);
-    // printf("c->mepc: 0x%08x\n",c->mepc);
+    printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
+    printf("c->mepc: 0x%08x\n",c->mepc);
+
     c = user_handler(ev, c); // 根据不同事件进行不同操作
     assert(c != NULL);
   }
