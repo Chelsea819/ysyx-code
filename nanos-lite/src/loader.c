@@ -31,7 +31,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // TODO();
   Elf_Ehdr Elf_header;  // ELF文件头
   Elf_Phdr Elf_proc;    // 程序头
-  char *buf = NULL;     // 存放段的buffer
+  // char *buf = NULL;     // 存放段的buffer
+  char buf[0xfffffff] = {0};     // 存放段的buffer
 
   // 读取ELF header
   ramdisk_read(&Elf_header, 0, sizeof(Elf_Ehdr));
@@ -49,21 +50,23 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     ramdisk_read(&Elf_proc, Elf_header.e_phoff + n * Elf_header.e_phentsize, sizeof(Elf_Phdr));
     // 是否需要加载
     if (Elf_proc.p_type == PT_LOAD){
-      buf = malloc(Elf_proc.p_memsz);
+      // buf = malloc(Elf_proc.p_memsz);
       // 读取段
       ramdisk_read(buf, Elf_proc.p_offset, Elf_proc.p_filesz);
       printf("Elf_proc.p_vaddr: 0x%016x\n",Elf_proc.p_vaddr);
       printf("Elf_proc.p_memsz: 0x%016x\n",Elf_proc.p_memsz);
       printf("Elf_header.e_phoff: 0x%016x\n",Elf_header.e_phoff);
       printf("Elf_header.e_phentsize: 0x%016x\n",Elf_header.e_phentsize);
-      printf("sizeof(Elf_Phdr): 0x%08x\n",sizeof(Elf_Phdr));
+      printf("sizeof(Elf_Ehdr): 0x%08x\n",sizeof(Elf_Ehdr));
+      printf("sizeof(Elf64_Ehdr): 0x%08x\n",sizeof(Elf64_Ehdr));
+      printf("sizeof(Elf32_Ehdr): 0x%08x\n",sizeof(Elf32_Ehdr));
       if(Elf_proc.p_memsz > Elf_proc.p_filesz)  
         memset(buf + Elf_proc.p_filesz, 0, Elf_proc.p_memsz - Elf_proc.p_filesz);
       
       // ramdisk_write(buf, Elf_proc.p_vaddr, Elf_proc.p_memsz);
       memcpy((uintptr_t*)Elf_proc.p_vaddr, buf, Elf_proc.p_memsz);
-      free(buf);
-      buf = NULL;
+      // free(buf);
+      // buf = NULL;
     }
   }
 
