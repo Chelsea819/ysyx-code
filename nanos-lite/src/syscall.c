@@ -1,4 +1,3 @@
-// 系统调用处理
 #include <common.h>
 #include "syscall.h"
 void do_syscall(Context *c) {

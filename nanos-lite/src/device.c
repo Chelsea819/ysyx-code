@@ -1,4 +1,3 @@
-// 设备抽象
 #include <common.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
