@@ -332,7 +332,7 @@ uint32_t eval(int p, int q){
       case TK_DIV: return val1 / val2;
       case TK_AND: return val1 && val2; 
       case TK_NEQ: return val1 != val2;
-      case TK_EQ: printf("val1 = 0x%08x\n, val2 = 0x%08x\n",val1,val2);  return val1 == val2;
+      case TK_EQ:  return val1 == val2;
       default: assert(0);
     
     }
