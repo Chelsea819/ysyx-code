@@ -408,15 +408,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-
-      // if ((sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
-      // {
-      //   // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-      //   if_same = true;
-      //   break;
-      // } 
-      if (n == 0)
-      {
+      if (n == 0){
         if_same = true;
         // Assert(0, "Fail in searching!");
       }
@@ -430,8 +422,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       struct func_call *func;
       static struct func_call *func_cur = NULL;
 
-      if (!if_return)
-      {
+      if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -450,13 +441,9 @@ static void exec_once(Decode *s, vaddr_t pc)
         if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
         index++;
       }
-      else
-      {
+      else{
         // 函数返回，将函数名所在链表节点抽出
-        while (1)
-        {
-          // printf("1111111111111\n");
-          // printf("name:%s\n",name);
+        while (1){
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
