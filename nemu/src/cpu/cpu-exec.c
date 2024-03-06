@@ -347,8 +347,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1)
-  {
+  if (strcmp(opcode, "1101111") == 0 && rd == 1){
     if_return = false;
     if_conduct = true;
   }
@@ -358,31 +357,30 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
 
-  // 判断出jalr
-  else if (strcmp(opcode, "1100111") == 0)
-  {
+  // 函数返回 jalr rs1 = x1, rd = x0
+  // 函数调用 jalr, rd = x0
+  // 函数调用 jalr, rd = x1
 
-    // 函数返回
-    if (rd == 0 && rs1 == 1)
-    {
+  // 判断出jalr
+  else if (strcmp(opcode, "1100111") == 0){
+
+    // 函数返回 jalr rs1 = x1, rd = x0
+    if (rd == 0 && rs1 == 1){
       if_return = true;
-      if_conduct = true;
+      if_conduct = false;
     }
     // 函数调用
-    else if (rd == 1)
-    {
+    else if (rd == 1){
       if_return = false;
       if_conduct = true;
     }
-    else if (rd == 0)
-    {
+    else if (rd == 0){
       if_return = false;
       if_conduct = true;
     }
   }
 
-  if (if_conduct)
-  {
+  if (if_conduct){
     // 3.找到是哪个函数
     Elf32_Sym sym;
     int ret = 0;
