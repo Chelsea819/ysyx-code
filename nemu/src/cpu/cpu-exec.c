@@ -407,7 +407,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       }
       // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_value == s->dnpc && sym.st_info == 18)
+      else if (!if_return && (sym.st_value <= s->dnpc && sym.st_value + sym.st_size >= s->dnpc) && sym.st_info == 18)
         break;
       if (n == 0){
         // if_same = true;
