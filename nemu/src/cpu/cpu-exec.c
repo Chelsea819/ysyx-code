@@ -78,12 +78,10 @@ int init_ftrace(const char *ftrace_file)
 
   // 读取ELF header
   int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
-  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0)
-  {
+  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0){
     Assert(0, "Not an ELF file!\n");
   }
 
@@ -93,8 +91,7 @@ int init_ftrace(const char *ftrace_file)
   // 移到.strtab的位置，并进行读取
   fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
   ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
   str_off = Elf_sec.sh_offset;
@@ -103,22 +100,18 @@ int init_ftrace(const char *ftrace_file)
 
   fseek(ftrace_fp, str_off, SEEK_SET);
   ret = fread(strtab, str_size, 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
 
   // get .symtab
-  for (int n = 0; n < Elf_header.e_shnum; n++)
-  {
+  for (int n = 0; n < Elf_header.e_shnum; n++){
     fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
     ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-    if (ret != 1)
-    {
+    if (ret != 1){
       perror("Error reading from file");
     }
-    if (Elf_sec.sh_type == SHT_SYMTAB)
-    {
+    if (Elf_sec.sh_type == SHT_SYMTAB){
       sym_off = Elf_sec.sh_offset;
       sym_size = Elf_sec.sh_entsize;
       sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
@@ -302,6 +295,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 根据指令判断函数调用/函数返回
 
   // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
+  printf("s->logbuf = %s",s->logbuf);
+  printf("s->isa.inst.val = 0x%08x",s->isa.inst.val);
   int k = 12;
   char *ins_tmp_16 = malloc(9);
   memset(ins_tmp_16, 0, 9);
