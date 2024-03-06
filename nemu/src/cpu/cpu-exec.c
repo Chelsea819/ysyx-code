@@ -469,7 +469,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
           if(strcmp(name,"putch") != 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
 
-          if(strcmp(name,"putch") != 0) {printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);}
+          if(strcmp(name,"putch") != 0) {Log("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);}
 
           while(funcN != NULL){
             if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",funcN->func_name);
