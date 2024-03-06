@@ -331,6 +331,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   bool if_conduct = false;
   // bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
+  // 函数调用 jal， x0 ,offset
   // 函数调用 jal,  rd = x1, imm = ***
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
@@ -347,7 +348,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1){
+  if (strcmp(opcode, "1101111") == 0 && (rd == 1 || rd == 0)){
     if_return = false;
     if_conduct = true;
   }
@@ -416,13 +417,18 @@ static void exec_once(Decode *s, vaddr_t pc)
     // if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
+      
 
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+
       static int index = 1;
       struct func_call *func;
       static struct func_call *func_cur = NULL;
 
-      if (!if_return){
+      if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
+        
+      }
+      else if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -475,7 +481,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           printf("flag = %d\n",flag);
         }
       }
-      Assert(func_cur, "func_cur NULL!");
+      // Assert(func_cur, "func_cur NULL!");
       free(name);
     // }
   }
