@@ -329,7 +329,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  // bool if_same = false;
+  bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal， x0 ,offset
   // 函数调用 jal,  rd = x1, imm = ***
@@ -401,20 +401,24 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
-      if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
+      if (if_return && (sym.st_value < s->pc && sym.st_value + sym.st_size > s->pc) && sym.st_info == 18)
       {
         // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
       }
       // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && (sym.st_value <= s->dnpc && sym.st_value + sym.st_size >= s->dnpc) && sym.st_info == 18)
+      else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
+      else{ 
+        if_same = true; 
+        break;
+      }
       if (n == 0){
         // if_same = true;
         Assert(0, "Fail in searching!");
       }
     }
-    // if(!if_same){
+    if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
 
@@ -480,7 +484,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       Assert(func_cur, "func_cur NULL!");
       free(name);
-    // }
+    }
   }
   free(opcode);
   free(ins);
