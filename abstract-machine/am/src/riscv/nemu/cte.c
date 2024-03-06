@@ -33,6 +33,7 @@ Context* __am_irq_handle(Context *c) {
     c = user_handler(ev, c); // 根据不同事件进行不同操作
     assert(c != NULL);
   }
+  else assert(0);
 
   return c;
 }
