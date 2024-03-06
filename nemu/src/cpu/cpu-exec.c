@@ -342,6 +342,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
   int rs1 = BITS(m, 19, 15);
+  // int a = 0;
 
   // 2.1 jal or jalr
 
