@@ -169,13 +169,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 
   // WP *index = get_head();
   WP *index = head;
-  while (index != NULL)
-  {
+  assert(index != NULL);
+  while (index != NULL){
+    printf("scan/n");
     // printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
     addr = expr(index->target, &success);
     Assert(success, "Make_token fail!");
-    if (addr != index->data)
-    {
+    if (addr != index->data){
       nemu_state.state = NEMU_STOP;
       index->times += 1;
       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
