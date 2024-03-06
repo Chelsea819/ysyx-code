@@ -329,7 +329,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  bool if_same = false;
+  // bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal,  rd = x1, imm = ***
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
@@ -407,12 +407,12 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-      if (n == 0){
-        if_same = true;
-        // Assert(0, "Fail in searching!");
-      }
+      // if (n == 0){
+      //   if_same = true;
+      //   // Assert(0, "Fail in searching!");
+      // }
     }
-    if(!if_same){
+    // if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
 
@@ -474,7 +474,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       Assert(func_cur, "func_cur NULL!");
       free(name);
-    }
+    // }
     
   }
   free(opcode);
