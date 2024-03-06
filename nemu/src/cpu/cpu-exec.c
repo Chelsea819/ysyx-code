@@ -447,10 +447,15 @@ static void exec_once(Decode *s, vaddr_t pc)
           func_cur = func;
         }
         if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+        while(func != NULL){
+          printf("[func->name = %s]\n",func->func_name);
+          func = func->past;
+        }
         index++;
       }
       else{
         // 函数返回，将函数名所在链表节点抽出
+        struct func_call *funcN = func_cur;
         while (1){
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
@@ -461,6 +466,10 @@ static void exec_once(Decode *s, vaddr_t pc)
           if(flag == 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
 
           if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          while(funcN != NULL){
+            printf("[func->name = %s]\n",funcN->func_name);
+            funcN = funcN->past;
+          }
           index++;
           // printf("name:%s\n",name);
 
