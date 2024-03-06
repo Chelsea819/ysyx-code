@@ -407,7 +407,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       }
       // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && (sym.st_value <= s->dnpc && sym.st_value + sym.st_size >= s->dnpc) && sym.st_info == 18)
+      else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
       if (n == 0){
         // if_same = true;
@@ -426,9 +426,9 @@ static void exec_once(Decode *s, vaddr_t pc)
       static struct func_call *func_cur = NULL;
 
       if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
-        
+          
       }
-      else if (!if_return){
+      if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -481,7 +481,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           printf("flag = %d\n",flag);
         }
       }
-      // Assert(func_cur, "func_cur NULL!");
+      Assert(func_cur, "func_cur NULL!");
       free(name);
     // }
   }
