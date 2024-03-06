@@ -46,7 +46,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
   // initialize exception entry
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap)); // 将异常入口地址设置到mtvec寄存器中
 
-  if(handler) assert(0);
+  if(!handler) assert(0);
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
