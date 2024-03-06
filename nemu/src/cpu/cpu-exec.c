@@ -407,7 +407,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         break;
       }
       // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
+      else if (!if_return && (sym.st_value <= s->dnpc && sym.st_value + sym.st_size >= s->dnpc) && sym.st_info == 18)
         break;
       if (n == 0){
         // if_same = true;
@@ -417,18 +417,15 @@ static void exec_once(Decode *s, vaddr_t pc)
     // if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
-      
 
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-
       static int index = 1;
       struct func_call *func;
       static struct func_call *func_cur = NULL;
-
       if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
-          
+        printf("Same!\n");
       }
-      if (!if_return){
+      else if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
