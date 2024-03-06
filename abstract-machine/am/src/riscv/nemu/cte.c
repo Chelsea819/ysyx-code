@@ -4,7 +4,7 @@
 
 #define REG_A0 10
 
-Context* (*user_handler)(Event, Context*) = NULL;
+static Context* (*user_handler)(Event, Context*) = NULL;
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
