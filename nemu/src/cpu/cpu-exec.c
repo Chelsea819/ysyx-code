@@ -423,7 +423,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       struct func_call *func;
       static struct func_call *func_cur = NULL;
       if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
-        printf("Same!\n");
+        printf("Same! name:%s func_cur->func_name:%s \n",name,func_cur->func_name);
       }
       else if (!if_return){
         // 函数调用，将函数名放入链表
