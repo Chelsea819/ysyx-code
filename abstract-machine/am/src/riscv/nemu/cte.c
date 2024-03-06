@@ -53,7 +53,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
-  printf("addr: %x\n", user_handler);
+  printf("addr: 0x%08x\n", user_handler);
   assert(user_handler);
 
   return true;
