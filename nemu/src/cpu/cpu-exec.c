@@ -366,7 +366,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     // 函数返回 jalr rs1 = x1, rd = x0
     if (rd == 0 && rs1 == 1){
       if_return = true;
-      if_conduct = false;
+      if_conduct = true;
     }
     // 函数调用
     else if (rd == 1){
@@ -407,10 +407,10 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-      // if (n == 0){
-      //   if_same = true;
-      //   // Assert(0, "Fail in searching!");
-      // }
+      if (n == 0){
+        // if_same = true;
+        Assert(0, "Fail in searching!");
+      }
     }
     // if(!if_same){
       // 取出函数名称
@@ -475,7 +475,6 @@ static void exec_once(Decode *s, vaddr_t pc)
       Assert(func_cur, "func_cur NULL!");
       free(name);
     // }
-    
   }
   free(opcode);
   free(ins);
