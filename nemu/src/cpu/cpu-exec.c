@@ -453,7 +453,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         }
         index++;
       }
-      else{
+      else if(if_return){
         // 函数返回，将函数名所在链表节点抽出
         struct func_call *funcN = func_cur;
         while (1){
