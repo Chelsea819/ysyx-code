@@ -15,7 +15,8 @@ const char *regs[] = {
 
 Context* __am_irq_handle(Context *c) {
   printf("1111\n");
-  if(user_handler == NULL)  printf("22222\n");
+  assert(user_handler);
+//  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
     switch (c->mcause) {
@@ -52,7 +53,8 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
-  if(user_handler == NULL)  printf("4444:\n");
+  assert(user_handler);
+//  if(user_handler == NULL)  printf("4444:\n");
 
   return true;
 }
