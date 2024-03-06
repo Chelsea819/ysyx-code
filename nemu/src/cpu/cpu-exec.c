@@ -461,6 +461,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
           int flag = 0;
+          printf("name:%s\n",name);
           if (strcmp(func_cur->func_name, name) == 0)
             flag = 1;
           if(flag == 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
@@ -471,7 +472,7 @@ static void exec_once(Decode *s, vaddr_t pc)
             funcN = funcN->past;
           }
           index++;
-          // printf("name:%s\n",name);
+          
 
           free(func_cur->func_name);
 
