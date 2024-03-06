@@ -410,6 +410,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
       else if (!if_return && (sym.st_value < s->dnpc && sym.st_value + sym.st_size > s->dnpc) && sym.st_info == 18){ 
+        printf("Same! dnpc = 0x%08x\n",s->dnpc);
         if_same = true; 
         break;
       }
