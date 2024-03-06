@@ -464,7 +464,6 @@ static void exec_once(Decode *s, vaddr_t pc)
           if(strcmp(name,"putch") != 0) printf("return PART name:%s\n",name);
           if (strcmp(func_cur->func_name, name) == 0)
             flag = 1;
-          if (flag) break;
           if(flag == 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
 
           if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
@@ -489,7 +488,7 @@ static void exec_once(Decode *s, vaddr_t pc)
             func_cur->next = NULL;
           }
 
-          
+          if (flag) break;
 
           printf("flag = %d\n",flag);
         }
