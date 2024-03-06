@@ -460,20 +460,23 @@ static void exec_once(Decode *s, vaddr_t pc)
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
-          int flag = 0;
-          if(strcmp(name,"putch") != 0) printf("return PART name:%s\n",name);
-          if (strcmp(func_cur->func_name, name) == 0)
-            flag = 1;
-          if(flag == 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
+          // int flag = 0;
+          // if(strcmp(name,"putch") != 0) printf("return PART name:%s\n",name);
+
+          // 返回到的位置时与当前链表中的函数名一致
+          // if (strcmp(func_cur->func_name, name) == 0) {flag = 1;}
+          if (strcmp(func_cur->func_name, name) == 0) break;
+
+          if(strcmp(name,"putch") != 0) printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
 
           if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+
           while(funcN != NULL){
             if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",funcN->func_name);
             funcN = funcN->past;
           }
           index++;
           
-
           free(func_cur->func_name);
 
           // 抽出节点
@@ -488,9 +491,9 @@ static void exec_once(Decode *s, vaddr_t pc)
             func_cur->next = NULL;
           }
 
-          if (flag) break;
+          // if (flag) break;
 
-          printf("flag = %d\n",flag);
+          // printf("flag = %d\n",flag);
         }
       }
       Assert(func_cur, "func_cur NULL!");
