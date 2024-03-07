@@ -368,7 +368,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     // 函数返回 jalr rs1 = x1, rd = x0
     if (rd == 0 && rs1 == 1){
       if_return = true;
-      if_conduct = true;
+      if_conduct = false;
     }
     // 函数调用
     else if (rd == 1){
