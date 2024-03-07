@@ -169,12 +169,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 
   // WP *index = get_head();
   WP *index = head;
-  // assert(index != NULL);
-  while (index != NULL){
+  while (index != NULL)
+  {
     // printf("\033[92m %d \thw watchpoint \tkeep \ty \t [%s] \033[m \n", index->NO, index->target);
     addr = expr(index->target, &success);
     Assert(success, "Make_token fail!");
-    if (addr != index->data){
+    if (addr != index->data)
+    {
       nemu_state.state = NEMU_STOP;
       index->times += 1;
       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
@@ -329,9 +330,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  // bool if_same = false;
+  bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
-  // 函数调用 jal， x0 ,offset
   // 函数调用 jal,  rd = x1, imm = ***
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
@@ -343,12 +343,11 @@ static void exec_once(Decode *s, vaddr_t pc)
   opcode[7] = '\0';
   int rd = BITS(m, 11, 7);
   int rs1 = BITS(m, 19, 15);
-  // int a = 0;
 
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && (rd == 1 || rd == 0)){
+  if (strcmp(opcode, "1101111") == 0 && rd == 1){
     if_return = false;
     if_conduct = true;
   }
@@ -401,7 +400,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       // 3.2找到对应的一行
       // 3.2.1 函数返回 是返回到原函数的中间位置
-      if (if_return && (sym.st_value < s->dnpc && sym.st_value + sym.st_size > s->dnpc) && sym.st_info == 18)
+      if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
       {
         // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
         break;
@@ -409,28 +408,21 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-      // else if (!if_return && (sym.st_value < s->dnpc && sym.st_value + sym.st_size > s->dnpc) && sym.st_info == 18){ 
-      //   printf("Same! dnpc = 0x%08x\n",s->dnpc);
-      //   if_same = true; 
-      //   break;
-      // }
       if (n == 0){
-        // if_same = true;
-        Assert(0, "Fail in searching!");
+        if_same = true;
+        // Assert(0, "Fail in searching!");
       }
     }
-    // if(!if_same){
+    if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
-      // printf("name:%s\n",name);
+
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
       static int index = 1;
       struct func_call *func;
       static struct func_call *func_cur = NULL;
-      if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
-        printf("Same! name:%s func_cur->func_name:%s \n",name,func_cur->func_name);
-      }
-      else if (!if_return){
+
+      if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -447,39 +439,21 @@ static void exec_once(Decode *s, vaddr_t pc)
           func_cur = func;
         }
         if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
-        while(func != NULL){
-          if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",func->func_name);
-          func = func->past;
-        }
         index++;
       }
-      else if(if_return){
+      else{
         // 函数返回，将函数名所在链表节点抽出
-        struct func_call *funcN = func_cur;
         while (1){
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
-          // int flag = 0;
-          // if(strcmp(name,"putch") != 0) printf("return PART name:%s\n",name);
-
-          // 返回到的位置时与当前链表中的函数名一致
-          // if (strcmp(func_cur->func_name, name) == 0) {flag = 1;}
-          if (strcmp(func_cur->func_name, name) == 0) break;
-
-          if(strcmp(name,"putch") != 0) {
-            printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
-            assert((strcmp(name,"putch") != 0)); 
-            Log("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-          }
-
-
-          while(funcN != NULL){
-            if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",funcN->func_name);
-            funcN = funcN->past;
-          }
+          int flag = 0;
+          if (strcmp(func_cur->func_name, name) == 0)
+            flag = 1;
+          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
           index++;
-          
+          // printf("name:%s\n",name);
+
           free(func_cur->func_name);
 
           // 抽出节点
@@ -494,14 +468,15 @@ static void exec_once(Decode *s, vaddr_t pc)
             func_cur->next = NULL;
           }
 
-          // if (flag) break;
+          if (flag) break;
 
-          // printf("flag = %d\n",flag);
+          printf("flag = %d\n",flag);
         }
       }
       Assert(func_cur, "func_cur NULL!");
       free(name);
-    // }
+    }
+    
   }
   free(opcode);
   free(ins);
