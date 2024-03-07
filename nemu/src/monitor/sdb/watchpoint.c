@@ -64,6 +64,7 @@ WP* new_wp(char *args){
   get_wp->target = (char *)malloc(strlen(args)+1);
   strcpy(get_wp->target,args);
   get_wp->data = expr(args,&success);
+  printf("get_wp->data = %d\n",get_wp->data);
   Assert(success,"Make_token fail!");
 
   //add it to head list

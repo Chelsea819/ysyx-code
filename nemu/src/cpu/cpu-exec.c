@@ -78,12 +78,10 @@ int init_ftrace(const char *ftrace_file)
 
   // 读取ELF header
   int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
-  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0)
-  {
+  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0){
     Assert(0, "Not an ELF file!\n");
   }
 
@@ -93,8 +91,7 @@ int init_ftrace(const char *ftrace_file)
   // 移到.strtab的位置，并进行读取
   fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
   ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
   str_off = Elf_sec.sh_offset;
@@ -103,22 +100,18 @@ int init_ftrace(const char *ftrace_file)
 
   fseek(ftrace_fp, str_off, SEEK_SET);
   ret = fread(strtab, str_size, 1, ftrace_fp);
-  if (ret != 1)
-  {
+  if (ret != 1){
     perror("Error reading from file");
   }
 
   // get .symtab
-  for (int n = 0; n < Elf_header.e_shnum; n++)
-  {
+  for (int n = 0; n < Elf_header.e_shnum; n++){
     fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
     ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-    if (ret != 1)
-    {
+    if (ret != 1){
       perror("Error reading from file");
     }
-    if (Elf_sec.sh_type == SHT_SYMTAB)
-    {
+    if (Elf_sec.sh_type == SHT_SYMTAB){
       sym_off = Elf_sec.sh_offset;
       sym_size = Elf_sec.sh_entsize;
       sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
@@ -302,6 +295,8 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 根据指令判断函数调用/函数返回
 
   // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
+  // printf("s->logbuf = %s\n",s->logbuf);
+  // printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
   int k = 12;
   char *ins_tmp_16 = malloc(9);
   memset(ins_tmp_16, 0, 9);
@@ -352,8 +347,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1)
-  {
+  if (strcmp(opcode, "1101111") == 0 && rd == 1){
     if_return = false;
     if_conduct = true;
   }
@@ -363,31 +357,30 @@ static void exec_once(Decode *s, vaddr_t pc)
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
 
-  // 判断出jalr
-  else if (strcmp(opcode, "1100111") == 0)
-  {
+  // 函数返回 jalr rs1 = x1, rd = x0
+  // 函数调用 jalr, rd = x0
+  // 函数调用 jalr, rd = x1
 
-    // 函数返回
-    if (rd == 0 && rs1 == 1)
-    {
+  // 判断出jalr
+  else if (strcmp(opcode, "1100111") == 0){
+
+    // 函数返回 jalr rs1 = x1, rd = x0
+    if (rd == 0 && rs1 == 1){
       if_return = true;
-      if_conduct = true;
+      if_conduct = false;
     }
     // 函数调用
-    else if (rd == 1)
-    {
+    else if (rd == 1){
       if_return = false;
       if_conduct = true;
     }
-    else if (rd == 0)
-    {
+    else if (rd == 0){
       if_return = false;
       if_conduct = true;
     }
   }
 
-  if (if_conduct)
-  {
+  if (if_conduct){
     // 3.找到是哪个函数
     Elf32_Sym sym;
     int ret = 0;
@@ -415,15 +408,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-
-      // if ((sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
-      // {
-      //   // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-      //   if_same = true;
-      //   break;
-      // } 
-      if (n == 0)
-      {
+      if (n == 0){
         if_same = true;
         // Assert(0, "Fail in searching!");
       }
@@ -437,8 +422,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       struct func_call *func;
       static struct func_call *func_cur = NULL;
 
-      if (!if_return)
-      {
+      if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -454,23 +438,19 @@ static void exec_once(Decode *s, vaddr_t pc)
           func_cur->next = func;
           func_cur = func;
         }
-        printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
         index++;
       }
-      else
-      {
+      else{
         // 函数返回，将函数名所在链表节点抽出
-        while (1)
-        {
-          // printf("1111111111111\n");
-          // printf("name:%s\n",name);
+        while (1){
           Assert(func_cur, "func_cur NULL!");
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
           int flag = 0;
           if (strcmp(func_cur->func_name, name) == 0)
             flag = 1;
-          printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
           index++;
           // printf("name:%s\n",name);
 

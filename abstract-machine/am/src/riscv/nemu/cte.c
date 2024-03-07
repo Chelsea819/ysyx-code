@@ -14,6 +14,9 @@ const char *regs[] = {
 };
 
 Context* __am_irq_handle(Context *c) {
+  printf("1111\n");
+  assert(user_handler);
+//  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
     switch (c->mcause) {
@@ -25,11 +28,14 @@ Context* __am_irq_handle(Context *c) {
     // }
     // printf("c->mcause: 0x%08x\n",c->mcause);
     // printf("c->mstatus: 0x%08x\n",c->mstatus);
-    // printf("c->mepc: 0x%08x\n",c->mepc);
+    printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
+    printf("c->mepc: 0x%08x\n",c->mepc);
+
     c = user_handler(ev, c); // 根据不同事件进行不同操作
     assert(c != NULL);
   }
+  else assert(0);
 
   return c;
 }
@@ -39,11 +45,16 @@ extern void __am_asm_trap(void);
 bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始化操作
   //接受一个来自操作系统的事件处理回调函数的指针, 
   //当发生事件时, CTE将会把事件和相关的上下文作为参数, 来调用这个回调函数, 交由操作系统进行后续处理.
-  // initialize exception entry
+  // initialize exception  
+  printf("user_handler : 0x%08x\n",&user_handler); 
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap)); // 将异常入口地址设置到mtvec寄存器中
+  printf("cte_init!\n");
+  assert(handler);
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
+  printf("addr: 0x%08x\n", user_handler);
+  assert(user_handler);
 
   return true;
 }
