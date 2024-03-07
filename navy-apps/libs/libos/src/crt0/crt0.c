@@ -9,7 +9,7 @@ void call_main(uintptr_t *args) {
   environ = empty;
   int ret = main(0, empty, empty);
   assert(ret == 1);
-  exit(ret);
+  exit(4);
   
   assert(0);
 }
