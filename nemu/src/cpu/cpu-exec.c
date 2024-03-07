@@ -329,7 +329,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  bool if_same = false;
+  // bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal， x0 ,offset
   // 函数调用 jal,  rd = x1, imm = ***
@@ -409,17 +409,17 @@ static void exec_once(Decode *s, vaddr_t pc)
       // 3.2.2 函数调用 是跳转到一个新函数的头部
       else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
         break;
-      else if (!if_return && (sym.st_value < s->dnpc && sym.st_value + sym.st_size > s->dnpc) && sym.st_info == 18){ 
-        printf("Same! dnpc = 0x%08x\n",s->dnpc);
-        if_same = true; 
-        break;
-      }
+      // else if (!if_return && (sym.st_value < s->dnpc && sym.st_value + sym.st_size > s->dnpc) && sym.st_info == 18){ 
+      //   printf("Same! dnpc = 0x%08x\n",s->dnpc);
+      //   if_same = true; 
+      //   break;
+      // }
       if (n == 0){
         // if_same = true;
         Assert(0, "Fail in searching!");
       }
     }
-    if(!if_same){
+    // if(!if_same){
       // 取出函数名称
       strncpy(name, strtab + sym.st_name, 19);
       // printf("name:%s\n",name);
@@ -427,10 +427,10 @@ static void exec_once(Decode *s, vaddr_t pc)
       static int index = 1;
       struct func_call *func;
       static struct func_call *func_cur = NULL;
-      if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
-        printf("Same! name:%s func_cur->func_name:%s \n",name,func_cur->func_name);
-      }
-      else if (!if_return){
+      // if(!if_return && func_cur != NULL && strcmp(name, func_cur->func_name) == 0){
+      //   printf("Same! name:%s func_cur->func_name:%s \n",name,func_cur->func_name);
+      // }
+      if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
         func->func_name = malloc(20);
@@ -448,7 +448,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         }
         if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
         while(func != NULL){
-          if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",func->func_name);
+          // if(strcmp(name,"putch") != 0) printf("[func->name = %s]\n",func->func_name);
           func = func->past;
         }
         index++;
@@ -468,7 +468,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           if (strcmp(func_cur->func_name, name) == 0) break;
 
           if(strcmp(name,"putch") != 0) {
-            printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
+            // printf("name:%s\nfunc_cur->func_name:%s\n",name,func_cur->func_name);
             assert((strcmp(name,"putch") != 0)); 
             Log("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
           }
@@ -501,7 +501,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       Assert(func_cur, "func_cur NULL!");
       free(name);
-    }
+    // }
   }
   free(opcode);
   free(ins);
