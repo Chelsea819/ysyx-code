@@ -3,7 +3,6 @@ RAMDISK_FILE = build/ramdisk.img
 
 NAME = nanos-lite
 SRCS = $(shell find -L ./src/ -name "*.c" -o -name "*.cpp" -o -name "*.S")
-CFLAGS += -DARCH_ELF=$(IMAGE).elf
 include $(AM_HOME)/Makefile
 
 ifeq ($(ARCH),native)
