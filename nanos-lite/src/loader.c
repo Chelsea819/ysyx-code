@@ -23,7 +23,7 @@ size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr Elf_header;  // ELF文件头
   Elf_Phdr Elf_proc;    // 程序头
-  char buf[0xcf] = {0};     // 存放段的buffer
+  char buf[0x8f] = {0};     // 存放段的buffer
 
   // 读取ELF header
   ramdisk_read(&Elf_header, 0, sizeof(Elf_header));
