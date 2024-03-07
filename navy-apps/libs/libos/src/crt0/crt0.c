@@ -8,8 +8,8 @@ void call_main(uintptr_t *args) {
   char *empty[] =  {NULL };
   environ = empty;
   int ret = main(0, empty, empty);
-  putch(ret);
-  putch('\n');
+  assert(ret == 1);
   exit(ret);
+  
   assert(0);
 }
