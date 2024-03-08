@@ -19,6 +19,8 @@ Context* __am_irq_handle(Context *c) {
 //  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
+    printf("c->GPR1: 0x%08x\n",c->GPR1);
+
     switch (c->mcause) {
       case 0xb:
         if (c->GPR1 == -1) ev.event = EVENT_YIELD;
@@ -30,7 +32,6 @@ Context* __am_irq_handle(Context *c) {
     // for(int i = 0; i < 32; i++){
     //   printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
     // }
-    // printf("c->mcause: 0x%08x\n",c->mcause);
     // printf("c->mstatus: 0x%08x\n",c->mstatus);
     printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
