@@ -20,7 +20,11 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
     switch (c->mcause) {
-      case 0xb: ev.event = EVENT_YIELD; break;
+      case 0xb:
+        if (c->GPR1 == -1) ev.event = EVENT_YIELD;
+        else if (c->GPR1 == 1) ev.event = EVENT_ERROR;
+        else ev.event = EVENT_NULL;
+        break;
       default: ev.event = EVENT_ERROR; break;
     }
     // for(int i = 0; i < 32; i++){
