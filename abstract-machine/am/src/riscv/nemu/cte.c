@@ -24,8 +24,7 @@ Context* __am_irq_handle(Context *c) {
     switch (c->mcause) {
       case 0xb:
         if (c->GPR1 == -1) ev.event = EVENT_YIELD;
-        else if (c->GPR1 == 1) ev.event = EVENT_SYSCALL;
-        else ev.event = EVENT_ERROR;
+        else ev.event = EVENT_SYSCALL; // 这边已经有0 和 1 了
         break;
       default: ev.event = EVENT_ERROR; break;
     }
