@@ -16,10 +16,12 @@ uintptr_t sys_write(Context *c){
   int i = 0;
   if(c->GPR2 == 1 || c->GPR2 == 2){
     for(i = 0; i < c->GPR4; i ++){
+      putch('a');
       if(!c->GPR3) return -1;
       putch(*((char *)c->GPR3 + i));
     }
   } 
+  putch('b');
   return i;
 }
 
