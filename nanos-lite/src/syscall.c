@@ -11,6 +11,11 @@ void sys_exit(){
   halt(0);
 }
 
+// uintptr_t sys_write(){
+//   yield();
+//   return 0;
+// }
+
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -22,14 +27,16 @@ void do_syscall(Context *c) {
   switch (a[0]){
     case 1: strcpy(name,"SYS_yield"); break;
     case 0: strcpy(name,"SYS_exit"); break;
+    // case x: strcpy(name,"SYS_write"); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
   #endif
-  
+
   switch (a[0]){
     case 1: ret = sys_yield(); break;
     case 0: sys_exit(); break;
+    // case x: ret = sys_write(); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
