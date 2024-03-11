@@ -70,8 +70,21 @@ int _write(int fd, void *buf, size_t count) {
   return 0;
 }
 
+extern char _end;
+intptr_t proBrk = (intptr_t)&_end;
+
+// 调整堆区大小
+// 在Navy的Newlib中, sbrk()最终会调用_sbrk()
 void *_sbrk(intptr_t increment) {
-  return (void *)-1;
+  intptr_t addr = proBrk + increment;
+  int ret = _syscall_(SYS_brk, addr, 0, 0);
+  if(ret != 0){
+    return (void *)-1;
+  }
+  else {
+    proBrk = addr;
+    return (void *)(addr - increment);
+  }
 }
 
 int _read(int fd, void *buf, size_t count) {

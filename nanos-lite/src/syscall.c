@@ -16,13 +16,17 @@ uintptr_t sys_write(Context *c){
   int i = 0;
   if(c->GPR2 == 1 || c->GPR2 == 2){
     for(i = 0; i < c->GPR4; i ++){
-      putch('a');
+      // putch('a');
       if(!c->GPR3) return -1;
       putch(*((char *)c->GPR3 + i));
     }
   } 
-  putch('b');
+  // putch('b');
   return i;
+}
+
+uintptr_t sys_brk(){
+  return 0;
 }
 
 
@@ -37,6 +41,7 @@ void do_syscall(Context *c) {
     case SYS_exit : strcpy(name,"SYS_exit"); break;
     case SYS_yield: strcpy(name,"SYS_yield"); break;
     case SYS_write: strcpy(name,"SYS_write"); break;
+    case SYS_brk: strcpy(name,"SYS_brk"); break;
     // case x: strcpy(name,"SYS_write"); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
@@ -47,6 +52,7 @@ void do_syscall(Context *c) {
     case SYS_exit: sys_exit(); break;
     case SYS_yield: ret = sys_yield(); break;
     case SYS_write: ret = sys_write(c); break;
+    case SYS_brk: ret = sys_brk(); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
