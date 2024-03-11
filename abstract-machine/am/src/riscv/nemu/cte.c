@@ -14,12 +14,12 @@ const char *regs[] = {
 };
 
 Context* __am_irq_handle(Context *c) {
-  printf("1111\n");
+  // printf("1111\n");
   assert(user_handler);
 //  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
-    printf("c->GPR1: 0x%08x\n",c->GPR1);
+    // printf("c->GPR1: 0x%08x\n",c->GPR1);
 
     switch (c->mcause) {
       case 0xb:
@@ -32,9 +32,9 @@ Context* __am_irq_handle(Context *c) {
     //   printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
     // }
     // printf("c->mstatus: 0x%08x\n",c->mstatus);
-    printf("c->mepc: 0x%08x\n",c->mepc);
+    // printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
-    printf("c->mepc: 0x%08x\n",c->mepc);
+    // printf("c->mepc: 0x%08x\n",c->mepc);
 
     c = user_handler(ev, c); // 根据不同事件进行不同操作
     assert(c != NULL);
