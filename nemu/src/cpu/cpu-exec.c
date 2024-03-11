@@ -49,6 +49,10 @@ static iringbuf *curre = NULL;
 static iringbuf *bottom = NULL;
 #endif
 
+#ifdef CONFIG_WATCHPOINT
+extern WP *head;
+#endif
+
 #ifdef CONFIG_FTRACE
 FILE *ftrace_fp = NULL;
 
@@ -60,7 +64,7 @@ Elf32_Sym Elf_sym;
 Elf32_Xword str_size;
 Elf32_Xword sym_size;
 int sym_num;
-extern WP *head;
+
 char *strtab = NULL;
 
 
