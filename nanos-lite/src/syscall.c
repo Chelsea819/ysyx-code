@@ -25,8 +25,9 @@ void do_syscall(Context *c) {
   #ifdef CONFIG_STRACE
   char name[10] = {0};
   switch (a[0]){
-    case 1: strcpy(name,"SYS_yield"); break;
-    case 0: strcpy(name,"SYS_exit"); break;
+    case SYS_exit : strcpy(name,"SYS_exit"); break;
+    case SYS_yield: strcpy(name,"SYS_yield"); break;
+    
     // case x: strcpy(name,"SYS_write"); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
@@ -34,8 +35,8 @@ void do_syscall(Context *c) {
   #endif
 
   switch (a[0]){
-    case 1: ret = sys_yield(); break;
-    case 0: sys_exit(); break;
+    case SYS_exit: sys_exit(); break;
+    case SYS_yield: ret = sys_yield(); break;
     // case x: ret = sys_write(); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
