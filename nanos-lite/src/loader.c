@@ -36,8 +36,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // ramdisk_read(&Elf_header, 0, sizeof(Elf_header));
   fs_read(fd, &Elf_header, sizeof(Elf_header));
   // 检查文件格式
-  printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
-  printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
+  // printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
+  // printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
   assert(Elf_header.e_ident[0] == '\x7f' && memcmp(&(Elf_header.e_ident[1]), "ELF", 3) == 0);
   assert(Elf_header.e_type == ET_EXEC);
 
