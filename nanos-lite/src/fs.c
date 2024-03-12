@@ -38,6 +38,7 @@ static Finfo file_table[] __attribute__((used)) = { // 文件记录表
 int fs_open(const char *pathname, int flags, int mode){
   // find the certain file
   int file_num = sizeof(file_table) / sizeof(Finfo);
+  printf("file_num = %d\n",file_num);
   int fd = 0;
   for(fd = 0; fd < file_num; fd ++){
     if(strcmp(file_table[fd].name, pathname) == 0){
