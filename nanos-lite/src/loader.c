@@ -48,14 +48,14 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   for(int n = 0; n < Elf_header.e_phnum; n ++){
     // 读程序头
     // ramdisk_read(&Elf_proc, Elf_header.e_phoff + n * Elf_header.e_phentsize, sizeof(Elf_proc));
-    fs_lseek(fd, Elf_header.e_phoff + n * Elf_header.e_phentsize, SEEK_SET);
+    fs_lseek(fd, Elf_header.e_phoff + n * Elf_header.e_phentsize - sizeof(Elf_header), SEEK_CUR);
     fs_read(fd, &Elf_proc, sizeof(Elf_proc));
     // 是否需要加载
     if (Elf_proc.p_type == PT_LOAD){
       buf = malloc(Elf_proc.p_memsz);
       // 读取段
       // ramdisk_read(buf, Elf_proc.p_offset, Elf_proc.p_filesz);
-      fs_lseek(fd, Elf_proc.p_offset, SEEK_SET);
+      fs_lseek(fd, Elf_proc.p_offset - (Elf_header.e_phoff + n * Elf_header.e_phentsize - sizeof(Elf_header)) , SEEK_CUR);
       fs_read(fd, buf, Elf_proc.p_filesz);
       // printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
       // printf("Elf_proc.p_memsz: 0x%016x\n",Elf_proc.p_memsz);
