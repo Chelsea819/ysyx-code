@@ -55,9 +55,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       buf = malloc(Elf_proc.p_memsz);
       // 读取段
       // ramdisk_read(buf, Elf_proc.p_offset, Elf_proc.p_filesz);
-      int addr = Elf_proc.p_offset - (Elf_header.e_phoff + n * Elf_header.e_phentsize - sizeof(Elf_header));
+      // int addr = Elf_proc.p_offset - (Elf_header.e_phoff + n * Elf_header.e_phentsize - sizeof(Elf_header));
       // printf("addr = 0x%08x\n",addr);
-      fs_lseek(fd, addr, SEEK_CUR);
+      fs_lseek(fd, Elf_proc.p_offset, SEEK_SET);
       fs_read(fd, buf, Elf_proc.p_filesz);
       // printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
       // printf("Elf_proc.p_memsz: 0x%016x\n",Elf_proc.p_memsz);
