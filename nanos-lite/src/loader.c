@@ -24,6 +24,7 @@ size_t fs_lseek(int fd, size_t offset, int whence);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   // 找到特定文件的offset
+  assert(filename != NULL);
   int fd = fs_open(filename, 0, 0);
   
   // 读取相应文件的ELF模块
