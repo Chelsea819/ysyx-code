@@ -523,7 +523,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     if(!if_same){
       // 取出函数名称
       strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
-
+      printf("name: %s\n",name); 
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
       static int index = 1;
       struct func_call *func;
