@@ -99,7 +99,7 @@ int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
   FILE *fp = NULL;
   // 需要读取的文件数
-  fileNum = file_cur->NO - file_header->NO + 1;
+  fileNum = file_cur->NO - file_header->NO;
 
   // 初始化链表
   elf_pool = malloc(fileNum * sizeof(ELF));
