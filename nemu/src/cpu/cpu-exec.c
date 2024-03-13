@@ -497,7 +497,6 @@ static void exec_once(Decode *s, vaddr_t pc)
 
     // printf("s->logbuf: %s\n",s->logbuf);
     for(indx = 0; indx < fileNum; indx ++){
-      printf("s->logbuf: %s\n",s->logbuf);
         for (int n = elf_header[indx].sym_num - 1; n >= 0; n--){
           // 3.1读取符号表
           fseek(elf_header[indx].ftrace_fp, elf_header[indx].sym_off + n * elf_header[indx].sym_size, SEEK_SET);
@@ -518,6 +517,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         }
         if (indx == fileNum - 1){
             if_same = true;
+            printf("s->logbuf: %s\n",s->logbuf);
             // Assert(0, "Fail in searching!");
           }
     }
