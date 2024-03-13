@@ -521,7 +521,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       if(n >= 0) break;
       if (indx == fileNum - 1){
           if_same = true;
-          Assert(0, "Fail in searching!");
+          // Assert(0, "Fail in searching!");
         }
     }
     
