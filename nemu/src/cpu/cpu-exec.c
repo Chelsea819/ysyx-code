@@ -514,7 +514,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           }
           // 3.2.2 函数调用 是跳转到一个新函数的头部
           else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18){
-            printf("sym.st_value = 0x%08x s->dnpc = 0x%08x \n",sym.st_value,s->dnpc);
+            // printf("sym.st_value = 0x%08x s->dnpc = 0x%08x \n",sym.st_value,s->dnpc);
             break;
           }
         }
