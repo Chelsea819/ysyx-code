@@ -496,7 +496,8 @@ static void exec_once(Decode *s, vaddr_t pc)
     memset(name, 0, 20);
 
     // printf("s->logbuf: %s\n",s->logbuf);
-    for(indx = 0; indx < fileNum; indx ++){
+    for(indx = 0; i < fileNum; i ++){
+      printf("i = %d\n",i);
         for (int n = elf_header[indx].sym_num - 1; n >= 0; n--){
           // 3.1读取符号表
           fseek(elf_header[indx].ftrace_fp, elf_header[indx].sym_off + n * elf_header[indx].sym_size, SEEK_SET);
