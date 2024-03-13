@@ -504,6 +504,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           if (ret != 1){
             perror("Read error");
           }
+          strncpy(name, elf_header[indx].strtab + sym.st_name, 19); printf("name: %s\n",name);
           // 3.2找到对应的一行
           // 3.2.1 函数返回 是返回到原函数的中间位置
           if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18){
