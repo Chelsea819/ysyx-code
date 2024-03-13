@@ -111,6 +111,7 @@ int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
     elf_header[indx].name = file_header[indx].name;
     elf_header[indx].NO = file_header[indx].NO;
     // 检查文件是否能正常读取
+    printf("elf_header[indx].NO [%d]\n",elf_header[indx].NO);
     Assert(file_header[indx].name, "file_header[indx].name is NULL!\n");
     Assert(elf_header[indx].name, "ftrace_file is NULL!\n");
 
