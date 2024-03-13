@@ -64,6 +64,7 @@ Ftrace_file *file_pool = NULL;
 Ftrace_file *file_cur = NULL;
 
 void creat_ftraceIndex(char *filename){
+  printf("filename = %s\n",filename);
   if(file_header == NULL){
     file_pool = malloc(FILE_NUM * sizeof(Ftrace_file));
     for(int i = 0; i < FILE_NUM; i ++){
