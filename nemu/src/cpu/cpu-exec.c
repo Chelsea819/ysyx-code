@@ -504,6 +504,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           if (ret != 1){
             perror("Read error");
           }
+          if(s->pc >= 0x83000000){strncpy(name, elf_header[indx].strtab + sym.st_name, 19); printf("name = [%s]\n",name);}
           // 3.2找到对应的一行
           // 3.2.1 函数返回 是返回到原函数的中间位置
           if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18){
@@ -523,7 +524,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     if(!if_same){
       // 取出函数名称
       strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
-      printf("name: %s\n",name); 
+      // printf("name: %s\n",name); 
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
       static int index = 1;
       struct func_call *func;
