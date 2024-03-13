@@ -108,6 +108,7 @@ int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
   // 循环读取文件
   for(int indx = 0; indx < fileNum; indx ++){
     fp = NULL;
+    printf("fileNum = %d\n",fileNum);
     elf_header[indx].name = file_header[indx].name;
     elf_header[indx].NO = file_header[indx].NO;
     // 检查文件是否能正常读取
