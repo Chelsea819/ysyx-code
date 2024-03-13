@@ -496,8 +496,9 @@ static void exec_once(Decode *s, vaddr_t pc)
     memset(name, 0, 20);
 
     // printf("s->logbuf: %s\n",s->logbuf);
-    for(indx = 0; i < fileNum; i ++, indx ++){
-        for (int n = elf_header[indx].sym_num - 1; n >= 0; n--){
+    for(indx = 0; indx < fileNum; indx ++){
+      int n = elf_header[indx].sym_num - 1;
+        for(; n >= 0; n--){
           // 3.1读取符号表
           fseek(elf_header[indx].ftrace_fp, elf_header[indx].sym_off + n * elf_header[indx].sym_size, SEEK_SET);
           ret = fread(&sym, sizeof(Elf32_Sym), 1, elf_header[indx].ftrace_fp);
@@ -517,6 +518,7 @@ static void exec_once(Decode *s, vaddr_t pc)
             break;
           }
         }
+        if(n < 0) break;
         if (indx == fileNum - 1){
             if_same = true;
             Assert(0, "Fail in searching!");
