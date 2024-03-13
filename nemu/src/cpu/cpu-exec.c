@@ -54,81 +54,181 @@ extern WP *head;
 #endif
 
 #ifdef CONFIG_FTRACE
-FILE *ftrace_fp = NULL;
 
-Elf32_Ehdr Elf_header;
-Elf32_Shdr Elf_sec;
-Elf32_Off sym_off;
-Elf32_Off str_off;
-Elf32_Sym Elf_sym;
-Elf32_Xword str_size;
-Elf32_Xword sym_size;
-int sym_num;
+typedef struct elf_table{
+  char *name;
+  int NO;
+  FILE *ftrace_fp;
+  Elf32_Ehdr Elf_header;
+  Elf32_Shdr Elf_sec;
+  Elf32_Off sym_off;
+  Elf32_Off str_off;
+  Elf32_Sym Elf_sym;
+  Elf32_Xword str_size;
+  Elf32_Xword sym_size;
+  int sym_num;
+  char *strtab;
+} ELF; 
 
-char *strtab = NULL;
+#define FILE_NUM 5
+static ELF *elf_header = NULL;
+static ELF *elf_pool = NULL;
+// static ELF *elf_cur = NULL;
+static int fileNum = 0;
 
+typedef struct ftrace_file{
+  char *name;
+  int NO;
+  struct ftrace_file *next;
+} Ftrace_file;
 
-int init_ftrace(const char *ftrace_file)
+// FILE *ftrace_fp = NULL;
+
+// Elf32_Ehdr Elf_header;
+// Elf32_Shdr Elf_sec;
+// Elf32_Off sym_off;
+// Elf32_Off str_off;
+// Elf32_Sym Elf_sym;
+// Elf32_Xword str_size;
+// Elf32_Xword sym_size;
+// int sym_num;
+
+// char *strtab = NULL;
+
+int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
   FILE *fp = NULL;
+  // 需要读取的文件数
+  fileNum = file_cur->NO - file_header->NO + 1;
 
-  // 检查文件是否能正常读取
-  Assert(ftrace_file, "ftrace_file is NULL!\n");
+  // 初始化链表
+  elf_pool = malloc(fileNum * sizeof(ELF));
+  elf_header = elf_pool;
 
-  fp = fopen(ftrace_file, "r");
-  Assert(fp, "Can not open '%s'", ftrace_file);
+  // 循环读取文件
+  for(int indx = 0; indx < fileNum; indx ++){
+    fp = NULL;
+    elf_header[indx].name = file_header[indx].name;
+    elf_header[indx].NO = file_header[indx].NO;
+    // 检查文件是否能正常读取
+    Assert(elf_header[indx].name, "ftrace_file is NULL!\n");
 
-  ftrace_fp = fp;
+    fp = fopen(elf_header[indx].name, "r");
+    Assert(fp, "Can not open '%s'", elf_header[indx].name);
 
-  // 读取ELF header
-  int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
-  if (ret != 1){
-    perror("Error reading from file");
-  }
-  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0){
-    Assert(0, "Not an ELF file!\n");
-  }
+    elf_header[indx].ftrace_fp = fp;
 
-  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
-  Assert(Elf_header.e_type == ET_EXEC, "Not an exec file\n");
-
-  // 移到.strtab的位置，并进行读取
-  fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
-  ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-  if (ret != 1){
-    perror("Error reading from file");
-  }
-  str_off = Elf_sec.sh_offset;
-  str_size = Elf_sec.sh_size;
-  strtab = malloc(str_size);
-
-  fseek(ftrace_fp, str_off, SEEK_SET);
-  ret = fread(strtab, str_size, 1, ftrace_fp);
-  if (ret != 1){
-    perror("Error reading from file");
-  }
-
-  // get .symtab
-  for (int n = 0; n < Elf_header.e_shnum; n++){
-    fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
-    ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
+    // 读取ELF header
+    int ret = fread(&(elf_header[indx].Elf_header), sizeof(Elf32_Ehdr), 1, elf_header[indx].ftrace_fp);
     if (ret != 1){
       perror("Error reading from file");
     }
-    if (Elf_sec.sh_type == SHT_SYMTAB){
-      sym_off = Elf_sec.sh_offset;
-      sym_size = Elf_sec.sh_entsize;
-      sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
-      continue;
+    if (elf_header[indx].Elf_header.e_ident[0] != '\x7f' || memcmp(&(elf_header[indx].Elf_header.e_ident[1]), "ELF", 3) != 0){
+      Assert(0, "Not an ELF file!\n");
+    }
+
+    Assert(elf_header[indx].Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
+    Assert(elf_header[indx].Elf_header.e_type == ET_EXEC, "Not an exec file\n");
+
+    // 移到.strtab的位置，并进行读取
+    fseek(elf_header[indx].ftrace_fp, elf_header[indx].Elf_header.e_shoff + elf_header[indx].Elf_header.e_shentsize * (elf_header[indx].Elf_header.e_shstrndx - 1), SEEK_SET);
+    ret = fread(&elf_header[indx].Elf_sec, elf_header[indx].Elf_header.e_shentsize, 1, elf_header[indx].ftrace_fp);
+    if (ret != 1){
+      perror("Error reading from file");
+    }
+    elf_header[indx].str_off = elf_header[indx].Elf_sec.sh_offset;
+    elf_header[indx].str_size = elf_header[indx].Elf_sec.sh_size;
+    elf_header[indx].strtab = malloc( elf_header[indx].str_size);
+
+    fseek(elf_header[indx].ftrace_fp, elf_header[indx].str_off, SEEK_SET);
+    ret = fread(elf_header[indx].strtab, elf_header[indx].str_size, 1, elf_header[indx].ftrace_fp);
+    if (ret != 1){
+      perror("Error reading from file");
+    }
+
+    // get .symtab
+    for (int n = 0; n < elf_header[indx].Elf_header.e_shnum; n++){
+      fseek(elf_header[indx].ftrace_fp, elf_header[indx].Elf_header.e_shoff + n * elf_header[indx].Elf_header.e_shentsize, SEEK_SET);
+      ret = fread(&elf_header[indx].Elf_sec, elf_header[indx].Elf_header.e_shentsize, 1, elf_header[indx].ftrace_fp);
+      if (ret != 1){
+        perror("Error reading from file");
+      }
+      if (elf_header[indx].Elf_sec.sh_type == SHT_SYMTAB){
+        elf_header[indx].sym_off = elf_header[indx].Elf_sec.sh_offset;
+        elf_header[indx].sym_size = elf_header[indx].Elf_sec.sh_entsize;
+        elf_header[indx].sym_num = elf_header[indx].Elf_sec.sh_size / elf_header[indx].Elf_sec.sh_entsize;
+        continue;
+      }
     }
   }
-
   return 0;
 }
 
+
+// int init_ftrace(const char *ftrace_file)
+// {
+//   FILE *fp = NULL;
+
+//   // 检查文件是否能正常读取
+//   Assert(ftrace_file, "ftrace_file is NULL!\n");
+
+//   fp = fopen(ftrace_file, "r");
+//   Assert(fp, "Can not open '%s'", ftrace_file);
+
+//   ftrace_fp = fp;
+
+//   // 读取ELF header
+//   int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
+//   if (ret != 1){
+//     perror("Error reading from file");
+//   }
+//   if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0){
+//     Assert(0, "Not an ELF file!\n");
+//   }
+
+//   Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
+//   Assert(Elf_header.e_type == ET_EXEC, "Not an exec file\n");
+
+//   // 移到.strtab的位置，并进行读取
+//   fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
+//   ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
+//   if (ret != 1){
+//     perror("Error reading from file");
+//   }
+//   str_off = Elf_sec.sh_offset;
+//   str_size = Elf_sec.sh_size;
+//   strtab = malloc(str_size);
+
+//   fseek(ftrace_fp, str_off, SEEK_SET);
+//   ret = fread(strtab, str_size, 1, ftrace_fp);
+//   if (ret != 1){
+//     perror("Error reading from file");
+//   }
+
+//   // get .symtab
+//   for (int n = 0; n < Elf_header.e_shnum; n++){
+//     fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
+//     ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
+//     if (ret != 1){
+//       perror("Error reading from file");
+//     }
+//     if (Elf_sec.sh_type == SHT_SYMTAB){
+//       sym_off = Elf_sec.sh_offset;
+//       sym_size = Elf_sec.sh_entsize;
+//       sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
+//       continue;
+//     }
+//   }
+
+//   return 0;
+// }
+
 void free_strtab()
 {
-  free(strtab);
+  for(int i = 0; i < fileNum; i ++){
+    free(elf_header[i].strtab);
+  }
+  
 }
 #endif
 
@@ -388,38 +488,38 @@ static void exec_once(Decode *s, vaddr_t pc)
     // 3.找到是哪个函数
     Elf32_Sym sym;
     int ret = 0;
+    int indx = 0;
     char *name = malloc(20);
     memset(name, 0, 20);
 
     // printf("s->logbuf: %s\n",s->logbuf);
-
-    for (int n = sym_num - 1; n >= 0; n--)
-    {
-      // 3.1读取符号表
-      fseek(ftrace_fp, sym_off + n * sym_size, SEEK_SET);
-      ret = fread(&sym, sizeof(Elf32_Sym), 1, ftrace_fp);
-      if (ret != 1)
-      {
-        perror("Read error");
-      }
-      // 3.2找到对应的一行
-      // 3.2.1 函数返回 是返回到原函数的中间位置
-      if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18)
-      {
-        // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-        break;
-      }
-      // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
-        break;
-      if (n == 0){
-        if_same = true;
-        // Assert(0, "Fail in searching!");
-      }
+    for(indx = 0; i < fileNum; i ++){
+        for (int n = elf_header[indx].sym_num - 1; n >= 0; n--){
+          // 3.1读取符号表
+          fseek(elf_header[indx].ftrace_fp, elf_header[indx].sym_off + n * elf_header[indx].sym_size, SEEK_SET);
+          ret = fread(&sym, sizeof(Elf32_Sym), 1, elf_header[indx].ftrace_fp);
+          if (ret != 1){
+            perror("Read error");
+          }
+          // 3.2找到对应的一行
+          // 3.2.1 函数返回 是返回到原函数的中间位置
+          if (if_return && (sym.st_value <= s->pc && sym.st_value + sym.st_size >= s->pc) && sym.st_info == 18){
+            // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+            break;
+          }
+          // 3.2.2 函数调用 是跳转到一个新函数的头部
+          else if (!if_return && sym.st_value == s->dnpc && sym.st_info == 18)
+            break;
+        }
+        if (indx == fileNum - 1){
+            if_same = true;
+            // Assert(0, "Fail in searching!");
+          }
     }
+    
     if(!if_same){
       // 取出函数名称
-      strncpy(name, strtab + sym.st_name, 19);
+      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
 
       // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
       static int index = 1;

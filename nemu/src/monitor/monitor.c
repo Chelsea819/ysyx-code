@@ -16,6 +16,11 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+typedef struct ftrace_file{
+  char *name;
+  int NO;
+  struct ftrace_file *next;
+} Ftrace_file;
 
 void init_rand();
 void init_log(const char *log_file);
@@ -23,7 +28,7 @@ void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
-int init_ftrace(const char *ftrace_file);
+int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur);
 void init_disasm(const char *triple);
 
 static void welcome() {
@@ -43,11 +48,34 @@ static void welcome() {
 
 void sdb_set_batch_mode();
 
+
+
 static char *log_file = NULL;
-static char *ftrace_file = NULL;
+// static int flag = 0;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
+
+
+
+#define FILE_NUM 5
+Ftrace_file *file_header = NULL;
+Ftrace_file *file_pool = NULL;
+Ftrace_file *file_cur = NULL;
+
+void creat_ftraceIndex(char *filename){
+  if(file_header == NULL){
+    file_pool = malloc(FILE_NUM * sizeof(Ftrace_file));
+    for(int i = 0; i < FILE_NUM; i ++){
+      file_pool[i].NO = i;
+      file_pool[i].next = (i == FILE_NUM - 1 ? NULL : &file_pool[i + 1]);
+    }
+    file_header = file_pool;
+    file_cur = file_pool;
+  }
+  file_cur->name = filename;
+  file_cur = file_cur->next;
+}
 
 //返回加载的镜像文件大小
 static long load_img() {
@@ -94,7 +122,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
+      case 'f': creat_ftraceIndex(optarg); break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -141,7 +169,7 @@ void init_monitor(int argc, char *argv[]) {
   init_sdb();
 
   #ifdef CONFIG_FTRACE
-  init_ftrace(ftrace_file);
+  init_ftrace(file_header,file_cur);
   #endif
 
 #ifndef CONFIG_ISA_loongarch32r
