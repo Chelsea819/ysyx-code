@@ -26,7 +26,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // 找到特定文件的offset
   assert(filename != NULL);
   int fd = fs_open(filename, 0, 0);
-  printf("filename = %s fd =%d\n",filename,fd);
   
   // 读取相应文件的ELF模块
   Elf_Ehdr Elf_header;  // ELF文件头
@@ -39,6 +38,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // 检查文件格式
   // printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
   // printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
+  printf("Elf_header.e_ident: %s\n",Elf_header.e_ident);
   assert(Elf_header.e_ident[0] == '\x7f');
   assert(memcmp(&(Elf_header.e_ident[1]), "ELF", 3) == 0);
   assert(Elf_header.e_type == ET_EXEC);
