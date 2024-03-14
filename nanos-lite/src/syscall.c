@@ -2,6 +2,8 @@
 #include "syscall.h"
 int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
+size_t fs_lseek(int fd, size_t offset, int whence);
+int fs_close(int fd);
 
 uintptr_t sys_yield(){
   yield();
@@ -59,9 +61,9 @@ void do_syscall(Context *c) {
     case SYS_write: ret = sys_write(c); break;
     case SYS_brk: ret = sys_brk(); break;
     case SYS_open: ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4); break;
-    // case SYS_read: ret = fs_read(); break;
-    // case SYS_close: ret = fs_close(); break;
-    // case SYS_lseek: ret = fs_lseek(); break;
+    case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
+    case SYS_close: ret = fs_close(c->GPR2); break;
+    case SYS_lseek: ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
