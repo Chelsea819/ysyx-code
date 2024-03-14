@@ -11,8 +11,8 @@ uintptr_t sys_yield(){
   return 0;
 }
 
-void sys_exit(){
-  halt(0);
+void sys_exit(int status){
+  halt(status);
 }
 
 // uintptr_t sys_write(Context *c){
@@ -57,7 +57,7 @@ void do_syscall(Context *c) {
   #endif
 
   switch (a[0]){
-    case SYS_exit: sys_exit(); break;
+    case SYS_exit: sys_exit(c->GPR2); break;
     case SYS_yield: ret = sys_yield(); break;
     case SYS_write: ret = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4); break;
     case SYS_brk: ret = sys_brk(); break;
