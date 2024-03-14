@@ -7,9 +7,9 @@ int main() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
-  putch('a');
-  putch('\n');
-  putch('\n');
+  putc('a',stdout);
+  putc('\n',stdout);
+  putc('\n',stdout);
   long size = ftell(fp);
   assert(size == 5000);
 
