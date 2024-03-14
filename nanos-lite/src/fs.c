@@ -80,7 +80,7 @@ size_t fs_read(int fd, void *buf, size_t len){
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
-  if(fd == 1 || fd == 0){  // stdout stderr
+  if(fd == 1 || fd == 2){  // stdout stderr
     int i = 0; 
     for(i = 0; i < len; i ++){
       putch(*((char*)buf + i));

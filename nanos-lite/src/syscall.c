@@ -2,6 +2,7 @@
 #include "syscall.h"
 int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
+size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
 
@@ -14,19 +15,19 @@ void sys_exit(){
   halt(0);
 }
 
-uintptr_t sys_write(Context *c){
-  // 检查fd的值
-  int i = 0;
-  if(c->GPR2 == 1 || c->GPR2 == 2){
-    for(i = 0; i < c->GPR4; i ++){
-      // putch('a');
-      if(!c->GPR3) return -1;
-      putch(*((char *)c->GPR3 + i));
-    }
-  } 
-  // putch('b');
-  return i;
-}
+// uintptr_t sys_write(Context *c){
+//   // 检查fd的值
+//   int i = 0;
+//   if(c->GPR2 == 1 || c->GPR2 == 2){
+//     for(i = 0; i < c->GPR4; i ++){
+//       // putch('a');
+//       if(!c->GPR3) return -1;
+//       putch(*((char *)c->GPR3 + i));
+//     }
+//   } 
+//   // putch('b');
+//   return i;
+// }
 
 uintptr_t sys_brk(){
   return 0;
@@ -58,7 +59,7 @@ void do_syscall(Context *c) {
   switch (a[0]){
     case SYS_exit: sys_exit(); break;
     case SYS_yield: ret = sys_yield(); break;
-    case SYS_write: ret = sys_write(c); break;
+    case SYS_write: ret = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4); break;
     case SYS_brk: ret = sys_brk(); break;
     case SYS_open: ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4); break;
     case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
