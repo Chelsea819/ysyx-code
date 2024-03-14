@@ -10,7 +10,7 @@ int main() {
   putc('b',stdout);
   putc('\n',stdout);
   putc('\n',stdout);
-  putc('b',stdout);
+  putc('c',stdout);
   long size = ftell(fp);
   assert(size == 5000);
 
