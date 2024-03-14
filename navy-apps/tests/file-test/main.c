@@ -7,7 +7,7 @@ int main() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
-  putc('a',stdout);
+  putc('b',stdout);
   putc('\n',stdout);
   putc('\n',stdout);
   putc('b',stdout);
