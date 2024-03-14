@@ -7,7 +7,6 @@ int main() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
-  printf("cgrdsfg\n");
   long size = ftell(fp);
   assert(size == 5000);
 
