@@ -7,10 +7,7 @@ int main() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
-  putc('c',stdout);
-  putc('\n',stdout);
-  putc('\n',stdout);
-  putc('c',stdout);
+  printf("c\n");
   long size = ftell(fp);
   assert(size == 5000);
 
