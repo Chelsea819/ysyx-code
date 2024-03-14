@@ -26,7 +26,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // 找到特定文件的offset
   assert(filename != NULL);
   int fd = fs_open(filename, 0, 0);
-  printf("filename = %s fd =\n",filename,fd);
+  printf("filename = %s fd =%d\n",filename,fd);
   
   // 读取相应文件的ELF模块
   Elf_Ehdr Elf_header;  // ELF文件头
