@@ -94,6 +94,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
     int ret = ramdisk_write(buf, file_table[fd].disk_offset, len);
     file_table[fd].disk_offset += ret;
+    printf("ret = %d\n",ret);
     return ret;
   }
   
