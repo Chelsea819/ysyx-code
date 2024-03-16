@@ -64,7 +64,7 @@ int fs_open(const char *pathname, int flags, int mode){
     }
     if(fd == file_num - 1) panic("Cannot find this file!");
   }
-
+  printf("fd = %d\n",fd);
   return fd;
 
 }
