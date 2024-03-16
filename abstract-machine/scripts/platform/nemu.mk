@@ -12,7 +12,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
              --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt 
-NEMUFLAGS += -f $(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf -f $(NEMU_HOME)/../navy-apps/tests/file-test/build/file-test-riscv32 -b
+NEMUFLAGS += -f $(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf -f $(NEMU_HOME)/../navy-apps/tests/file-test/build/file-test-riscv32 #-b
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
