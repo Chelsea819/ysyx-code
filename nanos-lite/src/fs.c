@@ -119,6 +119,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
   else if(whence == SEEK_END){
     assert(file_offset[fd] + offset + file_table[fd].size <= file_offset[fd] + file_table[fd].size);
     file_table[fd].disk_offset = file_offset[fd] + offset + file_table[fd].size;
+    // printf("")
   }
   return file_table[fd].disk_offset - pre;
 }

@@ -75,6 +75,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       // buf = NULL;
     }
   }
+  fs_lseek(fd, 0, SEEK_SET);
   return Elf_header.e_entry;
 }
 
