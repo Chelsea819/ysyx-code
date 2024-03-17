@@ -64,7 +64,7 @@ void do_syscall(Context *c) {
     case SYS_open: ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4); break;
     case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
     case SYS_close: ret = fs_close(c->GPR2); break;
-    case SYS_lseek: printf("c->GPR4 = %d\n"); ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
+    case SYS_lseek: printf("c->GPR4 = 0x%08x\n",c->GPR4); ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
