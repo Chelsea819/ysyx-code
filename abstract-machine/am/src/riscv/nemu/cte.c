@@ -50,14 +50,13 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
   //接受一个来自操作系统的事件处理回调函数的指针, 
   //当发生事件时, CTE将会把事件和相关的上下文作为参数, 来调用这个回调函数, 交由操作系统进行后续处理.
   // initialize exception  
-  printf("user_handler : 0x%08x\n",&user_handler); 
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap)); // 将异常入口地址设置到mtvec寄存器中
-  printf("cte_init!\n");
+  // printf("cte_init!\n");
   assert(handler);
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
-  printf("addr: 0x%08x\n", user_handler);
+  // printf("addr: 0x%08x\n", user_handler);
   assert(user_handler);
 
   return true;

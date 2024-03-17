@@ -38,7 +38,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // 检查文件格式
   // printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
   // printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
-  printf("Elf_header.e_ident: %s\n",Elf_header.e_ident);
+  // printf("Elf_header.e_ident: %s\n",Elf_header.e_ident);
   assert(Elf_header.e_ident[0] == '\x7f');
   assert(memcmp(&(Elf_header.e_ident[1]), "ELF", 3) == 0);
   assert(Elf_header.e_type == ET_EXEC);
