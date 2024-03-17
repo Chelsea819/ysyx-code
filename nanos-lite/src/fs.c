@@ -75,7 +75,7 @@ size_t fs_read(int fd, void *buf, size_t len){
   assert(len <= 0x7ffff000);
   printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x file_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,file_table[fd].disk_offset,fd,file_offset[fd],fd,file_table[fd].size);
   printf("file_table[fd].disk_offset + len = 0x%08x, file_offset[fd] + file_table[fd].size = 0x%08x\n",file_table[fd].disk_offset + len,file_offset[fd] + file_table[fd].size);
-  // assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
+  assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
   int ret = ramdisk_read(buf, file_table[fd].disk_offset, len);
   file_table[fd].disk_offset += ret;
   printf("ret = %d\n",ret);

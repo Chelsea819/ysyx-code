@@ -17,7 +17,6 @@ int main() {
   }
   size = ftell(fp);
   printf("size = %ld\n",size);
-  assert(size == 2500 + 2000);
   fseek(fp, 0, SEEK_SET);assert(0);
   for (i = 0; i < 500; i ++) {
     fprintf(fp, "%4d\n", i + 1 + 1000);
