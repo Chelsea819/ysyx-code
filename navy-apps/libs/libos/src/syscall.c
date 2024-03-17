@@ -95,7 +95,7 @@ int _close(int fd) {
 }
 
 off_t _lseek(int fd, off_t offset, int whence) {
-  
+  printf("whence == %d\n");
   return (off_t)_syscall_(SYS_lseek, fd, offset, whence);
 }
 
