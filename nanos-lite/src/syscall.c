@@ -5,6 +5,7 @@ size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
+char *get_filename(int fd);
 
 uintptr_t sys_yield(){
   yield();
@@ -54,6 +55,26 @@ void do_syscall(Context *c) {
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
+  if(a[0] == SYS_write || a[0] == SYS_open || a[0] == SYS_read || a[0] == SYS_close || a[0] == SYS_lseek){
+
+  }
+  switch (a[0]){
+    case SYS_write:
+    case SYS_read:
+    case SYS_close:
+    case SYS_lseek:
+      Log("[STRACE]: Name = [%s] Filename: [%s] arguments: [%d] ret: [%d]\n",name,get_filename(c->GPR2),a[0],ret);
+      break;
+    case SYS_open: 
+      Log("[STRACE]: Name = [%s] Filename: [%s] arguments: [%d] ret: [%d]\n",name,(char *)(c->GPR2),a[0],ret); 
+      break;
+    case SYS_exit : 
+    case SYS_yield: 
+    case SYS_brk: 
+      Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
+      break;
+    default: panic("Unhandled syscall ID = %d", a[0]);
+  }
   #endif
 
   switch (a[0]){

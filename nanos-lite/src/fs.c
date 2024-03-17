@@ -14,7 +14,6 @@ typedef struct {
 } Finfo;
 
 static size_t* file_offset = NULL;
-// static size_t file_offset = 0;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
 
@@ -47,6 +46,10 @@ void init_file_offset(){
 void free_file_offset(){
   free(file_offset);
   file_offset = NULL;
+}
+
+char *get_filename(int fd){
+  return file_table[fd].name;
 }
 
 // 为了简化实现, 我们允许所有用户程序都可以对所有已存在的文件进行读写, 
