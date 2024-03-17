@@ -16,7 +16,7 @@ int main() {
     assert(n == i + 1);
   }
   // size = ftell(fp);
-  // printf("size = %ld\n",size);
+  
   fseek(fp, 0, SEEK_SET);
   for (i = 0; i < 500; i ++) {
     fprintf(fp, "%4d\n", i + 1 + 1000);
@@ -25,7 +25,7 @@ int main() {
     fscanf(fp, "%d", &n);
     assert(n == i + 1);
   }
-  
+  printf("size\n",size);
   fseek(fp, 0, 0);assert(0);
   for (i = 0; i < 500; i ++) {
     fscanf(fp, "%d", &n);
