@@ -14,6 +14,7 @@ typedef struct {
 } Finfo;
 
 static size_t* file_offset = NULL;
+// static size_t file_offset = 0;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
 
@@ -73,6 +74,8 @@ size_t fs_read(int fd, void *buf, size_t len){
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
   assert(buf != NULL);
   assert(len <= 0x7ffff000);
+  if(file_table[fd].disk_offset + len > file_offset[fd] + file_table[fd].size)
+    len = file_offset[fd] + file_table[fd].size - file_table[fd].disk_offset;
   printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x file_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,file_table[fd].disk_offset,fd,file_offset[fd],fd,file_table[fd].size);
   printf("file_table[fd].disk_offset + len = 0x%08x, file_offset[fd] + file_table[fd].size = 0x%08x\n",file_table[fd].disk_offset + len,file_offset[fd] + file_table[fd].size);
   int ret = ramdisk_read(buf, file_table[fd].disk_offset, len);
