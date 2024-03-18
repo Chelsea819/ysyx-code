@@ -34,6 +34,19 @@ void do_syscall(Context *c) {
   a[0] = c->GPR1;
   uintptr_t ret = 0;
 
+  switch (a[0]){
+    case SYS_exit: sys_exit(c->GPR2); break;
+    case SYS_yield: ret = sys_yield(); break;
+    case SYS_write: ret = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4); break;
+    case SYS_brk: ret = sys_brk(); break;
+    case SYS_open: ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4); break;
+    case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
+    case SYS_close: ret = fs_close(c->GPR2); break;
+    case SYS_lseek: ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
+    case SYS_gettimeofday: ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3); break;
+    default: panic("Unhandled syscall ID = %d", a[0]);
+  }
+
   #ifdef CONFIG_STRACE
   char name[10] = {0};
   switch (a[0]){
@@ -49,10 +62,8 @@ void do_syscall(Context *c) {
     // case x: strcpy(name,"SYS_write"); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
-  Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
-  if(a[0] == SYS_write || a[0] == SYS_open || a[0] == SYS_read || a[0] == SYS_close || a[0] == SYS_lseek){
+  // Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
 
-  }
   switch (a[0]){
     case SYS_write:
     case SYS_read:
@@ -72,19 +83,6 @@ void do_syscall(Context *c) {
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   #endif
-
-  switch (a[0]){
-    case SYS_exit: sys_exit(c->GPR2); break;
-    case SYS_yield: ret = sys_yield(); break;
-    case SYS_write: ret = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4); break;
-    case SYS_brk: ret = sys_brk(); break;
-    case SYS_open: ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4); break;
-    case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
-    case SYS_close: ret = fs_close(c->GPR2); break;
-    case SYS_lseek: ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
-    case SYS_gettimeofday: ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3); break;
-    default: panic("Unhandled syscall ID = %d", a[0]);
-  }
   c->GPRx = ret;
 }
 
