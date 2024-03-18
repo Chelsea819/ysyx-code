@@ -22,6 +22,7 @@ uintptr_t sys_brk(){
 }
 
 uintptr_t sys_gettimeofday(struct timeval *tv, struct timezone *tz){
+  printf("sys_gettimeofday\n");
   if(tv == NULL){
     panic("struct timeval *tv can not be NULL!");
     return -1;
