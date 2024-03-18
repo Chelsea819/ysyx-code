@@ -2,6 +2,8 @@
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 
+size_t serial_write(const void *buf, size_t offset, size_t len);
+
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
 
@@ -9,8 +11,8 @@ typedef struct {
   char *name; // 文件名 把目录分隔符/也认为是文件名的一部分
   size_t size; // 文件大小
   size_t disk_offset; // 文件在ramdisk中的偏移
-  ReadFn read;
-  WriteFn write;
+  ReadFn read;  // 读函数指针
+  WriteFn write; // 写函数指针
 } Finfo;
 
 static size_t* file_offset = NULL;
@@ -30,8 +32,8 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = { // 文件记录表
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, invalid_write},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, invalid_write},
+  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
+  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
 #include "files.h"
 };
 
@@ -90,15 +92,7 @@ size_t fs_read(int fd, void *buf, size_t len){
 
 size_t fs_write(int fd, const void *buf, size_t len){
   // printf("fs_write fd = %d len = %d\n",fd,len);
-  if(fd == 1 || fd == 2){  // stdout stderr
-    int i = 0; 
-    for(i = 0; i < len; i ++){
-      putch(*((char*)buf + i));
-    }
-    // printf("i = %d\n",i);
-    return i;
-  }
-  else{
+  if(file_table[fd].write == NULL){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
     assert(len <= 0x7ffff000);
@@ -107,8 +101,33 @@ size_t fs_write(int fd, const void *buf, size_t len){
     file_table[fd].disk_offset += ret;
     return ret;
   }
+  else{
+    return file_table[fd].write(buf,0,len);
+  }
   
 }
+
+// size_t fs_write(int fd, const void *buf, size_t len){
+//   // printf("fs_write fd = %d len = %d\n",fd,len);
+//   if(fd == 1 || fd == 2){  // stdout stderr
+//     int i = 0; 
+//     for(i = 0; i < len; i ++){
+//       putch(*((char*)buf + i));
+//     }
+//     // printf("i = %d\n",i);
+//     return i;
+//   }
+//   else{
+//     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
+//     assert(buf != NULL);
+//     assert(len <= 0x7ffff000);
+//     assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
+//     int ret = ramdisk_write(buf, file_table[fd].disk_offset, len);
+//     file_table[fd].disk_offset += ret;
+//     return ret;
+//   }
+  
+// }
 
 // enum {SEEK_SET = 0, SEEK_CUR, SEEK_END};
 
