@@ -1,5 +1,6 @@
 #include <common.h>
 #include "syscall.h"
+#include <sys/time.h>
 int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
@@ -16,21 +17,15 @@ void sys_exit(int status){
   halt(status);
 }
 
-// uintptr_t sys_write(Context *c){
-//   // 检查fd的值
-//   int i = 0;
-//   if(c->GPR2 == 1 || c->GPR2 == 2){
-//     for(i = 0; i < c->GPR4; i ++){
-//       // putch('a');
-//       if(!c->GPR3) return -1;
-//       putch(*((char *)c->GPR3 + i));
-//     }
-//   } 
-//   // putch('b');
-//   return i;
-// }
-
 uintptr_t sys_brk(){
+  return 0;
+}
+
+uintptr_t sys_gettimeofday(struct timeval *tv, struct timezone *tz){
+  if(tv == NULL){
+    panic("struct timeval *tv can not be NULL!");
+    return -1;
+  }
   return 0;
 }
 
@@ -50,7 +45,7 @@ void do_syscall(Context *c) {
     case SYS_close: strcpy(name,"SYS_close"); break;
     case SYS_lseek: strcpy(name,"SYS_lseek"); break;
     case SYS_brk: strcpy(name,"SYS_brk"); break;
-
+    case SYS_gettimeofday: strcpy(name,"SYS_gettimeofday"); break;
     // case x: strcpy(name,"SYS_write"); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
@@ -71,6 +66,7 @@ void do_syscall(Context *c) {
     case SYS_exit : 
     case SYS_yield: 
     case SYS_brk: 
+    case SYS_gettimeofday:
       Log("[STRACE]: Name = [%s] arguments: [%d] ret: [%d]\n",name,a[0],ret);
       break;
     default: panic("Unhandled syscall ID = %d", a[0]);
@@ -86,6 +82,7 @@ void do_syscall(Context *c) {
     case SYS_read: ret = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4); break;
     case SYS_close: ret = fs_close(c->GPR2); break;
     case SYS_lseek: ret = fs_lseek(c->GPR2, c->GPR3, c->GPR4); break;
+    case SYS_gettimeofday: ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
