@@ -9,7 +9,7 @@ static Context* do_event(Event e, Context* c) {
     case EVENT_SYSCALL: do_syscall(c); printf("[do_event] c->mepc = 0x%08x\n",c->mepc);break;
     default: panic("Unhandled event ID = %d", e.event);
   }
-  printf("do_event_after : c = %p\n",c);
+  // printf("do_event_after : c = %p\n",c);
   // printf("[do_event] c->mepc = 0x%08x\n",c->mepc);
   return c;
 }
