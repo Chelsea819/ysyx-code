@@ -85,7 +85,7 @@ void do_syscall(Context *c) {
   }
   #endif
   c->GPRx = ret;
-  printf("c->mepc = 0x%08x\n",c->mepc);
+  printf("[do_syscall] c->mepc = 0x%08x\n",c->mepc);
 }
 
 
