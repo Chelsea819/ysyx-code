@@ -4,8 +4,8 @@
 #include <assert.h>
 
 int main() {
-    struct timeval *tv = malloc(sizeof(struct timeval));
-    struct timezone *tz = malloc(sizeof(struct timezone));
+    struct timeval tv;
+    struct timezone tz;
     int n = 1;
 
     // store the time
@@ -13,8 +13,8 @@ int main() {
 
     while(1){
         do{
-            assert(gettimeofday(tv,tz));
-            time = tv->tv_usec;
+            assert(gettimeofday(&tv, &tz));
+            time = tv.tv_usec;
         }while(time / 500000 < n);
         printf("NO.%d output.\n",n ++);
     }
