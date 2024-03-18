@@ -38,6 +38,8 @@ Context* __am_irq_handle(Context *c) {
     printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c 
 
     c = user_handler(ev, c); // 根据不同事件进行不同操作
+    printf("after c->mepc: 0x%08x\n",c->mepc);
+    printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c
     assert(c != NULL);
   }
   else assert(0);
