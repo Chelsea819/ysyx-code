@@ -13,7 +13,7 @@ int main() {
 
     while(1){
         do{
-            assert(gettimeofday(&tv, &tz));
+            assert(gettimeofday(&tv, &tz) == 0);
             time = tv.tv_usec;
         }while(time / 500000 < n);
         printf("NO.%d output.\n",n ++);
