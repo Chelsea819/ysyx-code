@@ -29,7 +29,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   int i = 0;
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
   printf("sizeof(keyname[ev.keycode] = %d\n",sizeof(keyname[ev.keycode]));
-  for(i = 0; i < len && i < sizeof(keyname[ev.keycode]); i ++){
+  for(i = 0; i < len && i < strlen(keyname[ev.keycode]); i ++){
     *((char *)buf + i) = keyname[io_read(AM_INPUT_KEYBRD).keycode][i];
   }
   *((char *)buf + i) = '\0';
