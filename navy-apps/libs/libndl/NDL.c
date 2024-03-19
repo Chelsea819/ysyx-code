@@ -6,11 +6,14 @@
 #include <assert.h>
 #include <sys/time.h>
 
-static FILE *event_fd;
+static int event_fd;
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 struct timeval start;
+
+int open(const char *path, int flags, ...);
+ssize_t read(int fd, void *buf, size_t count);
 
 // 以毫秒为单位返回系统时间
 uint32_t NDL_GetTicks() {
@@ -21,7 +24,7 @@ uint32_t NDL_GetTicks() {
 
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
 int NDL_PollEvent(char *buf, int len) {
-  fread(buf, len, 1, event_fd);
+  read(event_fd, buf, len);
   if(strcmp(buf,"NONE") == 0)
     return 0;
   else 
@@ -70,10 +73,10 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
   assert(gettimeofday(&start, NULL) == 0);
-  event_fd = fopen("/dev/event", "r+");
+  event_fd = open("/dev/event", 0);
   return 0;
 }
 
 void NDL_Quit() {
-  fclose(event_fd);
+  close(event_fd);
 }

@@ -168,6 +168,7 @@ int open(const char *path, int flags, ...) {
   if (strcmp(path, "/proc/dispinfo") == 0) {
     return dispinfo_fd;
   } else if (strcmp(path, "/dev/events") == 0) {
+    printf("evt_rd = %d\n",evt_fd);
     return evt_fd;
   } else if (strcmp(path, "/dev/fb") == 0) {
     return fb_memfd;
