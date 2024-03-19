@@ -9,6 +9,7 @@ int main() {
     for (volatile int i = 0; i < 1000000; i++) ;
     char buf[64];
     if (NDL_PollEvent(buf, sizeof(buf))) {
+      printf("strlen(buf) = %d\n",strlen(buf));
       printf("receive event: [%s]\n", buf);
     }
   }
