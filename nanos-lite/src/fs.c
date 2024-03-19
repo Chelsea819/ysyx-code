@@ -95,7 +95,7 @@ size_t fs_read(int fd, void *buf, size_t len){
   // printf("fs_write fd = %d len = %d\n",fd,len);
   }
   else{
-    return file_table[fd].write(buf,file_offset[fd],len);
+    return file_table[fd].read(buf,file_offset[fd],len);
   }
 }
 
