@@ -25,7 +25,7 @@ uint32_t NDL_GetTicks() {
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
 int NDL_PollEvent(char *buf, int len) {
   read(event_fd, buf, len);
-  printf("buf = %s\n",buf);
+  printf("buf = %s len = %d\n",buf,len);
   if(strcmp(buf,"NONE") == 0)
     return 0;
   else 
