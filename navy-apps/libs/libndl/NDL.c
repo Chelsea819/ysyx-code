@@ -3,13 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
+#include <sys/time.h>
 
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+struct timeval start;
 
+// 以毫秒为单位返回系统时间
 uint32_t NDL_GetTicks() {
-  return 0;
+  struct timeval tv;
+  assert(gettimeofday(&tv, NULL) == 0);
+  return start.tv_usec = tv.tv_usec;
 }
 
 int NDL_PollEvent(char *buf, int len) {
@@ -57,6 +63,7 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  assert(gettimeofday(&start, NULL) == 0);
   return 0;
 }
 

@@ -2,10 +2,9 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <NDL.h>
 
 int main() {
-    struct timeval tv;
-    struct timezone tz;
     int n = 1;
 
     // store the time
@@ -13,8 +12,7 @@ int main() {
 
     while(1){
         do{
-            assert(gettimeofday(&tv, &tz) == 0);
-            time = tv.tv_usec;
+            time = NDL_GetTicks();
         }while(time / 500000 < n);
         printf("NO.%d output.\n",n ++);
     }
