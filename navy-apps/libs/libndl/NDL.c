@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <sys/time.h>
 
+static FILE *event_fd;
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
@@ -18,8 +19,13 @@ uint32_t NDL_GetTicks() {
   return start.tv_usec = tv.tv_usec;
 }
 
+// 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
 int NDL_PollEvent(char *buf, int len) {
-  return 0;
+  fread(buf, len, 1, event_fd);
+  if(strcmp(buf,"NONE") == 0)
+    return 0;
+  else 
+    return 1;
 }
 
 void NDL_OpenCanvas(int *w, int *h) {
@@ -64,8 +70,10 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
   assert(gettimeofday(&start, NULL) == 0);
+  event_fd = fopen("/dev/event", "r+");
   return 0;
 }
 
 void NDL_Quit() {
+  fclose(event_fd);
 }

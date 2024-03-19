@@ -3,6 +3,7 @@ size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 
 size_t serial_write(const void *buf, size_t offset, size_t len);
+size_t events_read(void *buf, size_t offset, size_t len);
 
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
@@ -34,6 +35,7 @@ static Finfo file_table[] __attribute__((used)) = { // 文件记录表
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
+  [FD_STDERR] = {"/dev/events", 0, 0, events_read, invalid_write},
 #include "files.h"
 };
 
@@ -76,7 +78,9 @@ int fs_open(const char *pathname, int flags, int mode){
 }
 
 size_t fs_read(int fd, void *buf, size_t len){
-  assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
+  
+  if(file_table[fd].write == NULL){
+    assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
   assert(buf != NULL);
   assert(len <= 0x7ffff000);
   if(file_table[fd].disk_offset + len > file_offset[fd] + file_table[fd].size)
@@ -88,6 +92,11 @@ size_t fs_read(int fd, void *buf, size_t len){
  
   file_table[fd].disk_offset += ret;
   return ret;
+  // printf("fs_write fd = %d len = %d\n",fd,len);
+  }
+  else{
+    return file_table[fd].write(buf,file_offset[fd],len);
+  }
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
@@ -102,7 +111,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     return ret;
   }
   else{
-    return file_table[fd].write(buf,0,len);
+    return file_table[fd].write(buf,file_offset[fd],len);
   }
   
 }
