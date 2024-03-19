@@ -27,7 +27,7 @@ uintptr_t sys_gettimeofday(struct timeval *tv, struct timezone *tz){
     panic("struct timeval *tv can not be NULL!");
     return -1;
   }
-  // tv->tv_usec = io_read(AM_TIMER_UPTIME).us;
+  tv->tv_usec = io_read(AM_TIMER_UPTIME).us;
   return 0;
 }
 
