@@ -33,7 +33,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     *((char *)buf + i) = keyname[io_read(AM_INPUT_KEYBRD).keycode][i];
   }
   *((char *)buf + i) = '\0';
-  return i;
+  return i + 1;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
