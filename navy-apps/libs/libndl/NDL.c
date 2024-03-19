@@ -70,7 +70,7 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
   assert(gettimeofday(&start, NULL) == 0);
-  event_fd = fopen("/dev/event", "r+");
+  event_fd = open("/dev/event", "r+");
   return 0;
 }
 
