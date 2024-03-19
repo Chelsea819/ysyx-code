@@ -35,7 +35,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   *((char *)buf + i) = '\0';
   printf("buf = %s ev.keycode = %d ev.keydown = %d\n",buf ,ev.keycode,(ev.keydown ? 1 : 0));
   
-  return i + 1;
+  return i;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
