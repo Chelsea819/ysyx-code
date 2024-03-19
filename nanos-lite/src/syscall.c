@@ -22,7 +22,7 @@ uintptr_t sys_brk(){
 }
 
 uintptr_t sys_gettimeofday(struct timeval *tv, struct timezone *tz){
-  printf("sys_gettimeofday\n");
+  // printf("sys_gettimeofday\n");
   if(tv == NULL){
     panic("struct timeval *tv can not be NULL!");
     return -1;
@@ -32,7 +32,7 @@ uintptr_t sys_gettimeofday(struct timeval *tv, struct timezone *tz){
 }
 
 void do_syscall(Context *c) {
-  printf("do_sys c* = %p\n");
+  // printf("do_sys c* = %p\n");
   uintptr_t a[4];
   a[0] = c->GPR1;
   uintptr_t ret = 0;
@@ -87,7 +87,7 @@ void do_syscall(Context *c) {
   }
   #endif
   c->GPRx = ret;
-  printf("[do_syscall] c->mepc = 0x%08x\n",c->mepc);
+  // printf("[do_syscall] c->mepc = 0x%08x\n",c->mepc);
 }
 
 
