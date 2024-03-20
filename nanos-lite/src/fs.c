@@ -105,6 +105,7 @@ size_t fs_read(int fd, void *buf, size_t len){
 size_t fs_write(int fd, const void *buf, size_t len){
   printf("fs_write fd = %d len = %d\n",fd,len);
   if(file_table[fd].write == NULL){
+    printf("NULL\n");
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
     assert(len <= 0x7ffff000);
@@ -114,6 +115,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     return ret;
   }
   else{
+    printf("not NULL\n");
     return file_table[fd].write(buf,file_offset[fd],len);
   }
   
