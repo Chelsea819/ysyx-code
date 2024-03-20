@@ -37,8 +37,8 @@ static Finfo file_table[] __attribute__((used)) = { // 文件记录表
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"/dev/event", 0, 0, events_read, invalid_write},
-  [FD_STDERR] = {"/dev/fb", 0, 0, invalid_read, invalid_write},  // 支持写操作和lseek
-  [FD_STDERR] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write}, // 屏幕信息 支持读操作
+  // [FD_STDERR] = {"/dev/fb", 0, 0, invalid_read, invalid_write},  // 支持写操作和lseek
+  // [FD_STDERR] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write}, // 屏幕信息 支持读操作
 #include "files.h"
 };
 
