@@ -32,7 +32,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   for(i = 0; i < len && i < strlen(keyname[ev.keycode]); i ++){
     *((char *)buf + i) = keyname[ev.keycode][i];
   }
-  // *((char *)buf + i) = '\0';
+  *((char *)buf + i) = '\0';
   return i;
 }
 
