@@ -7,6 +7,7 @@
 #include <sys/time.h>
 
 static int event_fd;
+static int dpinfo_fd;
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
@@ -32,6 +33,8 @@ int NDL_PollEvent(char *buf, int len) {
     return 1;
 }
 
+// 打开一张 (*w) X (*h)的画布
+// 如果*h和*w均为0,则将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
 void NDL_OpenCanvas(int *w, int *h) {
   if (getenv("NWM_APP")) {
     int fbctl = 4;
@@ -50,8 +53,26 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
+  // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
+  char buf[64];
+  read(dpinfo_fd, buf, sizeof(buf));
+  printf("buf = %s\n",buf);
+  if(*w == 0 && *h == 0){
+    // 读出系统全屏幕大小
+    
+  }
+  else{
+    screen_w = *w; 
+    screen_h = *h;
+  }
+
+
+
+
 }
 
+// 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
+// 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
 }
 
@@ -75,9 +96,11 @@ int NDL_Init(uint32_t flags) {
   }
   assert(gettimeofday(&start, NULL) == 0);
   event_fd = open("/dev/event", 0);
+  dpinfo_fd = open("/proc/dispinfo", 0);
   return 0;
 }
 
 void NDL_Quit() {
   close(event_fd);
+  close(dpinfo_fd);
 }

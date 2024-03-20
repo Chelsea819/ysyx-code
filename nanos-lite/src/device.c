@@ -28,8 +28,8 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 size_t events_read(void *buf, size_t offset, size_t len) {
   int i = 0;
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
-  memset(buf,0,sizeof(buf));
-  for(i = 0; i < len && i < strlen(keyname[ev.keycode]); i ++){
+  // memset(buf,0,sizeof(buf));
+  for(i = 0; i < len - 1 && i < strlen(keyname[ev.keycode]); i ++){
     *((char *)buf + i) = keyname[ev.keycode][i];
   }
   *((char *)buf + i) = '\0';
@@ -37,7 +37,13 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  int i = 0;
+  AM_GPU_CONFIG_T ds = io_read(AM_GPU_CONFIG);
+  char *tmp = (char*)&ds;
+  for(i = 0; i < len && i < sizeof(ds); i ++){
+    *((char *)buf + i) = tmp[i];
+  }
+  return i;
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
