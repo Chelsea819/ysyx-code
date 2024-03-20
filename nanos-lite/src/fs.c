@@ -103,7 +103,7 @@ size_t fs_read(int fd, void *buf, size_t len){
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
-  // printf("fs_write fd = %d len = %d\n",fd,len);
+  printf("fs_write fd = %d len = %d\n",fd,len);
   if(file_table[fd].write == NULL){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
