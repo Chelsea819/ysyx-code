@@ -82,20 +82,20 @@ int fs_open(const char *pathname, int flags, int mode){
 
 size_t fs_read(int fd, void *buf, size_t len){
   
-  if(file_table[fd].write == NULL){
+  if(file_table[fd].read == NULL){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
-  assert(buf != NULL);
-  assert(len <= 0x7ffff000);
-  if(file_table[fd].disk_offset + len > file_offset[fd] + file_table[fd].size)
-    len = file_offset[fd] + file_table[fd].size - file_table[fd].disk_offset;
-  // printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x file_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,file_table[fd].disk_offset,fd,file_offset[fd],fd,file_table[fd].size);
-  // printf("file_table[fd].disk_offset + len = 0x%08x, file_offset[fd] + file_table[fd].size = 0x%08x\n",file_table[fd].disk_offset + len,file_offset[fd] + file_table[fd].size);
-  int ret = ramdisk_read(buf, file_table[fd].disk_offset, len);
-  // assert(file_table[fd].disk_offset + ret <= file_offset[fd] + file_table[fd].size);
- 
-  file_table[fd].disk_offset += ret;
-  return ret;
-  // printf("fs_write fd = %d len = %d\n",fd,len);
+    assert(buf != NULL);
+    assert(len <= 0x7ffff000);
+    if(file_table[fd].disk_offset + len > file_offset[fd] + file_table[fd].size)
+      len = file_offset[fd] + file_table[fd].size - file_table[fd].disk_offset;
+    // printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x file_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,file_table[fd].disk_offset,fd,file_offset[fd],fd,file_table[fd].size);
+    // printf("file_table[fd].disk_offset + len = 0x%08x, file_offset[fd] + file_table[fd].size = 0x%08x\n",file_table[fd].disk_offset + len,file_offset[fd] + file_table[fd].size);
+    int ret = ramdisk_read(buf, file_table[fd].disk_offset, len);
+    // assert(file_table[fd].disk_offset + ret <= file_offset[fd] + file_table[fd].size);
+  
+    file_table[fd].disk_offset += ret;
+    return ret;
+    // printf("fs_write fd = %d len = %d\n",fd,len);
   }
   else{
     return file_table[fd].read(buf,file_offset[fd],len);
