@@ -36,9 +36,11 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
+  
   int i = 0;
   AM_GPU_CONFIG_T ds = io_read(AM_GPU_CONFIG);
   char *tmp = (char*)&ds;
+  printf("len = %d sizeof(ds) = %d\n",len,sizeof(ds));
   for(i = 0; i < len && i < sizeof(ds); i ++){
     *((char *)buf + i) = tmp[i];
   }

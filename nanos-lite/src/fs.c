@@ -85,7 +85,6 @@ int fs_open(const char *pathname, int flags, int mode){
 }
 
 size_t fs_read(int fd, void *buf, size_t len){
-  
   if(file_table[fd].read == NULL){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
