@@ -28,13 +28,13 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 size_t events_read(void *buf, size_t offset, size_t len) {
   int i = 0;
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
-  printf("sizeof(keyname[ev.keycode] = %d\n",strlen(keyname[ev.keycode]));
+  // printf("sizeof(keyname[ev.keycode] = %d\n",strlen(keyname[ev.keycode]));
   memset(buf,0,sizeof(buf));
   for(i = 0; i < len && i < strlen(keyname[ev.keycode]); i ++){
     *((char *)buf + i) = keyname[ev.keycode][i];
   }
   *((char *)buf + i) = '\0';
-  printf("buf = %s ev.keycode = %d ev.keydown = %d\n",buf ,ev.keycode,(ev.keydown ? 1 : 0));
+  // printf("buf = %s ev.keycode = %d ev.keydown = %d\n",buf ,ev.keycode,(ev.keydown ? 1 : 0));
   
   return i;
 }
