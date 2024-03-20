@@ -73,7 +73,7 @@ int fs_open(const char *pathname, int flags, int mode){
   // printf("pathname = %s file_num = %d\n",pathname,file_num);
   int fd = 0;
   for(fd = 0; fd < file_num; fd ++){
-    printf("file_table[%d].name = %s\n",fd,file_table[fd].name);
+    // printf("file_table[%d].name = %s\n",fd,file_table[fd].name);
     if(strcmp(file_table[fd].name, pathname) == 0){
       break;
     }
@@ -107,9 +107,8 @@ size_t fs_read(int fd, void *buf, size_t len){
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
-  printf("fs_write fd = %d len = %d\n",fd,len);
+  // printf("fs_write fd = %d len = %d\n",fd,len);
   if(file_table[fd].write == NULL){
-    printf("NULL\n");
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
     assert(len <= 0x7ffff000);
@@ -119,7 +118,6 @@ size_t fs_write(int fd, const void *buf, size_t len){
     return ret;
   }
   else{
-    printf("not NULL\n");
     return file_table[fd].write(buf,file_offset[fd],len);
   }
   
