@@ -96,11 +96,11 @@ int NDL_Init(uint32_t flags) {
   }
   assert(gettimeofday(&start, NULL) == 0);
   event_fd = open("/dev/event", 0);
-  // dpinfo_fd = open("/proc/dispinfo", 0);
+  dpinfo_fd = open("/proc/dispinfo", 0);
   return 0;
 }
 
 void NDL_Quit() {
   close(event_fd);
-  // close(dpinfo_fd);
+  close(dpinfo_fd);
 }
