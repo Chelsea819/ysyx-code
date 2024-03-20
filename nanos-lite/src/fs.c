@@ -73,7 +73,7 @@ int fs_open(const char *pathname, int flags, int mode){
     if(strcmp(file_table[fd].name, pathname) == 0){
       break;
     }
-    if(fd == file_num - 1) panic("Cannot find this file!");
+    if(fd == file_num - 1) panic("Cannot find this file!  [%s]",pathname);
   }
   // printf("fd = %d\n",fd);
   return fd;
