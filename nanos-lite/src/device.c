@@ -35,10 +35,13 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   return i;
 }
 
+
+// unhandled!
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   
   int i = 0;
   AM_GPU_CONFIG_T ds = io_read(AM_GPU_CONFIG);
+  printf("width = %d height = %d\n",ds.width,ds.height);
   char *tmp = (char*)&ds;
   printf("len = %d sizeof(ds) = %d\n",len,sizeof(ds));
   for(i = 0; i < len && i < sizeof(ds); i ++){
