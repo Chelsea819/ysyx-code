@@ -17,7 +17,10 @@ typedef struct {
   WriteFn write; // 写函数指针
 } Finfo;
 
-static size_t* file_offset = NULL;
+#define FILE_NUM 40
+
+static size_t file_offset[FILE_NUM];
+static bool if_init = false;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_EVENT, FD_DISPINFO};
 
@@ -44,16 +47,17 @@ static Finfo file_table[] __attribute__((used)) = { // 文件记录表
 
 void init_file_offset(){
   int file_num = sizeof(file_table) / sizeof(Finfo);
-  file_offset = malloc(file_num * sizeof(size_t));
+  assert(file_num <= FILE_NUM);
   for(int i = 0; i < file_num; i ++){
     file_offset[i] = file_table[i].disk_offset;
   }
+  if_init = true;
 }
 
-void free_file_offset(){
-  free(file_offset);
-  file_offset = NULL;
-}
+// void free_file_offset(){
+//   free(file_offset);
+//   file_offset = NULL;
+// }
 
 char *get_filename(int fd){
   return file_table[fd].name;
@@ -62,7 +66,7 @@ char *get_filename(int fd){
 // 为了简化实现, 我们允许所有用户程序都可以对所有已存在的文件进行读写, 
 // 这样以后, 我们在实现fs_open()的时候就可以忽略flags和mode了
 int fs_open(const char *pathname, int flags, int mode){
-  if(file_offset == NULL)
+  if(if_init == false)
     init_file_offset();
   // find the certain file
   int file_num = sizeof(file_table) / sizeof(Finfo);
@@ -168,7 +172,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
 
 int fs_close(int fd){
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
-  free_file_offset();
+  // free_file_offset();
   return 0;
 }
 
