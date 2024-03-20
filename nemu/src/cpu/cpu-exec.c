@@ -552,10 +552,12 @@ static void exec_once(Decode *s, vaddr_t pc)
           func_cur = func;
         }
         if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+        #ifdef CONFIG_FTRACE_PASS
         if(strcmp(name,"putch") != 0) 
           for(int i = 10; i < 15; i++){
             printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg[i],gpr(i));
           }
+        #endif
         index++;
       }
       else{
