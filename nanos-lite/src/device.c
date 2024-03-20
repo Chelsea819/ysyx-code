@@ -44,7 +44,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   for(i = 0; i < len && i < sizeof(ds); i ++){
     *((char *)buf + i) = tmp[i];
   }
-  printf("buf = [%s]\n",buf);
+  printf("buf = [%s]\n",(char*)&ds);
   return i;
 }
 
