@@ -54,7 +54,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 size_t fb_write(const void *buf, size_t offset, size_t len) {
   printf("offset = %d screen_width = %d screen_height = %d\n",offset,screen_width,screen_height);
   int x = offset % screen_width;
-  int y = (offset - x) / screen_height;
+  int y = (offset - x) / screen_width;
   int w = screen_width - x * 2;
   int h = screen_height - y * 2;
   printf("(%d, %d) draw %d * %d\n",x,y,w,h);
