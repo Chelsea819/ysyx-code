@@ -77,6 +77,7 @@ void NDL_OpenCanvas(int *w, int *h) {
 
   // 设置到画布起始坐标
   printf("the size of painting area, width[%d] height[%d]\n",screen_w,screen_h);
+  printf("(%d %d)",x,y);
   lseek(fb_fd, screen_w*y + x, SEEK_SET);
 
 }
