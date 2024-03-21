@@ -52,12 +52,12 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 // 把buf中的len字节写到屏幕上offset处
 // 需要先从offset计算出屏幕上的坐标, 然后调用IOE来进行绘图
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  printf("offset = %d screen_width = %d screen_height = %d\n",offset,screen_width,screen_height);
+  // printf("offset = %d screen_width = %d screen_height = %d\n",offset,screen_width,screen_height);
   int x = offset % screen_width;
   int y = (offset - x) / screen_width;
   int w = screen_width - x * 2;
   int h = screen_height - y * 2;
-  printf("(%d, %d) draw %d * %d\n",x,y,w,h);
+  // printf("(%d, %d) draw %d * %d\n",x,y,w,h);
   io_write(AM_GPU_FBDRAW, x, y, (uint32_t *)buf, w, h, true);
   return 0;
 }
