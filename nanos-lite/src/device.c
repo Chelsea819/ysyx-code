@@ -38,17 +38,10 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 
 // unhandled!
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  
-  int i = 0;
+  // int i = 0;
   AM_GPU_CONFIG_T ds = io_read(AM_GPU_CONFIG);
-  printf("width = %d height = %d\n",ds.width,ds.height);
-  char *tmp = (char*)&ds;
-  printf("len = %d sizeof(ds) = %d\n",len,sizeof(ds));
-  for(i = 0; i < len && i < sizeof(ds); i ++){
-    *((char *)buf + i) = tmp[i];
-  }
-  printf("buf = [%s]\n",(char*)&ds);
-  return i;
+  // printf("width = %d height = %d\n",ds.width,ds.height);
+  return sprintf(buf, "WIDTH:%d\nHEIGHT:%d",ds.width,ds.height);
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
