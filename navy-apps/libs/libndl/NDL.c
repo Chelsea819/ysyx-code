@@ -61,7 +61,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   // fscanf(dpinfo_fd, buf, );
   read(dpinfo_fd, buf, sizeof(buf));
   printf("buf = [%s]\n",buf);
-  sscanf(buf, "WIDTH:%d\nHEIGHT:%d", sw,sh);
+  sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);
   assert(*w <= sw && *h <= sh);
   // assert(0);
   if(*w == 0 && *h == 0){
