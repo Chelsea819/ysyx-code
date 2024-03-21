@@ -76,7 +76,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   int y = (screen_h - *h) / 2;
 
   // 设置到画布起始坐标
-  fseek(fb_fd, screen_w*y + x, SEEK_SET);
+  lseek(fb_fd, screen_w*y + x, SEEK_SET);
 
 }
 
