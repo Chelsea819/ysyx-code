@@ -21,6 +21,7 @@ typedef struct {
 
 static size_t file_offset[FILE_NUM];
 static bool if_init = false;
+static char *fb = NULL;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_EVENT, FD_DISPINFO};
 
@@ -101,7 +102,7 @@ size_t fs_read(int fd, void *buf, size_t len){
     // printf("fs_write fd = %d len = %d\n",fd,len);
   }
   else{
-    return file_table[fd].read(buf,file_offset[fd],len);
+    return file_table[fd].read(buf,file_table[fd].disk_offset,len);
   }
 }
 
@@ -117,7 +118,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     return ret;
   }
   else{
-    return file_table[fd].write(buf,file_offset[fd],len);
+    return file_table[fd].write(buf,file_table[fd].disk_offset,len);
   }
   
 }
@@ -175,4 +176,10 @@ int fs_close(int fd){
 
 void init_fs() {
   // TODO: initialize the size of /dev/fb
+  // char buf[64];
+  AM_GPU_CONFIG_T ds = io_read(AM_GPU_CONFIG);
+  int sw = ds.width;
+  int sh = ds.height;
+  file_table[FD_FB].size = sw * sh * 4;
+  fb = malloc(file_table[FD_FB].size);
 }

@@ -7,6 +7,7 @@
 #include <sys/time.h>
 
 static int event_fd;
+static int fb_fd;
 static int dpinfo_fd;
 static int evtdev = -1;
 static int fbdev = -1;
@@ -71,12 +72,19 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   screen_w = *w; 
   screen_h = *h;
+  int x = (screen_w - *w) / 2;
+  int y = (screen_h - *h) / 2;
+
+  // 设置到画布起始坐标
+  fseek(fb_fd, screen_w*y + x, SEEK_SET);
 
 }
 
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+  fseek(fb_fd, screen_w*y + x, SEEK_SET);
+  write(fb_fd, pixels, w*h);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -100,6 +108,7 @@ int NDL_Init(uint32_t flags) {
   assert(gettimeofday(&start, NULL) == 0);
   event_fd = open("/dev/event", 0);
   dpinfo_fd = open("/proc/dispinfo", 0);
+  fb_fd = open("/dev/fb", 0);
   return 0;
 }
 
