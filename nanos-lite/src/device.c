@@ -56,8 +56,7 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   int y = (offset - x) / screen_height;
   int w = screen_width - x * 2;
   int h = screen_height - y * 2;
-  uint32_t *pixels = (uint32_t *)buf;
-  io_write(AM_GPU_FBDRAW, x, y, pixels, w, h, true);
+  io_write(AM_GPU_FBDRAW, x, y, (uint32_t *)buf, w, h, true);
   return 0;
 }
 
