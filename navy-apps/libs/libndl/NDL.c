@@ -55,22 +55,22 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
   char buf[64];
+  int sw = 0;
+  int sh = 0;
   // fgets(buf, );
   // fscanf(dpinfo_fd, buf, );
   read(dpinfo_fd, buf, sizeof(buf));
   printf("buf = [%s]\n",buf);
-  assert(0);
+  sscanf(buf, "WIDTH:%d\nHEIGHT:%d", sw,sh);
+  assert(*w <= sw && *h <= sh);
+  // assert(0);
   if(*w == 0 && *h == 0){
     // 读出系统全屏幕大小
-    
+    *w = sw;
+    *h = sh;
   }
-  else{
-    screen_w = *w; 
-    screen_h = *h;
-  }
-
-
-
+  screen_w = *w; 
+  screen_h = *h;
 
 }
 
