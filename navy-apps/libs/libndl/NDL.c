@@ -11,7 +11,9 @@ static int fb_fd;
 static int dpinfo_fd;
 static int evtdev = -1;
 static int fbdev = -1;
-static int screen_w = 0, screen_h = 0;
+static int screen_w = 0, screen_h = 0;  // 画布尺寸
+static int sw = 0, sh = 0;  // 屏幕尺寸
+static int screenX = 0, screenY = 0;  // 画布起始位置坐标
 struct timeval start;
 
 int open(const char *path, int flags, ...);
@@ -56,36 +58,33 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
   char buf[64];
-  int sw = 0;
-  int sh = 0;
-  // fgets(buf, );
-  // fscanf(dpinfo_fd, buf, );
   read(dpinfo_fd, buf, sizeof(buf));
   printf("buf = [%s]\n",buf);
   sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);
   assert(*w <= sw && *h <= sh);
-  // assert(0);
+  // 读出系统全屏幕大小
   if(*w == 0 && *h == 0){
-    // 读出系统全屏幕大小
     *w = sw;
     *h = sh;
   }
   screen_w = *w; 
   screen_h = *h;
-  int x = (sw - screen_w) / 2;
-  int y = (sh - screen_h) / 2;
+
+  // 求出画布起始坐标
+  screenX = (sw - screen_w) / 2;
+  screenY = (sh - screen_h) / 2;
 
   // 设置到画布起始坐标
   printf("the size of painting area, width[%d] height[%d]\n",screen_w,screen_h);
-  printf("(%d %d)",x,y);
-  lseek(fb_fd, sw*y + x, SEEK_SET);
+  printf("(%d %d)",screenX,screenY);
+  lseek(fb_fd, sw * screenY + screenX, SEEK_SET);
 
 }
 
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  // lseek(fb_fd, screen_w*y + x, SEEK_SET);
+  lseek(fb_fd, sw * (y + screenY) + x + screenX, SEEK_SET);
   write(fb_fd, pixels, w*h);
 }
 
