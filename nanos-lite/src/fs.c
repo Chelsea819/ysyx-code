@@ -21,7 +21,7 @@ typedef struct {
 
 static size_t file_offset[FILE_NUM];
 static bool if_init = false;
-static char *fb = NULL;
+// static char *fb = NULL;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_EVENT, FD_DISPINFO};
 
@@ -181,5 +181,5 @@ void init_fs() {
   int sw = ds.width;
   int sh = ds.height;
   file_table[FD_FB].size = sw * sh * 4;
-  fb = malloc(file_table[FD_FB].size);
+  // fb = malloc(file_table[FD_FB].size);
 }
