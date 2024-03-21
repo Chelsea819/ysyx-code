@@ -1,7 +1,7 @@
 #include <fs.h>
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
-
+size_t fb_write(const void *buf, size_t offset, size_t len);
 size_t serial_write(const void *buf, size_t offset, size_t len);
 size_t events_read(void *buf, size_t offset, size_t len);
 size_t dispinfo_read(void *buf, size_t offset, size_t len);
@@ -41,7 +41,7 @@ static Finfo file_table[] __attribute__((used)) = { // 文件记录表
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [FD_EVENT] = {"/dev/event", 0, 0, events_read, invalid_write},
-  [FD_FB] = {"/dev/fb", 0, 0, invalid_read, invalid_write},  // 支持写操作和lseek
+  [FD_FB] = {"/dev/fb", 0, 0, invalid_read, fb_write},  // 支持写操作和lseek
   [FD_DISPINFO] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write}, // 屏幕信息 支持读操作
 #include "files.h"
 };
