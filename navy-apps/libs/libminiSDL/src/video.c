@@ -4,17 +4,21 @@
 #include <string.h>
 #include <stdlib.h>
 
+// SDL_UpdateRect a piece of cloth with several features
+
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
-  panic("TODO!");
+  assert("TODO!");
 }
 
+// Makes sure the given area is updated on the given screen.
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  panic("TODO!");
+    NDL_DrawRect(s->pixels, x, y, w, h);
+  // assert("TODO!");
 }
 
 // APIs below are already implemented.
@@ -195,10 +199,10 @@ uint32_t SDL_MapRGBA(SDL_PixelFormat *fmt, uint8_t r, uint8_t g, uint8_t b, uint
 }
 
 int SDL_LockSurface(SDL_Surface *s) {
-  panic("TODO!");
+  assert("TODO!");
   return 0;
 }
 
 void SDL_UnlockSurface(SDL_Surface *s) {
-  panic("TODO!");
+  assert("TODO!");
 }
