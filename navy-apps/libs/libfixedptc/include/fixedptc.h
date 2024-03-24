@@ -150,12 +150,18 @@ static inline fixedpt fixedpt_abs(fixedpt A) {
 	return 0;
 }
 
+// Uncheck function
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return 0;
+	return fixedpt_fromint(fixedpt_toint(A + fixedpt_rconst(((A) >= 0 ? 0.5 : -0.5))));
 }
 
+// static inline float floor(float A) {
+// 	return (int)(A+0.5);
+// }
+
+// Uncheck function
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return 0;
+	return fixedpt_fromint(fixedpt_toint(A + fixedpt_rconst(((A) >= 0 ? -0.5 : 0.5))));
 }
 
 /*
