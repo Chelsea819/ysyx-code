@@ -28,7 +28,7 @@ uint32_t NDL_GetTicks() {
 
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
 int NDL_PollEvent(char *buf, int len) {
-  panic(read(event_fd, buf, len) != -1);
+  assert(read(event_fd, buf, len) != -1);
   // printf("buf = %s len = %d\n",buf,len);
   if(strcmp(buf,"NONE") == 0)
     return 0;
@@ -90,7 +90,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     // int x_i = (screenX + x + (screenY + y + i)) % sw;
     // int y_i = (screenX + x + (screenY + y + i) - x_i) / sw + 1;
     // printf("(x, y) : (%d, %d)", x_i,y_i);
-    // printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
+    printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
     // printf("(screenX + x + (screenY + y + i) * sw) %d\n",(screenX + x + (screenY + y + i) * sw));
     lseek(fb_fd, ((screenY + y + i) * sw + screenX + x), SEEK_SET);
     write(fb_fd, pixels + w * i, w);
