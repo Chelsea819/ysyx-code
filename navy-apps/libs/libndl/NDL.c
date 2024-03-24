@@ -90,7 +90,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     int x_i = screenX + x + (screenY + y + i - 1) % sw;
     int y_i = (screenX + x + (screenY + y + i - 1) - x_i) / sw + 1;
     printf("(x, y) : (%d, %d)", x_i,y_i);
-    printf("(x, y) : (%d, %d)", screenX + x,screenY + y + i);
+    printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
     fseek(fb_fd, screenX + x + (screenY + y + i - 1) * sw, SEEK_SET);
     fwrite(pixels + w * i, w, 1, fb_fd);
   }
