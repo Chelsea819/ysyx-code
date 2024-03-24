@@ -150,7 +150,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
 
 size_t fs_lseek(int fd, size_t offset, int whence){
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
-  printf("offset=0x%08x whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,file_table[fd].disk_offset);
+  // printf("offset=0x%08x whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,file_table[fd].disk_offset);
   // printf("file_offset[fd] = 0x%08x file_table[fd].size = 0x%08x\n",file_offset[fd],file_table[fd].size);
   if(whence == SEEK_SET){
     assert(offset <= file_table[fd].size);
