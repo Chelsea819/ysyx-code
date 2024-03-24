@@ -58,7 +58,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
   char buf[64];
-  read(dpinfo_fd, buf, sizeof(buf));
+  assert(read(dpinfo_fd, buf, sizeof(buf)) != -1);
   // printf("buf = [%s]\n",buf);
   sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);
   assert(*w <= sw && *h <= sh);
@@ -90,10 +90,10 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     // int x_i = (screenX + x + (screenY + y + i)) % sw;
     // int y_i = (screenX + x + (screenY + y + i) - x_i) / sw + 1;
     // printf("(x, y) : (%d, %d)", x_i,y_i);
-    printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
+    // printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
     // printf("(screenX + x + (screenY + y + i) * sw) %d\n",(screenX + x + (screenY + y + i) * sw));
     lseek(fb_fd, ((screenY + y + i) * sw + screenX + x), SEEK_SET);
-    write(fb_fd, pixels + w * i, w);
+    assert(write(fb_fd, pixels + w * i, w) != -1);
     
   }
 }
