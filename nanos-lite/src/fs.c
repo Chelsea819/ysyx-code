@@ -163,7 +163,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
     assert(file_offset[fd] + offset + file_table[fd].size <= file_offset[fd] + file_table[fd].size);
     file_table[fd].disk_offset = file_offset[fd] + offset + file_table[fd].size;
   }
-  printf("[fs_lseek] offset=%d whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,file_table[fd].disk_offset);
+  // printf("[fs_lseek] offset=%d whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,file_table[fd].disk_offset);
   return file_table[fd].disk_offset - file_offset[fd];
 }
 
