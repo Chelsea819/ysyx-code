@@ -6,9 +6,9 @@
 #include <assert.h>
 #include <sys/time.h>
 
-static int event_fd;
-static int fb_fd;
-static int dpinfo_fd;
+static FILE * event_fd;
+static FILE * fb_fd;
+static FILE * dpinfo_fd;
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;  // 画布尺寸
@@ -16,8 +16,8 @@ static int sw = 0, sh = 0;  // 屏幕尺寸
 static int screenX = 0, screenY = 0;  // 画布起始位置坐标
 struct timeval start;
 
-int open(const char *path, int flags, ...);
-ssize_t read(int fd, void *buf, size_t count);
+// int open(const char *path, int flags, ...);
+// ssize_t read(int fd, void *buf, size_t count);
 
 // 以毫秒为单位返回系统时间
 uint32_t NDL_GetTicks() {
@@ -28,7 +28,7 @@ uint32_t NDL_GetTicks() {
 
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
 int NDL_PollEvent(char *buf, int len) {
-  assert(read(event_fd, buf, len) != -1);
+  fread(buf, len, 1, event_fd);
   // printf("buf = %s len = %d\n",buf,len);
   if(strcmp(buf,"NONE") == 0)
     return 0;
@@ -58,7 +58,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
   char buf[64];
-  assert(read(dpinfo_fd, buf, sizeof(buf)) != -1);
+  fread(buf, sizeof(buf), 1, dpinfo_fd);
   printf("buf = [%s]\n",buf);
   sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);
   assert(*w <= sw && *h <= sh);
@@ -77,7 +77,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   // 设置到画布起始坐标
   printf("the size of painting area, width[%d] height[%d]\n",screen_w,screen_h);
   printf("(%d %d)",screenX,screenY);
-  lseek(fb_fd, sw * screenY + screenX, SEEK_SET);
+  fseek(fb_fd, sw * screenY + screenX, SEEK_SET);
 
 }
 
@@ -85,8 +85,8 @@ void NDL_OpenCanvas(int *w, int *h) {
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   printf("(%d, %d) draw %d*%d\n",x,y,w,h);
-  lseek(fb_fd, sw * (y + screenY) + x + screenX, SEEK_SET);
-  assert(write(fb_fd, pixels, w*h) != -1);
+  fseek(fb_fd, sw * (y + screenY) + x + screenX, SEEK_SET);
+  fwrite(pixels, w*h, 1, fb_fd);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -108,13 +108,13 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
   assert(gettimeofday(&start, NULL) == 0);
-  event_fd = open("/dev/event", 0);
-  dpinfo_fd = open("/proc/dispinfo", 0);
-  fb_fd = open("/dev/fb", 0);
+  event_fd = fopen("/dev/event", 0);
+  dpinfo_fd = fopen("/proc/dispinfo", 0);
+  fb_fd = fopen("/dev/fb", 0);
   return 0;
 }
 
 void NDL_Quit() {
-  close(event_fd);
-  close(dpinfo_fd);
+  fclose(event_fd);
+  fclose(dpinfo_fd);
 }
