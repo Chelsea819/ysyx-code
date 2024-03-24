@@ -113,9 +113,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     // printf("(x, y) : (%d, %d)", x_i,y_i);
     // printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
     // printf("(screenX + x + (screenY + y + i) * sw) %d\n",(screenX + x + (screenY + y + i) * sw));
-    lseek(fb_fd, ((screenY + y + i) * sw + screenX + x), SEEK_SET);
-    assert(write(fb_fd, pixels + w * i, w * 32) != -1);
-    for (volatile int j = 0; j < 100000; j++) ;
+    lseek(fb_fd, ((screenY + y + i) * sw + screenX + x) * 4, SEEK_SET);
+    assert(write(fb_fd, pixels + w * i, w * 4) != -1);
+    // for (volatile int j = 0; j < 100000; j++) ;
   }
 }
 
