@@ -49,12 +49,13 @@ int main() {
   SDL_Surface *screen = SDL_SetVideoMode(W, H, 32, SDL_HWSURFACE);
 
   int rep = 0, g = 0;
-
   render();
+  printf("after render");
 
   while (1) {
     SDL_Event e;
     SDL_WaitEvent(&e);
+    printf("SDL_WaitEvent");
 
     if (e.type == SDL_KEYDOWN) {
       switch(e.key.keysym.sym) {

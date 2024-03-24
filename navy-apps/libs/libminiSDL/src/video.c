@@ -18,7 +18,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 // Makes sure the given area is updated on the given screen.
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   printf("SDL_UpdateRect\n");
-    NDL_DrawRect(s->pixels, x, y, w, h);
+  NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
   // assert("TODO!");
 }
 
