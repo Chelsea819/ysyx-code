@@ -87,7 +87,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   printf("(%d, %d) draw %d*%d\n",x,y,w,h);
   printf("sw * (y + screenY) + x + screenX = %d [0x%08x]\n",sw * (y + screenY) + x + screenX, sw * (y + screenY) + x + screenX);
   for(int i = 0; i < h; i ++){
-    int x_i = screenX + x + (screenY + y + i - 1) % sw;
+    int x_i = (screenX + x + (screenY + y + i - 1)) % sw;
     int y_i = (screenX + x + (screenY + y + i - 1) - x_i) / sw + 1;
     printf("(x, y) : (%d, %d)", x_i,y_i);
     printf("(x, y) : (%d, %d)\n", screenX + x,screenY + y + i);
