@@ -108,9 +108,9 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
   assert(gettimeofday(&start, NULL) == 0);
-  event_fd = fopen("/dev/event", 0);
-  dpinfo_fd = fopen("/proc/dispinfo", 0);
-  fb_fd = fopen("/dev/fb", 0);
+  event_fd = fopen("/dev/event", "r+");
+  dpinfo_fd = fopen("/proc/dispinfo", "r+");
+  fb_fd = fopen("/dev/fb", "w+");
   return 0;
 }
 
