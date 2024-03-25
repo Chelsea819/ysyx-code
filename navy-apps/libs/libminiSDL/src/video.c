@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define W 400
+#define H 300
+
 // SDL_UpdateRect a piece of cloth with several features
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
@@ -18,6 +21,10 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 // Makes sure the given area is updated on the given screen.
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   printf("SDL_UpdateRect\n");
+  if(x == 0 && y == 0 && w == 0 && h == 0){
+    w = W;
+    h = H;
+  }
   NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
   // assert("TODO!");
 }
