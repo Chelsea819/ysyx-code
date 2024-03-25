@@ -52,6 +52,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 // 把buf中的len字节写到屏幕上offset处
 // 需要先从offset计算出屏幕上的坐标, 然后调用IOE来进行绘图
 size_t fb_write(const void *buf, size_t offset, size_t len) {
+  assert(offset + len <= screen_width * screen_height * 4);
   printf("offset = %d screen_width = %d screen_height = %d\n",offset,screen_width,screen_height);
   int x = (offset / 4) % screen_width;
   int y = (offset / 4 - x) / screen_width + 1;
