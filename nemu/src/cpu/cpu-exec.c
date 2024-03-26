@@ -289,6 +289,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
       printf("\n\033[105m Hardware watchpoint %d: %s \033[0m\n", index->NO, index->target);
       printf("Old value = 0x%08x\n", index->data);
       printf("New value = 0x%08x\n\n", addr);
+      printf("\033[105m at pc = [0x%08x] \033[0m\n", dnpc);
       index->data = addr;
       return;
     }
