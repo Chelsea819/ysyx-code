@@ -41,6 +41,7 @@ void next(int rep) {
   if (rep == 0) rep = 1;
   cur += rep;
   if (cur >= N) cur = N - 1;
+  printf("page [%d]\n",cur);
   render();
 }
 
