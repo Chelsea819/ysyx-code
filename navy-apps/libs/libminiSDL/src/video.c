@@ -26,7 +26,8 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     h = H;
   }
   NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
-  // assert("TODO!");
+  printf("after UpdateRect\n");
+  assert("TODO!");
 }
 
 // APIs below are already implemented.

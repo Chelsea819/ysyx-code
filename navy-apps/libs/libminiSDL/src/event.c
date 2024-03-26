@@ -23,17 +23,25 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
+  printf("SDL_WaitEvent\n");
   char buf[32];
   while(NDL_PollEvent(buf, sizeof(buf)) == 0);
   if(event == NULL){
+    printf("event NULL\n");
     return 0;
   }
+  printf("get event\n");
   size_t i = 0;
-  while (keyname[i] != NULL){
+  while (i < 83){
+    // while (keyname[i] != NULL && i < 83){
+    // printf("NULL i = %d\n",i);
+    assert(keyname[i]);
+    // printf("keyname[i]: %s  buf = [%s]\n",keyname[i],buf);
     if(strcmp(keyname[i], buf) == 0)
       break;
     i ++;
   }
+  // assert(0);
   if(keyname[i] == NULL) return 0;
   
   event->key.type = SDL_KEYDOWN;

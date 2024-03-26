@@ -107,6 +107,8 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   // printf("(%d, %d) draw %d*%d\n",x,y,w,h);
   // printf("sw * (y + screenY) + x + screenX = %d [0x%08x]\n",sw * (y + screenY) + x + screenX, sw * (y + screenY) + x + screenX);
   // h--line write
+  assert(pixels);
+  // assert(0);
   for(int i = 0; i < h; i ++){
     // int x_i = (screenX + x + (screenY + y + i)) % sw;
     // int y_i = (screenX + x + (screenY + y + i) - x_i) / sw + 1;
@@ -115,7 +117,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     // printf("(screenX + x + (screenY + y + i) * sw) %d\n",(screenX + x + (screenY + y + i) * sw));
     lseek(fb_fd, ((screenY + y + i) * sw + screenX + x) * 4, SEEK_SET);
     assert(write(fb_fd, pixels + w * i, w * 4) != -1);
-    // for (volatile int j = 0; j < 100000; j++) ;
+    for (volatile int j = 0; j < 10000000; j++) ;
   }
 }
 
