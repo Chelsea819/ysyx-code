@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <common.h>
+// #define TEST_EXPR
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
