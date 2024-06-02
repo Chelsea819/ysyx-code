@@ -17,19 +17,17 @@ int main() {
 
   init_device();
 
-  init_ramdisk();printf("ok!\n");
+  init_ramdisk();
 
 #ifdef HAS_CTE
-  init_irq();printf("ok!\n");
+  init_irq();
 #endif
 
-  init_fs();printf("ok!\n"); // 初始化文件系统
+  init_fs(); // 初始化文件系统
 
-  init_proc();printf("ok!\n");  // 创建进程
-  printf("ok!\n");
+  init_proc(); // 创建进程
 
   Log("Finish initialization");
-  printf("ok!\n");
 
 #ifdef HAS_CTE
   yield();
