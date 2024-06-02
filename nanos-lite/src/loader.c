@@ -36,9 +36,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   // ramdisk_read(&Elf_header, 0, sizeof(Elf_header));
   fs_read(fd, &Elf_header, sizeof(Elf_header));
   // 检查文件格式
-  // printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
-  // printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
-  // printf("Elf_header.e_ident: %s\n",Elf_header.e_ident);
+  printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
+  printf("Elf_header.e_phnum: 0x%08x\n",Elf_header.e_phnum);
+  printf("Elf_header.e_ident: %s\n",Elf_header.e_ident);
   assert(Elf_header.e_ident[0] == '\x7f');
   assert(memcmp(&(Elf_header.e_ident[1]), "ELF", 3) == 0);
   assert(Elf_header.e_type == ET_EXEC);
@@ -61,11 +61,11 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       // printf("addr = 0x%08x\n",addr);
       fs_lseek(fd, Elf_proc.p_offset, SEEK_SET);
       fs_read(fd, buf, Elf_proc.p_filesz);
-      // printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
-      // printf("Elf_proc.p_memsz: 0x%016x\n",Elf_proc.p_memsz);
-      // printf("Elf_proc.p_filesz: 0x%016x\n",Elf_proc.p_filesz);
-      // printf("Elf_header.e_phoff: 0x%016x\n",Elf_header.e_phoff);
-      // printf("Elf_header.e_phentsize: 0x%016x\n",Elf_header.e_phentsize);
+      printf("Elf_proc.p_vaddr: 0x%08x\n",Elf_proc.p_vaddr);
+      printf("Elf_proc.p_memsz: 0x%016x\n",Elf_proc.p_memsz);
+      printf("Elf_proc.p_filesz: 0x%016x\n",Elf_proc.p_filesz);
+      printf("Elf_header.e_phoff: 0x%016x\n",Elf_header.e_phoff);
+      printf("Elf_header.e_phentsize: 0x%016x\n",Elf_header.e_phentsize);
       if(Elf_proc.p_memsz > Elf_proc.p_filesz)  
         memset(buf + Elf_proc.p_filesz , 0, Elf_proc.p_memsz - Elf_proc.p_filesz);
       
