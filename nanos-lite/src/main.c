@@ -26,6 +26,7 @@ int main() {
   init_fs(); // 初始化文件系统
 
   init_proc();  // 创建进程
+  printf("ok!\n");
 
   Log("Finish initialization");
   printf("ok!\n");
