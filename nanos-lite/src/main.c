@@ -9,7 +9,7 @@ void init_proc(void);
 
 int main() {
   extern const char logo[];
-  printf("%s", logo);printf("ok!\n");
+  printf("%s", logo);
   Log("'Hello World!' from Nanos-lite");
   Log("Build time: %s, %s", __TIME__, __DATE__);
 
@@ -17,15 +17,15 @@ int main() {
 
   init_device();
 
-  init_ramdisk();
+  init_ramdisk();printf("ok!\n");
 
 #ifdef HAS_CTE
-  init_irq();
+  init_irq();printf("ok!\n");
 #endif
 
-  init_fs(); // 初始化文件系统
+  init_fs();printf("ok!\n"); // 初始化文件系统
 
-  init_proc();  // 创建进程
+  init_proc();printf("ok!\n");  // 创建进程
   printf("ok!\n");
 
   Log("Finish initialization");
