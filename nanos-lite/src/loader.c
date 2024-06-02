@@ -34,6 +34,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
   // 读取ELF header
   // ramdisk_read(&Elf_header, 0, sizeof(Elf_header));
+  printf("start read\n");
   fs_read(fd, &Elf_header, sizeof(Elf_header));
   // 检查文件格式
   printf("Elf_header.e_phoff: 0x%08x\n",Elf_header.e_phoff);
