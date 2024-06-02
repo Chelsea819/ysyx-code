@@ -71,10 +71,10 @@ int fs_open(const char *pathname, int flags, int mode){
     init_file_offset();
   // find the certain file
   int file_num = sizeof(file_table) / sizeof(Finfo);
-  // printf("pathname = %s file_num = %d\n",pathname,file_num);
+  printf("pathname = %s file_num = %d\n",pathname,file_num);
   int fd = 0;
   for(fd = 0; fd < file_num; fd ++){
-    // printf("file_table[%d].name = %s\n",fd,file_table[fd].name);
+    printf("file_table[%d].name = %s\n",fd,file_table[fd].name);
     if(strcmp(file_table[fd].name, pathname) == 0){
       break;
     }
