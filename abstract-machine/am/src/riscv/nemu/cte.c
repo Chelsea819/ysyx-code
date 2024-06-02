@@ -14,12 +14,9 @@ const char *regs[] = {
 };
 
 Context* __am_irq_handle(Context *c) {
-  // printf("1111\n");
   assert(user_handler);
-//  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
-    // printf("c->GPR1: 0x%08x\n",c->GPR1);
 
     switch (c->mcause) {
       case 0xb:
@@ -61,7 +58,6 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
-  // printf("addr: 0x%08x\n", user_handler);
   assert(user_handler);
 
   return true;
@@ -73,7 +69,6 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 // yield-os会调用kcontext()来创建上下文, 并把返回的指针记录到PCB的cp中
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内核线程的上下文
   Context *con = (Context *)kstack.end - 1;
-  // printf("entry = 0x%08x\n",(uintptr_t)entry);
   con->mepc = (uintptr_t)entry;
   con->gpr[REG_A0] = (uintptr_t)arg;
   con->mstatus = 0x1800;

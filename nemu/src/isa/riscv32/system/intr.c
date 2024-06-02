@@ -14,12 +14,6 @@
 ***************************************************************************************/
 
 #include <isa.h>
-// const char *regs2[] = {
-//   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-//   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-//   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-//   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-// };
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
@@ -35,7 +29,6 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 
   cpu.csr[CSR_MEPC] = epc;
   cpu.csr[CSR_MCAUSE] = NO;
-  // cpu.pc = cpu.csr[CSR_MTVEC];
   // printf("cpu.pc = 0x%08x\n",cpu.pc);
   // printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",cpu.csr[CSR_MTVEC]);
   // printf("cpu.csr[CSR_MEPC]: 0x%08x\n",cpu.csr[CSR_MEPC]);
@@ -45,7 +38,6 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   Log("[ETRACE]: CSR[mepc] = 0x%08x CSR[mtvec]: 0x%08x CSR[mcause]: 0x%08x\n",epc,cpu.csr[CSR_MTVEC],NO);
   #endif
   return cpu.csr[CSR_MTVEC];
-  // return 0;
 }
 
 word_t isa_query_intr() {
