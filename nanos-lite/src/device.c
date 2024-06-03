@@ -9,6 +9,7 @@
 #define NAME(key) \
   [AM_KEY_##key] = #key,
 
+// 系统屏幕大小
 static int screen_width = 0;
 static int screen_height = 0;
 
@@ -56,7 +57,7 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   assert(offset + len <= screen_width * screen_height * 4);
   // printf("offset = %d screen_width = %d screen_height = %d offset + len = %d\n",offset,screen_width,screen_height,offset + len);
   int x = (offset / 4) % screen_width;
-  int y = (offset / 4 - x) / screen_width + 1 - 1;
+  int y = (offset / 4 - x) / screen_width;
   int w = screen_width - x * 2;
   int h = len / w;
   // printf("[fb_write] (%d, %d) draw %d * %d offset = %d\n",x,y,w,h,offset);

@@ -58,15 +58,16 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   // 将系统全屏幕作为画布，并将*w和*h分别设为系统屏幕的大小
   char buf[64];
-  assert(read(dpinfo_fd, buf, sizeof(buf)) != -1);
-  printf("buf = [%s]\n",buf);
-  sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);
-  assert(*w <= sw && *h <= sh);
-  // 读出系统全屏幕大小
+  assert(read(dpinfo_fd, buf, sizeof(buf)) != -1);  // 读取系统屏幕大小
+  sscanf(buf, "WIDTH:%d\nHEIGHT:%d", &sw, &sh);     // 解析系统屏幕大小
+  assert(*w <= sw && *h <= sh); // 画布尺寸大于屏幕尺寸
+  // 设置画布大小为读系统屏幕大小
   if(*w == 0 && *h == 0){
     *w = sw;
     *h = sh;
   }
+
+  // 保存画布尺寸
   screen_w = *w; 
   screen_h = *h;
 
@@ -76,7 +77,7 @@ void NDL_OpenCanvas(int *w, int *h) {
 
   // 设置到画布起始坐标
   printf("the size of painting area, width[%d] height[%d]\n",screen_w,screen_h);
-  printf("(%d %d)",screenX,screenY);
+  printf("beginning point: (%d %d)\n",screenX,screenY);
   lseek(fb_fd, sw * screenY + screenX, SEEK_SET);
 
 }
