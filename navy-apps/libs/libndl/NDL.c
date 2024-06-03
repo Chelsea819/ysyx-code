@@ -18,11 +18,13 @@ struct timeval start;
 
 int open(const char *path, int flags, ...);
 ssize_t read(int fd, void *buf, size_t count);
+int n = 0;
 
 // 以毫秒为单位返回系统时间
 uint32_t NDL_GetTicks() {
   struct timeval tv;
   assert(gettimeofday(&tv, NULL) == 0);
+  if((tv.tv_usec - start.tv_usec) / 500000 < n ++) printf("tv.tv_usec = %d\nstart.tv_usec = %d\n",tv.tv_usec);
   return start.tv_usec = tv.tv_usec;
 }
 
@@ -94,11 +96,6 @@ void NDL_OpenCanvas(int *w, int *h) {
 //     for (volatile int j = 0; j < 100000; j++) ;
 //   }
 // }
-
-
-
-
-
 
 
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
