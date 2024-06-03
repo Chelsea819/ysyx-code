@@ -17,6 +17,8 @@ void sys_exit(int status){
   halt(status);
 }
 
+/* Nanos-lite还是一个单任务操作系统, 空闲的内存都可以让用户程序自由使用, 
+  因此我们只需要让SYS_brk系统调用总是返回0即可, 表示堆区大小的调整总是成功. */ 
 uintptr_t sys_brk(){
   return 0;
 }

@@ -18,9 +18,16 @@ typedef struct {
 } Finfo;
 
 #define FILE_NUM 40
+typedef struct
+{
+  size_t open_offset[FILE_NUM];
+  bool if_init[FILE_NUM];
+} OpenOff;
 
-static size_t file_offset[FILE_NUM];
-static bool if_init = false;
+static OpenOff open_table = {};
+
+// static size_t open_table.Open_offset[FILE_NUM];
+static bool fs_if_init = false;
 // static char *fb = NULL;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_EVENT, FD_DISPINFO};
@@ -50,14 +57,15 @@ void init_file_offset(){
   int file_num = sizeof(file_table) / sizeof(Finfo);
   assert(file_num <= FILE_NUM);
   for(int i = 0; i < file_num; i ++){
-    file_offset[i] = file_table[i].disk_offset;
+    open_table.open_offset[i] = file_table[i].disk_offset;
+    open_table.if_init[i] = false;
   }
-  if_init = true;
+  fs_if_init = true;
 }
 
 // void free_file_offset(){
-//   free(file_offset);
-//   file_offset = NULL;
+//   free(open_table.Open_offset);
+//   open_table.Open_offset = NULL;
 // }
 
 char *get_filename(int fd){
@@ -67,7 +75,7 @@ char *get_filename(int fd){
 // 为了简化实现, 我们允许所有用户程序都可以对所有已存在的文件进行读写, 
 // 这样以后, 我们在实现fs_open()的时候就可以忽略flags和mode了
 int fs_open(const char *pathname, int flags, int mode){
-  if(if_init == false)
+  if(fs_if_init == false)
     init_file_offset();
   // find the certain file
   int file_num = sizeof(file_table) / sizeof(Finfo);
@@ -78,31 +86,32 @@ int fs_open(const char *pathname, int flags, int mode){
     }
     if(fd == file_num - 1) panic("Cannot find this file!  [%s]",pathname);
   }
+  open_table.if_init[fd] = true;
   // printf("fd = %d\n",fd);
   return fd;
 
 }
 
 size_t fs_read(int fd, void *buf, size_t len){
-  // printf("file_table[%d].disk_offset = 0x%08x\n",fd,file_table[fd].disk_offset);
-  // printf("file_offset[fd] = 0x%08x\n",file_offset[fd]);
+  // printf("file_table[%d].disk_offset = 0x%08x\n",fd,open_table.open_offset[fd]);
+  // printf("file_table[i].disk_offset = 0x%08x\n",file_table[i].disk_offset);
   if(file_table[fd].read == NULL){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
     assert(len <= 0x7ffff000);
-    if(file_table[fd].disk_offset + len > file_offset[fd] + file_table[fd].size)
-      len = file_offset[fd] + file_table[fd].size - file_table[fd].disk_offset;
-    // printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x file_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,file_table[fd].disk_offset,fd,file_offset[fd],fd,file_table[fd].size);
-    // printf("file_table[fd].disk_offset + len = 0x%08x, file_offset[fd] + file_table[fd].size = 0x%08x\n",file_table[fd].disk_offset + len,file_offset[fd] + file_table[fd].size);
-    int ret = ramdisk_read(buf, file_table[fd].disk_offset, len);
-    // assert(file_table[fd].disk_offset + ret <= file_offset[fd] + file_table[fd].size);
+    if(open_table.open_offset[fd] + len > file_table[fd].disk_offset + file_table[fd].size)
+      len = file_table[fd].disk_offset + file_table[fd].size - open_table.open_offset[fd];
+    // printf("len = 0x%08x file_table[%d].disk_offset = 0x%08x open_table.Open_offset[%d] = 0x%08x file_table[%d].size = 0x%08x",len,fd,open_table.open_offset[fd],fd,file_table[i].disk_offset,fd,file_table[fd].size);
+    // printf("open_table.open_offset[fd] + len = 0x%08x, file_table[i].disk_offset + file_table[fd].size = 0x%08x\n",open_table.open_offset[fd] + len,file_table[i].disk_offset + file_table[fd].size);
+    int ret = ramdisk_read(buf, open_table.open_offset[fd], len);
+    // assert(open_table.open_offset[fd] + ret <= file_table[i].disk_offset + file_table[fd].size);
   
-    file_table[fd].disk_offset += ret;
+    open_table.open_offset[fd] += ret;
     return ret;
     // printf("fs_write fd = %d len = %d\n",fd,len);
   }
   else{
-    return file_table[fd].read(buf,file_table[fd].disk_offset,len);
+    return file_table[fd].read(buf,open_table.open_offset[fd],len);
   }
 }
 
@@ -112,13 +121,13 @@ size_t fs_write(int fd, const void *buf, size_t len){
     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
     assert(buf != NULL);
     assert(len <= 0x7ffff000);
-    assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
-    int ret = ramdisk_write(buf, file_table[fd].disk_offset, len);
-    file_table[fd].disk_offset += ret;
+    assert(open_table.open_offset[fd] + len <= file_table[fd].disk_offset + file_table[fd].size);
+    int ret = ramdisk_write(buf, open_table.open_offset[fd], len);
+    open_table.open_offset[fd] += ret;
     return ret;
   }
   else{
-    return file_table[fd].write(buf,file_table[fd].disk_offset,len);
+    return file_table[fd].write(buf,open_table.open_offset[fd],len);
   }
   
 }
@@ -137,9 +146,9 @@ size_t fs_write(int fd, const void *buf, size_t len){
 //     assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
 //     assert(buf != NULL);
 //     assert(len <= 0x7ffff000);
-//     assert(file_table[fd].disk_offset + len <= file_offset[fd] + file_table[fd].size);
-//     int ret = ramdisk_write(buf, file_table[fd].disk_offset, len);
-//     file_table[fd].disk_offset += ret;
+//     assert(open_table.open_offset[fd] + len <= file_table[i].disk_offset + file_table[fd].size);
+//     int ret = ramdisk_write(buf, open_table.open_offset[fd], len);
+//     open_table.open_offset[fd] += ret;
 //     return ret;
 //   }
   
@@ -150,26 +159,28 @@ size_t fs_write(int fd, const void *buf, size_t len){
 
 size_t fs_lseek(int fd, size_t offset, int whence){
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
-  // printf("file_offset[fd] = 0x%08x file_table[fd].size = 0x%08x\n",file_offset[fd],file_table[fd].size);
+  // printf("file_table[i].disk_offset = 0x%08x file_table[fd].size = 0x%08x\n",file_table[i].disk_offset,file_table[fd].size);
   if(whence == SEEK_SET){
     assert(offset <= file_table[fd].size);
-    file_table[fd].disk_offset = file_offset[fd] + offset;
+    open_table.open_offset[fd] = file_table[fd].disk_offset + offset;
   }
   else if(whence == SEEK_CUR){
-    assert(file_table[fd].disk_offset + offset <= file_offset[fd] + file_table[fd].size);
-    file_table[fd].disk_offset += offset;
+    assert(open_table.open_offset[fd] + offset <= file_table[fd].disk_offset + file_table[fd].size);
+    open_table.open_offset[fd] += offset;
   }
   else if(whence == SEEK_END){
-    assert(file_offset[fd] + offset + file_table[fd].size <= file_offset[fd] + file_table[fd].size);
-    file_table[fd].disk_offset = file_offset[fd] + offset + file_table[fd].size;
+    assert(file_table[fd].disk_offset + offset + file_table[fd].size <= file_table[fd].disk_offset + file_table[fd].size);
+    open_table.open_offset[fd] = file_table[fd].disk_offset + offset + file_table[fd].size;
   }
-  // printf("[fs_lseek] offset=%d whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,file_table[fd].disk_offset);
-  return file_table[fd].disk_offset - file_offset[fd];
+  // printf("[fs_lseek] offset=%d whence=%d file_table[%d].disk_offset=0x%08x\n",offset,whence,fd,open_table.open_offset[fd]);
+  return open_table.open_offset[fd] - file_table[fd].disk_offset;
 }
 
 int fs_close(int fd){
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
   // free_file_offset();
+  open_table.if_init[fd] = true;
+  open_table.open_offset[fd] = file_table[fd].disk_offset;
   return 0;
 }
 

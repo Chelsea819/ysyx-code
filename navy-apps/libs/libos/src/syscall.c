@@ -6,6 +6,10 @@
 #include "syscall.h"
 #include <stdio.h>
 
+// 用户程序开始运行时，probrk位于_end所指示位置
+extern char _end;
+intptr_t proBrk = (intptr_t)&_end;
+
 // helper macros
 #define _concat(x, y) x ## y
 #define concat(x, y) _concat(x, y)
@@ -69,9 +73,6 @@ int _write(int fd, void *buf, size_t count) {
   return (int)_syscall_(SYS_write, fd, (intptr_t)buf, (intptr_t)(uintptr_t)count); // size_t是无符号的
   
 }
-
-extern char _end;
-intptr_t proBrk = (intptr_t)&_end;
 
 // 调整堆区大小
 // 在Navy的Newlib中, sbrk()最终会调用_sbrk()

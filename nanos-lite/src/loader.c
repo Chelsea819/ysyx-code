@@ -70,7 +70,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         memset(buf + Elf_proc.p_filesz , 0, Elf_proc.p_memsz - Elf_proc.p_filesz);
       
       // ramdisk_write(buf, Elf_proc.p_vaddr, Elf_proc.p_memsz);
-      memcpy((uintptr_t*)Elf_proc.p_vaddr, buf, Elf_proc.p_memsz);
+      memcpy((uintptr_t*)Elf_proc.p_vaddr, buf, Elf_proc.p_memsz);  // 将程序读入内存
       // free(buf);
       // buf = NULL;
     }
@@ -82,6 +82,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
   Log("Jump to entry = %p", entry);
-  ((void(*)())entry) ();
+  ((void(*)())entry) ();  // 开始执行加载到内存的程序的第一条指令
 }
 
