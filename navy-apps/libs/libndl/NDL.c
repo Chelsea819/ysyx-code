@@ -24,8 +24,7 @@ int n = 0;
 uint32_t NDL_GetTicks() {
   struct timeval tv;
   assert(gettimeofday(&tv, NULL) == 0);
-  if((tv.tv_usec - start.tv_usec) / 500000 > n ++) printf("tv.tv_usec = %d\nstart.tv_usec = %d\n",tv.tv_usec,start.tv_usec);
-  return tv.tv_usec - start.tv_usec;
+  return tv.tv_usec;
 }
 
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
@@ -138,7 +137,7 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  assert(gettimeofday(&start, NULL) == 0);
+  // assert(gettimeofday(&start, NULL) == 0);
   event_fd = open("/dev/event", 0);
   dpinfo_fd = open("/proc/dispinfo", 0);
   fb_fd = open("/dev/fb", 0);
