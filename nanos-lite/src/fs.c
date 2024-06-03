@@ -154,7 +154,6 @@ size_t fs_write(int fd, const void *buf, size_t len){
   
 // }
 
-// enum {SEEK_SET = 0, SEEK_CUR, SEEK_END};
 
 
 size_t fs_lseek(int fd, size_t offset, int whence){
