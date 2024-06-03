@@ -9,6 +9,7 @@ extern uint8_t ramdisk_end;
  * a physical one, which is necessary for a microkernel.
  */
 
+// 对文件进行读写
 /* read `len' bytes starting from `offset' of ramdisk into `buf' */
 size_t ramdisk_read(void *buf, size_t offset, size_t len) {
   // printf("offset = 0x%08x\n",offset);
