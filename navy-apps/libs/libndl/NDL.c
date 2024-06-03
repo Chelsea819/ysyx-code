@@ -133,6 +133,7 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
+  assert(0);
   printf("NDL_Init!\n");
   if (getenv("NWM_APP")) {
     evtdev = 3;
