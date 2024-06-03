@@ -25,7 +25,7 @@ uint32_t NDL_GetTicks() {
   struct timeval tv;
   assert(gettimeofday(&tv, NULL) == 0);
   if((tv.tv_usec - start.tv_usec) / 500000 < n ++) printf("tv.tv_usec = %d\nstart.tv_usec = %d\n",tv.tv_usec,start.tv_usec);
-  return start.tv_usec = tv.tv_usec;
+  return tv.tv_usec - start.tv_usec;
 }
 
 // 在NDL中实现NDL_PollEvent(), 从/dev/events中读出事件并写入到buf中
