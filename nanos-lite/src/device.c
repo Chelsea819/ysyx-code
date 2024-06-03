@@ -35,6 +35,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     *((char *)buf + i) = keyname[ev.keycode][i];
   }
   *((char *)buf + i) = '\0';
+  printf("buf = %s\n",buf);
   return i;
 }
 
