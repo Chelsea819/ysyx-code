@@ -33,14 +33,14 @@ void render() {
 void prev(int rep) {
   if (rep == 0) rep = 1;
   cur -= rep;
-  if (cur < 0) cur = N-1;
+  if (cur < 0) cur = 0;
   render();
 }
 
 void next(int rep) {
   if (rep == 0) rep = 1;
   cur += rep;
-  if (cur >= N) cur = 0;
+  if (cur >= N) cur = N - 1;
   printf("page [%d]\n",cur);
   render();
 }
