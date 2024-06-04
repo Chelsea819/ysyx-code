@@ -24,12 +24,12 @@ int SDL_PollEvent(SDL_Event *ev) {
 
 int SDL_WaitEvent(SDL_Event *event) {
   printf("SDL_WaitEvent\n");
-  char buf[32];
-  while(NDL_PollEvent(buf, sizeof(buf)) == 0);
   if(event == NULL){
-    printf("event NULL\n");
+    assert("event NULL\n");
     return 0;
   }
+  char buf[32];
+  while(NDL_PollEvent(buf, sizeof(buf)) == 0);
   printf("get event\n");
   size_t i = 0;
   while (i < 83){
