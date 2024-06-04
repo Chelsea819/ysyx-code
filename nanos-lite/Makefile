@@ -10,7 +10,6 @@ ISA = am_native
 else
 INC_PATH += include $(NAVY_HOME)/libs/libc/include
 endif
-
 ./src/resources.S: $(RAMDISK_FILE)
 	@touch $@
 
