@@ -37,7 +37,7 @@ void init_proc() {
   // naive_uload(current, "/bin/nslider");
 }
 
-Context* schedule(Event ev, Context *prev) {
+Context* schedule(Context *prev) {
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   return current->cp;
