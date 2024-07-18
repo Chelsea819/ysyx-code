@@ -14,25 +14,34 @@ const char *regs[] = {
 };
 
 Context* __am_irq_handle(Context *c) {
-  printf("1111\n");
   assert(user_handler);
-//  if(user_handler == NULL)  printf("22222\n");
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
+
     switch (c->mcause) {
-      case 0xb: ev.event = EVENT_YIELD; break;
+      case 0xb:
+        if (c->GPR1 == -1) ev.event = EVENT_YIELD;    // 系统调用号的识别
+        else ev.event = EVENT_SYSCALL; // 这边已经有0 和 1 了
+        break;
+      case 0x80000007: 
+        ev.event = EVENT_IRQ_TIMER; 
+        break;
       default: ev.event = EVENT_ERROR; break;
     }
     // for(int i = 0; i < 32; i++){
     //   printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
     // }
-    // printf("c->mcause: 0x%08x\n",c->mcause);
     // printf("c->mstatus: 0x%08x\n",c->mstatus);
-    printf("c->mepc: 0x%08x\n",c->mepc);
+    // printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
-    printf("c->mepc: 0x%08x\n",c->mepc);
+    // printf("c->mepc: 0x%08x\n",c->mepc);
+    // printf("&c: 0x%08x\n",&c); 
+    // printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c 
 
     c = user_handler(ev, c); // 根据不同事件进行不同操作
+    // printf("after c->mepc: 0x%08x\n",c->mepc);
+    // printf("&c: 0x%08x\n",&c); // &c->mepc: 0x80099f9c
+    // printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c
     assert(c != NULL);
   }
   else assert(0);
@@ -46,14 +55,12 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
   //接受一个来自操作系统的事件处理回调函数的指针, 
   //当发生事件时, CTE将会把事件和相关的上下文作为参数, 来调用这个回调函数, 交由操作系统进行后续处理.
   // initialize exception  
-  printf("user_handler : 0x%08x\n",&user_handler); 
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap)); // 将异常入口地址设置到mtvec寄存器中
-  printf("cte_init!\n");
+  // printf("cte_init!\n");
   assert(handler);
 
   // register event handler
   user_handler = handler; // 注册一个事件处理回调函数, 这个回调函数由yield test提供
-  printf("addr: 0x%08x\n", user_handler);
   assert(user_handler);
 
   return true;
@@ -65,7 +72,6 @@ bool cte_init(Context*(*handler)(Event, Context*)) { // 进行CTE相关的初始
 // yield-os会调用kcontext()来创建上下文, 并把返回的指针记录到PCB的cp中
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内核线程的上下文
   Context *con = (Context *)kstack.end - 1;
-  // printf("entry = 0x%08x\n",(uintptr_t)entry);
   con->mepc = (uintptr_t)entry;
   con->gpr[REG_A0] = (uintptr_t)arg;
   con->mstatus = 0x1800;
@@ -76,6 +82,7 @@ void yield() { //进行自陷操作, 会触发一个编号为EVENT_YIELD事件. 
 #ifdef __riscv_e
   asm volatile("li a5, -1; ecall");
 #else
+  printf("void yield!\n");
   asm volatile("li a7, -1; ecall");
 #endif
 }

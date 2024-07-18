@@ -44,7 +44,7 @@ static char *code_format2 =
 "int flag = 0;"
 "int main() { "
 "  float result = %s; "
-"  if(isnan(result)) result = -1;"
+"  if(isnan(result)) return -1;"
 "  printf(\"%%f\", result); "
 "  return 0; "
 "}";
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
   //生成随机数种子
   int seed = time(0);
   srand(seed);
-  int loop = 1;
+  int loop = 100;
   //将所需生成测试用例的数量存入loop变量
   if (argc > 1) {
     sscanf(argv[1], "%d", &loop);

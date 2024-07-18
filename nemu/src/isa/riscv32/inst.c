@@ -148,7 +148,8 @@ int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   // int ret = decode_exec(s);
   // if((s->isa.inst.val & 0x0000007f)== 115) {printf("C(773) = 0x%08x\n",C(773));}
-  // if(s->pc != 0x800000a0 && s->pc != 0x800000a4 && s->pc != 0x80000098 && s->pc != 0x800000a8 && s->pc != 0x8000009c) printf("s->pc = 0x%08x s->isa.inst.val = 0x%08x\n",s->pc,s->isa.inst.val);
+  // printf("C(CSR_MEPC) = 0x%08x\n",C(CSR_MEPC));
+  // if(s->pc > 0x80001464 || s->pc < 0x80001c30) printf("s->pc = 0x%08x s->isa.inst.val = 0x%08x\n",s->pc,s->isa.inst.val);
   // if(s->pc == 0x800013d0) assert(0);
   return decode_exec(s);
 }

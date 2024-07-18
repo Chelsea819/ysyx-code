@@ -23,9 +23,9 @@ int main() {
   init_irq();
 #endif
 
-  init_fs();
+  init_fs(); // 初始化文件系统
 
-  init_proc();
+  init_proc(); // 创建进程
 
   Log("Finish initialization");
 

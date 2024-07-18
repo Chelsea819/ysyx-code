@@ -169,6 +169,11 @@ config FTRACE
   bool "Enable function tracer"
   default n
 
+config FTRACE_PASS
+  depends on FTRACE
+  bool "Enable function passing arguments tracer"
+  default n
+
 config FTRACE_COND
   depends on FTRACE
   string "Only trace function when the condition is true"
@@ -183,6 +188,11 @@ config ETRACE
   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
   bool "Enable exception tracer"
   default n
+
+# config STRACE
+#   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+#   bool "Enable system-call tracer"
+#   default n
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
