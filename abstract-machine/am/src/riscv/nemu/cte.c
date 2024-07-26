@@ -82,7 +82,7 @@ void yield() { //进行自陷操作, 会触发一个编号为EVENT_YIELD事件. 
 #ifdef __riscv_e
   asm volatile("li a5, -1; ecall");
 #else
-  printf("void yield!\n");
+  // printf("void yield!\n");
   asm volatile("li a7, -1; ecall");
 #endif
 }
