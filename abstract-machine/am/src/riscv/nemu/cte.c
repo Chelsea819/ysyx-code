@@ -75,6 +75,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内�
   con->mepc = (uintptr_t)entry;
   con->gpr[REG_A0] = (uintptr_t)arg;
   con->mstatus = 0x1800;
+  printf("entry = 0x%08x\n",entry);
   return con;
 }
 
