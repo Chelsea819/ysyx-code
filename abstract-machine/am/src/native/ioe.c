@@ -62,17 +62,18 @@ static void fail(void *buf) { panic("access nonexist register"); }
 void __am_ioe_init() {
   for (int i = 0; i < LENGTH(lut); i++)
     if (!lut[i]) lut[i] = fail;
-  __am_timer_init();
-  __am_gpu_init();
-  __am_input_init();
-  __am_audio_init();
+  printf("__am_timer_init begin!\n");
+  __am_timer_init();printf("__am_gpu_init begin!\n");
+  __am_gpu_init();printf("__am_input_init begin!\n");
+  __am_input_init();printf("__am_audio_init begin!\n");
+  __am_audio_init();printf("__am_disk_init begin!\n");
   __am_disk_init();
   ioe_init_done = true;
 }
 
 static void do_io(int reg, void *buf) {
-  if (!ioe_init_done) {
-    __am_ioe_init();
+  if (!ioe_init_done) {printf("__am_ioe_init begin!\n");
+    __am_ioe_init();printf("__am_ioe_init end!\n");
   }
   ((handler_t)lut[reg])(buf);
 }
