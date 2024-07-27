@@ -1,5 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
+#include <stdio.h>
 
 bool __am_has_ioe = false;
 static bool ioe_init_done = false;
@@ -76,7 +77,7 @@ static void do_io(int reg, void *buf) {
   ((handler_t)lut[reg])(buf);
 }
 // 从编号为reg的寄存器中读出内容到缓冲区buf中
-void ioe_read (int reg, void *buf) { do_io(reg, buf); }
+void ioe_read (int reg, void *buf) {printf("ioe_read begin!\n"); do_io(reg, buf); printf("ioe_read end!\n");}
 // 往编号为reg寄存器中写入缓冲区buf中的内容
 void ioe_write(int reg, void *buf) { do_io(reg, buf); }
 
