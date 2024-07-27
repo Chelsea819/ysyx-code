@@ -1,7 +1,6 @@
 #include <am.h>
 
 bool ioe_init() {
-  printf("navy ioe_init!\n");
   return true;
 }
 

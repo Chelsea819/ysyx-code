@@ -44,7 +44,6 @@ static int sbctl_fd = -1;
 static uint32_t *fb = NULL;
 static char fsimg_path[512] = "";
 
-// $(NAVY_HOME)/fsming as prefix
 static inline void get_fsimg_path(char *newpath, const char *path) {
   sprintf(newpath, "%s%s", fsimg_path, path);
 }
@@ -142,7 +141,6 @@ static void open_audio() {
 }
 
 static const char* redirect_path(char *newpath, const char *path) {
-  // refresh file_name
   get_fsimg_path(newpath, path);
   if (0 == access(newpath, 0)) {
     fprintf(stderr, "Redirecting file open: %s -> %s\n", path, newpath);
@@ -159,7 +157,6 @@ extern "C" int execve(const char *filename, char *const argv[], char *const envp
 
 FILE *fopen(const char *path, const char *mode) {
   char newpath[512];
-  // initialize glibc_fopen function point
   if (glibc_fopen == NULL) {
     glibc_fopen = (FILE*(*)(const char*, const char*))dlsym(RTLD_NEXT, "fopen");
     assert(glibc_fopen != NULL);

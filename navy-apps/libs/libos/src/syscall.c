@@ -4,11 +4,6 @@
 #include <assert.h>
 #include <time.h>
 #include "syscall.h"
-#include <stdio.h>
-
-// 用户程序开始运行时，probrk位于_end所指示位置
-extern char _end;
-intptr_t proBrk = (intptr_t)&_end;
 
 // helper macros
 #define _concat(x, y) x ## y
@@ -55,7 +50,7 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
   register intptr_t _gpr4 asm (GPR4) = a2;
-  register intptr_t ret asm (GPRx); // 设置系统调用的返回值
+  register intptr_t ret asm (GPRx);
   asm volatile (SYSCALL : "=r" (ret) : "r"(_gpr1), "r"(_gpr2), "r"(_gpr3), "r"(_gpr4));
   return ret;
 }
@@ -66,42 +61,37 @@ void _exit(int status) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  return (int)_syscall_(SYS_open, (intptr_t)path, flags, mode);
+  _exit(SYS_open);
+  return 0;
 }
 
 int _write(int fd, void *buf, size_t count) {
-  return (int)_syscall_(SYS_write, fd, (intptr_t)buf, (intptr_t)(uintptr_t)count); // size_t是无符号的
-  
+  _exit(SYS_write);
+  return 0;
 }
 
-// 调整堆区大小
-// 在Navy的Newlib中, sbrk()最终会调用_sbrk()
 void *_sbrk(intptr_t increment) {
-  intptr_t addr = proBrk + increment;
-  int ret = _syscall_(SYS_brk, addr, 0, 0);
-  if(ret != 0){
-    return (void *)-1;
-  }
-  else {
-    proBrk = addr;
-    return (void *)(addr - increment);
-  }
+  return (void *)-1;
 }
 
 int _read(int fd, void *buf, size_t count) {
-  return (int)_syscall_(SYS_read, fd, (intptr_t)buf, count);
+  _exit(SYS_read);
+  return 0;
 }
 
 int _close(int fd) {
-  return (int)_syscall_(SYS_close, fd, 0, 0);
+  _exit(SYS_close);
+  return 0;
 }
 
 off_t _lseek(int fd, off_t offset, int whence) {
-  return (off_t)_syscall_(SYS_lseek, fd, offset, whence);
+  _exit(SYS_lseek);
+  return 0;
 }
 
 int _gettimeofday(struct timeval *tv, struct timezone *tz) {
-  return _syscall_(SYS_gettimeofday, (intptr_t)tv, (intptr_t)tz, 0);
+  _exit(SYS_gettimeofday);
+  return 0;
 }
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
