@@ -26,7 +26,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //   printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs2[i],cpu.gpr[i]);
   // }
   // printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
-
+  isa_reg_display();
   cpu.csr[CSR_MEPC] = epc;
   cpu.csr[CSR_MCAUSE] = NO;
   // printf("cpu.pc = 0x%08x\n",cpu.pc);

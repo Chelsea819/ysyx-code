@@ -75,6 +75,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内�
   con->mepc = (uintptr_t)entry;
   con->gpr[REG_A0] = (uintptr_t)arg;
   con->mstatus = 0x1800;
+  printf("entry = 0x%08x\n",entry);
   return con;
 }
 
@@ -82,7 +83,7 @@ void yield() { //进行自陷操作, 会触发一个编号为EVENT_YIELD事件. 
 #ifdef __riscv_e
   asm volatile("li a5, -1; ecall");
 #else
-  printf("void yield!\n");
+  // printf("void yield!\n");
   asm volatile("li a7, -1; ecall");
 #endif
 }

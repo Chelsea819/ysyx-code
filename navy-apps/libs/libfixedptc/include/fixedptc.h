@@ -105,8 +105,6 @@ typedef	__uint128_t fixedptud;
 #define FIXEDPT_FBITS	(FIXEDPT_BITS - FIXEDPT_WBITS)
 #define FIXEDPT_FMASK	(((fixedpt)1 << FIXEDPT_FBITS) - 1)
 
-// 编译器的工作流程：词法分析->语法分析->语义分析->中间代码生成->优化->目标代码生成->汇编
-// 这里编译器对其进行了常量折叠优化，在编译时对表达式中的常量进行计算并简化
 #define fixedpt_rconst(R) ((fixedpt)((R) * FIXEDPT_ONE + ((R) >= 0 ? 0.5 : -0.5)))
 #define fixedpt_fromint(I) ((fixedptd)(I) << FIXEDPT_FBITS)
 #define fixedpt_toint(F) ((F) >> FIXEDPT_FBITS)
@@ -152,18 +150,12 @@ static inline fixedpt fixedpt_abs(fixedpt A) {
 	return 0;
 }
 
-// Uncheck function
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return fixedpt_fromint(fixedpt_toint(A + fixedpt_rconst(((A) >= 0 ? 0.5 : -0.5))));
+	return 0;
 }
 
-// static inline float floor(float A) {
-// 	return (int)(A+0.5);
-// }
-
-// Uncheck function
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return fixedpt_fromint(fixedpt_toint(A + fixedpt_rconst(((A) >= 0 ? -0.5 : 0.5))));
+	return 0;
 }
 
 /*
