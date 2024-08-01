@@ -27,8 +27,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   // initialize exception entry
   const uint32_t j_opcode = 0x08000000;
   uint32_t instr = j_opcode | (((uint32_t)__am_asm_trap >> 2) & 0x3ffffff);
-  *(uint32_t *)EX_ENTRY = instr; // 异常入口地址是固定在0x80000180
-  //在0x80000180放置一条无条件跳转指令, 使得这一指令的跳转目标是我们希望的真正的异常入口地址
+  *(uint32_t *)EX_ENTRY = instr;
   *(uint32_t *)(EX_ENTRY + 4) = 0;  // delay slot
   *(uint32_t *)0x80000000 = instr;  // TLB refill exception
   *(uint32_t *)(0x80000000 + 4) = 0;  // delay slot

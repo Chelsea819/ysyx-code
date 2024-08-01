@@ -28,8 +28,7 @@ static Uint32 texture_sync(Uint32 interval, void *param) {
 }
 
 void __am_gpu_init() {
-  printf("SDL_Init begin!\n"); // will output
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);printf("SDL_CreateWindow begin!\n"); // will output
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
   window = SDL_CreateWindow("Native Application",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 #ifdef MODE_800x600
@@ -37,9 +36,9 @@ void __am_gpu_init() {
 #else
       W * 2, H * 2,
 #endif
-      SDL_WINDOW_OPENGL);printf("SDL_CreateRGBSurface begin!\n");  // success
+      SDL_WINDOW_OPENGL);
   surface = SDL_CreateRGBSurface(SDL_SWSURFACE, W, H, 32,
-      RMASK, GMASK, BMASK, AMASK);printf("SDL_AddTimer begin!\n");
+      RMASK, GMASK, BMASK, AMASK);
   SDL_AddTimer(1000 / FPS, texture_sync, NULL);
 }
 
