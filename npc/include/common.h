@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NPC is licensed under Mulan PSL v2.
+* NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -13,38 +13,39 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __NPC_COMMON_H__
-#define __NPC_COMMON_H__
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
-#include <malloc.h>
 
-#include "macro.h"
-#include "debug.h"
-#include "config.h"
-#include "device-def.h"
+#include <generated/autoconf.h>
+#include <macro.h>
 
+// volatile static int dummy = 0;
+
+#ifdef CONFIG_TARGET_AM
+#include <klib.h>
+#else
 #include <assert.h>
 #include <stdlib.h>
-
-#define __GUEST_ISA__ riscv32
+#endif
 
 #if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul
 #define PMEM64 1
 #endif
 
-
-typedef uint32_t word_t;
-typedef int32_t  sword_t;
+typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
+typedef MUXDEF(CONFIG_ISA64, int64_t, int32_t)  sword_t;
 #define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
 
 typedef word_t vaddr_t;
-typedef uint32_t paddr_t;
+typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
 #define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
 typedef uint16_t ioaddr_t;
 
+#include <debug.h>
 
 #endif
