@@ -1,6 +1,6 @@
 #include <am.h>
-#include <nemu.h>
-// #define MODE_800x600
+#include <npc.h>
+
 #ifdef MODE_800x600
 # define W    800
 # define H    600
@@ -12,12 +12,12 @@
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
 void __am_gpu_init() {
-  // int i;
-  // int w = W;// TODO: get the correct width
-  // int h = H;// TODO: get the correct height
-  // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // for (i = 0; i < w * h; i ++) fb[i] = i;
-  // outl(SYNC_ADDR, 1);
+  int i;
+  int w = W;// TODO: get the correct width
+  int h = H;// TODO: get the correct height
+  uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
+  for (i = 0; i < w * h; i ++) fb[i] = i;
+  outl(SYNC_ADDR, 1);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
@@ -35,6 +35,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     uint32_t *p = (uint32_t *)ctl->pixels;
     int k = 0;
     for(int i = y; i < y + h; i ++){
+      // putch('1');
       for(int j = x; j < x + w; j ++){
         fb[W*i+j] = p[k++];
       }

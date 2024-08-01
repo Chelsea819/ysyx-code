@@ -3,6 +3,7 @@
 
 // **MAY SUBJECT TO CHANGE IN THE FUTURE**
 
+/*常见设备的"抽象寄存器"编号和相应的结构. 这些定义是架构无关的, 每个架构在实现各自的IOE API时, 都需要遵循这些定义(约定).*/
 #define AM_DEVREG(id, reg, perm, ...) \
   enum { AM_##reg = (id) }; \
   typedef struct { __VA_ARGS__; } AM_##reg##_T;
@@ -11,12 +12,17 @@ AM_DEVREG( 1, UART_CONFIG,  RD, bool present);
 AM_DEVREG( 2, UART_TX,      WR, char data);
 AM_DEVREG( 3, UART_RX,      RD, char data);
 AM_DEVREG( 4, TIMER_CONFIG, RD, bool present, has_rtc);
-AM_DEVREG( 5, TIMER_RTC,    RD, int year, month, day, hour, minute, second);
-AM_DEVREG( 6, TIMER_UPTIME, RD, uint64_t us);
+AM_DEVREG( 5, TIMER_RTC,    RD, int year, month, day, hour, minute, second);  // AM实时时钟，读出当前的年月日时分秒，PA中暂时不使用
+AM_DEVREG( 6, TIMER_UPTIME, RD, uint64_t us); // AM系统启动时间，可读出系统启动后的微秒数
 AM_DEVREG( 7, INPUT_CONFIG, RD, bool present);
-AM_DEVREG( 8, INPUT_KEYBRD, RD, bool keydown; int keycode);
+/*AM键盘控制器, 可读出按键信息. keydown为true时表示按下按键, 否则表示释放按键. keycode为按键的断码, 没有按键时, keycode为AM_KEY_NONE */
+AM_DEVREG( 8, INPUT_KEYBRD, RD, bool keydown; int keycode); 
+// AM显示控制器信息, 可读出屏幕大小信息width和height. 另外AM假设系统在运行过程中, 屏幕大小不会发生变化.
 AM_DEVREG( 9, GPU_CONFIG,   RD, bool present, has_accel; int width, height, vmemsz);
 AM_DEVREG(10, GPU_STATUS,   RD, bool ready);
+// AM帧缓冲控制器, 可写入绘图信息, 向屏幕(x, y)坐标处绘制w*h的矩形图像. 
+// 图像像素按行优先方式存储在pixels中, 每个像素用32位整数以00RRGGBB的方式描述颜色. 
+// 若sync为true, 则马上将帧缓冲中的内容同步到屏幕上.
 AM_DEVREG(11, GPU_FBDRAW,   WR, int x, y; void *pixels; int w, h; bool sync);
 AM_DEVREG(12, GPU_MEMCPY,   WR, uint32_t dest; void *src; int size);
 AM_DEVREG(13, GPU_RENDER,   WR, uint32_t root);

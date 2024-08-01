@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include ARCH_H // this macro is defined in $CFLAGS
                 // examples: "arch/x86-qemu.h", "arch/native.h", ...
-
 // Memory protection flags
 #define MMAP_NONE  0x00000000 // no access
 #define MMAP_READ  0x00000001 // can read
@@ -18,7 +17,8 @@ typedef struct {
 } Area;
 
 // Arch-dependent processor context
-typedef struct Context Context;
+typedef struct Context Context; // 不同架构之间上下文信息的差异过大
+                                // 其中的具体内容, 就无法进一步进行抽象了.
 
 // An event of type @event, caused by @cause of pointer @ref
 typedef struct {
@@ -26,9 +26,10 @@ typedef struct {
     EVENT_NULL = 0,
     EVENT_YIELD, EVENT_SYSCALL, EVENT_PAGEFAULT, EVENT_ERROR,
     EVENT_IRQ_TIMER, EVENT_IRQ_IODEV,
-  } event;
-  uintptr_t cause, ref;
-  const char *msg;
+  } event; // 统一的事件编号, 让每个架构在实现各自的CTE API时, 
+           // 都统一通过上述结构体来描述执行流切换的原因, 就可以实现切换原因的抽象了.
+  uintptr_t cause, ref; // 一些描述事件的补充信息
+  const char *msg; // 事件信息字符串
 } Event;
 
 // A protected address space with user memory @area

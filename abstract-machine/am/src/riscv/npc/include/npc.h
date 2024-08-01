@@ -1,5 +1,5 @@
-#ifndef NEMU_H__
-#define NEMU_H__
+#ifndef NPC_H__
+#define NPC_H__
 
 #include <klib-macros.h>
 
@@ -7,9 +7,9 @@
                // it will be expanded as "x86/x86.h", "mips/mips32.h", ...
 
 #if defined(__ISA_X86__)
-# define nemu_trap(code) asm volatile ("int3" : :"a"(code))
+# define npc_trap(code) asm volatile ("int3" : :"a"(code))
 #elif defined(__ISA_MIPS32__)
-# define nemu_trap(code) asm volatile ("move $v0, %0; sdbbp" : :"r"(code))
+# define npc_trap(code) asm volatile ("move $v0, %0; sdbbp" : :"r"(code))
 #elif defined(__riscv)
 
 // asm volatile：这个关键字告诉编译器，嵌入的汇编代码不要对内联汇编代码进行优化，
@@ -25,14 +25,14 @@
 //volatile是C语言中的一个关键字。
 //它用于告诉编译器变量是易变的（volatile），即其值可能在编译器不可见的情况下被改变。
 
-# define nemu_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
+# define npc_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
 #elif defined(__ISA_LOONGARCH32R__)
-# define nemu_trap(code) asm volatile("move $a0, %0; break 0" : :"r"(code))
+# define npc_trap(code) asm volatile("move $a0, %0; break 0" : :"r"(code))
 #elif
 # error unsupported ISA __ISA__
 #endif
 
-#if defined(__ARCH_X86_NEMU)
+#if defined(__ARCH_X86_NPC)
 # define DEVICE_BASE 0x0
 #else
 # define DEVICE_BASE 0xa0000000
@@ -52,7 +52,7 @@
 extern char _pmem_start;
 #define PMEM_SIZE (128 * 1024 * 1024)
 #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
-#define NEMU_PADDR_SPACE \
+#define NPC_PADDR_SPACE \
   RANGE(&_pmem_start, PMEM_END), \
   RANGE(FB_ADDR, FB_ADDR + 0x200000), \
   RANGE(MMIO_BASE, MMIO_BASE + 0x1000) /* serial, rtc, screen, keyboard */

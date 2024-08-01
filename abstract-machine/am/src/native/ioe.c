@@ -1,5 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
+#include <stdio.h>
 
 bool __am_has_ioe = false;
 static bool ioe_init_done = false;
@@ -48,6 +49,7 @@ static void *lut[128] = {
   [AM_NET_CONFIG  ] = __am_net_config,
 };
 
+// 进行IOE相关的初始化操作
 bool ioe_init() {
   panic_on(cpu_current() != 0, "call ioe_init() in other CPUs");
   panic_on(ioe_init_done, "double-initialization");
@@ -60,20 +62,27 @@ static void fail(void *buf) { panic("access nonexist register"); }
 void __am_ioe_init() {
   for (int i = 0; i < LENGTH(lut); i++)
     if (!lut[i]) lut[i] = fail;
-  __am_timer_init();
-  __am_gpu_init();
-  __am_input_init();
-  __am_audio_init();
+  printf("__am_timer_init begin!\n");
+  __am_timer_init();printf("__am_gpu_init begin!\n");
+  __am_gpu_init();printf("__am_input_init begin!\n");
+  __am_input_init();printf("__am_audio_init begin!\n");
+  __am_audio_init();printf("__am_disk_init begin!\n");
   __am_disk_init();
   ioe_init_done = true;
 }
 
 static void do_io(int reg, void *buf) {
-  if (!ioe_init_done) {
-    __am_ioe_init();
+  if (!ioe_init_done) {printf("__am_ioe_init begin!\n");
+    __am_ioe_init();printf("__am_ioe_init end!\n");
   }
   ((handler_t)lut[reg])(buf);
 }
-
-void ioe_read (int reg, void *buf) { do_io(reg, buf); }
+// 从编号为reg的寄存器中读出内容到缓冲区buf中
+void ioe_read (int reg, void *buf) {printf("ioe_read begin!\n"); do_io(reg, buf); printf("ioe_read end!\n");}
+// 往编号为reg寄存器中写入缓冲区buf中的内容
 void ioe_write(int reg, void *buf) { do_io(reg, buf); }
+
+
+/*这里的reg寄存器并不是上文讨论的设备寄存器, 因为设备寄存器的编号是架构相关的. 
+  在IOE中, 我们希望采用一种架构无关的"抽象寄存器", 
+  这个reg其实是一个功能编号, 我们约定在不同的架构中, 同一个功能编号的含义也是相同的, 这样就实现了设备寄存器的抽象*/
