@@ -60,28 +60,33 @@ char *strcat(char *dst, const char *src) {
   //panic("Not implemented");
 }
 
-int strcmp(const char *s1, const char *s2)
-{
-  size_t i = 0;
-  for (; s1[i] != '\0' && s2[i] != '\0'; ++i)
-  {
-    if (s1[i] != s2[i])
-      return s1[i] - s2[i];
+int strcmp(const char *s1, const char *s2) {
+  int i = 0;
+  for(i = 0; s1[i] != '\0'&& s2[i] != '\0' ; i ++){
+    if((unsigned char)s1[i] == (unsigned char)s2[i]) continue;
+    if((unsigned char)s1[i] > (unsigned char)s2[i]) return 1;
+    if((unsigned char)s1[i] < (unsigned char)s2[i]) return -1;
   }
-  return s1[i] - s2[i];
+  size_t len1 = strlen(s1);
+  size_t len2 = strlen(s2);
+  if(len1 > len2) return 1;
+  else if(len1 < len2) return -1;
+  return 0;
+  //panic("Not implemented");
 }
 
-int strncmp(const char *s1, const char *s2, size_t n)
-{
-  size_t i = 0;
-  for (; s1[i] != '\0' && s2[i] != '\0' && i < n; ++i)
-  {
-    if (s1[i] != s2[i])
-      return s1[i] - s2[i];
+int strncmp(const char *s1, const char *s2, size_t n) {
+  int i = 0;
+  for(i = 0; s1[i] != '\0'&& s2[i] != '\0' && i < n; i ++){
+    if((unsigned char)s1[i] == (unsigned char)s2[i]) continue;
+    if((unsigned char)s1[i] > (unsigned char)s2[i]) return 1;
+    if((unsigned char)s1[i] < (unsigned char)s2[i]) return -1;
   }
-  if (i == n)
-    return 0;
-  return s1[i] - s2[i];
+  if(s1[i] == s2[i]) return 0;
+  if(s1[i] == '\0') return -1;
+  // if(s2[i] == '\0') return 1;
+  return 1;
+  //panic("Not implemented");
 }
 
 /* fill memory with a constant byte */
