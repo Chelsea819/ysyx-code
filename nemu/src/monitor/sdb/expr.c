@@ -289,11 +289,16 @@ uint32_t eval(int p, int q){
     //寄存器 or pc 里的值
     case TK_REG: 
       //printf("pc current\n");
-      char *arr1 = malloc(3*sizeof(char));
-      memset(arr1,0,3*sizeof(char));
-      strncpy(arr1,tokens[p].str,2);
+      // char *arr1 = malloc(3*sizeof(char));
+      // memset(arr1,0,3*sizeof(char));
+      // strncpy(arr1,tokens[p].str,2);
       
-      return isa_reg_str2val(arr1, &success);
+      // return isa_reg_str2val(arr1, &success);
+      char tokens_str_tmp[3] = {0};
+      tokens_str_tmp[2] = '\0';
+      strncpy(tokens_str_tmp,tokens[p].str,2);
+      
+      return isa_reg_str2val(tokens_str_tmp, &success);
 
     //十六进制数 
     case TK_HEXA: 
