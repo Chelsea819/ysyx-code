@@ -13,38 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __NPC_COMMON_H__
-#define __NPC_COMMON_H__
+#include <utils.h>
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <malloc.h>
+NPCState npc_state = { .state = NPC_STOP };
 
-#include "macro.h"
-#include "debug.h"
-#include "config.h"
-#include "device-def.h"
-#include "sim.h"
-#include <assert.h>
-#include <stdlib.h>
-
-#define __GUEST_ISA__ riscv32
-
-#if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul
-#define PMEM64 1
-#endif
-
-extern TOP_NAME dut;
-typedef uint32_t word_t;
-typedef int32_t  sword_t;
-#define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
-
-typedef word_t vaddr_t;
-typedef uint32_t paddr_t;
-#define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
-typedef uint16_t ioaddr_t;
-
-
-#endif
+int is_exit_status_bad() {
+  int good = (npc_state.state == NPC_END && npc_state.halt_ret == 0) ||
+    (npc_state.state == NPC_QUIT);
+  return !good;
+}

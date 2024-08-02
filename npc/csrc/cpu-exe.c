@@ -109,6 +109,11 @@ extern WP *head;
 
 void device_update();
 
+void ifebreak_func(int inst){
+	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst)
+	if(inst == 1048691) {ifbreak = true; } 
+}
+
 static void trace_and_difftest(vaddr_t dnpc){
   
 #ifdef CONFIG_ITRACE_COND
