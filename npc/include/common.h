@@ -23,12 +23,13 @@
 #include <malloc.h>
 
 #include "macro.h"
-#include "debug.h"
 #include "config.h"
 #include "device-def.h"
 #include "sim.h"
+
 #include <assert.h>
 #include <stdlib.h>
+#include <debug.h>
 
 #define __GUEST_ISA__ riscv32
 

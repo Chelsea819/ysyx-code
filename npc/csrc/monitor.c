@@ -15,6 +15,9 @@
 
 #include <isa.h>
 #include <paddr.h>
+#include <common.h>
+#include <utils.h>
+#include <debug.h>
 
 typedef struct ftrace_file{
   char *name;
@@ -48,15 +51,15 @@ static void welcome() {
 
 void sdb_set_batch_mode();
 
-
-
 static char *log_file = NULL;
 // static int flag = 0;
 static char *ftrace_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
-static int difftest_port = 1234;
 
+#ifdef CONFIG_DIFFTEST
+    static int difftest_port = 1234;
+#endif
 
 
 #define FILE_NUM 5

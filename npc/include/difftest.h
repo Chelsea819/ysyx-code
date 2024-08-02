@@ -19,6 +19,7 @@
 #include <common.h>
 #include <difftest-def.h>
 #include "config.h"
+#include <debug.h>
 
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
@@ -36,6 +37,8 @@ static inline void difftest_detach() {}
 static inline void difftest_attach() {}
 #endif
 
+
+void difftest_skip_ref();
 extern void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction);
 extern void (*ref_difftest_regcpy)(void *dut, bool direction);
 extern void (*ref_difftest_exec)(uint64_t n);

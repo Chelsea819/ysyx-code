@@ -18,6 +18,7 @@
 #include <device/mmio.h>
 #include <isa.h>
 #include <common.h>
+#include <debug.h>
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
@@ -32,6 +33,53 @@ uint8_t* guest_to_host(paddr_t paddr) {
   return pmem + paddr - CONFIG_MBASE; 
 }
 // paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
+
+extern "C" int pmem_read_task(int raddr, char wmask) {
+  // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
+  // printf("read!\n");
+  // printf("raddr = 0x%08x\n",raddr); 
+  // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
+  // printf("rdata = 0x%08x\n",rdata);
+  int len = 0;
+  switch (wmask){
+      case 0x1: len = 1; break;
+      case 0x3: len = 2; break;
+      case 0xf: len = 4; break;
+      IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
+      IFDEF(CONFIG_RT_CHECK, default: assert(0));
+    }
+  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
+    // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
+    // time_t current_time;
+    // time(&current_time); // 获取系统时间戳
+    // return current_time;
+  }
+  return paddr_read((paddr_t)raddr, len);
+}
+extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
+  // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
+  // `wmask`中每比特表示`wdata`中1个字节的掩码,
+  // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
+  // printf("pc = 0x%08x\n",dut.pc);
+  // printf("wmask = 0x%01u\n",wmask);
+  // printf("waddr = 0x%08x\n",(paddr_t)waddr);
+  // printf("wdata = 0x%08x\n",(paddr_t)wdata);
+  if(waddr == CONFIG_SERIAL_MMIO) {
+    // Log("Write device --- [addr: 0x%08x data: 0x%08x]",waddr,wdata);
+    // putchar(wdata);
+  }
+  // else {
+    int len = 0;
+    switch (wmask){
+      case 0x1: len = 1; break;
+      case 0x3: len = 2; break;
+      case 0xf: len = 4; break;
+      IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
+      IFDEF(CONFIG_RT_CHECK, default: assert(0));
+    }
+    paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
+  // }
+}
 
 static word_t pmem_read(paddr_t addr,int len) {
   word_t ret = host_read(guest_to_host(addr), len);
