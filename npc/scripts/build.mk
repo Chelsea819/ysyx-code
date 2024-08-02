@@ -1,45 +1,61 @@
-.DEFAULT_GOAL = app
+#***************************************************************************************
+# Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+#
+# NEMU is licensed under Mulan PSL v2.
+# You can use this software according to the terms and conditions of the Mulan PSL v2.
+# You may obtain a copy of Mulan PSL v2 at:
+#          http://license.coscl.org.cn/MulanPSL2
+#
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+# EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+# MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+#
+# See the Mulan PSL v2 for more details.
+#**************************************************************************************/
 
-# Add necessary options if the target is a shared library
-ifeq ($(SHARE),1)
-CFLAGS  += -fPIC -fvisibility=hidden
-LDFLAGS += -shared -fPIC
-endif
+-include $(NPC_HOME)/../Makefile
+include $(NPC_HOME)/scripts/build.mk
 
-WORK_DIR  = $(shell pwd)
-override BUILD_DIR ?= $(WORK_DIR)/build
-OBJ_DIR = $(BUILD_DIR)/obj_dir
-BIN = $(BUILD_DIR)/$(TOPNAME)
-WAVE = waveform.vcd
 
-INC_PATH := $(WORK_DIR)/include $(INC_PATH)
+compile_git:
+	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 
-# Compilation flags
-ifeq ($(CC),clang)
-CXX := clang++
-else
-CXX := g++
-endif
-LD := $(CXX)
-INCLUDES = $(addprefix -I, $(INC_PATH))
-CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS) -Wno-div-by-zero
-LDFLAGS := -O2 $(LDFLAGS)
-
-# fixdep:一个聪明的小工具
-## 通过分析文件中的CONFIG_XX宏将对autoconf.h的以来分成若干空文件的依赖
-## Kconfig更新配置选项时，更新相应空文件的时间戳
-
-$(BIN):$(SRCS) $(VSRCS) 
-	$(warning INC_PATH = $(INC_PATH))
+$(BINARY):compile_git $(SRCS) $(VSRCS) 
+	$(info SRCS = $(SRCS))
+	$(info INC_PATH = $(INC_PATH))
+	$(info LINKAGE = $(LINKAGE))
+	$(info LDFLAGS = $(LDFLAGS))
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) \
+		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS))  \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
 
-.PHONY: app clean
+# Some convenient rules
 
-app: $(BIN)
+override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  --ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf -b
+override ARGS += $(ARGS_DIFF) #--batch
 
-clean:
-	-rm -rf $(BUILD_DIR)
+# Command to execute NEMU
+IMG ?=
+NEMU_EXEC := $(BINARY) $(ARGS) $(IMG) 
+
+run-env:  $(BINARY) $(DIFF_REF_SO)
+
+run:$(BINARY)
+	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
+	$(info $(ARGS))
+	$(info $(BUILD_DIR))
+	$(EXE)  $(ARGS) $(IMG)
+	
+gdb: run-env
+	$(call git_commit, "gdb NEMU")
+	gdb -s $(BINARY) --args $(NEMU_EXEC)
+
+clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
+$(clean-tools):
+	-@$(MAKE) -s -C $@ clean
+clean-tools: $(clean-tools)
+clean-all: clean distclean clean-tools
+
+.PHONY: run gdb run-env clean-tools clean-all $(clean-tools)

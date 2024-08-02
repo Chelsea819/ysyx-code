@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NEMU is licensed under Mulan PSL v2.
+* NPC is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -13,13 +13,10 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __SDB_H__
-#define __SDB_H__
+#ifndef __NPC_SDB_H__
+#define __NPC_SDB_H__
 
-#include <common.h>
-#define NR_WP 32
-
-word_t expr(char *e, bool *success);
+#include "common.h"
 
 typedef struct watchpoint {
   int NO;
@@ -33,14 +30,6 @@ typedef struct watchpoint {
 
 } WP;
 
-// static WP *head = NULL;
-
-// __attribute__((unused)) static WP wp_pool[NR_WP] = {};
-// static WP *free_ = NULL;
-// static WP wp_pool[NR_WP] = {};
-
-
-void watchPoints_display();
-// void init_wp_pool();
+word_t expr(char *e, bool *success);
 
 #endif
