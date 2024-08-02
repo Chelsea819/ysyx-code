@@ -66,7 +66,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 INCLUDES += $(addprefix -I, $(INC_PATH))
 CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" #-D__GUEST_ISA__=$(GUEST_ISA)
 CXXFLAGS := $(filter-out -D__STDC_FORMAT_MACROS, $(CXXFLAGS))
-CFLAGS := $(filter-out -D__STDC_FORMAT_MACROS, $(CFLAGS))
+# CFLAGS := $(filter-out -D__STDC_FORMAT_MACROS, $(CFLAGS))
 LDFLAGS += -lreadline -ldl -lSDL2  -pie $(LIBS) #-fsanitize=address
 
 
