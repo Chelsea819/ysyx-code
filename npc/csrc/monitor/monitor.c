@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include <paddr.h>
+#include <memory/paddr.h>
 #include <common.h>
 #include <utils.h>
 #include <debug.h>

@@ -1,5 +1,5 @@
 #include <isa.h>
-#include <difftest.h>
+#include <cpu/difftest.h>
 #include "reg.h"
 
 // #include "sim.h"

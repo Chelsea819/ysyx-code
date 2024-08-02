@@ -7,8 +7,27 @@ WAVE = waveform.vcd
 
 GUEST_ISA ?= riscv32e
 TOPNAME = ysyx_22041211_top
+
+
+# Include all filelist.mk to merge file lists
+FILELIST_MK = $(shell find -L ./csrc -name "filelist.mk")
+include $(FILELIST_MK)
+
+# Filter out directories and files in blacklist to obtain the final set of source files
+DIRS-BLACKLIST-y += $(DIRS-BLACKLIST)
+CSRCS-BLACKLIST-y += $(CSRCS-BLACKLIST) $(shell find -L $(DIRS-BLACKLIST-y) -name "*.c")
+CSRCS-y += $(shell find -L $(DIRS-y) -name "*.c")
+CSRCS = $(filter-out $(CSRCS-BLACKLIST-y),$(CSRCS-y))
+
+# project source
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+# CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+# CSRCS += $(shell find $(abspath ./csrc/device) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+SRCS = $(CXXSRC) $(CSRCS)
+
+
 NXDC_FILES = constr/ysyx_22041211_top.nxdc
-INC_PATH += /home/chelsea/ysyx-workbench/npc/include 
+INC_PATH += $(NPC_HOME)/include 
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc  -Wall --build -j 0  \
@@ -22,10 +41,10 @@ override BUILD_DIR ?= $(WORK_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
-CXXSRC = $(NPC_HOME)/utils/disasm.cc
+CXXSRC = $(NPC_HOME)/csrc/utils/disasm.cc
 # --cxxflags 选项表示获取与 C++ 相关的编译器选项，输出使用LLVM头文件所需要的C++编译选项
 # llvm-config 让使用LLVM构建的应用程序变得很容易，他可以打印链接LLVM所需的编译器标志，编译器标志和对象库
-#CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE 
+CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE 
 # --libs 打印链接指定LLVM 组件所需的所有库 ，包括任何依赖项。
 
 LIBS += $(shell llvm-config --libs)
@@ -41,12 +60,6 @@ $(shell mkdir -p $(BUILD_DIR))
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 $(SRC_AUTO_BIND): $(NXDC_FILES)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
-
-# project source
-VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-CSRCS += $(shell find $(abspath ./csrc/device) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
-SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator
 INCLUDES += $(addprefix -I, $(INC_PATH))

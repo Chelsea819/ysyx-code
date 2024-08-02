@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <device/map.h>
-#include <paddr.h>
+#include <memory/paddr.h>
 #include <config.h>
 
 #define NR_MAP 16

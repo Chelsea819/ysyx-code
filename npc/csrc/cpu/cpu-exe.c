@@ -1,8 +1,8 @@
-#include <decode.h>
+#include <cpu/decode.h>
 #include <isa.h>
 #include <elf.h>
 #include "reg.h"
-#include "cpu.h"
+#include <cpu/cpu.h>
 #include <locale.h>
 #include "sdb.h"
 

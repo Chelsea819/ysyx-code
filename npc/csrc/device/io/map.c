@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include <host.h>
+#include <memory/host.h>
 #include <vaddr.h>
 #include <device/map.h>
 

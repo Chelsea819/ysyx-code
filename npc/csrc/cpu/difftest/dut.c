@@ -1,8 +1,8 @@
 #include <dlfcn.h>
 
 #include <isa.h>
-#include <cpu.h>
-#include "paddr.h"
+#include <cpu/cpu.h>
+#include <memory/paddr.h>
 #include <utils.h>
 #include <difftest-def.h>
 #include <debug.h>

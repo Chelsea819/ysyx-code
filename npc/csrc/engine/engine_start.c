@@ -13,7 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <cpu.h>
+#include <cpu/cpu.h>
 
 void sdb_mainloop();
 

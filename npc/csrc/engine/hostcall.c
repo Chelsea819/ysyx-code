@@ -15,7 +15,7 @@
 
 #include <utils.h>
 #include <isa.h>
-#include <difftest.h>
+#include <cpu/difftest.h>
 
 vaddr_t paddr_read(paddr_t addr,int len);
 

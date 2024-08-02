@@ -6,8 +6,8 @@
   > Created Time: 2023年07月13日 星期四 11时16分41秒
  ************************************************************************/
 
-#include <paddr.h>
-#include <cpu.h>
+#include <memory/paddr.h>
+#include <cpu/cpu.h>
 #include "utils.h"
 #include "reg.h"
 #include "difftest-def.h"

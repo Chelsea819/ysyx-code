@@ -13,10 +13,14 @@
 # See the Mulan PSL v2 for more details.
 #**************************************************************************************/
 
-# ifneq ($(CONFIG_ITRACE)$(CONFIG_IQUEUE),)
-CXXSRC = $(shell find $(abspath ./utils) -name "*.cc")
-# CXXSRC = utils/disasm.cc
-CXXFLAGS = $(shell llvm-config --cxxflags) -fPIE
-# CXXFLAGS += $(filter-out -D__STDC_FORMAT_MACROS, $(CXXFLAGS_N))
-LIBS += $(shell llvm-config --libs)
-# endif
+CSRCS-y += $(NPC_HOME)/csrc/sim_main.cpp
+DIRS-y += $(NPC_HOME)/csrc/cpu $(NPC_HOME)/csrc/monitor $(NPC_HOME)/csrc/utils $(NPC_HOME)/csrc/memory
+# DIRS-$(CONFIG_MODE_SYSTEM) += $(NPC_HOME)/csrc/memory
+DIRS-BLACKLIST-$(CONFIG_TARGET_AM) += $(NPC_HOME)/csrc/monitor/sdb
+
+SHARE = $(if $(CONFIG_TARGET_SHARE),1,0)
+LIBS += $(if $(CONFIG_TARGET_NATIVE_ELF),-lreadline -ldl -pie,)
+
+ifdef mainargs
+ASFLAGS += -DBIN_PATH=\"$(mainargs)\"
+endif
