@@ -40,6 +40,12 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 void init_sdb();
 void sdb_mainloop();
+word_t pmem_read(paddr_t addr,int len);
+void pmem_write(paddr_t addr, int len, word_t data);
+void init_npc(int argc,char *argv[]);
+void engine_start();
+vaddr_t paddr_read(paddr_t addr,int len);
+void paddr_write(vaddr_t addr, vaddr_t len, word_t data);
 NPCState npc_state = { .state = NPC_STOP };
 
 static char *img_file = NULL;
@@ -204,32 +210,6 @@ bool log_enable() {
          (g_nr_guest_inst <= CONFIG_TRACE_END), false);
 }
 
-static void out_of_bound(paddr_t addr) {
-  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, PMEM_LEFT, PMEM_RIGHT, dut.pc);
-}
-
-void init_mem_npc(){
-    uint32_t *p = (uint32_t *)pmem;
-    int i;
-    for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
-        p[i] = rand();
-    }
-	return ;
-}
-
-uint8_t* guest_to_host_npc(paddr_t paddr) { 
-  // printf("pmem: 0x%08x\n",pmem);
-  // printf("paddr: 0x%08x\n",paddr);
-  // printf("CONFIG_MBASE: 0x%08x\n",CONFIG_MBASE);
-  return pmem + paddr - CONFIG_MBASE; 
-}
-
-void init_isa() {
-  /* Load built-in image. */
-  memcpy(guest_to_host_npc(RESET_VECTOR), img, sizeof(img));
-}
-
 static inline word_t host_read_npc(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
@@ -252,39 +232,6 @@ static inline void host_write_npc(void *addr, int len, word_t data) {
 
 static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
-}
-
-static word_t pmem_read_npc(paddr_t addr,int len) {
-  word_t ret = host_read_npc(guest_to_host_npc(addr), len);
-  return ret;
-}
-
-static void pmem_write_npc(paddr_t addr, int len, word_t data) {
-  host_write_npc(guest_to_host_npc(addr), len, data);
-}
-
-
-vaddr_t paddr_read(paddr_t addr,int len) {
-  
-	if (likely(in_pmem(addr))) {
-    word_t rdata = pmem_read_npc(addr,len);
-    #ifdef CONFIG_MTRACE
-      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
-    #endif
-    return rdata;
-  }
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  out_of_bound(addr);
-  return 0;
-}
-
-void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
-  #ifdef CONFIG_MTRACE
-  Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
-  #endif
-  if (likely(in_pmem(addr))) { return pmem_write_npc(addr, len, data);}
-  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-  out_of_bound(addr);
 }
 
 extern "C" int pmem_read(int raddr, char wmask) {
@@ -340,43 +287,6 @@ void ifebreak_func(int inst){
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
-
-static void welcome() {
-  Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
-  IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
-        "to record the trace. This may lead to a large log file. "
-        "If it is not necessary, you can disable it in menuconfig"));
-  Log("Build time: %s, %s", __TIME__, __DATE__);
-  printf("Welcome to %s-NPC!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
-  printf("For help, type \"help\"\n");
-//   printf("For help, type \"help\"\n");
-}
-
-static long load_img() {
-  if (img_file == NULL) {
-    printf("No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-    //如果img_file为NULL,说明没有指定文件,则使用默认内置的镜像,返回其大小4096
-  }
-
-  FILE *fp = fopen(img_file, "rb");
-  assert(fp);
-
-  fseek(fp, 0, SEEK_END);
-  //ftell()可以获取文件当前的读写位置偏移量
-  long size = ftell(fp);
-
-  printf("The image is %s!\nThe size = %ld!\n", img_file, size);
-
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host_npc(RESET_VECTOR), size, 1, fp);
-//   printf("inst = 0x%08x\n",*(uint32_t*)(guest_to_host_npc(RESET_VECTOR)));
-  //fread()可以高效地从文件流中读取大块的二进制数据,放入指定的内存缓冲区中
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
-}
 
 enum {
   TK_NOTYPE = 256,  //space
@@ -452,96 +362,12 @@ void init_regex() {
 
 void sdb_set_batch_mode();
 
-static int parseArgs(int argc, char *argv[]) {
-  const struct option table[] = {
-    {"batch"    , no_argument      , NULL, 'b'},
-    {"log"      , required_argument, NULL, 'l'},
-    {"diff"     , required_argument, NULL, 'd'},
-    {"port"     , required_argument, NULL, 'p'},
-    {"ftrace"   , required_argument, NULL, 'f'},
-    {"help"     , no_argument      , NULL, 'h'},
-    {0          , 0                , NULL,  0 },
-  };
-  int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
-    //参数个数 参数数组 短选项列表 长选项列表 处理长选项时返回选项的索引
-    switch (o) {
-      case 'b': sdb_set_batch_mode(); break; 
-      case 'p': break;
-      case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
-      case 'd': diff_so_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
-      case 1: img_file = optarg; printf("img_file oparg = %s\n",optarg); return 0;
-      default:
-        printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
-        printf("\t-b,--batch              run with batch mode\n");
-        printf("\t-l,--log=FILE           output log to FILE\n");
-        printf("\t-f,--ftrace=FILE        get elf from FILE\n");
-        printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
-        printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
-        printf("\n");
-        exit(0);
-    }
-  }
-  return 0;
-}
-
-void init_npc(int argc,char *argv[]){
-
-    //parse shell arguments
-    parseArgs(argc, argv);
-
-    /* Set random time seed. */
-    init_rand();
-
-    /* Open the log file. */
-    init_log(log_file);
-
-    //init memory
-    init_mem_npc();
-
-    /* Initialize devices. */
-    IFDEF(CONFIG_DEVICE, init_device());
-
-    //load img to memory
-    init_isa();
-
-    //load certain program to memory
-    long img_size = load_img();
-
-#ifdef CONFIG_DIFFTEST
-    /* Initialize differential testing. */
-    init_difftest(diff_so_file, img_size, difftest_port);
-#endif
-
-    /* Initialize the simple debugger.初始化简单调试器 */
-    init_sdb();
-
-    #ifdef CONFIG_FTRACE
-    init_ftrace(ftrace_file);
-    #endif
-
-    #ifndef CONFIG_ISA_loongarch32r
-  IFDEF(CONFIG_ITRACE, init_disasm(
-    MUXDEF(CONFIG_ISA_x86,     "i686",
-    MUXDEF(CONFIG_ISA_mips32,  "mipsel",
-    MUXDEF(CONFIG_ISA_riscv,
-      MUXDEF(CONFIG_RV64,      "riscv64",
-                               "riscv32"),
-                               "bad"))) "-pc-linux-gnu"
-  ));
-#endif
-    welcome();
-}
-
 void set_npc_state(int state, vaddr_t pc, int halt_ret) {
   difftest_skip_ref();
   npc_state.state = state;
   npc_state.halt_pc = pc;
   npc_state.halt_ret = halt_ret;
 }
-
-
 
 __attribute__((noinline))
 void invalid_inst(vaddr_t thispc) {
@@ -876,22 +702,6 @@ word_t expr(char *e, bool *success) {
   return eval(0, i - 1);
 }
 
-
-
-/* ------------------------------------sdb.c------------------------------------ */
-
-
-
-/* start CPU or receive commands */
-void engine_start() {
-#ifdef CONFIG_TARGET_AM
-/* Simulate how the CPU works. */
-  cpu_exec(-1);
-#else
-  /* Receive commands from user. */
-  sdb_mainloop();
-#endif
-}
 
 int main(int argc, char** argv, char** env) {
 #ifdef CONFIG_WAVE
