@@ -45,6 +45,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
+CSRCS += $(shell find $(abspath ./csrc/device) -name "*.c" -or -name "*.cpp" -or -name "*.cc")
 SRCS = $(CXXSRC) $(CSRCS)
 
 # rules for verilator

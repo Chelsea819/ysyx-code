@@ -19,11 +19,12 @@
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
-  0x00000297,  // auipc t0,0
-  0x00028823,  // sb  zero,16(t0)
-  0x0102c503,  // lbu a0,16(t0)
-  0x00100073,  // ebreak (used as npc_trap)
-  0xdeadbeef,  // some data
+  0x00010537,  // lui	a0,0x10
+  0x01050513,  // auipc t0,0
+  0x00010537,  // addi    x[1] = 0 + 1
+  0x01050513,  // auipc t0,0
+  0x00100073,  // ebreak (used ass npc_trap)
+  0x00100093,  // addi    x[1] = 0 + 1
 };
 
 // static void restart() {
