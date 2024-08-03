@@ -20,11 +20,11 @@
 #include <SDL2/SDL.h>
 #endif
 void init_map();
-// void init_serial();
-// void init_timer();
-// void init_vga();
-// void send_key(uint8_t, bool);
-// void vga_update_screen();
+void init_serial();
+void init_timer();
+void init_vga();
+void send_key(uint8_t, bool);
+void vga_update_screen();
 
 void device_update() {
   // 检查距离上次设备更新是否已经超过了一定时间，若是，则会尝试刷新屏幕
@@ -35,7 +35,7 @@ void device_update() {
   }
   last = now;
 
-  // IFDEF(CONFIG_HAS_VGA, vga_update_screen());
+  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
 // 进一步检查是否有按键按下/释放，以及是否点击了窗口的X按钮
 #ifndef CONFIG_TARGET_AM
@@ -61,19 +61,19 @@ void device_update() {
 #endif
 }
 
-// void sdl_clear_event_queue() {
-// #ifndef CONFIG_TARGET_AM
-//   SDL_Event event;
-//   while (SDL_PollEvent(&event));
-// #endif
-// }
+void sdl_clear_event_queue() {
+#ifndef CONFIG_TARGET_AM
+  SDL_Event event;
+  while (SDL_PollEvent(&event));
+#endif
+}
 
 void init_device() {
   IFDEF(CONFIG_TARGET_AM, ioe_init());
   init_map();  // 初始化
 
-  // IFDEF(CONFIG_HAS_SERIAL, init_serial());
-  // IFDEF(CONFIG_HAS_TIMER, init_timer());
-  // IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
+  IFDEF(CONFIG_HAS_SERIAL, init_serial());
+  IFDEF(CONFIG_HAS_TIMER, init_timer());
+  IFDEF(CONFIG_HAS_VGA, init_vga()); // 初始化VGA时还会进行一些和SDL相关的初始化工作，包括创建窗口，设置显示功能
 
 }
