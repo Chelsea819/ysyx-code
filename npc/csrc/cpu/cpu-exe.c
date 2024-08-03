@@ -5,6 +5,7 @@
 #include <cpu/cpu.h>
 #include <locale.h>
 #include "sdb.h"
+#include <cpu/difftest.h>
 
 word_t expr(char *e, bool *success);
 Decode s;
