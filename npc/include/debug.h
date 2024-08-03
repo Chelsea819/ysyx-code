@@ -16,9 +16,10 @@
 #ifndef __DEBUG_H__NPC
 #define __DEBUG_H__NPC
 
-#include "common.h"
 #include <stdio.h>
+#include <common.h>
 #include "utils.h"
+
 // #include "sim.h"
 // extern CPU_state cpu;
 // extern TOP_NAME dut;
