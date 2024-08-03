@@ -123,7 +123,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   
   //将DUT的guest memory拷贝到REF中
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
-  // cpu.pc = 0x80000000;
+  cpu.pc = 0x80000000;
   Log("cpu addr: %p",&cpu);
   //将DUT的寄存器状态拷贝到REF中
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
