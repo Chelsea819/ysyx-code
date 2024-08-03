@@ -5,6 +5,7 @@ WAVE = waveform.vcd
 # SO = -so
 # NAME = riscv32-npc
 
+all:$(BIN)
 
 # Extract variabls from menuconfig
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))

@@ -10,7 +10,7 @@
 
 word_t expr(char *e, bool *success);
 Decode s;
-Decode diff;
+Decode diff = {0x80000000,0x80000000,0x80000000};
 
 extern TOP_NAME dut;
 CPU_state cpu = {};
