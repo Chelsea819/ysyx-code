@@ -15,7 +15,6 @@
 
 #include <utils.h>
 #include <device/map.h>
-#include "device-def.h"
 
 /* http://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming */
 // NOTE: this is compatible to 16550

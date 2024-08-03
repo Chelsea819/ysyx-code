@@ -25,6 +25,7 @@ static uint8_t *pmem = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 //{}使用聚合初始化把数组初始化为0
 #endif
+
 extern TOP_NAME dut;
 uint8_t* guest_to_host(paddr_t paddr) { 
   // printf("pmem: 0x%08x\n",pmem);
@@ -48,12 +49,24 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
       IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
-  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_SERIAL_MMIO) { 
-    // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
-    // time_t current_time;
-    // time(&current_time); // 获取系统时间戳
-    // return current_time;
-  }
+  #ifdef CONFIG_DEVICE
+    #ifdef CONFIG_RTC_MMIO 
+    if(raddr == CONFIG_RTC_MMIO) { 
+      // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
+      // time_t current_time;
+      // time(&current_time); // 获取系统时间戳
+      // return current_time;
+    }
+    #endif
+    #ifdef CONFIG_SERIAL_MMIO 
+    if(raddr == CONFIG_SERIAL_MMIO) { 
+      // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
+      // time_t current_time;
+      // time(&current_time); // 获取系统时间戳
+      // return current_time;
+    }
+    #endif
+  #endif
   return paddr_read((paddr_t)raddr, len);
 }
 extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
@@ -64,10 +77,15 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // printf("wmask = 0x%01u\n",wmask);
   // printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
-  if(waddr == CONFIG_SERIAL_MMIO) {
+
+  #ifdef CONFIG_DEVICE
+    #ifdef CONFIG_SERIAL_MMIO 
+    if(waddr == CONFIG_SERIAL_MMIO) {
     // Log("Write device --- [addr: 0x%08x data: 0x%08x]",waddr,wdata);
     // putchar(wdata);
   }
+    #endif
+  #endif
   // else {
     int len = 0;
     switch (wmask){

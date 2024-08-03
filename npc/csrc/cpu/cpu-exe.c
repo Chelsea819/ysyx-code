@@ -126,7 +126,7 @@ static void trace_and_difftest(vaddr_t dnpc){
   {
     IFDEF(CONFIG_ITRACE, puts(s.logbuf));
   }
-
+#ifdef CONFIG_WATCHPOINT
   bool success = true;
   uint32_t addr = 0;
 
@@ -149,7 +149,7 @@ static void trace_and_difftest(vaddr_t dnpc){
 
     index = index->next;
   }
-
+#endif
 #ifdef CONFIG_DIFFTEST
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);

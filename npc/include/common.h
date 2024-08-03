@@ -24,7 +24,6 @@
 #include <generated/autoconf.h>
 #include "macro.h"
 #include "config.h"
-#include "device-def.h"
 #include "sim.h"
 
 #include <assert.h>
