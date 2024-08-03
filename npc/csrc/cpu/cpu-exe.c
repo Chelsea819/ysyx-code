@@ -531,7 +531,7 @@ static void execute(uint64_t n)
     if(cpu.pc != 0x80000000 && dut.clk == 1) {
       printf("cpu.pc = 0x%08x dut.pc = 0x%08x s.npc = 0x%08x\n",cpu.pc,dut.pc,s.dnpc);
       // printf("inst = 0x%08x\n",dut.rootp->ysyx_22041211_top__DOT__inst);
-      trace_and_difftest(diff.dnpc);
+      trace_and_difftest(s.dnpc);
     }
 
     diff.pc = s.pc;
