@@ -38,5 +38,5 @@ run: image
 	$(info ARGS_DIFF:$(ARGS_DIFF))
 # -$(MAKE) -C $(NEMU_HOME) ISA=riscv32 run ARGS="$(NEMUFLAGS)"  IMG=$(IMAGE).bin
 # $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
-	bear --output ~/ysyx-workbench/npc -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	bear --output ~/ysyx-workbench/npc/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 

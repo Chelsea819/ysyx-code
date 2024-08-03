@@ -176,8 +176,8 @@ void init_npc(int argc,char *argv[]){
     init_sdb();
 
     #ifdef CONFIG_FTRACE
-    init_ftrace(ftrace_file);
-    #endif
+  init_ftrace(file_header,file_cur);
+  #endif
 
     #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(

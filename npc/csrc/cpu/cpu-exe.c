@@ -10,17 +10,7 @@
 word_t expr(char *e, bool *success);
 Decode s;
 Decode diff;
-FILE *ftrace_fp = NULL;
 
-Elf32_Ehdr Elf_header;
-Elf32_Shdr Elf_sec;
-Elf32_Off sym_off;
-Elf32_Off str_off;
-Elf32_Sym Elf_sym;
-Elf32_Xword str_size;
-Elf32_Xword sym_size;
-int sym_num;
-char *strtab = NULL;
 extern TOP_NAME dut;
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -28,79 +18,123 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 bool ifbreak = false;
 
-
 #ifdef CONFIG_FTRACE
-int init_ftrace(const char *ftrace_file)
+
+typedef struct elf_table{
+  char *name;
+  int NO;
+  FILE *ftrace_fp;
+  Elf32_Ehdr Elf_header;
+  Elf32_Shdr Elf_sec;
+  Elf32_Off sym_off;
+  Elf32_Off str_off;
+  Elf32_Sym Elf_sym;
+  Elf32_Xword str_size;
+  Elf32_Xword sym_size;
+  int sym_num;
+  char *strtab;
+} ELF; 
+
+#define FILE_NUM 5
+static ELF *elf_header = NULL;
+static ELF *elf_pool = NULL;
+// static ELF *elf_cur = NULL;
+static int fileNum = 0;
+
+typedef struct ftrace_file{
+  char *name;
+  int NO;
+  struct ftrace_file *next;
+} Ftrace_file;
+
+struct func_call
+{
+  char *func_name;
+  struct func_call *next;
+  struct func_call *past;
+};
+
+
+int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
   FILE *fp = NULL;
+  // 需要读取的文件数
+  fileNum = file_cur->NO - file_header->NO;
 
-  // 检查文件是否能正常读取
-  Assert(ftrace_file, "ftrace_file is NULL!\n");
+  // 初始化链表
+  elf_pool = (ELF*)malloc(fileNum * sizeof(ELF));
+  elf_header = elf_pool;
 
-  fp = fopen(ftrace_file, "r");
+  // 循环读取文件
+  for(int indx = 0; indx < fileNum; indx ++){
+    fp = NULL;
+    printf("fileNum = %d\n",fileNum);
+    elf_header[indx].name = file_header[indx].name;
+    elf_header[indx].NO = file_header[indx].NO;
+    // 检查文件是否能正常读取
+    Assert(file_header[indx].name, "file_header[indx].name is NULL!\n");
+    Assert(elf_header[indx].name, "ftrace_file is NULL!\n");
 
-  printf("ftrace_file :%s\n",ftrace_file);
+    fp = fopen(elf_header[indx].name, "r");
+    Assert(fp, "Can not open '%s'", elf_header[indx].name);
 
-  Assert(fp, "Can not open '%s'", ftrace_file);
+    elf_header[indx].ftrace_fp = fp;
 
-  ftrace_fp = fp;
-
-  // 读取ELF header
-  int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
-  if (ret != 1)
-  {
-    perror("Error reading from file");
-  }
-  if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0)
-  {
-    Assert(0, "Not an ELF file!\n");
-  }
-
-  Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
-  Assert(Elf_header.e_type == ET_EXEC, "Not an exec file\n");
-
-  // 移到.strtab的位置，并进行读取
-  fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
-  ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-  if (ret != 1)
-  {
-    perror("Error reading from file");
-  }
-  str_off = Elf_sec.sh_offset;
-  str_size = Elf_sec.sh_size;
-  strtab = (char *)malloc(str_size);
-
-  fseek(ftrace_fp, str_off, SEEK_SET);
-  ret = fread(strtab, str_size, 1, ftrace_fp);
-  if (ret != 1)
-  {
-    perror("Error reading from file");
-  }
-
-  // get .symtab
-  for (int n = 0; n < Elf_header.e_shnum; n++)
-  {
-    fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
-    ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-    if (ret != 1)
-    {
+    // 读取ELF header
+    int ret = fread(&(elf_header[indx].Elf_header), sizeof(Elf32_Ehdr), 1, elf_header[indx].ftrace_fp);
+    if (ret != 1){
       perror("Error reading from file");
     }
-    if (Elf_sec.sh_type == SHT_SYMTAB)
-    {
-      sym_off = Elf_sec.sh_offset;
-      sym_size = Elf_sec.sh_entsize;
-      sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
-      continue;
+      printf("Elf_header.e_ident: %s\n",elf_header[indx].Elf_header.e_ident);
+
+    if (elf_header[indx].Elf_header.e_ident[0] != '\x7f' || memcmp(&(elf_header[indx].Elf_header.e_ident[1]), "ELF", 3) != 0){
+      Assert(0, "Not an ELF file!\n");
+    }
+
+    Assert(elf_header[indx].Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
+    Assert(elf_header[indx].Elf_header.e_type == ET_EXEC, "Not an exec file\n");
+
+    // 移到.strtab的位置，并进行读取
+    fseek(elf_header[indx].ftrace_fp, elf_header[indx].Elf_header.e_shoff + elf_header[indx].Elf_header.e_shentsize * (elf_header[indx].Elf_header.e_shstrndx - 1), SEEK_SET);
+    ret = fread(&elf_header[indx].Elf_sec, elf_header[indx].Elf_header.e_shentsize, 1, elf_header[indx].ftrace_fp);
+    if (ret != 1){
+      perror("Error reading from file");
+    }
+    elf_header[indx].str_off = elf_header[indx].Elf_sec.sh_offset;
+    elf_header[indx].str_size = elf_header[indx].Elf_sec.sh_size;
+    elf_header[indx].strtab = (char*)malloc( elf_header[indx].str_size);
+
+    fseek(elf_header[indx].ftrace_fp, elf_header[indx].str_off, SEEK_SET);
+    ret = fread(elf_header[indx].strtab, elf_header[indx].str_size, 1, elf_header[indx].ftrace_fp);
+    if (ret != 1){
+      perror("Error reading from file");
+    }
+
+    // get .symtab
+    for (int n = 0; n < elf_header[indx].Elf_header.e_shnum; n++){
+      fseek(elf_header[indx].ftrace_fp, elf_header[indx].Elf_header.e_shoff + n * elf_header[indx].Elf_header.e_shentsize, SEEK_SET);
+      ret = fread(&elf_header[indx].Elf_sec, elf_header[indx].Elf_header.e_shentsize, 1, elf_header[indx].ftrace_fp);
+      if (ret != 1){
+        perror("Error reading from file");
+      }
+      if (elf_header[indx].Elf_sec.sh_type == SHT_SYMTAB){
+        elf_header[indx].sym_off = elf_header[indx].Elf_sec.sh_offset;
+        elf_header[indx].sym_size = elf_header[indx].Elf_sec.sh_entsize;
+        elf_header[indx].sym_num = elf_header[indx].Elf_sec.sh_size / elf_header[indx].Elf_sec.sh_entsize;
+        continue;
+      }
     }
   }
-
   return 0;
 }
 
+
 void free_strtab()
 {
-  free(strtab);
+  for(int i = 0; i < fileNum; i ++){
+    free(elf_header[i].strtab);
+  }
+  
 }
 #endif
 
@@ -204,15 +238,6 @@ void inst_get(int inst){
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
-#ifdef CONFIG_FTRACE
-struct func_call
-{
-  char *func_name;
-  struct func_call *next;
-  struct func_call *past;
-};
-#endif
-
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
@@ -290,10 +315,12 @@ static void exec_once()
   // 根据指令判断函数调用/函数返回
 
   // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
+  // printf("s.logbuf = %s\n",s.logbuf);
+  // printf("s.isa.inst.val = 0x%08x\n",s.isa.inst.val);
   int k = 12;
-  char *ins_tmp_16 = (char *)malloc(9);
+  char *ins_tmp_16 = (char*)malloc(9);
   memset(ins_tmp_16, 0, 9);
-  char *ins = (char *)malloc(33);
+  char *ins = (char*)malloc(33);
   memset(ins, 0, 33);
 
   // 1.1将logbuf中的指令存入临时数组
@@ -323,7 +350,7 @@ static void exec_once()
   uint32_t m = s.isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-
+  bool if_same = false;
   // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
   // 函数调用 jal,  rd = x1, imm = ***
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
@@ -340,8 +367,7 @@ static void exec_once()
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1)
-  {
+  if (strcmp(opcode, "1101111") == 0 && rd == 1){
     if_return = false;
     if_conduct = true;
   }
@@ -351,123 +377,137 @@ static void exec_once()
   // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
   // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
 
-  // 判断出jalr
-  else if (strcmp(opcode, "1100111") == 0)
-  {
+  // 函数返回 jalr rs1 = x1, rd = x0
+  // 函数调用 jalr, rd = x0
+  // 函数调用 jalr, rd = x1
 
-    // 函数返回
-    if (rd == 0 && rs1 == 1)
-    {
+  // 判断出jalr
+  else if (strcmp(opcode, "1100111") == 0){
+
+    // 函数返回 jalr rs1 = x1, rd = x0
+    if (rd == 0 && rs1 == 1){
       if_return = true;
-      if_conduct = true;
+      if_conduct = false;
     }
     // 函数调用
-    else if (rd == 1)
-    {
+    else if (rd == 1){
       if_return = false;
       if_conduct = true;
     }
-    else if (rd == 0)
-    {
+    else if (rd == 0){
       if_return = false;
       if_conduct = true;
     }
   }
 
-  if (if_conduct)
-  {
+  if (if_conduct){
     // 3.找到是哪个函数
     Elf32_Sym sym;
     int ret = 0;
-    char *name = (char *)malloc(20);
+    int indx = 0;
+    char *name = (char*)malloc(20);
     memset(name, 0, 20);
 
-    for (int n = sym_num - 1; n >= 0; n--)
-    {
-      // 3.1读取符号表
-      fseek(ftrace_fp, sym_off + n * sym_size, SEEK_SET);
-      ret = fread(&sym, sizeof(Elf32_Sym), 1, ftrace_fp);
-      if (ret != 1)
-      {
-        perror("Read error");
+    // printf("s.logbuf: %s\n",s.logbuf);
+    for(indx = 0; indx < fileNum; indx ++){
+      int n = elf_header[indx].sym_num - 1;
+      for(; n >= 0; n--){
+        // 3.1读取符号表
+        fseek(elf_header[indx].ftrace_fp, elf_header[indx].sym_off + n * elf_header[indx].sym_size, SEEK_SET);
+        ret = fread(&sym, sizeof(Elf32_Sym), 1, elf_header[indx].ftrace_fp);
+        if (ret != 1){
+          perror("Read error");
+        }
+        // strncpy(name, elf_header[indx].strtab + sym.st_name, 19); printf("name: %s\n",name);
+        // 3.2找到对应的一行
+        // 3.2.1 函数返回 是返回到原函数的中间位置
+        if (if_return && (sym.st_value <= s.pc && sym.st_value + sym.st_size >= s.pc) && sym.st_info == 18){
+          // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
+          break;
+        }
+        // 3.2.2 函数调用 是跳转到一个新函数的头部
+        else if (!if_return && sym.st_value == s.dnpc && sym.st_info == 18){
+          // printf("sym.st_value = 0x%08x s.dnpc = 0x%08x \n",sym.st_value,s.dnpc);
+          break;
+        }
       }
-
-      // 3.2找到对应的一行
-      // 3.2.1 函数返回 是返回到原函数的中间位置
-      if (if_return && (sym.st_value <= s.pc && sym.st_value + sym.st_size >= s.pc) && sym.st_info == 18)
-      {
-        // printf("sym.st_value = 0x%08x sym.st_size = %d \n",sym.st_value,sym.st_size);
-        break;
-      }
-      // 3.2.2 函数调用 是跳转到一个新函数的头部
-      else if (!if_return && sym.st_value == s.dnpc && sym.st_info == 18)
-        break;
-      if (n == 0)
-      {
-        Assert(0, "Fail in searching!");
-      }
+      if(n >= 0) break;
+      if (indx == fileNum - 1){
+          if_same = true;
+          // Assert(0, "Fail in searching!");
+        }
     }
- 
-    // 取出函数名称
-    strncpy(name, strtab + sym.st_name, 19);
+    
+    if(!if_same){
+      // 取出函数名称
+      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
+      // printf("name: %s\n",name); 
+      // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+      static int index = 1;
+      struct func_call *func;
+      static struct func_call *func_cur = NULL;
 
-    // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-    static int index = 1;
-    struct func_call *func;
-    static struct func_call *func_cur = NULL;
-
-    if (!if_return)
-    {
-      // 函数调用，将函数名放入链表
-      func = (func_call*)malloc(sizeof(struct func_call));
-      func->func_name = (char *)malloc(20);
-      strcpy(func->func_name, name);
-      func->past = func_cur;
-      func->next = NULL;
-      if (!func_cur)
-      {
-        func_cur = func;
-      }
-      else
-      {
-        func_cur->next = func;
-        func_cur = func;
-      }
-      printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, dut.pc, name, s.dnpc);
-      index++;
-    }
-    else
-    {
-      // 函数返回，将函数名所在链表节点抽出
-      while (1)
-      {
-        Assert(func_cur, "func_cur NULL!");
-        int flag = 0;
-        if (strcmp(func_cur->func_name, name) == 0)
-          flag = 1;
-        printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, dut.pc, func_cur->func_name);
-        index++;
-
-        free(func_cur->func_name);
-
-        // 抽出节点
-        if (func_cur->past == NULL)
+      if (!if_return){
+        // 函数调用，将函数名放入链表
+        func = (func_call*)malloc(sizeof(struct func_call));
+        func->func_name = (char *)malloc(20);
+        strcpy(func->func_name, name);
+        func->past = func_cur;
+        func->next = NULL;
+        if (!func_cur)
         {
-          free(func_cur);
+          func_cur = func;
         }
         else
         {
-          func_cur = func_cur->past;
-          free(func_cur->next);
-          func_cur->next = NULL;
+          func_cur->next = func;
+          func_cur = func;
         }
-
-        if (flag)
-          break;
+        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s.dnpc);
+        #ifdef CONFIG_FTRACE_PASS
+        if(strcmp(name,"putch") != 0) 
+          for(int i = 10; i < 15; i++){
+            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg[i],gpr(i));
+          }
+        #endif
+        index++;
       }
+      else{
+        // 函数返回，将函数名所在链表节点抽出
+        while (1){
+          Assert(func_cur, "func_cur NULL!");
+          Assert(func_cur->func_name, "func_cur->func_name NULL!");
+          Assert(name, "name NULL!");
+          int flag = 0;
+          if (strcmp(func_cur->func_name, name) == 0)
+            flag = 1;
+          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          index++;
+          // printf("name:%s\n",name);
+
+          free(func_cur->func_name);
+
+          // 抽出节点
+          if (func_cur->past == NULL)
+          {
+            free(func_cur);
+          }
+          else
+          {
+            func_cur = func_cur->past;
+            free(func_cur->next);
+            func_cur->next = NULL;
+          }
+
+          if (flag) break;
+
+          printf("flag = %d\n",flag);
+        }
+      }
+      Assert(func_cur, "func_cur NULL!");
+      free(name);
     }
-    Assert(func_cur, "func_cur NULL!");
-    free(name);
+    
   }
   free(opcode);
   free(ins);
@@ -483,11 +523,11 @@ static void execute(uint64_t n)
   {
     exec_once();
     if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
-
+    Log("diff.dnpc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x s.npc = 0x%08x\n",diff.dnpc,cpu.pc,dut.pc,s.dnpc);
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
     if(cpu.pc != 0x80000000 && dut.clk == 1) {
-      // printf("cpu.pc = 0x%08x dut.pc = 0x%08x s.npc = 0x%08x\n",cpu.pc,dut.pc,s.dnpc);
+      printf("cpu.pc = 0x%08x dut.pc = 0x%08x s.npc = 0x%08x\n",cpu.pc,dut.pc,s.dnpc);
       // printf("inst = 0x%08x\n",dut.rootp->ysyx_22041211_top__DOT__inst);
       trace_and_difftest(diff.dnpc);
     }
