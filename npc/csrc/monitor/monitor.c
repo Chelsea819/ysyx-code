@@ -166,7 +166,7 @@ void init_npc(int argc,char *argv[]){
     //load certain program to memory
     long img_size = load_img();
 
-    cpu.pc = 0x80000000;
+    // cpu.pc = 0x80000000;
 #ifdef CONFIG_DIFFTEST
     /* Initialize differential testing. */
     init_difftest(diff_so_file, img_size, difftest_port);
