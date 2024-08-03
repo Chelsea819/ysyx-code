@@ -43,6 +43,8 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
   } else {
     printf("获取REF的寄存器状态,ref.pc = 0x%08x\n",((CPU_state *)ref)->pc);
     memcpy(dut, ref, DIFFTEST_REG_SIZE);
+    printf("获取REF的寄存器状态,ref.pc = 0x%08x\n",((CPU_state *)ref)->pc);
+    printf("获取REF的寄存器状态,dut.pc = 0x%08x\n",((CPU_state *)dut)->pc);
   }
 }
 
