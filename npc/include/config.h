@@ -23,6 +23,6 @@
 // #define CONFIG_WAVE 1
 
 
-#define ANTO_Q 1
+#define AUTO_Q 1
 
 #endif

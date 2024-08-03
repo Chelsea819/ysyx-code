@@ -13,28 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __ISA_RISCVNPC_H__
-#define __ISA_RISCVNPC_H__
+#include <device/map.h>
 
-#include "common.h"
-// #define __GUEST_ISA__ riscv32
-
-typedef struct {
-  word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
-  // word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
-  //normal register
-  word_t csr[4096];
-  vaddr_t pc;
-} MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state); //寄存器结构体
-
-
-// decode
-typedef struct {
-  union {
-    uint32_t val;
-  } inst;
-} MUXDEF(CONFIG_RV64, riscv64_ISADecodeInfo, riscv32_ISADecodeInfo);
-
-#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
-
-#endif
+void init_disk() {
+}

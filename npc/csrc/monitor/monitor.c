@@ -53,7 +53,6 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 // static int flag = 0;
-static char *ftrace_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 
@@ -128,7 +127,7 @@ static int parseArgs(int argc, char *argv[]) {
       case 'p': break;
       case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
       case 'd': diff_so_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
+      case 'f': creat_ftraceIndex(optarg); break;
       case 1: img_file = optarg; printf("img_file oparg = %s\n",optarg); return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -159,7 +158,7 @@ void init_npc(int argc,char *argv[]){
     init_mem();
 
     /* Initialize devices. */
-    // IFDEF(CONFIG_DEVICE, init_device());
+    IFDEF(CONFIG_DEVICE, init_device());
 
     //load img to memory
     init_isa();
@@ -167,6 +166,7 @@ void init_npc(int argc,char *argv[]){
     //load certain program to memory
     long img_size = load_img();
 
+    // cpu.pc = 0x80000000;
 #ifdef CONFIG_DIFFTEST
     /* Initialize differential testing. */
     init_difftest(diff_so_file, img_size, difftest_port);
@@ -176,8 +176,8 @@ void init_npc(int argc,char *argv[]){
     init_sdb();
 
     #ifdef CONFIG_FTRACE
-    init_ftrace(ftrace_file);
-    #endif
+  init_ftrace(file_header,file_cur);
+  #endif
 
     #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(
@@ -185,7 +185,7 @@ void init_npc(int argc,char *argv[]){
     MUXDEF(CONFIG_ISA_mips32,  "mipsel",
     MUXDEF(CONFIG_ISA_riscv,
       MUXDEF(CONFIG_RV64,      "riscv64",
-                               "riscv32e"),
+                               "riscv32"),
                                "bad"))) "-pc-linux-gnu"
   ));
 #endif
