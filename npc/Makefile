@@ -77,7 +77,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 
 # rules for verilator
 INCLUDES += $(addprefix -I, $(INC_PATH))
-CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" #-D__GUEST_ISA__=$(GUEST_ISA)
+CFLAGS +=  $(INCLUDES) -Wall -DTOP_NAME="\"V$(TOPNAME)\"" -g #-D__GUEST_ISA__=$(GUEST_ISA)
 CXXFLAGS := $(filter-out -D__STDC_FORMAT_MACROS, $(CXXFLAGS))
 LDFLAGS += -lreadline -ldl -lSDL2  -pie $(LIBS) #-fsanitize=address
 
