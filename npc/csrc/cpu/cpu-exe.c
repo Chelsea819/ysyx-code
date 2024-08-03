@@ -13,7 +13,7 @@ Decode s;
 Decode diff = {0x80000000,0x80000000,0x80000000};
 
 extern TOP_NAME dut;
-CPU_state cpu = {};
+CPU_state cpu = {.pc = 0x80000000};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
