@@ -256,7 +256,7 @@ void sdb_set_batch_mode()
 {
   is_batch_mode = true;
 }
-#define AUTO_Q 1
+// #define AUTO_Q 1
 /* Receive commands from user. */
 void sdb_mainloop()
 {
