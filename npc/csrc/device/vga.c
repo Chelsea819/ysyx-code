@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NEMU is licensed under Mulan PSL v2.
+* NPC is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -44,7 +44,7 @@ static SDL_Texture *texture = NULL;
 static void init_screen() {
   SDL_Window *window = NULL;
   char title[128];
-  sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
+  sprintf(title, "%s-NPC", str(__GUEST_ISA__));
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(
       SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),

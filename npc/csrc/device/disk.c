@@ -13,7 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
+#include <device/map.h>
 
-void dev_raise_intr() {
+void init_disk() {
 }
