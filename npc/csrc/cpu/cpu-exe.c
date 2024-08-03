@@ -6,6 +6,7 @@
 #include <locale.h>
 #include "sdb.h"
 #include <cpu/difftest.h>
+#include <debug.h>
 
 word_t expr(char *e, bool *success);
 Decode s;
@@ -57,6 +58,7 @@ struct func_call
 
 int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
+  Assert(file_header != NULL && file_cur != NULL,"Pass file failed!");
   FILE *fp = NULL;
   // 需要读取的文件数
   fileNum = file_cur->NO - file_header->NO;
