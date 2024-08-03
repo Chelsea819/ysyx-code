@@ -266,8 +266,10 @@ void sdb_mainloop()
     cmd_c(NULL);
     //return;
   }
+  Log("cmd_q");
   #ifdef AUTO_Q
   char arr[2] = {'a','b'};
+  Log("cmd_q");
   cmd_q(arr);
   return;
 
