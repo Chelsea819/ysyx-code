@@ -35,6 +35,6 @@ gdb: image
 
 run: image
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
-	$(info ARGS_DIFF:$(ARGS_DIFF))
+	$(info ARGS_DIFF:$(ARGS_DIFF)) --diff=$(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 	bear --output ~/ysyx-workbench/npc/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 
