@@ -18,8 +18,6 @@
 void init_npc(int argc,char *argv[]);
 void engine_start();
 
-// #define __GUEST_ISA__ riscv32
-
 vluint64_t sim_time = 0;
 
 TOP_NAME dut;
