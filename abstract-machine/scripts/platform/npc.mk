@@ -19,7 +19,7 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
-NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
+NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf --diff=$(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 
 CFLAGS += -I$(AM_HOME)/am/include -I$(AM_HOME)/am/src/riscv/npc/libgcc -I$(AM_HOME)/am/src/riscv/npc/include
 
@@ -35,6 +35,6 @@ gdb: image
 
 run: image
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
-	$(info ARGS_DIFF:$(ARGS_DIFF)) --diff=$(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+	$(info ARGS_DIFF:$(ARGS_DIFF)) 
 	bear --output ~/ysyx-workbench/npc/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 
