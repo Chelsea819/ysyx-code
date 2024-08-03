@@ -21,7 +21,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <malloc.h>
-
+#include <generated/autoconf.h>
 #include "macro.h"
 #include "config.h"
 #include "device-def.h"

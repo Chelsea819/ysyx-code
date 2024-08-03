@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <macro.h>
-// #include <generated/autoconf.h>
+#include <generated/autoconf.h>
 #define CONFIG_ISA "riscv32"
 #define CONFIG_ISA_riscv 1
 // #define CONFIG_DIFFTEST 1
