@@ -128,7 +128,7 @@ static int parseArgs(int argc, char *argv[]) {
       case 'p': break;
       case 'l': log_file = optarg; printf("oparg = %s\n",optarg); break;
       case 'd': diff_so_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
+      case 'f': creat_ftraceIndex(optarg); break;
       case 1: img_file = optarg; printf("img_file oparg = %s\n",optarg); return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -159,7 +159,7 @@ void init_npc(int argc,char *argv[]){
     init_mem();
 
     /* Initialize devices. */
-    // IFDEF(CONFIG_DEVICE, init_device());
+    IFDEF(CONFIG_DEVICE, init_device());
 
     //load img to memory
     init_isa();
