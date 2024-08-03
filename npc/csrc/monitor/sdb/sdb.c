@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include <sdb.h>
 #include <vaddr.h>
+#include "config.h"
 
 void init_wp_pool();
 
