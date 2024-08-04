@@ -21,14 +21,14 @@
 #include <stdbool.h>
 #include <string.h>
 #include <malloc.h>
-#include <generated/autoconf.h>
+
 #include "macro.h"
+#include "debug.h"
 #include "config.h"
-#include "sim.h"
+#include "device-def.h"
 
 #include <assert.h>
 #include <stdlib.h>
-#include <debug.h>
 
 #define __GUEST_ISA__ riscv32
 
@@ -36,7 +36,7 @@
 #define PMEM64 1
 #endif
 
-extern TOP_NAME dut;
+
 typedef uint32_t word_t;
 typedef int32_t  sword_t;
 #define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
