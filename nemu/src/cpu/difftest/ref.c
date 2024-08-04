@@ -33,19 +33,11 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
 // `direction`为`DIFFTEST_TO_REF`时, 设置REF的寄存器状态为`dut`;
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
   CPU_state *ref = &cpu;
-  printf("dut addr: %p\nref-cpu addr: %p\n",dut,ref);
   if (direction == DIFFTEST_TO_REF) {
-    printf("设置REF的寄存器状态,dut.pc = 0x%08x\n",((CPU_state *)dut)->pc);
     memcpy(ref, dut, DIFFTEST_REG_SIZE);
     if(!initial) {ref->pc = 0x80000000; initial = true;}
-    printf("设置REF的寄存器状态,dut.pc = 0x%08x\n",((CPU_state *)dut)->pc);
-    printf("设置REF的寄存器状态,ref->pc = 0x%08x\n",ref->pc);
   } else {
-    printf("sizeof(ref) = %ld %ld\n",sizeof(CPU_state),sizeof(cpu));
-    printf("获取REF的寄存器状态,ref.pc = 0x%08x\n",((CPU_state *)ref)->pc);
     memcpy(dut, ref, DIFFTEST_REG_SIZE);
-    printf("获取REF的寄存器状态,ref.pc = 0x%08x\n",((CPU_state *)ref)->pc);
-    printf("获取REF的寄存器状态,dut.pc = 0x%08x\n",((CPU_state *)dut)->pc);
   }
 }
 
