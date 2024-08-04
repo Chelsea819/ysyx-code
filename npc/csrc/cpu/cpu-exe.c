@@ -291,7 +291,7 @@ static void exec_once()
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
-
+  printf("inst = [0x%08x]\n",(uint32_t*)inst);
   for (i = ilen - 1; i >= 0; i--)
   {
     p += snprintf(p, 4, " %02x", inst[i]);
