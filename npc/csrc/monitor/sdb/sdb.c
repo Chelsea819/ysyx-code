@@ -266,13 +266,13 @@ void sdb_mainloop()
     cmd_c(NULL);
     //return;
   }
-  #ifdef AUTO_Q
-  char arr[2] = {'a','b'};
-  Log("cmd_q");
-  cmd_q(arr);
-  return;
+  // #ifdef AUTO_Q
+  // char arr[2] = {'a','b'};
+  // Log("cmd_q");
+  // cmd_q(arr);
+  // return;
 
-  #endif
+  // #endif
   for (char *str; (str = rl_gets()) != NULL;)
   {
     char *str_end = str + strlen(str);
