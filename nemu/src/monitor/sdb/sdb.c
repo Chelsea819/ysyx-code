@@ -295,6 +295,7 @@ void sdb_mainloop()
     //return;
   }
 #ifdef CONFIG_AUTO_Q
+  cmd_c(NULL);
   cmd_q(NULL);return;
 #endif
   
