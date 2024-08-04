@@ -172,7 +172,7 @@ static void trace_and_difftest(vaddr_t dnpc){
   while (index != NULL){
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
-    printf("index->target: %s\n",index->target);
+    printf("index->target: %s, addr: 0x%08x, index->data: 0x%08x\n",index->target,addr,index->data);
     if(addr != index->data){
       npc_state.state = NPC_STOP;
       index->times += 1;
