@@ -48,7 +48,7 @@ static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_wr
 }
 
 
-// 初始化
+// 初始化,申请一段空间给device，io_space为首地址，p_space为空闲地址首地址
 void init_map() {
   io_space = (uint8_t *)malloc(IO_SPACE_MAX);
   assert(io_space);
