@@ -59,6 +59,7 @@ struct func_call
 
 int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
+  printf("cpu.pc addr: %p\n",(cpu.pc));
   Assert(file_header != NULL && file_cur != NULL,"Pass file failed!");
   FILE *fp = NULL;
   // 需要读取的文件数
@@ -291,7 +292,7 @@ static void exec_once()
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
-  printf("inst = [0x%08x]----pc = [0x%08x]\n",*(uint32_t*)inst,cpu.pc);
+  // printf("inst = [0x%08x]----pc = [0x%08x]\n",*(uint32_t*)inst,cpu.pc);
   for (i = ilen - 1; i >= 0; i--)
   {
     p += snprintf(p, 4, " %02x", inst[i]);
