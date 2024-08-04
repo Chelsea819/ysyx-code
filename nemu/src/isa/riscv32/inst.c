@@ -15,6 +15,7 @@
 
 /* different ISAs is different in the pattern of codes and codes' mean */
 
+#include "debug.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -61,6 +62,27 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_R_5: src1R(); src2R_5();     break;  
     case TYPE_B: src1R(); src2R(); immB(); break;
   }
+}
+
+word_t* csr_reg_match(int csr_index){
+  word_t* csr_val = 0;
+  switch (csr_index) {
+    case CSR_MEPC:
+      csr_val = &CSR_MEPC_REG;
+      break;
+    case CSR_MCAUSE:
+      csr_val = &CSR_MCAUSE_REG;
+      break;
+    case CSR_MTVEC:
+      csr_val = &CSR_MTVEC_REG;
+      break;
+    case CSR_MSTATUS:
+      csr_val = &CSR_MSTATUS_REG;
+      break;
+    default:
+      Assert(0, "Unvalid csr-register index: [0x%x]\n", csr_index);
+  }
+  return csr_val;
 }
 
 static int decode_exec(Decode *s) {
@@ -117,10 +139,12 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, R(rd) = src1 & src2 ); 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)));
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(0xb, s->pc));
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , I, s->dnpc = C(CSR_MEPC));
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , I, s->dnpc = CSR_MEPC);
 
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = C(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) |= src1);
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = C(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) = src1);
+  // INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, csr_read(rd, BITS(imm, 12, 0)), csr_write(BITS(imm, 12, 0), C(BITS(imm, 12, 0)) |= src1) C(BITS(imm, 12, 0)) |= src1);
+  // INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = csr_read(BITS(imm, 12, 0)), C(BITS(imm, 12, 0)) = src1);
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = *csr_reg_match(BITS(imm, 12, 0)), *csr_reg_match(BITS(imm, 12, 0)) |= src1);
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = *csr_reg_match(BITS(imm, 12, 0)), *csr_reg_match(BITS(imm, 12, 0)) = src1);
 
   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(rd) = src1 * src2 ); 
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = (signed)src1 / (signed)src2 ); 
@@ -141,6 +165,14 @@ static int decode_exec(Decode *s) {
 
   return 0;
 }
+
+
+
+// void csrrs_func(int rd, int csr_index){
+//   R(rd) = *csr_reg_match(csr_index);
+//   csr_reg_match(csr_index) = 
+  
+// }
 
 //取出s->pc指向的指令并译码执行, 同时更新s->snpc
 int isa_exec_once(Decode *s) {

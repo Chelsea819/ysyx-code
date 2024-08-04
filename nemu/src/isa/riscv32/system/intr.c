@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+#include <reg.h>
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
@@ -27,17 +27,17 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // }
   // printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
   // isa_reg_display();
-  cpu.csr[CSR_MEPC] = epc;
-  cpu.csr[CSR_MCAUSE] = NO;
+  CSR_MEPC_REG = epc;
+  CSR_MCAUSE_REG = NO;
   // printf("cpu.pc = 0x%08x\n",cpu.pc);
   // printf("cpu.csr[CSR_MTVEC] = 0x%08x\n",cpu.csr[CSR_MTVEC]);
   // printf("cpu.csr[CSR_MEPC]: 0x%08x\n",cpu.csr[CSR_MEPC]);
   // printf("cpu.csr[CSR_MCAUSE]: 0x%08x\n",cpu.csr[CSR_MCAUSE]);
   // printf("cpu.csr[773] = 0x%08x\n",csr(773));
   #ifdef CONFIG_ETRACE
-  Log("[ETRACE]: CSR[mepc] = 0x%08x CSR[mtvec]: 0x%08x CSR[mcause]: 0x%08x\n",epc,cpu.csr[CSR_MTVEC],NO);
+  Log("[ETRACE]: CSR[mepc] = 0x%08x CSR[mtvec]: 0x%08x CSR[mcause]: 0x%08x\n",epc,CSR_MTVEC_REG,NO);
   #endif
-  return cpu.csr[CSR_MTVEC];
+  return CSR_MTVEC_REG;
 }
 
 word_t isa_query_intr() {
