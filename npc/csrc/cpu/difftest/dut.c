@@ -9,7 +9,6 @@
 #include "reg.h"
 #include "config.h"
 
-extern TOP_NAME dut;
 #ifdef CONFIG_WAVE
 extern VerilatedVcdC *m_trace;
 #endif
