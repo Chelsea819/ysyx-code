@@ -59,7 +59,6 @@ struct func_call
 
 int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
-  printf("cpu.pc addr: %p\n",(cpu.pc));
   Assert(file_header != NULL && file_cur != NULL,"Pass file failed!");
   FILE *fp = NULL;
   // 需要读取的文件数
@@ -285,6 +284,9 @@ static void exec_once()
   s.snpc = s.pc + 4;
   s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
   cpu.pc = s.pc;
+
+  if(s.pc == 0x80000008)
+    printf("cpu.pc addr: %p",&(cpu.pc));
 
   #ifdef CONFIG_ITRACE
   char *p = s.logbuf;
