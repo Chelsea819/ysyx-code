@@ -73,7 +73,7 @@ static inline void update_screen() {
 void vga_update_screen() {
   
   if(vgactl_port_base[1]) {
-    // printf("enter vgactl_port_base[1] %d\n",vgactl_port_base[1]);
+    printf("enter vgactl_port_base[1] %d\n",vgactl_port_base[1]);
     update_screen();printf("vga_update_screen\n");
     vgactl_port_base[1] = 0;
     // io_write(CONFIG_VGA_CTL_MMIO + 4, 0);
