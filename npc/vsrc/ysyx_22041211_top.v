@@ -72,12 +72,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(*)
         ifebreak_func(inst);
 
-	import "DPI-C" function int pmem_read_task(input int raddr, input byte wmask);
-	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
+	import "DPI-C" function int pmem_read(input int raddr, input byte wmask);
+	import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 
 	//取指令
 	always @(posedge clk) begin
-        inst <= pmem_read_task(pc_next, 8'b00001111);
+        inst <= pmem_read(pc_next, 8'b00001111);
 	end
 
 	// wire	[31:0]	inst_pc;
@@ -90,14 +90,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 				   (DataLen == 3'b100)? 8'b00001111: 8'b11111111);
 	always @(*) begin
   		if ((memToReg[0] & ~memToReg[1])) // 有读写请求时
-   			ReadData = pmem_read_task(ALUResult, wmask);
+   			ReadData = pmem_read(ALUResult, wmask);
   		else
     		ReadData = 0;
 	end
 
 	always @(*) begin
   		if (memWrite) // 有写请求时
-      		pmem_write_task(ALUResult, reg_data2, wmask);
+      		pmem_write(ALUResult, reg_data2, wmask);
 	end
 
 	// 为ITRACE提供指令

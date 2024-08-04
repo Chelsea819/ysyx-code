@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #include <macro.h>
-// #include <generated/autoconf.h>
-#define CONFIG_ISA "riscv32"
-#define CONFIG_ISA_riscv 1
+#include <generated/autoconf.h>
+// #define CONFIG_ISA "riscv32"
+// #define CONFIG_ISA_riscv 1
 // #define CONFIG_DIFFTEST 1
 #define __EXPORT __attribute__((visibility("default")))
 enum { DIFFTEST_TO_DUT, DIFFTEST_TO_REF };

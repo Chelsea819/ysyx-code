@@ -1,7 +1,7 @@
 #***************************************************************************************
 # Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 #
-# NEMU is licensed under Mulan PSL v2.
+# NPC is licensed under Mulan PSL v2.
 # You can use this software according to the terms and conditions of the Mulan PSL v2.
 # You may obtain a copy of Mulan PSL v2 at:
 #          http://license.coscl.org.cn/MulanPSL2
@@ -14,43 +14,32 @@
 #**************************************************************************************/
 
 -include $(NPC_HOME)/../Makefile
-include $(NPC_HOME)/scripts/build.mk
+# include $(NPC_HOME)/scripts/build.mk
 
+# include $(NPC_HOME)/tools/difftest.mk
 
 compile_git:
-	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
-
-$(BINARY):compile_git $(SRCS) $(VSRCS) 
-	$(info SRCS = $(SRCS))
-	$(info INC_PATH = $(INC_PATH))
-	$(info LINKAGE = $(LINKAGE))
-	$(info LDFLAGS = $(LDFLAGS))
-	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS))  \
-		$(addprefix -LDFLAGS , $(LDFLAGS)) \
-		$(addprefix -CFLAGS , $(CXXFLAGS))	\
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BINARY))
+	$(call git_commit, "compile NPC")
+$(BINARY): compile_git
 
 # Some convenient rules
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt  --ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf -b
 override ARGS += $(ARGS_DIFF) #--batch
 
-# Command to execute NEMU
+# Command to execute NPC
 IMG ?=
-NEMU_EXEC := $(BINARY) $(ARGS) $(IMG) 
+NPC_EXEC := $(BINARY) $(ARGS) $(IMG) 
 
 run-env:  $(BINARY) $(DIFF_REF_SO)
 
-run:$(BINARY)
-	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
-	$(info $(ARGS))
-	$(info $(BUILD_DIR))
-	$(EXE)  $(ARGS) $(IMG)
+run: run-env
+	$(call git_commit, "run NPC")
+	$(NPC_EXEC)
 	
 gdb: run-env
-	$(call git_commit, "gdb NEMU")
-	gdb -s $(BINARY) --args $(NEMU_EXEC)
+	$(call git_commit, "gdb NPC")
+	gdb -s $(BINARY) --args $(NPC_EXEC)
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):

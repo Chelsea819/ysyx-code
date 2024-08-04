@@ -16,7 +16,20 @@
 #ifndef __NPC_SDB_H__
 #define __NPC_SDB_H__
 
-#include "common.h"
+#include <common.h>
+#include <debug.h>
+
+typedef struct watchpoint {
+  int NO;
+  int times;
+  uint32_t data;
+  char *target;
+  struct watchpoint *next;
+  struct watchpoint *past;
+
+  /* TODO: Add more members if necessary */
+
+} WP;
 
 word_t expr(char *e, bool *success);
 
