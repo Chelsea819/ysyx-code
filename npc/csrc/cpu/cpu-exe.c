@@ -1,4 +1,5 @@
 #include <cpu/decode.h>
+#include <cstdio>
 #include <isa.h>
 #include <elf.h>
 #include "reg.h"
@@ -171,7 +172,7 @@ static void trace_and_difftest(vaddr_t dnpc){
   while (index != NULL){
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
-
+    printf("index->target: %s\n",index->target);
     if(addr != index->data){
       npc_state.state = NPC_STOP;
       index->times += 1;
