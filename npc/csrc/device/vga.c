@@ -85,7 +85,7 @@ void vga_update_screen() {
 }
 
 void init_vga() {
-  vgactl_port_base = (uint32_t *)new_space(8);printf("vgactl_port_base addr: %p\nvgactl_port_base[1] addr: %p\n",&vgactl_port_base, &(vgactl_port_base[1]));
+  vgactl_port_base = (uint32_t *)new_space(8);printf("vgactl_port_base addr: %p\nvgactl_port_base[1] addr: %p\n",vgactl_port_base, &(vgactl_port_base[1]));
   vgactl_port_base[0] = (screen_width() << 16) | screen_height();
 #ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("vgactl", CONFIG_VGA_CTL_PORT, vgactl_port_base, 8, NULL);
