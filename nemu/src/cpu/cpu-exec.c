@@ -21,7 +21,7 @@
 #include <elf.h>
 
 #include <isa.h>
-#include "../isa/riscv32/local-include/reg.h"
+#include "reg.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -241,11 +241,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   return;
 }
 
-const char *reg[] = {
-    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-    "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-    "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 uint32_t convert_16(char *args);
 
@@ -498,7 +493,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         #ifdef CONFIG_FTRACE_PASS
         if(strcmp(name,"putch") != 0) 
           for(int i = 10; i < 15; i++){
-            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg[i],gpr(i));
+            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
           }
         #endif
         index++;

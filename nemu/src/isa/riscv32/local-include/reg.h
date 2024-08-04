@@ -17,7 +17,7 @@
 #define __RISCV_REG_H__
 
 #include <common.h>
-
+extern const char *regs[];
 /*check register index*/
 static inline int check_reg_idx(int idx) {
   /* if index in certain range */

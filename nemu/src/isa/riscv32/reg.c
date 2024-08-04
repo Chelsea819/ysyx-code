@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include "local-include/reg.h"
+#include "reg.h"
 
 uint32_t convert_ten(char *args);
 
