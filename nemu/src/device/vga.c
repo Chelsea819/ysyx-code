@@ -73,6 +73,7 @@ static inline void update_screen() {
 
 void vga_update_screen() {
   // printf("vgactl_port_base[1] %d\n",vgactl_port_base[1]);
+   printf("1");
   if(vgactl_port_base[1]) {
     printf("enter vgactl_port_base[1] %d\n",vgactl_port_base[1]);
     update_screen();
