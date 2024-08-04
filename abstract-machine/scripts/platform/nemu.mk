@@ -26,7 +26,7 @@ image: $(IMAGE).elf
 run: image
 	$(info ARCHIVES = $(ARCHIVES))
 	$(info ARCHIVE = $(ARCHIVE))
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	bear --output ~/ysyx-workbench/npc/build/compile_commands.json -- $(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 
 gdb: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin

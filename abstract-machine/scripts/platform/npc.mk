@@ -36,5 +36,5 @@ gdb: image
 run: image
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
 	$(info ARGS_DIFF:$(ARGS_DIFF)) 
-	bear --output ~/ysyx-workbench/npc/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	bear --output ~/ysyx-workbench/npc/build/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 
