@@ -86,7 +86,7 @@ LDFLAGS += -lreadline -ldl -lSDL2  -pie $(LIBS) #-fsanitize=address
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
 override ARGS += $(ARGS_DIFF) #--batch
 
-$(BIN):$(SRCS) $(VSRCS) 
+$(BIN): $(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) \
