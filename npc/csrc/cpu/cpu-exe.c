@@ -281,7 +281,7 @@ static void exec_once()
 
   s.pc = dut.pc;
   s.snpc = s.pc + 4;
-  s.dnpc = dut.rootp->ysyx_22041211_top__DOT__pc_next;
+  s.dnpc = dut.rootp->ysyx_22041211_top__DOT__if_pc_next;
   cpu.pc = s.pc;
 
   if(s.pc == 0x80000008)
