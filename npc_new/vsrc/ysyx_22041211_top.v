@@ -55,7 +55,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 						  (DataSign == 1'b0 && DataLen == 3'b001) ? {{24{1'b0}}, ReadData[7:0]} : 
 						  (DataSign == 1'b0 && DataLen == 3'b010) ? {{16{1'b0}}, ReadData[15:0]} : 
 						  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
-						  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
+				context function void ifebreak_func(int inst);
+    always @(*)		  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
 	assign invalid = ~((inst[6:0] == 7'b0010111) | (inst[6:0] == 7'b0110111) | //U-auipc lui
 					 (inst[6:0] == 7'b1101111) | 	 					     //jal
@@ -68,8 +69,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 					 (inst[6:0] == 7'b0110011) | //R
 					 (inst == 32'b00000000000100000000000001110011));
 	// 检测到ebreak
-    import "DPI-C" context function void ifebreak_func(int inst);
-    always @(*)
+    import "DPI-C" 
         ifebreak_func(inst);
 
 	import "DPI-C" function int pmem_read(input int raddr, input byte wmask);
