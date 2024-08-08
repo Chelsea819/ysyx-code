@@ -83,7 +83,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	//取指令
 	always @(posedge clk) begin
-        if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
+		if(~rst)
+        	if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
 	end
 
 	assign id_inst_i = if_inst;
