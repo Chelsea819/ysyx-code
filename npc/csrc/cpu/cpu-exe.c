@@ -1,5 +1,4 @@
 #include <cpu/decode.h>
-#include <cstdio>
 #include <isa.h>
 #include <elf.h>
 #include "reg.h"
