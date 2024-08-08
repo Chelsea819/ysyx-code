@@ -10,8 +10,8 @@ module ysyx_22041211_decoder(
     // output          [1:0]                         jmp,
     // output          [3:0]                         ALUcontrol,
     input           [31:0]                        pc_i          ,
-    output          [3:0]                         aluop_i       ,
-    output          [3:0]                         alusel_i      ,
+    output          [3:0]                         aluop_o       ,
+    output          [3:0]                         alusel_o      ,
     output          [31:0]                        pc_o          ,
     output          [31:0]                        reg1_o        ,
     output          [31:0]                        reg2_o        ,
@@ -19,8 +19,8 @@ module ysyx_22041211_decoder(
     output		    [4:0]		                  wreg_o        ,
     output          [4:0]                         reg1_addr_o   ,
     output          [4:0]                         reg2_addr_o   ,
-    output                                        reg1_read_o   ,
-    output                                        reg2_read_o   ,
+    // output                                        reg1_read_o   ,
+    // output                                        reg2_read_o   ,
     output          [31:0]                        inst_o        ,
     output          [31:0]                        imm_o         
     // output 			[2:0]				          DataLen 	,  // 0 1 3
@@ -33,16 +33,26 @@ module ysyx_22041211_decoder(
     assign func3 = inst_i[14:12];
     assign func7 = inst_i[31:25];
     assign opcode = inst_i[6:0];
-    
+    assign inst_o = inst_i;
+    assign pc_o = pc_i;
+    assign reg1_o = reg1_data_i;
+    assign reg2_o = reg2_data_i;
+    assign wreg_o = inst_i[11:7];
+    assign reg1_addr_o = inst_i[19:15];
+    assign reg2_addr_o = inst_i[24:20];
 
+    
 // controller look-up lut
-// inst: R-type: wd_o aluop alu_sel
+// inst: R-type: wd_o aluop_o alusel_o
 // alu_sel  [1:0] res1/pc/0, [3:2] res2/imm/4/0
 // alu_op + - 
-ysyx_22041211_MuxKeyWithDefault #(2,17,9) lut_mux ( {wd_o, aluop_i, alusel_i}, {opcode, func3, func7}, 9'b0, {
-            {7'b0000011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000},					// add
-			{7'b0000011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}
-    });
+// ysyx_22041211_MuxKeyWithDefault #(2,17,9) lut_mux ( {wd_o, aluop_o, alusel_o}, {opcode, func3, func7}, 9'b0, {
+//             {7'b0000011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000},				// add
+// 			{7'b0010011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}              // addi
+//     });
+
+assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {7'b0000011, 3'b00, 7'b00}) ? {1'b1,4'b0000,4'b0100} :    // R-add
+                                   ({opcode, func3} == {7'b0010011, 3'b00}) ? {1'b1,4'b0000,4'b0101} : 9'b0;            // I-addi
 
 ysyx_22041211_immGen my_gen (
     .inst       (inst_i),

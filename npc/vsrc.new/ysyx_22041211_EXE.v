@@ -6,6 +6,7 @@
  ************************************************************************/
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off WIDTHEXPAND */
+/* verilator lint_off PINCONNECTEMPTY */
 module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		reg1_i		,
 	input		[DATA_LEN - 1:0]		reg2_i		,
@@ -14,11 +15,11 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input 		[3:0]					alu_control	,
     input 		[3:0]					alu_sel		, // choose source number
 	input       [DATA_LEN - 1:0]        imm_i		,
+	input		                		wd_i		,
+    input		[4:0]		            wreg_i		,
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
     output		[DATA_LEN - 1:0]		wdata_o
-	// output								zero
-	// output								zero
 	// output								zero
 	// output		[DATA_LEN - 1:0]		result,
 	// output								zero
@@ -27,7 +28,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 );
 	wire [31:0] src1;
 	wire [31:0] src2;
-
+	assign wd_o = wd_i;
+	assign wreg_o = wreg_i;
 
 	ysyx_22041211_ALU my_alu(
 		.src1				(src1),
@@ -100,3 +102,4 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 endmodule
 /* verilator lint_on UNUSEDSIGNAL */
 /* verilator lint_on WIDTHEXPAND */
+/* verilator lint_on PINCONNECTEMPTY */
