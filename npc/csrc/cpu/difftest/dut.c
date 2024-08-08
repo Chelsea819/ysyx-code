@@ -40,12 +40,12 @@ static int skip_dut_nr_inst = 0;
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
   tail->is_skip_ref_bool = true;
-  tail->is_skip_ref_pc = dut.pc;
-  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut.pc);
+  tail->is_skip_ref_pc = dut->pc;
+  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut->pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut->pc);
 
   tail = tail->next;
   // is_skip_ref = true;
-  // is_skip_ref_pc = dut.pc;
+  // is_skip_ref_pc = dut->pc;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
@@ -131,7 +131,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
         printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],R(i));
     }
     printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
-    dut.final();
+    dut->final();
   #ifdef CONFIG_WAVE
     m_trace->close();
   #endif

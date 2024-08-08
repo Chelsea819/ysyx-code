@@ -18,7 +18,7 @@
 
 #include "common.h"
 #include "sim.h"
-extern TOP_NAME dut;
+extern TOP_NAME *dut; extern VerilatedVcdC *m_trace;
 extern const char* regs[];
 /*check register index*/
 static inline int check_reg_idx(int idx) {
@@ -27,7 +27,7 @@ static inline int check_reg_idx(int idx) {
   return idx;
 }
 
-#define R(idx) (dut.rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[check_reg_idx(idx)])
+#define R(idx) (dut->rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[check_reg_idx(idx)])
 
 // #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
 

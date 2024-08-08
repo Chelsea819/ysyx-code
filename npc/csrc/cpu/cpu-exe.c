@@ -7,12 +7,13 @@
 #include "sdb.h"
 #include <cpu/difftest.h>
 #include <debug.h>
+#include <config.h>
 
 word_t expr(char *e, bool *success);
 Decode s;
 Decode diff = {0x80000000,0x80000000,0x80000000};
-
-extern TOP_NAME dut;
+extern vluint64_t sim_time;
+extern TOP_NAME *dut; extern VerilatedVcdC *m_trace;
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
@@ -147,7 +148,7 @@ extern WP *head;
 void device_update();
 
 void ifebreak_func(int inst){
-	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst)
+	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst)
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
@@ -244,44 +245,44 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 static void exec_once()
 {
   //上升沿取指令
-  // if(dut.clk == 1) {
-  //   if(dut.memWrite == 1) {
+  // if(dut->clk == 1) {
+  //   if(dut->memWrite == 1) {
   //     printf("memWrite\n");
-  //     paddr_write(dut.ALUResult,dut.DataLen + 1,dut.storeData);
+  //     paddr_write(dut->ALUResult,dut->DataLen + 1,dut->storeData);
   //   } 
-  //   // printf("common:pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
+  //   // printf("common:pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
   // }
-  // if(dut.memToReg == 1){
-	// 		dut.ReadData = paddr_read(dut.ALUResult,dut.DataLen + 1);
-	// 		dut.eval();
+  // if(dut->memToReg == 1){
+	// 		dut->ReadData = paddr_read(dut->ALUResult,dut->DataLen + 1);
+	// 		dut->eval();
 	// }
 
-  // if(dut.clk == 1) dut.inst = paddr_read(dut.pc,4);
-  // dut.eval();  
+  // if(dut->clk == 1) dut->inst = paddr_read(dut->pc,4);
+  // dut->eval();  
 	// m_trace->dump(sim_time);
 	// sim_time++;
 
-  dut.clk ^= 1;
-  dut.eval();
+  dut->clk ^= 1;
+  dut->eval();
   #ifdef CONFIG_WAVE
   m_trace->dump(sim_time);
 	sim_time++;
   #endif
 		
-  if(dut.invalid == 1){
-    invalid_inst(dut.pc);
+  if(dut->invalid == 1){
+    invalid_inst(dut->pc);
   }
 
-  if(ifbreak && dut.clk == 0){
+  if(ifbreak && dut->clk == 0){
     printf("\nebreak!\n");
-    // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut.pc,dut.inst);
-    NPCTRAP(dut.pc, 0);
+    // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
+    NPCTRAP(dut->pc, 0);
   }
-  if(dut.clk == 0 && !ifbreak)    return; 
+  if(dut->clk == 0 && !ifbreak)    return; 
 
-  s.pc = dut.pc;
+  s.pc = dut->pc;
   s.snpc = s.pc + 4;
-  s.dnpc = dut.rootp->ysyx_22041211_top__DOT__if_pc_next;
+  s.dnpc = dut->rootp->ysyx_22041211_top__DOT__if_pc_next;
   cpu.pc = s.pc;
 
   if(s.pc == 0x80000008)
@@ -527,11 +528,11 @@ static void execute(uint64_t n)
   for (; n > 0; n--)
   {
     exec_once();
-    if(dut.clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
+    if(dut->clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
-    if(cpu.pc != 0x80000000 && dut.clk == 1) {
-      // printf("inst = 0x%08x\n",dut.rootp->ysyx_22041211_top__DOT__inst);
+    if(cpu.pc != 0x80000000 && dut->clk == 1) {
+      // printf("inst = 0x%08x\n",dut->rootp->ysyx_22041211_top__DOT__inst);
       trace_and_difftest(diff.dnpc);
     }
 
@@ -566,7 +567,7 @@ void cpu_exec(uint64_t n)
 			case NPC_END:
 			case NPC_ABORT:
 				printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
-				dut.final();
+				dut->final();
         #ifdef CONFIG_WAVE
         m_trace->close();	//关闭波形跟踪文件
         #endif
