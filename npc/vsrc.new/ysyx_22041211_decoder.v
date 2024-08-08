@@ -1,4 +1,3 @@
-/* verilator lint_off UNUSEDSIGNAL */
 
 module ysyx_22041211_decoder(
     input           [31:0]                        inst_i        ,
@@ -21,7 +20,7 @@ module ysyx_22041211_decoder(
     output          [4:0]                         reg2_addr_o   ,
     // output                                        reg1_read_o   ,
     // output                                        reg2_read_o   ,
-    output          [31:0]                        inst_o        ,
+    // output          [31:0]                        inst_o        ,
     output          [31:0]                        imm_o         
     // output 			[2:0]				          DataLen 	,  // 0 1 3
 	// output								          DataSign	,
@@ -33,7 +32,7 @@ module ysyx_22041211_decoder(
     assign func3 = inst_i[14:12];
     assign func7 = inst_i[31:25];
     assign opcode = inst_i[6:0];
-    assign inst_o = inst_i;
+    // assign inst_o = inst_i;
     assign pc_o = pc_i;
     assign reg1_o = reg1_data_i;
     assign reg2_o = reg2_data_i;
@@ -192,4 +191,3 @@ ysyx_22041211_immGen my_gen (
 
 endmodule
 
-/* verilator lint_on UNUSEDSIGNAL */

@@ -4,14 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
-/* verilator lint_off UNUSEDSIGNAL */
-/* verilator lint_off WIDTHEXPAND */
-/* verilator lint_off PINCONNECTEMPTY */
+
 module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		reg1_i		,
 	input		[DATA_LEN - 1:0]		reg2_i		,
 	input		[DATA_LEN - 1:0]		pc_i		,
-    input		[DATA_LEN - 1:0]		inst		,
+    // input		[DATA_LEN - 1:0]		inst		,
 	input 		[3:0]					alu_control	,
     input 		[3:0]					alu_sel		, // choose source number
 	input       [DATA_LEN - 1:0]        imm_i		,
@@ -35,21 +33,21 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.src1				(src1),
 		.src2				(src2),
 		.alu_control		(alu_control),
-		.result				(wdata_o),
-		.zero				()
+		.result				(wdata_o)
+		// .zero				()
 	);
 
-	ysyx_22041211_MuxKeyWithDefault #(3,4,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
-		4'b00, 32'b0,
-		4'b01, reg1_i,
-		4'b10, pc_i
+	ysyx_22041211_MuxKeyWithDefault #(3,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
+		2'b00, 32'b0,
+		2'b01, reg1_i,
+		2'b10, pc_i
 	});
 
-	ysyx_22041211_MuxKeyWithDefault #(4,4,32) src2_choose (src2, alu_sel[3:2], 32'b0, {
-		4'b00, reg2_i,
-		4'b01, imm_i,
-		4'b10, pc_i,
-		4'b11, 32'b0
+	ysyx_22041211_MuxKeyWithDefault #(4,2,32) src2_choose (src2, alu_sel[3:2], 32'b0, {
+		2'b00, reg2_i,
+		2'b01, imm_i,
+		2'b10, pc_i,
+		2'b11, 32'b0
 	});
 
 	// wire signed [31:0] signed_a  ;
@@ -100,6 +98,4 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 
 
 endmodule
-/* verilator lint_on UNUSEDSIGNAL */
-/* verilator lint_on WIDTHEXPAND */
-/* verilator lint_on PINCONNECTEMPTY */
+

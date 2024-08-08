@@ -1,15 +1,15 @@
-module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,invalid); // (
+module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// input								clk ,
 	// input								rst	,
 	// // input			[DATA_LEN - 1:0]	id_inst_i,
 	// output			[ADDR_LEN - 1:0]	pc			,
 	// output								invalid
-	input								clk ;
-	input								rst	;
+	input								clk ,
+	input								rst ,
 	// input			[DATA_LEN - 1:0]	id_inst_i,
-	output			[ADDR_LEN - 1:0]	pc			;
-	output								invalid;
-// );
+	output			[ADDR_LEN - 1:0]	pc			,
+	output								invalid
+);
 
 	// //registerFile
 	// wire								reg_re1_i		;
@@ -21,7 +21,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,inv
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
 
 	//my_counter
-	wire			[ADDR_LEN - 1:0]	if_pc_next_i	;	
+	wire			[ADDR_LEN - 1:0]	if_pc_next	;	
 	// wire			[ADDR_LEN - 1:0]	pcPlus		;
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
@@ -43,7 +43,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,inv
 	wire			[DATA_LEN - 1:0]	ex_reg1_i		;
 	wire			[DATA_LEN - 1:0]	ex_reg2_i		;
 	wire			[DATA_LEN - 1:0]	ex_imm_i		;
-	wire			[DATA_LEN - 1:0]	ex_inst_i		;
+	// wire			[DATA_LEN - 1:0]	ex_inst_i		;
 	wire			[DATA_LEN - 1:0]	ex_pc_i			;
 	wire								ex_wd_i			;
 	wire			[4:0]				ex_wreg_i		;
@@ -83,24 +83,24 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,inv
 
 	//取指令
 	always @(posedge clk) begin
-        if_inst <= pmem_read_task(if_pc_next_i, 8'b00001111);
+        if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
 	end
 
 	assign id_inst_i = if_inst;
 
 	// wire	[31:0]	inst_pc;
-	// assign inst_pc = ((id_pc_i < 32'h80000000) ? 32'h80000000 : if_pc_next_i);
+	// assign inst_pc = ((id_pc_i < 32'h80000000) ? 32'h80000000 : if_pc_next);
 
 	ysyx_22041211_counter my_counter(
 		.clk		(clk),
 		.rst		(rst),
-		.pc_next	(if_pc_next_i),
+		.pc_next	(if_pc_next),
 		.pc			(id_pc_i)
 	);
 
 	ysyx_22041211_pcPlus my_pcPlus(
 		.pc_old	(id_pc_i),
-		.pc_new	(if_pc_next_i)
+		.pc_new	(if_pc_next)
 	);
 
 	ysyx_22041211_RegisterFile my_RegisterFile(
@@ -131,7 +131,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,inv
 		.reg2_addr_o		(reg_raddr2_i),
 		// .reg1_read_o		(reg_re1_i),
 		// .reg2_read_o		(reg_re2_i),
-		.inst_o     		(ex_inst_i),
+		// .inst_o     		(ex_inst_i),
 		.imm_o      		(ex_imm_i)
 	);
 
@@ -139,7 +139,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(clk,rst,pc,inv
 		.reg1_i				(ex_reg1_i),
 		.reg2_i				(ex_reg2_i),
 		.pc_i				(ex_pc_i),
-		.inst				(ex_inst_i),
+		// .inst				(ex_inst_i),
 		.alu_control		(ex_aluop_i),
 		.alu_sel			(ex_alusel_i),		
 		.imm_i				(ex_imm_i),

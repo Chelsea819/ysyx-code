@@ -4,14 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
-/* verilator lint_off UNUSEDSIGNAL */
-/* verilator lint_off WIDTHEXPAND */
 module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1,
 	input		[DATA_LEN - 1:0]		src2,
 	input 		[3:0]					alu_control,
-	output		[DATA_LEN - 1:0]		result,
-	output								zero
+	output		[DATA_LEN - 1:0]		result
+	// output								zero
 	// output								OF,		//溢出标志
 	// output								CF		//进/借位标志
 );
@@ -53,7 +51,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	
 
-	assign zero = result_tmp == 32'b0 ;
+	// assign zero = result_tmp == 32'b0 ;
 	// assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
 	// 					(alu_control == 4'b0001) ? (({1'b0,src1} + {1'b0,~src2} + 1)) :
 	// 			 		(alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 
@@ -65,5 +63,3 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 
 endmodule
-/* verilator lint_on UNUSEDSIGNAL */
-/* verilator lint_on WIDTHEXPAND */
