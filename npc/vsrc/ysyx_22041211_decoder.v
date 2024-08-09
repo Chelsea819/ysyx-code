@@ -50,8 +50,10 @@ module ysyx_22041211_decoder(
 // 			{7'b0010011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}              // addi
 //     });
 
-assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {`TYPE_I_OPCODE, 3'b00, 7'b00}) ? {1'b1,4'b0000,4'b0100} :    // R-add
-                                   ({opcode, func3} == {7'b0010011, 3'b00}) ? {1'b1,4'b0000,4'b0101} : 9'b0;            // I-addi
+assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})   ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :    // R-add
+                                   ({opcode, func3}        == {`TYPE_I_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  : 
+                                   ({opcode}               == {`TYPE_U_AUIPC_OPCODE})               ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :     
+                                   ({opcode}               == {`TYPE_U_LUI_OPCODE})                 ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;            // I-addi
 
 ysyx_22041211_immGen my_gen (
     .inst       (inst_i),

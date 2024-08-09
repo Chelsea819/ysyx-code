@@ -4,7 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
-
+`include "./ysyx_22041211_define.v"
 module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		reg1_i		,
 	input		[DATA_LEN - 1:0]		reg2_i		,
@@ -38,16 +38,16 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	);
 
 	ysyx_22041211_MuxKeyWithDefault #(3,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
-		2'b00, 32'b0,
-		2'b01, reg1_i,
-		2'b10, pc_i
+		`ALU_SEL1_ZERO, 32'b0,
+		`ALU_SEL1_REG1, reg1_i,
+		`ALU_SEL1_PC,   pc_i
 	});
 
 	ysyx_22041211_MuxKeyWithDefault #(4,2,32) src2_choose (src2, alu_sel[3:2], 32'b0, {
-		2'b00, reg2_i,
-		2'b01, imm_i,
-		2'b10, pc_i,
-		2'b11, 32'b0
+		`ALU_SEL1_ZERO, 32'b0,
+		`ALU_SEL2_REG2, reg2_i,
+		`ALU_SEL2_IMM, 	imm_i,
+		`ALU_SEL2_4, 	32'b100
 	});
 
 	// wire signed [31:0] signed_a  ;

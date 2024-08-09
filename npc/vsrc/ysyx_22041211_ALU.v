@@ -4,6 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
+ `include "./ysyx_22041211_define.v"
 module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1,
 	input		[DATA_LEN - 1:0]		src2,
@@ -16,8 +17,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire		[DATA_LEN - 1:0]		result_tmp;
 	
 	ysyx_22041211_MuxKeyWithDefault #(2,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
-		4'b0000, src1 + src2,
-		4'b0001, src1 + (~src2 + 1)
+		`ALU_OP_ADD, src1 + src2,
+		`ALU_OP_SUB, src1 + (~src2 + 1)
 		// 4'b0010, src1 << src2,
 		// 4'b0011, signed_a + (~signed_b + 1),        //signed_a < signed_b ? 32'b1 : 32'b0,
 		// 4'b0100, src1 + (~src2 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
