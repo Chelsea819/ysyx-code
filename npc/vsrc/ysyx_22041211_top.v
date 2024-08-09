@@ -84,8 +84,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	//取指令
 	always @(id_pc_i) begin
 		if(~rst) begin
-			$display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
+			// $display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
         	if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
+			$display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
+
 		end
 		else  begin
 			$display("rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
