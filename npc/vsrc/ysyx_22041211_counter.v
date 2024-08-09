@@ -5,7 +5,7 @@
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
 
-module ysyx_22041211_counter #(parameter ADDR_LEN = 32,RESET_VAL = 32'h80000000)(
+module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	input									clk		,
 	input									rst		,
 	input	    [ADDR_LEN - 1:0]			pc_next	,
@@ -14,10 +14,7 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32,RESET_VAL = 32'h80000000)
 );
 	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
 	always @ (posedge clk) begin
-		if(rst)
-		 	pc <= RESET_VAL;
-		else 
-			pc <= pc_next;
+		pc <= pc_next;
 	end
 
 endmodule
