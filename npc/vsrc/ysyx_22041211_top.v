@@ -84,8 +84,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	//取指令
 	always @(id_pc_i) begin
 		if(~rst) begin
-			$display("~rst: pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
-        	if_inst <= pmem_read_task(id_pc_i, 8'b00001111);
+			$display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
+        	if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
 		end
 		else  begin
 			if_inst <= 32'b0;
@@ -94,7 +94,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	end
 
 	always @(*) begin
-			$display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
+			$display("pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
 	end
 
 	assign id_inst_i = if_inst;
@@ -109,10 +109,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.pc			(id_pc_i)
 	);
 
-	ysyx_22041211_pcPlus my_pcPlus(
-		.pc_old	(id_pc_i),
-		.pc_new	(if_pc_next)
+	ysyx_22041211_pcPlus#(
+		.DATA_LEN ( 32 )
+	)u_ysyx_22041211_pcPlus(
+		.pc_old ( id_pc_i ),
+		.rst    ( rst    ),
+		.pc_new  ( if_pc_next  )
 	);
+
 
 	ysyx_22041211_RegisterFile my_RegisterFile(
 		.clk		(clk),
