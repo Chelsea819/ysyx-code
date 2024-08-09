@@ -11,7 +11,7 @@ module ysyx_22041211_pcPlus #(parameter DATA_LEN = 32)(
 	output	reg	[DATA_LEN - 1:0]		pc_new
 );
 	always @(*) begin
-		if(~rst)
+		if(rst)
 			pc_new = 32'h80000000;
 		else 
 			pc_new = pc_old + 32'b100;
