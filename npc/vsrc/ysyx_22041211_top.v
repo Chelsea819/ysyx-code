@@ -84,15 +84,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	//取指令
 	always @(*) begin
 		if(~rst) begin
-			// $display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
         	if_inst = pmem_read_task(id_pc_i, 8'b00001111);
-			// $display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
-
 		end
 		else  begin
-			// $display("rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
 			if_inst = 32'b0;
-			// $display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
 		end
 	end
 
@@ -101,9 +96,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	end
 
 	assign id_inst_i = if_inst;
-
-	// wire	[31:0]	inst_pc;
-	// assign inst_pc = ((id_pc_i < 32'h80000000) ? 32'h80000000 : if_pc_next);
 
 	ysyx_22041211_counter my_counter(
 		.clk		(clk),

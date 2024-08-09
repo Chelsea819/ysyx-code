@@ -45,7 +45,7 @@ INC_PATH += $(NPC_HOME)/include
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc  -Wall --build -j 0  \
-				-O3 --x-assign fast --x-initial fast --noassert --public --trace
+				-O3 --x-assign fast --x-initial fast --noassert --public --trace -I$(NPC_HOME)/vsrc/
 
 #-ggdb -LDFLAGS -ggdb -CFLAGS -DVL_DEBUG=1 
 # -CFLAGS -D_GLIBCXX_DEBUG

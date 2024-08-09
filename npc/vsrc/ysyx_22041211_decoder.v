@@ -1,4 +1,4 @@
-
+`include "./ysyx_22041211_define.v"
 module ysyx_22041211_decoder(
     input           [31:0]                        inst_i        ,
     input           [31:0]                        reg1_data_i   ,
@@ -50,7 +50,7 @@ module ysyx_22041211_decoder(
 // 			{7'b0010011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}              // addi
 //     });
 
-assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {7'b0000011, 3'b00, 7'b00}) ? {1'b1,4'b0000,4'b0100} :    // R-add
+assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {`TYPE_I_OPCODE, 3'b00, 7'b00}) ? {1'b1,4'b0000,4'b0100} :    // R-add
                                    ({opcode, func3} == {7'b0010011, 3'b00}) ? {1'b1,4'b0000,4'b0101} : 9'b0;            // I-addi
 
 ysyx_22041211_immGen my_gen (
