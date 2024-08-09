@@ -269,7 +269,7 @@ static void exec_once()
 	sim_time++;
   #endif
 		
-  if(dut->invalid == 1){
+  if(dut->clk == 0 && dut->invalid == 1){
     invalid_inst(dut->pc);
   }
 
