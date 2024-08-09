@@ -6,12 +6,18 @@
  ************************************************************************/
 
 module ysyx_22041211_counter #(parameter ADDR_LEN = 32,RESET_VAL = 32'h80000000)(
-	input								clk		,
-	input								rst		,
-	input	[ADDR_LEN - 1:0]			pc_next	,
+	input									clk		,
+	input									rst		,
+	input	    [ADDR_LEN - 1:0]			pc_next	,
 	// input	[ADDR_LEN - 1:0]			ce		,
-	output	[ADDR_LEN - 1:0]			pc
+	output reg	[ADDR_LEN - 1:0]			pc
 );
-	ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
+	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
+	always @ (posedge clk) begin
+		if(rst)
+		 	pc <= RESET_VAL;
+		else 
+			pc <= pc_next;
+	end
 
 endmodule
