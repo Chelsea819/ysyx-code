@@ -88,7 +88,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		end
 		else  begin
 			if_inst <= 32'b0;
-			$display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
+			// $display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
 		end
 	end
 
