@@ -82,16 +82,16 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
 	
 	//取指令
-	always @(id_pc_i) begin
+	always @(*) begin
 		if(~rst) begin
 			// $display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
-        	if_inst <= pmem_read_task(if_pc_next, 8'b00001111);
-			$display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
+        	if_inst = pmem_read_task(if_pc_next, 8'b00001111);
+			// $display("~rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
 
 		end
 		else  begin
-			$display("rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
-			if_inst <= 32'b0;
+			// $display("rst: pc: [%h] inst: [%h] invalid: [%h]",if_pc_next, if_inst, invalid);
+			if_inst = 32'b0;
 			// $display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
 		end
 	end
