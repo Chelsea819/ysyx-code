@@ -95,7 +95,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	end
 
 	always @(*) begin
-			$display("pc: [%h] inst: [%h] invalid: [%h]",id_pc_i, if_inst, invalid);
+			$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, if_inst, invalid);
 	end
 
 	assign id_inst_i = if_inst;
