@@ -1,3 +1,4 @@
+`include "./ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// input								clk ,
 	// input								rst	,
@@ -66,16 +67,16 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 					  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
 	// 					  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
-	assign invalid = ~((id_inst_i[6:0] == 7'b0010111) | (id_inst_i[6:0] == 7'b0110111) | //U-auipc lui
-					 (id_inst_i[6:0] == 7'b1101111) | 	 					     //jal
-				     ({id_inst_i[14:12],id_inst_i[6:0]} == 10'b0001100111) |			 //I-jalr
-					 ({id_inst_i[6:0]} == 7'b0001100011) |			 //B-beq
-					 ((id_inst_i[6:0] == 7'b0000011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
-					 ((id_inst_i[6:0] == 7'b0100011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010))	|		//S-sb sh sw
-					 ((id_inst_i[6:0] == 7'b0010011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b011 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b110 | id_inst_i[14:12] == 3'b111)) |	 //I-addi slti sltiu xori ori andi
-					 ((id_inst_i[6:0] == 7'b0010011) & ((id_inst_i[14:12] == 3'b001 && id_inst_i[31:26] == 6'b000000) | (id_inst_i[14:12] == 3'b101 && (id_inst_i[31:26] == 6'b000000 || id_inst_i[31:26] == 6'b010000)) )) |	 //I-slli srli srai
-					 (id_inst_i[6:0] == 7'b0110011) | //R
-					 (id_inst_i == 32'b00000000000100000000000001110011));
+	assign invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
+					//  (id_inst_i[6:0] == 7'b1101111) | 	 					     //jal
+				    //  ({id_inst_i[14:12],id_inst_i[6:0]} == 10'b0001100111) |			 //I-jalr
+					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
+					//  ((id_inst_i[6:0] == 7'b0000011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
+					//  ((id_inst_i[6:0] == 7'b0100011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010))	|		//S-sb sh sw
+					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3)) |	 //I-addi slti sltiu xori ori andi
+					//  ((id_inst_i[6:0] == 7'b0010011) & ((id_inst_i[14:12] == 3'b001 && id_inst_i[31:26] == 6'b000000) | (id_inst_i[14:12] == 3'b101 && (id_inst_i[31:26] == 6'b000000 || id_inst_i[31:26] == 6'b010000)) )) |	 //I-slli srli srai
+					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
+					 (id_inst_i == `TYPE_I_EBREAK));
 	// 检测到ebreak
     import "DPI-C" function void ifebreak_func(int id_inst_i);
     always @(*)
