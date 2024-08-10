@@ -5,6 +5,9 @@
 `define TYPE_I_BASE_OPCODE 7'b0010011
 `define TYPE_I_ADDI_FUNC3 3'b000
 
+`define TYPE_I_JALR_OPCODE 7'b1100111
+`define TYPE_I_JALR_FUNC3 3'b0
+
 `define TYPE_I_EBREAK 32'b00000000000100000000000001110011
 
 `define TYPE_U_LUI_OPCODE   7'b0110111 
@@ -13,6 +16,9 @@
 `define TYPE_B_OPCODE       7'b1100011
 `define TYPE_B_BEQ_FUNC3    3'b000
 
+`define TYPE_J_JAL_OPCODE 7'b1101111
+
+`define BRANCH_INVALID      3'b000 
 `define BRANCH_BEQ          3'b001 
 `define BRANCH_BNE          3'b010  
 `define BRANCH_BLT          3'b011 
@@ -21,7 +27,7 @@
 `define BRANCH_BGEU         3'b110 
 
 `define EN_REG_WRITE        1'b1
-`define EN_BRANCH_JMP       1'b1
+`define EN_JMP       1'b1
 
 // `define TYPE_I_OPCODE 7'b0000011
 // `define TYPE_I_OPCODE 7'b0000011

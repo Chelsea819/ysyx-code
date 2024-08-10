@@ -26,6 +26,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[ADDR_LEN - 1:0]	if_branch_target_i;
 	wire			[2:0]				if_branch_type_i;
 	wire								if_branch_request_i;	
+	wire			[ADDR_LEN - 1:0]	if_jmp_target_i;
+	wire								if_jmp_flag_i;
 	// wire			[ADDR_LEN - 1:0]	pcPlus		;
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
@@ -68,8 +70,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 					  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
 
 	assign invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
-					//  (id_inst_i[6:0] == 7'b1101111) | 	 					     //jal
-				    //  ({id_inst_i[14:12],id_inst_i[6:0]} == 10'b0001100111) |			 //I-jalr
+					 (id_inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
+				     ({id_inst_i[14:12],id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
 					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
 					//  ((id_inst_i[6:0] == 7'b0000011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
 					//  ((id_inst_i[6:0] == 7'b0100011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010))	|		//S-sb sh sw
@@ -110,6 +112,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.branch_request_i ( if_branch_request_i ),
 		.branch_target_i  ( if_branch_target_i  ),
 		.branch_flag_i    ( |if_branch_type_i    ),
+		.jmp_flag_i  	  ( if_jmp_flag_i  ),
+		.jmp_target_i     ( if_jmp_target_i    ),
 		.pc_plus_4        ( if_pc_plus_4     ),
 		.pc               ( id_pc_i               )
 	);
@@ -151,9 +155,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.reg1_addr_o					(reg_raddr1_i),
 		.reg2_addr_o					(reg_raddr2_i),
 		.branch_type_o					(if_branch_type_i),
-		.branch_target_address_o		(if_branch_target_i),
-		// .reg1_read_o					(reg_re1_i),
-		// .reg2_read_o					(reg_re2_i),
+		.branch_target_o				(if_branch_target_i),
+		.jmp_flag_o						(if_jmp_flag_i),
+		.jmp_target_o					(if_jmp_target_i),
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);

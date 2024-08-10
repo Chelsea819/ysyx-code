@@ -19,7 +19,9 @@ module ysyx_22041211_decoder(
     output          [4:0]                         reg1_addr_o               ,
     output          [4:0]                         reg2_addr_o               ,
     output          [2:0]                         branch_type_o             ,
-    output          [31:0]                        branch_target_address_o   ,
+    output          [31:0]                        branch_target_o   ,
+    output                                        jmp_flag_o                ,
+    output          [31:0]                        jmp_target_o      ,
     // output                                        reg2_read_o   ,
     // output          [31:0]                        inst_o        ,
     output          [31:0]                        imm_o         
@@ -42,7 +44,7 @@ module ysyx_22041211_decoder(
     assign wreg_o = inst_i[11:7];
     assign reg1_addr_o = inst_i[19:15];
     assign reg2_addr_o = inst_i[24:20];
-    assign branch_target_address_o = pc_i + imm;
+    assign branch_target_o = pc_i + imm;
 
     
 // controller look-up lut
@@ -56,11 +58,17 @@ module ysyx_22041211_decoder(
 
 assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7}  == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :        // R-add
                                    ({opcode, func3}         == {`TYPE_I_BASE_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  :        // I-addi
+                                   ({opcode, func3}         == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_4,`ALU_SEL1_PC}}  :            // I-jalr
+                                   ({opcode}                == {`TYPE_J_JAL_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_4,`ALU_SEL1_PC}}  :            // J-jal
                                    ({opcode, func3}         == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}}:        // B-beq
                                    ({opcode}                == {`TYPE_U_AUIPC_OPCODE})                    ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :        // U-auipc
-                                   ({opcode}                == {`TYPE_U_LUI_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;  // U-lui          
+                                   ({opcode}                == {`TYPE_U_LUI_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 
+                                   0;  // U-lui          
 
-assign  {branch_type_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})  ? {`BRANCH_BEQ}: 3'b0;       // B-beq
+assign  {branch_type_o, jmp_target_o, jmp_flag_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})             ? {`BRANCH_BEQ,     32'b0,             ~`EN_JMP}:         // B-beq
+                                                    ({opcode, func3} == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3})       ? {`BRANCH_INVALID, reg1_data_i + imm, `EN_JMP} :         // I-jalr
+                                                    ({opcode}        == {`TYPE_J_JAL_OPCODE})                            ? {`BRANCH_INVALID, pc_i + imm,        `EN_JMP} :         // J-jal 
+                                                    0;       
 
 ysyx_22041211_immGen my_gen (
     .inst       (inst_i),
