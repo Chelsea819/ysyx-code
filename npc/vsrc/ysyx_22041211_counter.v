@@ -6,13 +6,20 @@
  ************************************************************************/
 
 module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
-	input									clk		,
-	input									rst		,
-	input	    [ADDR_LEN - 1:0]			pc_next	,
+	input									clk				,
+	input									rst				,
+	input									branch_request_i,	
+	input		[ADDR_LEN - 1:0]			branch_target_i	,
+	input									branch_flag_i	,
+	input	    [ADDR_LEN - 1:0]			pc_plus_4		,
 	// input	[ADDR_LEN - 1:0]			ce		,
 	output reg	[ADDR_LEN - 1:0]			pc
-);
+);	
+	wire 		[ADDR_LEN - 1:0]			pc_next;
+
 	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
+	assign pc_next = (branch_flag_i & branch_request_i) ? branch_target_i : pc_plus_4;
+	
 	always @ (posedge clk) begin
 		pc <= pc_next;
 	end

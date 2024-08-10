@@ -1,24 +1,25 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_decoder(
-    input           [31:0]                        inst_i        ,
-    input           [31:0]                        reg1_data_i   ,
-    input           [31:0]                        reg2_data_i   ,
+    input           [31:0]                        inst_i                    ,
+    input           [31:0]                        reg1_data_i               ,
+    input           [31:0]                        reg2_data_i               ,
     // output          [1:0]                         memToReg,
     // output                                        memWrite, //写内存操作
     // output          [2:0]                         branch,
     // output          [1:0]                         jmp,
     // output          [3:0]                         ALUcontrol,
-    input           [31:0]                        pc_i          ,
-    output          [3:0]                         aluop_o       ,
-    output          [3:0]                         alusel_o      ,
-    output          [31:0]                        pc_o          ,
-    output          [31:0]                        reg1_o        ,
-    output          [31:0]                        reg2_o        ,
-    output		                		          wd_o          ,
-    output		    [4:0]		                  wreg_o        ,
-    output          [4:0]                         reg1_addr_o   ,
-    output          [4:0]                         reg2_addr_o   ,
-    // output                                        reg1_read_o   ,
+    input           [31:0]                        pc_i                      ,
+    output          [3:0]                         aluop_o                   ,
+    output          [3:0]                         alusel_o                  ,
+    output          [31:0]                        pc_o                      ,
+    output          [31:0]                        reg1_o                    ,
+    output          [31:0]                        reg2_o                    ,
+    output		                		          wd_o                      ,
+    output		    [4:0]		                  wreg_o                    ,
+    output          [4:0]                         reg1_addr_o               ,
+    output          [4:0]                         reg2_addr_o               ,
+    output          [2:0]                         branch_type_o             ,
+    output          [31:0]                        branch_target_address_o   ,
     // output                                        reg2_read_o   ,
     // output          [31:0]                        inst_o        ,
     output          [31:0]                        imm_o         
@@ -28,17 +29,20 @@ module ysyx_22041211_decoder(
     wire            [6:0]                          func7;
     wire            [2:0]                          func3;
     wire            [6:0]                          opcode;
+    wire            [31:0]                         imm;
 
     assign func3 = inst_i[14:12];
     assign func7 = inst_i[31:25];
     assign opcode = inst_i[6:0];
     // assign inst_o = inst_i;
     assign pc_o = pc_i;
+    assign imm_o = imm;
     assign reg1_o = reg1_data_i;
     assign reg2_o = reg2_data_i;
     assign wreg_o = inst_i[11:7];
     assign reg1_addr_o = inst_i[19:15];
     assign reg2_addr_o = inst_i[24:20];
+    assign branch_target_address_o = pc_i + imm;
 
     
 // controller look-up lut
@@ -50,15 +54,19 @@ module ysyx_22041211_decoder(
 // 			{7'b0010011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}              // addi
 //     });
 
-assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7} == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})   ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :    // R-add
-                                   ({opcode, func3}        == {`TYPE_I_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  : 
-                                   ({opcode}               == {`TYPE_U_AUIPC_OPCODE})               ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :     
-                                   ({opcode}               == {`TYPE_U_LUI_OPCODE})                 ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;            // I-addi
+assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7}  == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})   ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :        // R-add
+                                   ({opcode, func3}         == {`TYPE_I_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  :        // I-addi
+                                   ({opcode, func3}         == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})  ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}}:        // B-beq
+                                   ({opcode}                == {`TYPE_U_AUIPC_OPCODE})               ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :        // U-auipc
+                                   ({opcode}                == {`TYPE_U_LUI_OPCODE})                 ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;  // U-lui          
+
+assign  {branch_type_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})  ? {`BRANCH_BEQ}: 3'b0;       // B-beq
 
 ysyx_22041211_immGen my_gen (
     .inst       (inst_i),
-    .imm        (imm_o)
+    .imm        (imm)
 );
+
     // ysyx_22041211_MuxKeyWithDefault #(4, 7, 2) mux_memToReg ({}, opcode, 2'b00, {
     //     7'b0000011, 2'b01,  // I-type lb lh lw lbu lhu
     //     7'b1100111, 2'b10,  // jalr

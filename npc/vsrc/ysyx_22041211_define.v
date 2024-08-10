@@ -8,7 +8,18 @@
 `define TYPE_U_LUI_OPCODE   7'b0010111
 `define TYPE_U_AUIPC_OPCODE 7'b0110111
 
-`define EN_REG_WRITE    1'b1
+`define TYPE_B_OPCODE       7'b1100011
+`define TYPE_B_BEQ_FUNC3    3'b000
+
+`define BRANCH_BEQ          3'b001 
+`define BRANCH_BNE          3'b010  
+`define BRANCH_BLT          3'b011 
+`define BRANCH_BGE          3'b100 
+`define BRANCH_BLTU         3'b101 
+`define BRANCH_BGEU         3'b110 
+
+`define EN_REG_WRITE        1'b1
+`define EN_BRANCH_JMP       1'b1
 
 // `define TYPE_I_OPCODE 7'b0000011
 // `define TYPE_I_OPCODE 7'b0000011

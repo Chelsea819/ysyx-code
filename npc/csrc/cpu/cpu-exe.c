@@ -11,7 +11,15 @@
 
 word_t expr(char *e, bool *success);
 Decode s;
-Decode diff = {0x80000000,0x80000000,0x80000000};
+
+#ifdef CONFIG_DIFFTEST
+// store the last pc
+static struct diff_pc{
+  paddr_t pc;
+  paddr_t dnpc;
+}diff;
+#endif
+
 extern vluint64_t sim_time;
 extern TOP_NAME *dut; extern VerilatedVcdC *m_trace;
 CPU_state cpu = {};
@@ -19,6 +27,15 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 bool ifbreak = false;
+
+extern "C" void pc_get(paddr_t pc, paddr_t dnpc){
+  cpu.pc = pc;
+  # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
+    s.pc = pc;
+    s.dnpc = dnpc;
+  #endif
+}
+
 
 #ifdef CONFIG_FTRACE
 
@@ -152,7 +169,7 @@ void ifebreak_func(int inst){
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
-static void trace_and_difftest(vaddr_t dnpc){
+static void trace_and_difftest(){
   
 #ifdef CONFIG_ITRACE_COND
   if (CONFIG_ITRACE_COND)
@@ -188,11 +205,12 @@ static void trace_and_difftest(vaddr_t dnpc){
     index = index->next;
   }
 #endif
+
 #ifdef CONFIG_DIFFTEST
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
- IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, dnpc));
+ IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
  
@@ -244,24 +262,6 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
-  //上升沿取指令
-  // if(dut->clk == 1) {
-  //   if(dut->memWrite == 1) {
-  //     printf("memWrite\n");
-  //     paddr_write(dut->ALUResult,dut->DataLen + 1,dut->storeData);
-  //   } 
-  //   // printf("common:pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
-  // }
-  // if(dut->memToReg == 1){
-	// 		dut->ReadData = paddr_read(dut->ALUResult,dut->DataLen + 1);
-	// 		dut->eval();
-	// }
-
-  // if(dut->clk == 1) dut->inst = paddr_read(dut->pc,4);
-  // dut->eval();  
-	// m_trace->dump(sim_time);
-	// sim_time++;
-
   dut->clk ^= 1;
   dut->eval();
   #ifdef CONFIG_WAVE
@@ -279,14 +279,10 @@ static void exec_once()
     NPCTRAP(dut->pc, 0);
   }
   if(dut->clk == 0 && !ifbreak)    return; 
-
-  s.pc = dut->pc;
+  #if (defined CONFIG_TRACE) || (defined CONFIG_TRACE)
   s.snpc = s.pc + 4;
-  s.dnpc = dut->rootp->ysyx_22041211_top__DOT__if_pc_next;
-  cpu.pc = s.pc;
-
-  if(s.pc == 0x80000008)
-    printf("cpu.pc addr: %p",&(cpu.pc));
+  #endif
+  // printf("inst = [0x%08x]----pc = [0x%08x]\n",*(uint32_t*)inst,cpu.pc);
 
   #ifdef CONFIG_ITRACE
   char *p = s.logbuf;
@@ -294,7 +290,7 @@ static void exec_once()
   int ilen = s.snpc - s.pc;
   int i;
   uint8_t *inst = (uint8_t *)&s.isa.inst.val;
-  // printf("inst = [0x%08x]----pc = [0x%08x]\n",*(uint32_t*)inst,cpu.pc);
+  
   for (i = ilen - 1; i >= 0; i--)
   {
     p += snprintf(p, 4, " %02x", inst[i]);
@@ -321,8 +317,6 @@ static void exec_once()
   // 根据指令判断函数调用/函数返回
 
   // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
-  // printf("s.logbuf = %s\n",s.logbuf);
-  // printf("s.isa.inst.val = 0x%08x\n",s.isa.inst.val);
   int k = 12;
   char *ins_tmp_16 = (char*)malloc(9);
   memset(ins_tmp_16, 0, 9);
@@ -469,7 +463,7 @@ static void exec_once()
           func_cur->next = func;
           func_cur = func;
         }
-        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s.dnpc);
+        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, s.pc, name, s.dnpc);
         #ifdef CONFIG_FTRACE_PASS
         if(strcmp(name,"putch") != 0) 
           for(int i = 10; i < 15; i++){
@@ -487,7 +481,7 @@ static void exec_once()
           int flag = 0;
           if (strcmp(func_cur->func_name, name) == 0)
             flag = 1;
-          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, s.pc, func_cur->func_name);
           index++;
           // printf("name:%s\n",name);
 
@@ -523,8 +517,7 @@ static void exec_once()
 }
 
 /* stimulate the way CPU works ,get commands constantly */
-static void execute(uint64_t n)
-{
+static void execute(uint64_t n) {
   for (; n > 0; n--)
   {
     exec_once();
@@ -533,12 +526,12 @@ static void execute(uint64_t n)
     //所以这里要整个往后延迟一个周期
     if(cpu.pc != 0x80000000 && dut->clk == 1) {
       // printf("inst = 0x%08x\n",dut->rootp->ysyx_22041211_top__DOT__inst);
-      trace_and_difftest(diff.dnpc);
+      trace_and_difftest();
     }
-
+  #ifdef CONFIG_DIFFTEST
     diff.pc = s.pc;
-    diff.snpc = s.snpc;
     diff.dnpc = s.dnpc;
+  #endif
     
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)

@@ -6,9 +6,11 @@
  ************************************************************************/
  `include "./ysyx_22041211_define.v"
 module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
-	input		[DATA_LEN - 1:0]		src1,
-	input		[DATA_LEN - 1:0]		src2,
-	input 		[3:0]					alu_control,
+	input		[DATA_LEN - 1:0]		src1		,
+	input		[DATA_LEN - 1:0]		src2		,
+	input 		[3:0]					alu_control	,
+	output								alu_sign_o	,
+	output								alu_zero_o	,
 	output		[DATA_LEN - 1:0]		result
 	// output								zero
 	// output								OF,		//溢出标志
@@ -33,6 +35,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		// 4'b1101, signed_a >>> src2[4:0]
 	});
 
+	assign alu_sign_o = result_tmp[31];
+	assign alu_zero_o = result_tmp == 32'b0 ;
 	assign result = result_tmp;
 
 
@@ -52,7 +56,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 
 	
 
-	// assign zero = result_tmp == 32'b0 ;
+	
 	// assign {cout,tmp} = ((alu_control == 4'b0000) ? (({1'b0,src1} + {1'b0,src2})) :
 	// 					(alu_control == 4'b0001) ? (({1'b0,src1} + {1'b0,~src2} + 1)) :
 	// 			 		(alu_control == 4'b0100) ? (({1'b0,src1} + {1'b0,~src2} + 1)) : 

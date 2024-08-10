@@ -21,7 +21,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
 
 	//my_counter
-	wire			[ADDR_LEN - 1:0]	if_pc_next	;	
+	wire			[ADDR_LEN - 1:0]	if_pc_plus_4	;
+	wire			[ADDR_LEN - 1:0]	if_branch_target_i;
+	wire			[2:0]				if_branch_type_i;
+	wire								if_branch_request_i;	
 	// wire			[ADDR_LEN - 1:0]	pcPlus		;
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
@@ -97,19 +100,26 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	assign id_inst_i = if_inst;
 
-	ysyx_22041211_counter my_counter(
-		.clk		(clk),
-		.rst		(rst),
-		.pc_next	(if_pc_next),
-		.pc			(id_pc_i)
+
+	ysyx_22041211_counter#(
+		.ADDR_LEN         ( 32 )
+	)u_ysyx_22041211_counter(
+		.clk              ( clk              ),
+		.rst              ( rst              ),
+		.branch_request_i ( if_branch_request_i ),
+		.branch_target_i  ( if_branch_target_i  ),
+		.branch_flag_i    ( |if_branch_type_i    ),
+		.pc_plus_4        ( if_pc_plus_4     ),
+		.pc               ( id_pc_i               )
 	);
+
 
 	ysyx_22041211_pcPlus#(
 		.DATA_LEN ( 32 )
 	)u_ysyx_22041211_pcPlus(
 		.pc_old ( id_pc_i ),
 		.rst    ( rst    ),
-		.pc_new  ( if_pc_next  )
+		.pc_new  ( if_pc_plus_4  )
 	);
 
 
@@ -126,35 +136,39 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	);
 
 	ysyx_22041211_decoder my_decoder(
-		.inst_i				(id_inst_i),
-		.reg1_data_i		(id_reg1_data_i),
-		.reg2_data_i		(id_reg2_data_i),
-		.pc_i       		(id_pc_i),	
-		.aluop_o    		(ex_aluop_i),	
-		.alusel_o   		(ex_alusel_i),
-		.pc_o       		(ex_pc_i),
-		.reg1_o     		(ex_reg1_i),
-		.reg2_o     		(ex_reg2_i),
-		.wd_o       		(ex_wd_i),
-		.wreg_o     		(ex_wreg_i),
-		.reg1_addr_o		(reg_raddr1_i),
-		.reg2_addr_o		(reg_raddr2_i),
-		// .reg1_read_o		(reg_re1_i),
-		// .reg2_read_o		(reg_re2_i),
-		// .inst_o     		(ex_inst_i),
-		.imm_o      		(ex_imm_i)
+		.inst_i							(id_inst_i),
+		.reg1_data_i					(id_reg1_data_i),
+		.reg2_data_i					(id_reg2_data_i),
+		.pc_i       					(id_pc_i),	
+		.aluop_o    					(ex_aluop_i),	
+		.alusel_o   					(ex_alusel_i),
+		.pc_o       					(ex_pc_i),
+		.reg1_o     					(ex_reg1_i),
+		.reg2_o     					(ex_reg2_i),
+		.wd_o       					(ex_wd_i),
+		.wreg_o     					(ex_wreg_i),
+		.reg1_addr_o					(reg_raddr1_i),
+		.reg2_addr_o					(reg_raddr2_i),
+		.branch_type_o					(if_branch_type_i),
+		.branch_target_address_o		(if_branch_target_i),
+		// .reg1_read_o					(reg_re1_i),
+		// .reg2_read_o					(reg_re2_i),
+		// .inst_o     					(ex_inst_i),
+		.imm_o      					(ex_imm_i)
 	);
 
 	ysyx_22041211_EXE my_execute(
 		.reg1_i				(ex_reg1_i),
 		.reg2_i				(ex_reg2_i),
 		.pc_i				(ex_pc_i),
-		// .inst				(ex_inst_i),
+		// .inst			(ex_inst_i),
 		.alu_control		(ex_aluop_i),
 		.alu_sel			(ex_alusel_i),		
 		.imm_i				(ex_imm_i),
 		.wd_i				(ex_wd_i),	
 		.wreg_i				(ex_wreg_i),
+		.branch_type_i		(if_branch_type_i),	
+		.branch_request_o	(if_branch_request_i),
 		.wd_o				(wb_wd_i),	
 		.wreg_o				(wb_wreg_i),	
 		.wdata_o			(wb_data_i)
