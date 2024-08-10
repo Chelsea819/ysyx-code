@@ -77,7 +77,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 					 (id_inst_i[6:0] == 7'b0110011) | //R
 					 (id_inst_i == 32'b00000000000100000000000001110011));
 	// 检测到ebreak
-    import "DPI-C" context function void ifebreak_func(int id_inst_i);
+    import "DPI-C" function void ifebreak_func(int id_inst_i);
     always @(*)
         ifebreak_func(id_inst_i);
 
