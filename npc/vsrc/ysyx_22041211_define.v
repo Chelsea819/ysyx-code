@@ -18,7 +18,7 @@
 
 `define TYPE_J_JAL_OPCODE 7'b1101111
 
-`define TYPE_S_OPCODE      7'b1100011
+`define TYPE_S_OPCODE      7'b0100011
 `define TYPE_S_SB_FUNC3    3'b000
 `define TYPE_S_SH_FUNC3    3'b001
 `define TYPE_S_SW_FUNC3    3'b010
