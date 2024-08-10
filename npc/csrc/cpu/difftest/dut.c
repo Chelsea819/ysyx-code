@@ -128,7 +128,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     for(int i = 0; i < 32; i++){
-        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],R(i));
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
     }
     printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     dut->final();
