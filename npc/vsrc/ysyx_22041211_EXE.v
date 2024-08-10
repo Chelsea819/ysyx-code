@@ -19,7 +19,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	output								branch_request_o,	
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
-    output		[DATA_LEN - 1:0]		wdata_o
+    output		[DATA_LEN - 1:0]		alu_result_o
 	// output								zero
 	// output		[DATA_LEN - 1:0]		result,
 	// output								zero
@@ -46,7 +46,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.src1				(src1),
 		.src2				(src2),
 		.alu_control		(alu_control),
-		.result				(wdata_o),
+		.result				(alu_result_o),
 		.alu_sign_o			(alu_zero),
 		.alu_zero_o 		(alu_sign)
 	);

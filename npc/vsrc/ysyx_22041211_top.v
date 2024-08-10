@@ -57,7 +57,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// wb Unit
 	wire								wb_wd_i			;
 	wire			[4:0]				wb_wreg_i		;
-	wire			[DATA_LEN - 1:0]	wb_data_i		;
+	wire			[DATA_LEN - 1:0]	wb_alu_result_i		;
 	
 	assign pc = id_pc_i;
 	// assign memToReg = memToReg_tmp;
@@ -176,18 +176,18 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.branch_request_o	(if_branch_request_i),
 		.wd_o				(wb_wd_i),	
 		.wreg_o				(wb_wreg_i),	
-		.wdata_o			(wb_data_i)
+		.alu_result_o			(wb_alu_result_i)
 	);
 
 	ysyx_22041211_wb #(
 		.DATA_LEN ( 32 )
 	)u_ysyx_22041211_wb(
-		.wd_i     ( wb_wd_i     ),
-		.wreg_i   ( wb_wreg_i   ),
-		.wdata_i  ( wb_data_i  	),
-		.wd_o     ( reg_wen_i   ),
-		.wreg_o   ( reg_waddr_i ),
-		.wdata_o  ( reg_wdata_i )
+		.wd_i     		( wb_wd_i     ),
+		.wreg_i   		( wb_wreg_i   ),
+		.alu_result_i   ( wb_alu_result_i  	),
+		.wd_o     		( reg_wen_i   ),
+		.wreg_o   		( reg_waddr_i ),
+		.wdata_o  		( reg_wdata_i )
 	);
 
 
