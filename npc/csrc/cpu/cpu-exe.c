@@ -28,7 +28,7 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 bool ifbreak = false;
 
-extern "C" void pc_get(paddr_t pc, paddr_t dnpc){
+extern "C" void pc_get(int pc, int dnpc){
   cpu.pc = pc;
   # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
     s.pc = pc;

@@ -17,11 +17,15 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 );	
 	wire 		[ADDR_LEN - 1:0]			pc_next;
 
+	
+
 	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
 	assign pc_next = (branch_flag_i & branch_request_i) ? branch_target_i : pc_plus_4;
 	
 	always @ (posedge clk) begin
 		pc <= pc_next;
 	end
-
+	import "DPI-C" function void pc_get(int pc, int dnpc);
+		always @(*)
+			pc_get(pc, pc_next);
 endmodule
