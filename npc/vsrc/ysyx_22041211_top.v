@@ -77,7 +77,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 				     ({id_inst_i[14:12],id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
 					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
 					//  ((id_inst_i[6:0] == 7'b0000011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
-					//  ((id_inst_i[6:0] == 7'b0100011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010))	|		//S-sb sh sw
+					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
 					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3)) |	 //I-addi slti sltiu xori ori andi
 					//  ((id_inst_i[6:0] == 7'b0010011) & ((id_inst_i[14:12] == 3'b001 && id_inst_i[31:26] == 6'b000000) | (id_inst_i[14:12] == 3'b101 && (id_inst_i[31:26] == 6'b000000 || id_inst_i[31:26] == 6'b010000)) )) |	 //I-slli srli srai
 					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
