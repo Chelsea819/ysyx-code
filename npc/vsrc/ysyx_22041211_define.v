@@ -18,6 +18,21 @@
 
 `define TYPE_J_JAL_OPCODE 7'b1101111
 
+`define TYPE_S_OPCODE      7'b1100011
+`define TYPE_S_SB_FUNC3    3'b000
+`define TYPE_S_SH_FUNC3    3'b001
+`define TYPE_S_SW_FUNC3    3'b010
+
+`define STORE_SB_8      2'b11
+`define STORE_SH_16     2'b01
+`define STORE_SW_32     2'b10
+`define STORE_INVALID   2'b00
+
+`define STORE_SB_MASK     32'h000000ff
+`define STORE_SH_MASK     32'h0000ffff
+`define STORE_SW_MASK     32'hffffffff
+
+
 `define BRANCH_INVALID      3'b000 
 `define BRANCH_BEQ          3'b001 
 `define BRANCH_BNE          3'b010  

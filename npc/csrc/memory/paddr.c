@@ -69,7 +69,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
   #endif
   return paddr_read((paddr_t)raddr, len);
 }
-extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
+extern "C" void pmem_write_task(int waddr, int wdata) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
@@ -87,14 +87,15 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
     #endif
   #endif
   // else {
-    int len = 0;
-    switch (wmask){
-      case 0x1: len = 1; break;
-      case 0x3: len = 2; break;
-      case 0xf: len = 4; break;
-      IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
-      IFDEF(CONFIG_RT_CHECK, default: assert(0));
-    }
+    int len = 0; 
+    len = 4;
+    // switch (wmask){
+    //   case 0x1: len = 1; break;
+    //   case 0x3: len = 2; break;
+    //   case 0xf: len = 4; break;
+    //   IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
+    //   IFDEF(CONFIG_RT_CHECK, default: assert(0));
+    // }
     paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
   // }
 }

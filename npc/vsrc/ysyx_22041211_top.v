@@ -53,8 +53,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	ex_pc_i			;
 	wire								ex_wd_i			;
 	wire			[4:0]				ex_wreg_i		;
+	wire			[1:0]				ex_store_type_i	;
 
 	// wb Unit
+	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
+	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
 	wire			[4:0]				wb_wreg_i		;
 	wire			[DATA_LEN - 1:0]	wb_alu_result_i		;
@@ -85,7 +88,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
         ifebreak_func(id_inst_i);
 
 	import "DPI-C" function int pmem_read_task(input int raddr, input byte wmask);
-	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
+	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
 	
 	//取指令
 	always @(*) begin
@@ -158,6 +161,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.branch_target_o				(if_branch_target_i),
 		.jmp_flag_o						(if_jmp_flag_i),
 		.jmp_target_o					(if_jmp_target_i),
+		.store_type_o					(ex_store_type_i),
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
@@ -173,10 +177,13 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wd_i				(ex_wd_i),	
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
+		.store_type_i		(ex_store_type_i),	
 		.branch_request_o	(if_branch_request_i),
 		.wd_o				(wb_wd_i),	
-		.wreg_o				(wb_wreg_i),	
-		.alu_result_o			(wb_alu_result_i)
+		.wreg_o				(wb_wreg_i),
+		.mem_wen_o			(wb_mem_wen_i),	
+		.mem_wdata_o		(wb_mem_wdata_i),	
+		.alu_result_o		(wb_alu_result_i)
 	);
 
 	ysyx_22041211_wb #(
@@ -185,6 +192,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wd_i     		( wb_wd_i     ),
 		.wreg_i   		( wb_wreg_i   ),
 		.alu_result_i   ( wb_alu_result_i  	),
+		.mem_wen_i     	( wb_mem_wen_i   ),
+		.mem_wdata_i   	( wb_mem_wdata_i ),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )

@@ -15,8 +15,11 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input       [DATA_LEN - 1:0]        imm_i		,
 	input		                		wd_i		,
     input		[4:0]		            wreg_i		,
+	input		[1:0]					store_type_i,
 	input		[2:0]					branch_type_i,
 	output								branch_request_o,	
+    output		                		mem_wen_o		,
+	output		[DATA_LEN - 1:0]		mem_wdata_o	,
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
     output		[DATA_LEN - 1:0]		alu_result_o
@@ -30,8 +33,15 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	wire [31:0] src2;
 	wire 		alu_zero;
 	wire 		alu_sign;
+	wire [31:0] mem_data_mask;
 	assign wd_o = wd_i;
 	assign wreg_o = wreg_i;
+	assign mem_wen_o = |store_type_i;
+	assign mem_data_mask = (store_type_i == `STORE_SB_8) ? `STORE_SB_MASK :
+						   (store_type_i == `STORE_SH_16) ? `STORE_SH_MASK :
+						   (store_type_i == `STORE_SW_32) ? `STORE_SW_MASK :
+						   32'b0;
+	assign mem_wdata_o = reg2_i & mem_data_mask;
 
 	ysyx_22041211_MuxKeyWithDefault #(4,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,
