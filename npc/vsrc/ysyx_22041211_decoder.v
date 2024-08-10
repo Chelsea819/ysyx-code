@@ -54,11 +54,11 @@ module ysyx_22041211_decoder(
 // 			{7'b0010011, 3'b00, 7'b00}, {1'b1,4'b0000,4'b0000}              // addi
 //     });
 
-assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7}  == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})   ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :        // R-add
-                                   ({opcode, func3}         == {`TYPE_I_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  :        // I-addi
-                                   ({opcode, func3}         == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})  ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}}:        // B-beq
-                                   ({opcode}                == {`TYPE_U_AUIPC_OPCODE})               ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :        // U-auipc
-                                   ({opcode}                == {`TYPE_U_LUI_OPCODE})                 ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;  // U-lui          
+assign {wd_o, aluop_o, alusel_o} = ({opcode, func3, func7}  == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}} :        // R-add
+                                   ({opcode, func3}         == {`TYPE_I_BASE_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1}}  :        // I-addi
+                                   ({opcode, func3}         == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1}}:        // B-beq
+                                   ({opcode}                == {`TYPE_U_AUIPC_OPCODE})                    ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC}}    :        // U-auipc
+                                   ({opcode}                == {`TYPE_U_LUI_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO}}  : 9'b0;  // U-lui          
 
 assign  {branch_type_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})  ? {`BRANCH_BEQ}: 3'b0;       // B-beq
 
