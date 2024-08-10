@@ -21,11 +21,9 @@
 static const uint32_t img [] = {
   // 0x00010537,  // lui	a0,0x10
   // 0x01050513,  // auipc t0,0
-  0x00010537,  // addi    x[1] = 0 + 1
+  // 0x00010537,  // addi    x[1] = 0 + 1
   // 0x01050513,  // auipc t0,0
   0x00100093,  // addi    x[1] = 0 + 1
-  0xbbc68693,          	// addi	a3,a3,-1092
-  0xc1040413,          	// addi	s0,s0,-1008
   0x01440413,          	// addi	s0,s0,20
   0x00178793,          	// addi	a5,a5,1
   0x00f586b3,          	// add	a3,a1,a5
