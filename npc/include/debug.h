@@ -32,10 +32,10 @@
   //Assert宏用于调试检查,如果条件不满足则打印信息并退出
 #define Assert(cond, format, ...) \
   do { \
+    dut->final();m_trace->close(); \
     if (!(cond)) { \
       MUXDEF(CONFIG_TARGET_AM, printf(ANSI_FMT(format, ANSI_FG_RED) "\n", ## __VA_ARGS__), \
         (fflush(stdout), fprintf(stderr, ANSI_FMT(format, ANSI_FG_RED) "\n", ##  __VA_ARGS__))); \
-      dut->final();m_trace->close(); \
       assert(cond); \
     } \
   } while (0)
