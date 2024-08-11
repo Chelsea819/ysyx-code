@@ -54,13 +54,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire								ex_wd_i			;
 	wire			[4:0]				ex_wreg_i		;
 	wire			[1:0]				ex_store_type_i	;
+	wire			[2:0]				ex_load_type_i	;
 
 	// wb Unit
 	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
 	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
 	wire			[4:0]				wb_wreg_i		;
-	wire			[DATA_LEN - 1:0]	wb_alu_result_i		;
+	wire			[DATA_LEN - 1:0]	wb_alu_result_i	;
+	wire			[2:0]				wb_load_type_i	;
 	
 	assign pc = id_pc_i;
 	// assign memToReg = memToReg_tmp;
@@ -74,9 +76,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	assign invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (id_inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
-				     ({id_inst_i[14:12],id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
+				     ({id_inst_i[14:12], id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
 					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
-					//  ((id_inst_i[6:0] == 7'b0000011) & (id_inst_i[14:12] == 3'b000 | id_inst_i[14:12] == 3'b001 | id_inst_i[14:12] == 3'b010 | id_inst_i[14:12] == 3'b100 | id_inst_i[14:12] == 3'b101)) |	 //I-lb lh lw lbu lhu
+					 ((id_inst_i[6:0] == `TYPE_I_LOAD_OPCODE) & (id_inst_i[14:12] == `TYPE_I_LB_FUNC3 | id_inst_i[14:12] == `TYPE_I_LH_FUNC3 | id_inst_i[14:12] == `TYPE_I_LW_FUNC3 | id_inst_i[14:12] == `TYPE_I_LBU_FUNC3 | id_inst_i[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
 					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
 					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3)) |	 //I-addi slti sltiu xori ori andi
 					//  ((id_inst_i[6:0] == 7'b0010011) & ((id_inst_i[14:12] == 3'b001 && id_inst_i[31:26] == 6'b000000) | (id_inst_i[14:12] == 3'b101 && (id_inst_i[31:26] == 6'b000000 || id_inst_i[31:26] == 6'b010000)) )) |	 //I-slli srli srai
@@ -162,6 +164,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_flag_o						(if_jmp_flag_i),
 		.jmp_target_o					(if_jmp_target_i),
 		.store_type_o					(ex_store_type_i),
+		.load_type_o					(ex_load_type_i),
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
@@ -178,11 +181,13 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
 		.store_type_i		(ex_store_type_i),	
+		.load_type_i		(ex_load_type_i),
 		.branch_request_o	(if_branch_request_i),
 		.wd_o				(wb_wd_i),	
 		.wreg_o				(wb_wreg_i),
 		.mem_wen_o			(wb_mem_wen_i),	
 		.mem_wdata_o		(wb_mem_wdata_i),	
+		.load_type_o		(wb_load_type_i),
 		.alu_result_o		(wb_alu_result_i)
 	);
 
@@ -194,6 +199,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.alu_result_i   ( wb_alu_result_i  	),
 		.mem_wen_i     	( wb_mem_wen_i   ),
 		.mem_wdata_i   	( wb_mem_wdata_i ),
+		.load_type_i	(wb_load_type_i),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )

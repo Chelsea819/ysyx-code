@@ -16,7 +16,9 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		                		wd_i		,
     input		[4:0]		            wreg_i		,
 	input		[1:0]					store_type_i,
+	input       [2:0]                   load_type_i ,
 	input		[2:0]					branch_type_i,
+	output      [2:0]                   load_type_o ,
 	output								branch_request_o,	
     output		                		mem_wen_o		,
 	output		[DATA_LEN - 1:0]		mem_wdata_o	,
@@ -42,6 +44,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 						   (store_type_i == `STORE_SW_32) ? `STORE_SW_MASK :
 						   32'b0;
 	assign mem_wdata_o = reg2_i & mem_data_mask;
+	assign load_type_o = load_type_i;
 
 	ysyx_22041211_MuxKeyWithDefault #(4,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,

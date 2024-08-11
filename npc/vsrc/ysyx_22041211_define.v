@@ -32,6 +32,24 @@
 `define STORE_SH_MASK     32'h0000ffff
 `define STORE_SW_MASK     32'hffffffff
 
+`define TYPE_I_LOAD_OPCODE 7'b0000011
+`define TYPE_I_LB_FUNC3    3'b000
+`define TYPE_I_LH_FUNC3    3'b001
+`define TYPE_I_LW_FUNC3    3'b010
+`define TYPE_I_LBU_FUNC3   3'b100
+`define TYPE_I_LHU_FUNC3   3'b101
+
+`define LOAD_LB_8      3'b011
+`define LOAD_LH_16     3'b001
+`define LOAD_LW_32     3'b010
+`define LOAD_LBU_8     3'b111
+`define LOAD_LHU_16    3'b101
+`define LOAD_INVALID   3'b000
+
+`define LOAD_MASK_8     8'b1
+`define LOAD_MASK_16    8'b11
+`define LOAD_MASK_32    8'b1111
+
 
 `define BRANCH_INVALID      3'b000 
 `define BRANCH_BEQ          3'b001 
