@@ -42,8 +42,8 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
             $display("mem_to_reg = %b",mem_to_reg);
         end
         else if(mem_to_reg) begin
-            $display("mem_to_reg = %b",mem_to_reg); mem_rdata_rare = 0;
-            //mem_rdata_rare = pmem_read_task(mem_raddr, mem_rmask);
+            $display("mem_to_reg = %b",mem_to_reg); // mem_rdata_rare = 0;
+            mem_rdata_rare = pmem_read_task(mem_raddr, mem_rmask);
         end else begin
          $display("mem_to_reg = %b",mem_to_reg);
             mem_rdata_rare = 0;
