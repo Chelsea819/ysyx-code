@@ -35,8 +35,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     // 访存指令
     import "DPI-C" function int pmem_read_task(input int raddr, input byte wmask);
 	always @(*) begin
-  		if (mem_to_reg) // 有读写请求时
+  		if (mem_to_reg) begin// 有读写请求时
+            $display("pmem_read_task");
    			mem_rdata_rare = pmem_read_task(mem_raddr, mem_rmask);
+        end
   		else
     		mem_rdata_rare = 0;
 	end
