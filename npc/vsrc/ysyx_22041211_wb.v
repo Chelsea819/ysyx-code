@@ -32,9 +32,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
                        (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `LOAD_MASK_16 :
                        (load_type_i == `LOAD_LW_32)                                ? `LOAD_MASK_32 : 
                        0;
-    assign mem_rdata_rare = mem_raddr != 0 ? pmem_read_task(mem_raddr, mem_rmask) : 0;
+   
     // 访存指令
-    import "DPI-C" function int pmem_read_task(input int raddr, input byte wmask);
+    import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
+     assign mem_rdata_rare = mem_raddr != 0 ? pmem_read_task(mem_raddr, mem_rmask) : 0;
 	// always @(*) begin
         
     //     if(rst) 
