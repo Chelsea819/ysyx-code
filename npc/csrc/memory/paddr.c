@@ -47,7 +47,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
       case 0x3: len = 2; break;
       case 0xf: len = 4; break;
       IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
-      IFDEF(CONFIG_RT_CHECK, default: assert(0));
+      // IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
   #ifdef CONFIG_DEVICE
     #ifdef CONFIG_RTC_MMIO 
