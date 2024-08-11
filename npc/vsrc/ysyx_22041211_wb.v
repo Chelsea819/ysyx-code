@@ -38,9 +38,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
      //assign mem_rdata_rare = mem_raddr != 0 ? pmem_read_task(mem_raddr, mem_rmask) : 0;
 	always @(*) begin
         
-        if(rst) 
-            mem_rdata_rare = 0;
-        else if(mem_to_reg ) begin
+        // if(rst) 
+        //     mem_rdata_rare = 0;
+        if( ~rst & mem_to_reg ) begin
             $display("rst = %b",rst); //mem_rdata_rare = 0;
             mem_rdata_rare = pmem_read_task(mem_raddr, mem_rmask);
         end else 
