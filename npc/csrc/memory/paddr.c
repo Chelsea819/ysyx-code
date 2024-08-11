@@ -40,7 +40,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
   // printf("read!\n");
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
-  // printf("rdata = 0x%08x\n",rdata);
+  printf("raddr = 0x%08x\n",raddr);
   int len = 0;
   switch (wmask){
       case 0x1: len = 1; break;
