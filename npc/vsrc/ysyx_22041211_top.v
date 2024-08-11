@@ -65,15 +65,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[2:0]				wb_load_type_i	;
 	
 	assign pc = id_pc_i;
-	// assign memToReg = memToReg_tmp;
-	
-	// 做位拓展 ReadData_tmp是处理好的最终读取到的数据
-	// assign ReadData_tmp = (DataLen == 3'b100) ? ReadData : 
-	// 					  (DataSign == 1'b0 && DataLen == 3'b001) ? {{24{1'b0}}, ReadData[7:0]} : 
-	// 					  (DataSign == 1'b0 && DataLen == 3'b010) ? {{16{1'b0}}, ReadData[15:0]} : 
-	// 					  (DataLen == 3'b001) ? {{24{ReadData[7]}}, ReadData[7:0]}:				//0--1 8bits
-	// 					  (DataLen == 3'b010) ? {{16{ReadData[15]}}, ReadData[15:0]}: 32'b0;    //1--2 16bits
-
 	assign invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (id_inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
 				     ({id_inst_i[14:12], id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
@@ -105,9 +96,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	always @(*) begin
 			$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, if_inst, invalid);
 	end
-
 	assign id_inst_i = if_inst;
-
 
 	ysyx_22041211_counter#(
 		.ADDR_LEN         ( 32 )
