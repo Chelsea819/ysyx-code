@@ -86,6 +86,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	//取指令
 	always @(*) begin
 		if(~rst) begin
+			$display("rst = %b",rst);
         	if_inst = pmem_read_task(id_pc_i, 8'b00001111);
 		end
 		else  begin
