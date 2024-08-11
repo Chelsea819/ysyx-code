@@ -4,6 +4,14 @@
 
 `define TYPE_I_BASE_OPCODE 7'b0010011
 `define TYPE_I_ADDI_FUNC3 3'b000
+`define TYPE_I_XORI_FUNC3 3'b100
+`define TYPE_I_ORI_FUNC3  3'b110
+`define TYPE_I_ANDI_FUNC3 3'b111
+`define TYPE_I_SLLI_FUNC3_IMM 10'b001_0000000
+`define TYPE_I_SRLI_FUNC3_IMM 10'b101_0000000
+`define TYPE_I_SRAI_FUNC3_IMM 10'b101_0100000
+
+// `define TYPE_I_ADDI_FUNC3 3'b000
 
 `define TYPE_I_JALR_OPCODE 7'b1100111
 `define TYPE_I_JALR_FUNC3 3'b0
@@ -78,6 +86,14 @@
 `define ALU_SEL2_4     2'b11
 
 // alu_op operator
-`define ALU_OP_ADD  4'b0000
-`define ALU_OP_SUB  4'b0001
+`define ALU_OP_ADD          4'b0000
+`define ALU_OP_SUB          4'b0001
+`define ALU_OP_XOR          4'b0010
+`define ALU_OP_OR           4'b0011
+`define ALU_OP_AND          4'b0100
+`define ALU_OP_RIGHT_LOGIC  4'b0101
+`define ALU_OP_RIGHT_ARITH  4'b0110
+`define ALU_OP_LEFT_LOGIC   4'b0111
+`define ALU_OP_LESS_SIGNED    4'b1000
+`define ALU_OP_LESS_UNSIGNED   4'b1001
 // `define TYPE_ALU_OP_PC   4'b0010

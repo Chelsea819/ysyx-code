@@ -9,7 +9,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1		,
 	input		[DATA_LEN - 1:0]		src2		,
 	input 		[3:0]					alu_control	,
-	output								alu_sign_o	,
+	output								alu_less_o, // 其实是用来判断有没有出现借位的
 	output								alu_zero_o	,
 	output		[DATA_LEN - 1:0]		result
 	// output								zero
@@ -17,10 +17,23 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	// output								CF		//进/借位标志
 );
 	wire		[DATA_LEN - 1:0]		result_tmp;
+	wire		[DATA_LEN - 1:0]		s_compare_result;
+	wire		[DATA_LEN - 1:0]		u_compare_result;
+	wire		[DATA_LEN - 1:0]		sub_result;
+	// wire 								alu_sign;
+	wire 								sub_cout;
 	
-	ysyx_22041211_MuxKeyWithDefault #(2,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
-		`ALU_OP_ADD, src1 + src2,
-		`ALU_OP_SUB, src1 + (~src2 + 1)
+	ysyx_22041211_MuxKeyWithDefault #(10,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
+		`ALU_OP_ADD, 			src1 + src2,
+		`ALU_OP_SUB, 			sub_result, 
+		`ALU_OP_XOR, 			src1 ^ src2,
+		`ALU_OP_OR,  			src1 | src2,
+		`ALU_OP_AND, 			src1 & src2,
+		`ALU_OP_RIGHT_LOGIC, 	src1 >> src2[4:0],
+		`ALU_OP_RIGHT_ARITH,  	$signed(src1) >>> src2[4:0],
+		`ALU_OP_LEFT_LOGIC, 	src1 << src2[4:0],
+		`ALU_OP_LESS_SIGNED,  	s_compare_result,
+		`ALU_OP_LESS_UNSIGNED, 	u_compare_result
 		// 4'b0010, src1 << src2,
 		// 4'b0011, signed_a + (~signed_b + 1),        //signed_a < signed_b ? 32'b1 : 32'b0,
 		// 4'b0100, src1 + (~src2 + 1),				//src1 < src2 ? 32'b1 : 32'b0,
@@ -35,9 +48,15 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		// 4'b1101, signed_a >>> src2[4:0]
 	});
 
-	assign alu_sign_o = result_tmp[31];
-	assign alu_zero_o = result_tmp == 32'b0 ;
+	// assign alu_sign = sub_result[31];
+	assign alu_zero_o = (result_tmp == 32'b0);
 	assign result = result_tmp;
+	assign s_compare_result = {{31{1'b0}}, sub_result[31]};
+	assign u_compare_result = {{31{1'b0}}, ~sub_cout};
+	assign {sub_cout, sub_result} = {1'b0, src1} + (~{1'b1, src2} + 1);
+	assign alu_less_o = (alu_control == `ALU_OP_LESS_SIGNED) ? sub_result[31] : 
+						   (alu_control == `ALU_OP_LESS_UNSIGNED) ? ~sub_cout : 
+						   result_tmp[31];
 
 
 	// wire signed [31:0] signed_a  ;

@@ -34,7 +34,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	wire [31:0] src1;
 	wire [31:0] src2;
 	wire 		alu_zero;
-	wire 		alu_sign;
+	wire 		alu_less;
 	wire [31:0] mem_data_mask;
 	assign wd_o = wd_i;
 	assign wreg_o = wreg_i;
@@ -49,10 +49,10 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	ysyx_22041211_MuxKeyWithDefault #(4,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,
 		`BRANCH_BNE, ~alu_zero,
-		`BRANCH_BLT, alu_sign,
-		`BRANCH_BGE, ~alu_sign
+		`BRANCH_BLT, alu_less,
+		`BRANCH_BGE, ~alu_less
 		// `BRANCH_BLTU, ~alu_zero,
-		// `BRANCH_BGEU, alu_sign
+		// `BRANCH_BGEU, alu_less
 	});
 
 	ysyx_22041211_ALU my_alu(
@@ -60,8 +60,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.src2				(src2),
 		.alu_control		(alu_control),
 		.result				(alu_result_o),
-		.alu_sign_o			(alu_zero),
-		.alu_zero_o 		(alu_sign)
+		.alu_less_o			(alu_zero),
+		.alu_zero_o 		(alu_less)
 	);
 
 	ysyx_22041211_MuxKeyWithDefault #(3,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
