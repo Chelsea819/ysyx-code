@@ -80,6 +80,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
     always @(*)
         ifebreak_func(id_inst_i);
 
+	// 为ITRACE提供指令
+    import "DPI-C" context function void inst_get(int inst);
+    always @(*)
+        inst_get(id_inst_i);
 
 	import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
