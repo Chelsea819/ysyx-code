@@ -24,8 +24,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire 								sub_cout;
 
 	always @(*) begin
-		$display("src1 = [%b], src2 = [%b] alu_zero_o = [%b]",src1, src2, alu_zero_o);
-		$display("src1 = [%h], src2 = [%h]",src1, src2);
+		$display("src1 = [%b], src2 = [%b] alu_zero_o = [%b]  alu_less = [%b]",src1, src2, alu_zero_o, alu_less_o);
+		$display("src1 = [%h], src2 = [%h] sub_result = [%b] s_compare_result = [%b]",src1, src2, sub_result, s_compare_result);
 	end
 	
 	ysyx_22041211_MuxKeyWithDefault #(10,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
