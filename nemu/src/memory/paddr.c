@@ -32,14 +32,14 @@ static word_t pmem_read(paddr_t addr, int len) {
   
   word_t ret = host_read(guest_to_host(addr), len);
   #ifdef CONFIG_MTRACE
-      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,ret);
+      // Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,ret);
   #endif
   return ret;
 }
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
   #ifdef CONFIG_MTRACE
-  // Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
+  Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
   #endif
   host_write(guest_to_host(addr), len, data);
 }
