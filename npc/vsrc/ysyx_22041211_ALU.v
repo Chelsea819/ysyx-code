@@ -60,8 +60,8 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	assign s_compare_result =  {{31{1'b0}}, ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o}; // ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o
 	assign u_compare_result = {{31{1'b0}}, ~sub_cout};
 	assign {sub_cout, sub_result} = {1'b0, src1} + (~{1'b1, src2} + 1);
-	assign alu_less_o = (alu_control == `ALU_OP_LESS_SIGNED) ? sub_result[31] : 
-						   (alu_control == `ALU_OP_LESS_UNSIGNED) ? ~sub_cout : 
+	assign alu_less_o = (alu_control == `ALU_OP_LESS_SIGNED) ? s_compare_result[0] : 
+						   (alu_control == `ALU_OP_LESS_UNSIGNED) ? u_compare_result[0] : 
 						   result_tmp[31];
 
 
