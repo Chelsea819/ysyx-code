@@ -47,7 +47,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	assign load_type_o = load_type_i;
 
 	always @(*) begin
-		$display("branch_request_o = [%b]",branch_request_o);
+		$display("branch_request_o = [%b] branch_type_i = [%b] alu_zero = [%b]",branch_request_o,branch_type_i,alu_zero);
 	end
 
 	ysyx_22041211_MuxKeyWithDefault #(4,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
