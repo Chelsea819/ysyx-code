@@ -259,10 +259,8 @@ void sdb_set_batch_mode()
 /* Receive commands from user. */
 void sdb_mainloop()
 {
-  printf("sdb_mainloop\n");
   if (is_batch_mode)
   {
-    printf("batch\n");
     cmd_c(NULL);
     //return;
   }
