@@ -261,6 +261,7 @@ void sdb_mainloop()
 {
   if (is_batch_mode)
   {
+    printf("batch\n");
     cmd_c(NULL);
     //return;
   }
