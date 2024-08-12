@@ -9,7 +9,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1		,
 	input		[DATA_LEN - 1:0]		src2		,
 	input 		[3:0]					alu_control	,
-	output								alu_less_o, // 其实是用来判断有没有出现借位的
+	output								alu_less_o	, // 其实是用来判断有没有出现借位的
 	output								alu_zero_o	,
 	output		[DATA_LEN - 1:0]		result
 );
@@ -19,10 +19,10 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire		[DATA_LEN - 1:0]		sub_result;
 	wire 								sub_cout;
 
-	always @(*) begin
-		$display("src1 = [%b], src2 = [%b] alu_zero_o = [%b]  alu_less = [%b]",src1, src2, alu_zero_o, alu_less_o);
-		$display("src1 = [%h], src2 = [%h] sub_result = [%b] s_compare_result = [%b]",src1, src2, sub_result, s_compare_result);
-	end
+	// always @(*) begin
+	// 	$display("src1 = [%b], src2 = [%b] alu_zero_o = [%b]  alu_less = [%b]",src1, src2, alu_zero_o, alu_less_o);
+	// 	$display("src1 = [%h], src2 = [%h] sub_result = [%b] s_compare_result = [%b]",src1, src2, sub_result, s_compare_result);
+	// end
 	
 	ysyx_22041211_MuxKeyWithDefault #(10,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		`ALU_OP_ADD, 			src1 + src2,
@@ -46,12 +46,16 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	Sub = 1 表示减法运算，此时CF = ~Cout
 	Sub = 0 表示加法运算，此时CF = Cout
 	 */
+
 	wire [31:0] get_second_cout;
 	assign get_second_cout = {1'b0, src1[30:0]} + (~{1'b1, src2[30:0]} + 1); // get the count to bit-31th
 	assign alu_zero_o = (sub_result == 32'b0);
 	assign result = result_tmp;
-	assign s_compare_result =  {{31{1'b0}}, ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o};
+	assign s_compare_result =  {{31{1'b0}}, ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o}; 
+	assign u_compare_result = {{31{1'b0}}, ~sub_cout};
+	assign {sub_cout, sub_result} = {1'b0, src1} + (~{1'b1, src2} + 1);
 	assign alu_less_o = (alu_control == `ALU_OP_LESS_SIGNED) ? s_compare_result[0] : 
 						(alu_control == `ALU_OP_LESS_UNSIGNED) ? u_compare_result[0] : 
 						result_tmp[31];
+
 endmodule
