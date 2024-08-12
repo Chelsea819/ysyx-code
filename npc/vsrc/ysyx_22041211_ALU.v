@@ -52,11 +52,12 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 		// 4'b1100, src1 << src2[4:0],
 		// 4'b1101, signed_a >>> src2[4:0]
 	});
-
+	wire [31:0] get_second_cout;
+	assign get_second_cout = {1'b0, src1[30:0]} + (~{1'b1, src2[30:0]} + 1);
 	// assign alu_sign = sub_result[31];
 	assign alu_zero_o = (sub_result == 32'b0);
 	assign result = result_tmp;
-	assign s_compare_result = {{31{1'b0}}, sub_result[31]};
+	assign s_compare_result =  {{31{1'b0}}, ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o}; // ((get_second_cout[31] ^ sub_cout) != sub_result[31]) & ~alu_zero_o
 	assign u_compare_result = {{31{1'b0}}, ~sub_cout};
 	assign {sub_cout, sub_result} = {1'b0, src1} + (~{1'b1, src2} + 1);
 	assign alu_less_o = (alu_control == `ALU_OP_LESS_SIGNED) ? sub_result[31] : 
