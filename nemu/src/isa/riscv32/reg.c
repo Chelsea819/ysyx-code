@@ -39,7 +39,7 @@ word_t isa_reg_str2val(char *s, bool *success) {
   if(strcmp("pc",s) == 0){
       *success = true;
       //printf("strcmp(pc,s) == 0\n");
-      free(s);
+      // free(s);
       return cpu.pc;
   }  
   for(int i = 0; i < 32; i++){
