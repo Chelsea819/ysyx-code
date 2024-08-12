@@ -24,7 +24,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	wire 								sub_cout;
 
 	always @(*) begin
-		$display("src1 = [%b], src2 = [%b]",src1, src2);
+		$display("src1 = [%b], src2 = [%b] alu_zero_o = [%b]",src1, src2, alu_zero_o);
 		$display("src1 = [%h], src2 = [%h]",src1, src2);
 	end
 	
