@@ -46,9 +46,9 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	assign mem_wdata_o = reg2_i & mem_data_mask;
 	assign load_type_o = load_type_i;
 
-	always @(*) begin
-		$display("branch_request_o = [%b] branch_type_i = [%b] alu_zero = [%b] alu_less = [%b]",branch_request_o,branch_type_i,alu_zero, alu_less);
-	end
+	// always @(*) begin
+	// 	$display("branch_request_o = [%b] branch_type_i = [%b] alu_zero = [%b] alu_less = [%b]",branch_request_o,branch_type_i,alu_zero, alu_less);
+	// end
 
 	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,
