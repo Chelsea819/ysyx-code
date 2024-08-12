@@ -17,6 +17,11 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 );
 	wire		[DATA_LEN - 1:0]		result_tmp;
 	
+	always @(*) begin
+		$display("src1 = [%b], src2 = [%b]",src1, src2);
+		$display("src1 = [%h], src2 = [%h]",src1, src2);
+	end
+
 	ysyx_22041211_MuxKeyWithDefault #(2,4,32) ALUmode (result_tmp, alu_control, 32'b0, {
 		4'b0000, src1 + src2,
 		4'b0001, src1 + (~src2 + 1)
