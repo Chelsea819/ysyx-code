@@ -252,12 +252,10 @@ static int cmd_help(char *args)
   }
   return 0;
 }
-// #define ANTO_Q 1
 void sdb_set_batch_mode()
 {
   is_batch_mode = true;
 }
-// #define AUTO_Q 1
 /* Receive commands from user. */
 void sdb_mainloop()
 {
