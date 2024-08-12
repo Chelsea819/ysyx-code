@@ -76,10 +76,10 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
 
 	//取指令
-	always @(posedge clk) begin
-        inst <= pmem_read_task(pc_next, 8'b00001111);
-		$display("pc: [%h] inst: [%h]",pc_next, inst);
-	end
+	// always @(posedge clk) begin
+    //     inst <= pmem_read_task(pc_next, 8'b00001111);
+	// 	$display("pc: [%h] inst: [%h]",pc_next, inst);
+	// end
 
 	// wire	[31:0]	inst_pc;
 	// assign inst_pc = ((pc_tmp < 32'h80000000) ? 32'h80000000 : pc_next);

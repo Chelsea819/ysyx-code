@@ -19,7 +19,6 @@ module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg [DATA_WIDTH - 1:0] rf [ADDR_WIDTH - 1:0];
 
 	always @(posedge clk) begin
-		$display("wdata : [%b]",wdata);
 		if (regWrite && rd != 0) rf[rd] <= wdata & (~{32{rst}});
 		else if(regWrite && rd == 0) rf[rd] <= 0;
 	end

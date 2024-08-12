@@ -50,9 +50,9 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	assign load_type_o = load_type_i;
 	assign store_type_o = store_type_i;
 
-	always @(*) begin
-		$display("mem_wdata_o = [%h] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_wen_o, reg2_i);
-	end
+	// always @(*) begin
+	// 	$display("mem_wdata_o = [%h] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_wen_o, reg2_i);
+	// end
 
 	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,

@@ -39,9 +39,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
                        (store_type_i == `STORE_SW_32) ? `MEM_MASK_32 : 
                        0;
 
-	always @(*) begin
-		$display("mem_to_reg = [%b] mem_rdata_rare = [%h] mem_rmask = [%b] mem_raddr = [%h]",mem_to_reg, mem_rdata_rare,mem_rmask, mem_raddr);
-	end
+	// always @(*) begin
+	// 	$display("mem_to_reg = [%b] mem_rdata_rare = [%h] mem_rmask = [%b] mem_raddr = [%h]",mem_to_reg, mem_rdata_rare,mem_rmask, mem_raddr);
+	// end
 
     // 访存指令
     import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
