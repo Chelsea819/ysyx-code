@@ -25,6 +25,11 @@
 
 `define TYPE_B_OPCODE       7'b1100011
 `define TYPE_B_BEQ_FUNC3    3'b000
+`define TYPE_B_BNE_FUNC3    3'b001
+`define TYPE_B_BLT_FUNC3    3'b100
+`define TYPE_B_BGE_FUNC3    3'b101
+`define TYPE_B_BLTU_FUNC3   3'b110
+`define TYPE_B_BGEU_FUNC3   3'b111
 
 `define TYPE_J_JAL_OPCODE 7'b1101111
 
