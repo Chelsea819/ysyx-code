@@ -32,6 +32,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
                        (load_type_i == `LOAD_LW_32)                                ? `LOAD_MASK_32 : 
                        0;
 
+	always @(*) begin
+		$display("mem_to_reg = [%b] mem_rdata_rare = [%b] mem_rmask = [%b] mem_raddr = [%b]",mem_to_reg, mem_rdata_rare,mem_rmask, mem_raddr);
+	end
+
     // 访存指令
     import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
      //assign mem_rdata_rare = mem_raddr != 0 ? pmem_read_task(mem_raddr, mem_rmask) : 0;
@@ -46,6 +50,6 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
 	always @(*) begin
   		if (mem_wen_i) // 有写请求时
-      		pmem_write_task(mem_waddr, mem_wdata_i);
+            pmem_write_task(mem_waddr, mem_wdata_i);
 	end
 endmodule
