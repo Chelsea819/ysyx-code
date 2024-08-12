@@ -15,7 +15,7 @@ extern VerilatedVcdC *m_trace;
 extern CPU_state cpu;
 
 #ifdef CONFIG_DIFFTEST
-bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
+int isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
 
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
@@ -124,13 +124,20 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
-  if (!isa_difftest_checkregs(ref, pc)) {
+  int flag = 0;
+  if ((flag = isa_difftest_checkregs(ref, pc)) != 0) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     for(int i = 0; i < 32; i++){
+      if (flag == i + 1) 
+        printf("\033[105m %d: \033[0m \t0x%08x  \033[106m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
+      else
         printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
     }
-    printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    if (flag == 33) 
+      printf("\033[105m ref->pc: \033[0m \t0x%08x  \033[106m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    else
+      printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     dut->final();
   #ifdef CONFIG_WAVE
     m_trace->close();
