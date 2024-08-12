@@ -19,6 +19,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input       [2:0]                   load_type_i ,
 	input		[2:0]					branch_type_i,
 	output      [2:0]                   load_type_o ,
+	output      [1:0]					store_type_o,
 	output								branch_request_o,	
     output		                		mem_wen_o		,
 	output		[DATA_LEN - 1:0]		mem_wdata_o	,
@@ -45,13 +46,12 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	// 					   (store_type_i == `STORE_SW_32) ? `STORE_SW_MASK :
 	// 					   32'b0;
 	// assign mem_wdata_rare = reg2_i & mem_data_mask;
-	assign mem_wdata_o = (store_type_i == `STORE_SB_8)  ? {{24{reg2_i[7]}}, reg2_i[7:0]} :
-						 (store_type_i == `STORE_SH_16) ? {{16{reg2_i[15]}}, reg2_i[15:0]} :
-						 reg2_i;
+	assign mem_wdata_o = reg2_i;
 	assign load_type_o = load_type_i;
+	assign store_type_o = store_type_i;
 
 	always @(*) begin
-		$display("mem_wdata_o = [%h] mem_data_mask = [%b] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_data_mask,mem_wen_o, reg2_i);
+		$display("mem_wdata_o = [%h] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_wen_o, reg2_i);
 	end
 
 	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {

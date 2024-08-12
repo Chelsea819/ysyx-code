@@ -70,9 +70,9 @@
 `define LOAD_LHU_16    3'b101
 `define LOAD_INVALID   3'b000
 
-`define LOAD_MASK_8     8'b1
-`define LOAD_MASK_16    8'b11
-`define LOAD_MASK_32    8'b1111
+`define MEM_MASK_8     8'b1
+`define MEM_MASK_16    8'b11
+`define MEM_MASK_32    8'b1111
 
 
 `define BRANCH_INVALID      3'b000 

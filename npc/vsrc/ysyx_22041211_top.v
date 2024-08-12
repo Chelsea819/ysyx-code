@@ -63,6 +63,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[4:0]				wb_wreg_i		;
 	wire			[DATA_LEN - 1:0]	wb_alu_result_i	;
 	wire			[2:0]				wb_load_type_i	;
+	wire			[1:0]				wb_store_type_i	;
 	
 	assign pc = id_pc_i;
 	assign invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
@@ -72,7 +73,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 					 ((id_inst_i[6:0] == `TYPE_I_LOAD_OPCODE) & (id_inst_i[14:12] == `TYPE_I_LB_FUNC3 | id_inst_i[14:12] == `TYPE_I_LH_FUNC3 | id_inst_i[14:12] == `TYPE_I_LW_FUNC3 | id_inst_i[14:12] == `TYPE_I_LBU_FUNC3 | id_inst_i[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
 					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
 					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_SLTI_FUNC3 || id_inst_i[14:12] == `TYPE_I_SLTIU_FUNC3 || id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3 || id_inst_i[14:12] == `TYPE_I_XORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ANDI_FUNC3 || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
-					//  ((id_inst_i[6:0] == 7'b0010011) & ((id_inst_i[14:12] == 3'b001 && id_inst_i[31:26] == 6'b000000) | (id_inst_i[14:12] == 3'b101 && (id_inst_i[31:26] == 6'b000000 || id_inst_i[31:26] == 6'b010000)) )) |	 //I-slli srli srai
 					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
 					 (id_inst_i == `TYPE_I_EBREAK));
 	// 检测到ebreak
@@ -86,7 +86,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
         inst_get(id_inst_i);
 
 	import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
-	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
 	
 	//取指令
 	always @(*) begin
@@ -182,6 +181,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.mem_wen_o			(wb_mem_wen_i),	
 		.mem_wdata_o		(wb_mem_wdata_i),	
 		.load_type_o		(wb_load_type_i),
+		.store_type_o		(wb_store_type_i),
 		.alu_result_o		(wb_alu_result_i)
 	);
 
@@ -194,6 +194,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.mem_wen_i     	( wb_mem_wen_i   ),
 		.mem_wdata_i   	( wb_mem_wdata_i ),
 		.load_type_i	(wb_load_type_i),
+		.store_type_i	(wb_store_type_i),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )

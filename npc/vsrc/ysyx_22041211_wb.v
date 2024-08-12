@@ -6,6 +6,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input		                		mem_wen_i	,
 	input		[DATA_LEN - 1:0]		mem_wdata_i	,
     input       [2:0]                   load_type_i , 
+    input       [1:0]                   store_type_i , 
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
     output		[DATA_LEN - 1:0]		wdata_o
@@ -15,6 +16,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     wire [31:0] mem_rdata;
     reg  [31:0] mem_rdata_rare;
     wire [7:0]  mem_rmask;
+    wire [7:0]  mem_wmask;
     wire        mem_to_reg;
     assign wd_o = wd_i;
     assign wreg_o = wreg_i;
@@ -27,9 +29,14 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
                        (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 
                        mem_rdata_rare;
 
-    assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `LOAD_MASK_8 : 
-                       (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `LOAD_MASK_16 :
-                       (load_type_i == `LOAD_LW_32)                                ? `LOAD_MASK_32 : 
+    assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
+                       (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
+                       (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
+                       0;
+
+    assign mem_wmask = (store_type_i == `STORE_SB_8)  ? `MEM_MASK_8 : 
+                       (store_type_i == `STORE_SH_16) ? `MEM_MASK_16 :
+                       (store_type_i == `STORE_SW_32) ? `MEM_MASK_32 : 
                        0;
 
 	always @(*) begin
@@ -46,9 +53,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
             mem_rdata_rare = 0;
         end
 	end
-	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata);
+	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
 	always @(*) begin
   		if (mem_wen_i) // 有写请求时
-            pmem_write_task(mem_waddr, mem_wdata_i);
+            pmem_write_task(mem_waddr, mem_wdata_i, mem_wmask);
 	end
 endmodule
