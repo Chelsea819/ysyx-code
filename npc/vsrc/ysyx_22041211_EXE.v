@@ -50,13 +50,13 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		$display("branch_request_o = [%b] branch_type_i = [%b] alu_zero = [%b]",branch_request_o,branch_type_i,alu_zero);
 	end
 
-	ysyx_22041211_MuxKeyWithDefault #(4,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request (branch_request_o, branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,
 		`BRANCH_BNE, ~alu_zero,
 		`BRANCH_BLT, alu_less,
-		`BRANCH_BGE, ~alu_less
-		// `BRANCH_BLTU, ~alu_zero,
-		// `BRANCH_BGEU, alu_less
+		`BRANCH_BGE, ~alu_less,
+		`BRANCH_BLTU, alu_less,
+		`BRANCH_BGEU, ~alu_less
 	});
 
 	ysyx_22041211_ALU my_alu(

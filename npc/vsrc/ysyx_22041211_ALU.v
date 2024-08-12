@@ -54,7 +54,7 @@ module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	});
 
 	// assign alu_sign = sub_result[31];
-	assign alu_zero_o = (result_tmp == 32'b0);
+	assign alu_zero_o = (sub_result == 32'b0);
 	assign result = result_tmp;
 	assign s_compare_result = {{31{1'b0}}, sub_result[31]};
 	assign u_compare_result = {{31{1'b0}}, ~sub_cout};
