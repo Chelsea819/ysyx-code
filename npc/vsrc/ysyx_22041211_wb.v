@@ -24,7 +24,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     assign mem_raddr = alu_result_i;
 
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
-                       (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[7]}}, mem_rdata_rare[15:0]}: 
+                       (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 
                        mem_rdata_rare;
 
     assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `LOAD_MASK_8 : 
