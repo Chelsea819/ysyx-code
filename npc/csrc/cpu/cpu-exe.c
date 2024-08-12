@@ -166,6 +166,7 @@ void device_update();
 
 void ifebreak_func(int inst){
 	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst)
+  s.logbuf = inst;
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
