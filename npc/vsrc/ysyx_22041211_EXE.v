@@ -64,8 +64,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.src2				(src2),
 		.alu_control		(alu_control),
 		.result				(alu_result_o),
-		.alu_less_o			(alu_zero),
-		.alu_zero_o 		(alu_less)
+		.alu_less_o			(alu_less),
+		.alu_zero_o 		(alu_zero)
 	);
 
 	ysyx_22041211_MuxKeyWithDefault #(3,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
