@@ -45,7 +45,7 @@ INC_PATH += $(NPC_HOME)/include
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc  -Wall --build -j 0  \
-				-O3 --x-assign fast --x-initial fast --noassert #--trace
+				-O3 --x-assign fast --x-initial fast --noassert --public --trace -I$(NPC_HOME)/vsrc/
 
 #-ggdb -LDFLAGS -ggdb -CFLAGS -DVL_DEBUG=1 
 # -CFLAGS -D_GLIBCXX_DEBUG
@@ -84,9 +84,9 @@ LDFLAGS += -lreadline -ldl -lSDL2  -pie $(LIBS) #-fsanitize=address
 
 
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt  #--ftrace=$(BUILD_DIR)/$(ALL)-$(ARCH).elf
-override ARGS += $(ARGS_DIFF) --batch
+override ARGS += $(ARGS_DIFF) #--batch
 
-$(BIN):$(SRCS) $(VSRCS) 
+$(BIN): $(SRCS) $(VSRCS) 
 	$(warning INC_PATH = $(INC_PATH))
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ $(addprefix -CFLAGS , $(CFLAGS)) \
@@ -94,7 +94,6 @@ $(BIN):$(SRCS) $(VSRCS)
 		$(addprefix -CFLAGS , $(CXXFLAGS))	\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	
-
 
 $(shell mkdir -p $(BUILD_DIR))
 

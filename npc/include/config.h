@@ -20,9 +20,9 @@
 // #define CONFIG_TRACE_START 0
 // #define CONFIG_TRACE_END 10000
 
-// #define CONFIG_WAVE 1
+#define CONFIG_WAVE 1
 
 
-#define AUTO_Q 1
+// #define AUTO_Q 1
 
 #endif

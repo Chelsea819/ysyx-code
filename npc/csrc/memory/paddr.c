@@ -26,7 +26,7 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 //{}使用聚合初始化把数组初始化为0
 #endif
 
-extern TOP_NAME dut;
+extern TOP_NAME *dut; extern VerilatedVcdC *m_trace;
 uint8_t* guest_to_host(paddr_t paddr) { 
   // printf("pmem: 0x%08x\n",pmem);
   // printf("paddr: 0x%08x\n",paddr);
@@ -40,7 +40,9 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
   // printf("read!\n");
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
-  // printf("rdata = 0x%08x\n",rdata);
+  if (wmask == 0) {
+    return 0;
+  }
   int len = 0;
   switch (wmask){
       case 0x1: len = 1; break;
@@ -73,7 +75,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  // printf("pc = 0x%08x\n",dut.pc);
+  // printf("pc = 0x%08x\n",dut->pc);
   // printf("wmask = 0x%01u\n",wmask);
   // printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
@@ -87,7 +89,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
     #endif
   #endif
   // else {
-    int len = 0;
+    int len = 0; 
     switch (wmask){
       case 0x1: len = 1; break;
       case 0x3: len = 2; break;
@@ -110,7 +112,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 
 static void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, PMEM_LEFT, PMEM_RIGHT, dut.pc);
+      addr, PMEM_LEFT, PMEM_RIGHT, dut->pc);
 }
 
 void init_mem(){
@@ -126,9 +128,9 @@ vaddr_t paddr_read(paddr_t addr,int len) {
   
 	if (likely(in_pmem(addr))) {
     word_t rdata = pmem_read(addr,len);
-    #ifdef CONFIG_MTRACE
-      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
-    #endif
+    // #ifdef CONFIG_MTRACE
+    //   Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
+    // #endif
     return rdata;
   }
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));

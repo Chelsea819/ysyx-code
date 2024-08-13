@@ -9,14 +9,13 @@
 #include "reg.h"
 #include "config.h"
 
-extern TOP_NAME dut;
 #ifdef CONFIG_WAVE
 extern VerilatedVcdC *m_trace;
 #endif
 extern CPU_state cpu;
 
 #ifdef CONFIG_DIFFTEST
-bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
+int isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
 
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
@@ -41,12 +40,12 @@ static int skip_dut_nr_inst = 0;
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
   tail->is_skip_ref_bool = true;
-  tail->is_skip_ref_pc = dut.pc;
-  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut.pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut.pc);
+  tail->is_skip_ref_pc = dut->pc;
+  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut->pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut->pc);
 
   tail = tail->next;
   // is_skip_ref = true;
-  // is_skip_ref_pc = dut.pc;
+  // is_skip_ref_pc = dut->pc;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
@@ -71,12 +70,6 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
   }
 }
 
-const char *regs1[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
 
 void init_skip_pool(){
   for (int i = 0; i < NR_SKIP; i ++) {
@@ -123,7 +116,6 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   
   //将DUT的guest memory拷贝到REF中
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
-  
   //将DUT的寄存器状态拷贝到REF中
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
 
@@ -132,14 +124,21 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
-  if (!isa_difftest_checkregs(ref, pc)) {
+  int flag = 0;
+  if ((flag = isa_difftest_checkregs(ref, pc)) != 0) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     for(int i = 0; i < 32; i++){
-        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs1[i],R(i));
+      if (flag == i + 1) 
+        printf("\033[105m %d:  \t0x%08x\033[0m  \033[106m %s:  \t0x%08x\033[0m\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
+      else
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
     }
-    printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
-    dut.final();
+    if (flag == 33) 
+      printf("\033[105m ref->pc: \033[0m \t0x%08x  \033[106m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    else
+      printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    dut->final();
   #ifdef CONFIG_WAVE
     m_trace->close();
   #endif
