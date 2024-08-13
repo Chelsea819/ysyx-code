@@ -56,6 +56,14 @@
 `define STORE_SH_MASK     32'h0000ffff
 `define STORE_SW_MASK     32'hffffffff
 
+`define TYPE_I_CSR_OPCODE  7'b1110011
+`define TYPE_I_CSRRW_FUNC3 3'b001
+`define TYPE_I_CSRRS_FUNC3 3'b010
+
+`define CSR_INVALID     2'b00
+`define CSR_CSRRW       2'b01
+`define CSR_CSRRS       2'b10
+
 `define TYPE_I_LOAD_OPCODE 7'b0000011
 `define TYPE_I_LB_FUNC3    3'b000
 `define TYPE_I_LH_FUNC3    3'b001
@@ -95,6 +103,7 @@
 `define ALU_SEL1_ZERO  2'b00
 `define ALU_SEL1_REG1  2'b01
 `define ALU_SEL1_PC    2'b10
+`define ALU_SEL1_CSR   2'b11
 
 `define ALU_SEL2_ZERO  2'b00
 `define ALU_SEL2_REG2  2'b01
@@ -113,3 +122,17 @@
 `define ALU_OP_LESS_SIGNED    4'b1000
 `define ALU_OP_LESS_UNSIGNED   4'b1001
 // `define TYPE_ALU_OP_PC   4'b0010
+
+
+// csr reg
+`define CSR_MCAUSE_ADDR      12'h342
+`define CSR_MSTATUS_ADDR     12'h300
+`define CSR_MEPC_ADDR        12'h341
+`define CSR_MTVEC_ADDR       12'h305
+
+`define CSR_MCAUSE_IDX       2'b00
+`define CSR_MSTATUS_IDX      2'b01
+`define CSR_MEPC_IDX         2'b10
+`define CSR_MTVEC_IDX        2'b11
+
+`define CSR_MTVEC_IDX        2'b11

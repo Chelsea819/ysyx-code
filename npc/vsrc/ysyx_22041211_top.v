@@ -20,6 +20,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire								reg_wen_i		;
 	wire			[4:0]				reg_waddr_i		;
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
+	wire	        [DATA_LEN - 1:0]    reg_csr_wdata_i	;
 
 	//my_counter
 	wire			[ADDR_LEN - 1:0]	if_pc_plus_4	;
@@ -55,9 +56,13 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[4:0]				ex_wreg_i		;
 	wire			[1:0]				ex_store_type_i	;
 	wire			[2:0]				ex_load_type_i	;
+	wire			[11:0]				ex_csr_addr_i	;
+	wire			[1:0]				ex_csr_flag_i	;
+	wire			[31:0]				ex_csr_rdata_i	;
 
 	// wb Unit
 	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
+	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
 	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
 	wire			[4:0]				wb_wreg_i		;
@@ -158,6 +163,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_target_o					(if_jmp_target_i),
 		.store_type_o					(ex_store_type_i),
 		.load_type_o					(ex_load_type_i),
+		.csr_addr_o						(ex_csr_addr_i),
+		.csr_flag_o						(ex_csr_flag_i),
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
@@ -170,6 +177,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.alu_control		(ex_aluop_i),
 		.alu_sel			(ex_alusel_i),		
 		.imm_i				(ex_imm_i),
+		.csr_rdata_i		(ex_csr_rdata_i),
+		.csr_flag_i			(ex_csr_flag_i),
 		.wd_i				(ex_wd_i),	
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
@@ -180,6 +189,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wreg_o				(wb_wreg_i),
 		.mem_wen_o			(wb_mem_wen_i),	
 		.mem_wdata_o		(wb_mem_wdata_i),	
+		.csr_wdata_o		(wb_csr_wdata_i),
 		.load_type_o		(wb_load_type_i),
 		.store_type_o		(wb_store_type_i),
 		.alu_result_o		(wb_alu_result_i)
@@ -192,10 +202,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wd_i     		( wb_wd_i     ),
 		.wreg_i   		( wb_wreg_i   ),
 		.alu_result_i   ( wb_alu_result_i  	),
+		.csr_wdata_i	( wb_csr_wdata_i),
 		.mem_wen_i     	( wb_mem_wen_i   ),
 		.mem_wdata_i   	( wb_mem_wdata_i ),
 		.load_type_i	(wb_load_type_i),
 		.store_type_i	(wb_store_type_i),
+		.csr_wdata_o	( reg_csr_wdata_i),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )

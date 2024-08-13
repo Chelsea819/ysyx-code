@@ -8,8 +8,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		mem_wdata_i	,
     input       [2:0]                   load_type_i , 
     input       [1:0]                   store_type_i , 
+    input       [DATA_LEN - 1:0]        csr_wdata_i	,
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
+    output      [DATA_LEN - 1:0]        csr_wdata_o	,
     output		[DATA_LEN - 1:0]		wdata_o
 );
     wire [31:0] mem_waddr;
@@ -25,6 +27,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     assign wdata_o = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
     assign mem_waddr = alu_result_i;
     assign mem_raddr = alu_result_i;
+    assign csr_wdata_o = csr_wdata_i;
 
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
                        (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 

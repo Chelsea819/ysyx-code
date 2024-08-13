@@ -13,6 +13,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input 		[3:0]					alu_control	,
     input 		[3:0]					alu_sel		, // choose source number
 	input       [DATA_LEN - 1:0]        imm_i		,
+	input       [DATA_LEN - 1:0]        csr_rdata_i	,
+	input 		[1:0]					csr_flag_i	,
 	input		                		wd_i		,
     input		[4:0]		            wreg_i		,
 	input		[1:0]					store_type_i,
@@ -25,27 +27,16 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	output		[DATA_LEN - 1:0]		mem_wdata_o	,
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
+	output      [DATA_LEN - 1:0]        csr_wdata_o	,
     output		[DATA_LEN - 1:0]		alu_result_o
-	// output								zero
-	// output		[DATA_LEN - 1:0]		result,
-	// output								zero
-	// output								OF,		//溢出标志
-	// output								CF		//进/借位标志
 );
 	wire [31:0] src1;
 	wire [31:0] src2;
 	wire 		alu_zero;
 	wire 		alu_less;
-	// wire [31:0] mem_data_mask;
-	// wire [31:0] mem_wdata_rare;
 	assign wd_o = wd_i;
 	assign wreg_o = wreg_i;
 	assign mem_wen_o = |store_type_i;
-	// assign mem_data_mask = (store_type_i == `STORE_SB_8) ? `STORE_SB_MASK :
-	// 					   (store_type_i == `STORE_SH_16) ? `STORE_SH_MASK :
-	// 					   (store_type_i == `STORE_SW_32) ? `STORE_SW_MASK :
-	// 					   32'b0;
-	// assign mem_wdata_rare = reg2_i & mem_data_mask;
 	assign mem_wdata_o = reg2_i;
 	assign load_type_o = load_type_i;
 	assign store_type_o = store_type_i;
@@ -63,6 +54,11 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		`BRANCH_BGEU, ~alu_less
 	});
 
+	ysyx_22041211_MuxKeyWithDefault #(2,2,32) csr_wdata_choose (csr_wdata_o, csr_flag_i, 32'b0, {
+		`CSR_CSRRW, reg1_i,
+		`CSR_CSRRS, reg1_i | csr_rdata_i
+	});
+
 	ysyx_22041211_ALU my_alu(
 		.src1				(src1),
 		.src2				(src2),
@@ -72,10 +68,11 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.alu_zero_o 		(alu_zero)
 	);
 
-	ysyx_22041211_MuxKeyWithDefault #(3,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(4,2,32) src1_choose (src1, alu_sel[1:0], 32'b0, {
 		`ALU_SEL1_ZERO, 32'b0,
 		`ALU_SEL1_REG1, reg1_i,
-		`ALU_SEL1_PC,   pc_i
+		`ALU_SEL1_PC,   pc_i,
+		`ALU_SEL1_CSR,  csr_rdata_i
 	});
 
 	ysyx_22041211_MuxKeyWithDefault #(4,2,32) src2_choose (src2, alu_sel[3:2], 32'b0, {
