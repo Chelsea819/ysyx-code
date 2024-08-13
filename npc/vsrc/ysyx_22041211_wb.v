@@ -1,6 +1,7 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input		                		wd_i		,
+    input		                		clk		,
     input		[4:0]		            wreg_i		,
     input		[DATA_LEN - 1:0]		alu_result_i,
     input		                		mem_wen_i	,
@@ -54,7 +55,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
         end
 	end
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
-	always @(*) begin
+	always @(posedge clk) begin
   		if (mem_wen_i) // 有写请求时
             pmem_write_task(mem_waddr, mem_wdata_i, mem_wmask);
 	end

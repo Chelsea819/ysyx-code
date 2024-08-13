@@ -188,6 +188,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	ysyx_22041211_wb #(
 		.DATA_LEN ( 32 )
 	)u_ysyx_22041211_wb(
+		.clk			(clk),
 		.wd_i     		( wb_wd_i     ),
 		.wreg_i   		( wb_wreg_i   ),
 		.alu_result_i   ( wb_alu_result_i  	),
