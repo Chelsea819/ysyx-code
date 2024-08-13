@@ -24,7 +24,7 @@ static inline int check_reg_idx(int idx) {
   IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < MUXDEF(CONFIG_RVE, 16, 32)));
   return idx;
 }
-
+#define REG_NUM MUXDEF(CONFIG_RVE, 16, 32)
 static inline int check_csr_reg_idx(int idx) {
   /* if index in certain range */
   IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < 4096));
