@@ -128,7 +128,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   if ((flag = isa_difftest_checkregs(ref, pc)) != 0) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
-    for(int i = 0; i < 32; i++){
+    for(int i = 0; i < RISCV_GPR_NUM; i++){
       if (flag == i + 1) 
         printf("\033[105m %d:  \t0x%08x\033[0m  \033[106m %s:  \t0x%08x\033[0m\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
       else
