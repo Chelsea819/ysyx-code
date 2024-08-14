@@ -164,7 +164,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.store_type_o					(ex_store_type_i),
 		.load_type_o					(ex_load_type_i),
 		.csr_addr_o						(ex_csr_addr_i),
-		.csr_flag_o						(ex_csr_flag_i),
+		.csr_flag_o						(ex_csr_flag_i),  
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
