@@ -28,7 +28,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[2:0]				if_branch_type_i;
 	wire								if_branch_request_i;	
 	wire			[ADDR_LEN - 1:0]	if_jmp_target_i;
-	wire								if_jmp_flag_i;
+	wire								if_jmp_flag_i;	
+	wire			[ADDR_LEN - 1:0]	if_csr_pc_i;
 	// wire			[ADDR_LEN - 1:0]	pcPlus		;
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
@@ -57,8 +58,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[1:0]				ex_store_type_i	;
 	wire			[2:0]				ex_load_type_i	;
 	wire			[11:0]				ex_csr_addr_i	;
-	wire			[1:0]				ex_csr_flag_i	;
+	wire			[3:0]				ex_csr_flag_i	;
 	wire			[31:0]				ex_csr_rdata_i	;
+
+	// csr Unit
+	wire			[11:0]				csr_addr_i	;
+	wire			[DATA_LEN - 1:0]	csr_wdata_i		;
+	wire			[3:0]				csr_type_i		;
+	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
+	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 
 	// wb Unit
 	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
@@ -118,6 +126,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_flag_i  	  ( if_jmp_flag_i  ),
 		.jmp_target_i     ( if_jmp_target_i    ),
 		.pc_plus_4        ( if_pc_plus_4     ),
+		.csr_jmp_i     	  ( ~(^ex_csr_flag_i)   ),
+		.csr_pc_i         ( if_csr_pc_i      ),
 		.pc               ( id_pc_i               )
 	);
 
@@ -190,6 +200,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.mem_wen_o			(wb_mem_wen_i),	
 		.mem_wdata_o		(wb_mem_wdata_i),	
 		.csr_wdata_o		(wb_csr_wdata_i),
+		.csr_mcause_o		(csr_mcause_i),
+		.pc_o				(csr_mepc_i),
 		.load_type_o		(wb_load_type_i),
 		.store_type_o		(wb_store_type_i),
 		.alu_result_o		(wb_alu_result_i)
@@ -211,6 +223,20 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )
+	);
+
+	ysyx_22041211_CSR#(
+		.DATA_WIDTH    ( 32 )
+	)u_ysyx_22041211_CSR(
+		.clk           ( clk           ),
+		.rst           ( rst           ),
+		.csr_addr      ( csr_addr_i      ),
+		.wdata         ( csr_wdata_i         ),
+		.csr_type_i    ( ex_csr_flag_i    ),
+		.csr_mepc_i    ( csr_mepc_i    ),
+		.csr_mcause_i  ( csr_mcause_i  ),
+		.csr_pc_o      ( if_csr_pc_i      ),
+		.r_data        ( ex_csr_rdata_i     )
 	);
 
 

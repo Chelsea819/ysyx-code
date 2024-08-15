@@ -5,12 +5,15 @@
 	> Created Time: 2023年08月04日 星期五 18时19分21秒
  ************************************************************************/
 `include "./ysyx_22041211_define.v"
-module ysyx_22041211_CSR #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
+module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 	input								clk		,
 	input								rst		,
 	input	    [11:0]					csr_addr,	// 要读的csr
 	input		[DATA_WIDTH - 1:0]		wdata	,	// 要写入csr的数据	
-	input								csrWrite,
+	input		[3:0]					csr_type_i,
+	input		[DATA_WIDTH - 1:0]		csr_mepc_i	,
+	input		[DATA_WIDTH - 1:0]		csr_mcause_i	,
+	output		[DATA_WIDTH - 1:0]		csr_pc_o	,
 	output		[DATA_WIDTH - 1:0]		r_data	
 );
 	reg 	[DATA_WIDTH - 1:0] 		csr [3:0]	;
@@ -22,13 +25,21 @@ module ysyx_22041211_CSR #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (csr_addr == `CSR_MTVEC_ADDR)	? `CSR_MTVEC_IDX :
 					 `CSR_MTVEC_IDX ;
 
+	assign csr_pc_o = (csr_type_i == `CSR_ECALL)	? csr[`CSR_MTVEC_IDX] :
+					  (csr_type_i == `CSR_MRET)		? csr[`CSR_MEPC_IDX] :
+					  32'b0 ;
+
 	assign r_data = csr[csr_idx];
 
 	always @(posedge clk) begin
 		if(rst)
 			csr[`CSR_MSTATUS_IDX] <= 32'h1800;
-		else if (csrWrite) 
+		else if (^csr_type_i == 1'b1) 
 			csr[csr_idx] <= wdata;
+		else if(csr_type_i == `CSR_ECALL) begin
+			csr[`CSR_MCAUSE_IDX] <= csr_mcause_i;
+			csr[`CSR_MEPC_IDX] <= csr_mepc_i;
+		end
 	end
 
 	// //读取操作数

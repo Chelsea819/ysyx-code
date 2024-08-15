@@ -14,7 +14,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
     input 		[3:0]					alu_sel		, // choose source number
 	input       [DATA_LEN - 1:0]        imm_i		,
 	input       [DATA_LEN - 1:0]        csr_rdata_i	,
-	input 		[1:0]					csr_flag_i	,
+	input 		[3:0]					csr_flag_i	,
 	input		                		wd_i		,
     input		[4:0]		            wreg_i		,
 	input		[1:0]					store_type_i,
@@ -28,6 +28,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
     output		                		wd_o		,
     output		[4:0]		            wreg_o		,
 	output      [DATA_LEN - 1:0]        csr_wdata_o	,
+	output      [DATA_LEN - 1:0]        csr_mcause_o,
+	output		[DATA_LEN - 1:0]		pc_o		,
     output		[DATA_LEN - 1:0]		alu_result_o
 );
 	wire [31:0] src1;
@@ -40,6 +42,9 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	assign mem_wdata_o = reg2_i;
 	assign load_type_o = load_type_i;
 	assign store_type_o = store_type_i;
+	assign pc_o = pc_i;
+	assign csr_mcause_o = 32'hb;
+
 
 	// always @(*) begin
 	// 	$display("mem_wdata_o = [%h] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_wen_o, reg2_i);
@@ -54,7 +59,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		`BRANCH_BGEU, ~alu_less
 	});
 
-	ysyx_22041211_MuxKeyWithDefault #(2,2,32) csr_wdata_choose (csr_wdata_o, csr_flag_i, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(2,4,32) csr_wdata_choose (csr_wdata_o, csr_flag_i, 32'b0, {
 		`CSR_CSRRW, reg1_i,
 		`CSR_CSRRS, reg1_i | csr_rdata_i
 	});

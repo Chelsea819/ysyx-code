@@ -28,6 +28,7 @@
 `define TYPE_I_JALR_FUNC3 3'b0
 
 `define TYPE_I_EBREAK 32'b00000000000100000000000001110011
+`define TYPE_I_ECALL  32'b0000000_00000_00000_000_00000_11100_11
 
 `define TYPE_U_LUI_OPCODE   7'b0110111 
 `define TYPE_U_AUIPC_OPCODE 7'b0010111
@@ -60,9 +61,16 @@
 `define TYPE_I_CSRRW_FUNC3 3'b001
 `define TYPE_I_CSRRS_FUNC3 3'b010
 
-`define CSR_INVALID     2'b00
-`define CSR_CSRRW       2'b01
-`define CSR_CSRRS       2'b10
+// `define CSR_INVALID     2'b00
+// `define CSR_CSRRW       2'b01
+// `define CSR_CSRRS       2'b10
+
+
+`define CSR_INVALID     4'b000
+`define CSR_CSRRW       4'b001
+`define CSR_CSRRS       4'b010
+`define CSR_ECALL       4'b110
+`define CSR_MRET        4'b011
 
 `define TYPE_I_LOAD_OPCODE 7'b0000011
 `define TYPE_I_LB_FUNC3    3'b000
