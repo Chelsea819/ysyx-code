@@ -65,7 +65,7 @@ void init_mem() {
   uint32_t *p = (uint32_t *)pmem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
-    p[i] = rand();
+    p[i] = 0;
   }
 #endif
   /*打印日志,输出初始化的内存区域的地址范围,
