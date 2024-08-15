@@ -126,7 +126,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_flag_i  	  ( if_jmp_flag_i  ),
 		.jmp_target_i     ( if_jmp_target_i    ),
 		.pc_plus_4        ( if_pc_plus_4     ),
-		.csr_jmp_i     	  ( ~(^ex_csr_flag_i)   ),
+		.csr_jmp_i     	  ( ex_csr_flag_i[2]  ),
 		.csr_pc_i         ( if_csr_pc_i      ),
 		.pc               ( id_pc_i               )
 	);
