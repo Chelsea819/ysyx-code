@@ -7,7 +7,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    // asm volatile ("ebreak");
+    asm volatile ("ebreak");
     switch (c->mcause) {
       case 0xb:
         if (c->GPR1 == -1) ev.event = EVENT_YIELD;    // 系统调用号的识别
