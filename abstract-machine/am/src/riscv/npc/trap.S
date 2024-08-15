@@ -44,8 +44,8 @@ __am_asm_trap:
 
   MAP(REGS, PUSH)
 
-  ebreak    
   
+
   csrr t0, mcause
   csrr t1, mstatus
   csrr t2, mepc
@@ -60,7 +60,7 @@ __am_asm_trap:
   csrw mstatus, t1
 
   mv a0, sp
-
+ ebreak   
   jal __am_irq_handle
 
   LOAD t1, OFFSET_STATUS(sp)
