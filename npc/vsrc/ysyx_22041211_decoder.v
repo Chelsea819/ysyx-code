@@ -40,9 +40,9 @@ module ysyx_22041211_decoder(
     assign reg2_addr_o = inst_i[24:20];
     assign branch_target_o = pc_i + imm;
     assign csr_addr_o = inst_i[31:20];
-    always @(*) begin
-		$display("csr_flag_o = [%b]",csr_flag_o);
-	end
+    // always @(*) begin
+	// 	$display("csr_flag_o = [%b]",csr_flag_o);
+	// end
     
 // controller look-up lut
 // inst: R-type: wd_o aluop_o alusel_o
