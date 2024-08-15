@@ -56,7 +56,7 @@ __am_asm_trap:
 
 
   mv a0, sp
- ebreak   
+ 
   jal __am_irq_handle
 
   LOAD t1, OFFSET_STATUS(sp)
