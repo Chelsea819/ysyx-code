@@ -20,7 +20,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire								reg_wen_i		;
 	wire			[4:0]				reg_waddr_i		;
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
-	wire	        [DATA_LEN - 1:0]    reg_csr_wdata_i	;
 
 	//my_counter
 	wire			[ADDR_LEN - 1:0]	if_pc_plus_4	;
@@ -222,7 +221,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.mem_wdata_i   	( wb_mem_wdata_i ),
 		.load_type_i	(wb_load_type_i),
 		.store_type_i	(wb_store_type_i),
-		.csr_wdata_o	( reg_csr_wdata_i),
+		.csr_wdata_o	( csr_wdata_i),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )
