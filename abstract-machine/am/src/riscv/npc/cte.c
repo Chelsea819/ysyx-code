@@ -18,6 +18,8 @@ Context* __am_irq_handle(Context *c) {
         break;
       default: 
         printf("c->mcause: [0x%08x]\n",c->mcause);
+        printf("c->mepc: [0x%08x]\n",c->mepc);
+        printf("c->mstatus: [0x%08x]\n",c->mstatus);
         ev.event = EVENT_ERROR; break;
     }asm volatile ("ebreak");
     c->mepc += 4;
