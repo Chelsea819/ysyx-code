@@ -31,6 +31,10 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 
 	assign r_data = csr[csr_idx];
 
+	always @(*) begin
+		$display("csr_type_i = [%b] csr_idx = [%b]  wdata = [%b]",csr_type_i,csr_idx,wdata);
+	end
+
 	always @(posedge clk) begin
 		if(rst)
 			csr[`CSR_MSTATUS_IDX] <= 32'h1800;
