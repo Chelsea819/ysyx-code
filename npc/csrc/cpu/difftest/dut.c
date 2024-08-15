@@ -1,11 +1,14 @@
+#include <cstdint>
 #include <dlfcn.h>
 
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <memory/paddr.h>
+#include <string.h>
 #include <utils.h>
 #include <difftest-def.h>
 #include <debug.h>
+#include "common.h"
 #include "reg.h"
 #include "config.h"
 
@@ -152,6 +155,12 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   }
 }
 
+static void check_mem(void *buf, vaddr_t pc, int len, paddr_t addr) {
+  paddr_t* dut = (paddr_t*)(guest_to_host(addr));
+  int ret = memcmp(dut, buf, len);
+  Assert(ret == 0, "mem difference!");
+}
+
 //进行逐条指令执行后的状态对比
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   CPU_state ref_r;
@@ -186,6 +195,9 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 // dut 0x8004 0x8008 0x800c 0x800f
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+  uint8_t ref_mem[4096] = {0};
+  ref_difftest_memcpy(0x8009d000, ref_mem, 4096, DIFFTEST_TO_DUT);
+  check_mem(ref_mem, pc, 4096,0x8009d000 );
   checkregs(&ref_r, pc);
 }
 #else
