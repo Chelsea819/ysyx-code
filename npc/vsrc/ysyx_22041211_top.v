@@ -56,14 +56,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[4:0]				ex_wreg_i		;
 	wire			[1:0]				ex_store_type_i	;
 	wire			[2:0]				ex_load_type_i	;
-	wire			[11:0]				ex_csr_addr_i	;
 	wire			[2:0]				ex_csr_flag_i	;
 	wire			[31:0]				ex_csr_rdata_i	;
 
 	// csr Unit
 	wire			[11:0]				csr_addr_i	;
 	wire			[DATA_LEN - 1:0]	csr_wdata_i		;
-	wire			[2:0]				csr_type_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 
@@ -175,7 +173,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_target_o					(if_jmp_target_i),
 		.store_type_o					(ex_store_type_i),
 		.load_type_o					(ex_load_type_i),
-		.csr_addr_o						(ex_csr_addr_i),
+		.csr_addr_o						(csr_addr_i),
 		.csr_flag_o						(ex_csr_flag_i),  
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
