@@ -87,6 +87,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
 					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_SLTI_FUNC3 || id_inst_i[14:12] == `TYPE_I_SLTIU_FUNC3 || id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3 || id_inst_i[14:12] == `TYPE_I_XORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ANDI_FUNC3 || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
 					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
+					 (id_inst_i == `TYPE_I_ECALL) | 
+					 (id_inst_i == `TYPE_I_MRET)  | 
 					 (id_inst_i == `TYPE_I_EBREAK));
 	// 检测到ebreak
     import "DPI-C" function void ifebreak_func(int id_inst_i);
