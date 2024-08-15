@@ -23,6 +23,7 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 
 	always @(*) begin
 		$display("csr_jmp_i = [%b]",csr_jmp_i);
+		$display("jmp_flag_i = [%b]",jmp_flag_i);
 	end
 
 	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
