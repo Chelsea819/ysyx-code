@@ -210,6 +210,10 @@ static void trace_and_difftest(){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
+  // cpu.mcause = ;
+  // cpu.mepc = ;
+  // cpu.mstatus = ;
+  // cpu.mtvec = ;
  IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
