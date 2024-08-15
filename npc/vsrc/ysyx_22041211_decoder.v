@@ -42,6 +42,7 @@ module ysyx_22041211_decoder(
     assign csr_addr_o = inst_i[31:20];
     always @(*) begin
 		$display("csr_flag_o = [%b]",csr_flag_o);
+		$display("jmp_flag_o = [%b]",jmp_flag_o);
 	end
     
 // controller look-up lut
@@ -96,7 +97,7 @@ assign  {branch_type_o, jmp_target_o, jmp_flag_o, csr_flag_o} = ({opcode, func3}
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGE_FUNC3})             ? {`BRANCH_BGE,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLTU_FUNC3})            ? {`BRANCH_BLTU,    32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGEU_FUNC3})            ? {`BRANCH_BGEU,    32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
-                                                                ({opcode, func3} == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3})       ? {`BRANCH_INVALID, reg1_data_i + imm, `EN_JMP, `CSR_INVALID} :         // I-jalr
+                                                                ({opcode, func3} == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3})       ? {`BRANCH_INVALID, reg1_data_i + imm, `EN_JMP , `CSR_INVALID} :         // I-jalr
                                                                 ({inst_i}        == {`TYPE_I_ECALL})                                 ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_ECALL}  :         // I-ecall 
                                                                 ({opcode, func3} == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRW_FUNC3})       ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_CSRRW}  :         // I-csrrw
                                                                 ({opcode, func3} == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRS_FUNC3})       ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_CSRRS}  :         // I-csrrs
