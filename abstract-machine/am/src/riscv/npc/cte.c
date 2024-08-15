@@ -7,7 +7,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    // asm volatile ("ebreak");
+    
     switch (c->mcause) {
       case 0xb:
         if (c->GPR1 == -1) ev.event = EVENT_YIELD;    // 系统调用号的识别
@@ -19,7 +19,7 @@ Context* __am_irq_handle(Context *c) {
       default: 
         printf("c->mcause: [0x%08x]\n",c->mcause);
         ev.event = EVENT_ERROR; break;
-    }
+    }asm volatile ("ebreak");
     c->mepc += 4;
     c = user_handler(ev, c);
     assert(c != NULL);
