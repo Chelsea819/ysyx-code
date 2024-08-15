@@ -1,5 +1,4 @@
 #include <am.h>
-// #include <cstdio>
 #include <riscv/riscv.h>
 #include <klib.h>
 
@@ -9,13 +8,20 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
+      case 0xb:
+        if (c->GPR1 == -1) ev.event = EVENT_YIELD;    // 系统调用号的识别
+        else ev.event = EVENT_SYSCALL; // 这边已经有0 和 1 了
+        break;
+      case 0x80000007: 
+        ev.event = EVENT_IRQ_TIMER; 
+        break;
       default: ev.event = EVENT_ERROR; break;
     }
-
+    c->mepc += 4;
     c = user_handler(ev, c);
     assert(c != NULL);
   }
-
+  else assert(0);
   return c;
 }
 
