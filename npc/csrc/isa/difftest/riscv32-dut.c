@@ -14,8 +14,8 @@ int isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for(int i = 0; i < RISCV_GPR_NUM; i++){
     if(ref_r->gpr[i] != cpu.gpr[i]) return (i + 1);
   } 
-  if (0x80000010 == cpu.mcause)
-    printf("ref_r->mcause = 0x%08x cpu.mcause = 0x%08x\n",ref_r->mcause, cpu.mcause);
+  // if (0x80000010 == cpu.mcause)
+  //   printf("ref_r->mcause = 0x%08x cpu.mcause = 0x%08x\n",ref_r->mcause, cpu.mcause);
   if (ref_r->mcause != cpu.mcause) {
     return 34;
   } else if (0) {

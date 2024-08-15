@@ -37,6 +37,11 @@ void isa_reg_display() {
   for(int i = 0; i < REG_NUM; i++){
     printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),R(i));
   }
+  printf("\033[103m %d: \033[0m \t  \033[104m %s: \033[0m \t0x%08x\n",0,"macuse",cpu.mcause);
+  printf("\033[103m %d: \033[0m \t  \033[104m %s: \033[0m \t0x%08x\n",1,"mepc",cpu.mepc);
+  printf("\033[103m %d: \033[0m \t  \033[104m %s: \033[0m \t0x%08x\n",2,"mstatus",cpu.mstatus);
+  printf("\033[103m %d: \033[0m \t  \033[104m %s: \033[0m \t0x%08x\n",3,"mtvec",cpu.mtvec);
+
   printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
   return;
 }
