@@ -15,7 +15,9 @@ Context* __am_irq_handle(Context *c) {
       case 0x80000007: 
         ev.event = EVENT_IRQ_TIMER; 
         break;
-      default: ev.event = EVENT_ERROR; break;
+      default: 
+        printf("c->mcause: [%d]\n",c->mcause);
+        ev.event = EVENT_ERROR; break;
     }
     c->mepc += 4;
     c = user_handler(ev, c);
