@@ -14,7 +14,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
     input 		[3:0]					alu_sel		, // choose source number
 	input       [DATA_LEN - 1:0]        imm_i		,
 	input       [DATA_LEN - 1:0]        csr_rdata_i	,
-	input 		[3:0]					csr_flag_i	,
+	input 		[2:0]					csr_flag_i	,
 	input		                		wd_i		,
     input		[4:0]		            wreg_i		,
 	input		[1:0]					store_type_i,
@@ -59,7 +59,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		`BRANCH_BGEU, ~alu_less
 	});
 
-	ysyx_22041211_MuxKeyWithDefault #(2,4,32) csr_wdata_choose (csr_wdata_o, csr_flag_i, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(2,3,32) csr_wdata_choose (csr_wdata_o, csr_flag_i, 32'b0, {
 		`CSR_CSRRW, reg1_i,
 		`CSR_CSRRS, reg1_i | csr_rdata_i
 	});

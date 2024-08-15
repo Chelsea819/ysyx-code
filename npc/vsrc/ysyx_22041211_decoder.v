@@ -20,7 +20,7 @@ module ysyx_22041211_decoder(
     output                                        jmp_flag_o                ,
     output          [31:0]                        jmp_target_o              ,
     output          [11:0]                        csr_addr_o                ,
-    output          [3:0]                         csr_flag_o                ,
+    output          [2:0]                         csr_flag_o                ,
     output          [31:0]                        imm_o         
 );
     wire            [6:0]                          func7;

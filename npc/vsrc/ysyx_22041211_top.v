@@ -58,13 +58,13 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[1:0]				ex_store_type_i	;
 	wire			[2:0]				ex_load_type_i	;
 	wire			[11:0]				ex_csr_addr_i	;
-	wire			[3:0]				ex_csr_flag_i	;
+	wire			[2:0]				ex_csr_flag_i	;
 	wire			[31:0]				ex_csr_rdata_i	;
 
 	// csr Unit
 	wire			[11:0]				csr_addr_i	;
 	wire			[DATA_LEN - 1:0]	csr_wdata_i		;
-	wire			[3:0]				csr_type_i		;
+	wire			[2:0]				csr_type_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 

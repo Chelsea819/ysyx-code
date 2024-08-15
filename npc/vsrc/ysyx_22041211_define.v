@@ -66,11 +66,11 @@
 // `define CSR_CSRRS       2'b10
 
 
-`define CSR_INVALID     4'b000
-`define CSR_CSRRW       4'b001
-`define CSR_CSRRS       4'b010
-`define CSR_ECALL       4'b110
-`define CSR_MRET        4'b011
+`define CSR_INVALID     3'b000
+`define CSR_CSRRW       3'b001
+`define CSR_CSRRS       3'b010
+`define CSR_ECALL       3'b110
+`define CSR_MRET        3'b011
 
 `define TYPE_I_LOAD_OPCODE 7'b0000011
 `define TYPE_I_LB_FUNC3    3'b000

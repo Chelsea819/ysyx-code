@@ -10,7 +10,7 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 	input								rst		,
 	input	    [11:0]					csr_addr,	// 要读的csr
 	input		[DATA_WIDTH - 1:0]		wdata	,	// 要写入csr的数据	
-	input		[3:0]					csr_type_i,
+	input		[2:0]					csr_type_i,
 	input		[DATA_WIDTH - 1:0]		csr_mepc_i	,
 	input		[DATA_WIDTH - 1:0]		csr_mcause_i	,
 	output		[DATA_WIDTH - 1:0]		csr_pc_o	,
