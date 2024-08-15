@@ -138,6 +138,12 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
       printf("\033[105m ref->pc: \033[0m \t0x%08x  \033[106m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     else
       printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    if (flag >= 34 && flag <= 37) {
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",0,ref->mcause,"macuse",cpu.mcause);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",1,ref->mepc,"mepc",cpu.mepc);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",2,ref->mstatus,"mstatus",cpu.mstatus);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",3,ref->mtvec,"mtvec",cpu.mtvec);
+    }
     dut->final();
   #ifdef CONFIG_WAVE
     m_trace->close();
