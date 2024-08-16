@@ -19,6 +19,8 @@ module ysyx_22041211_decoder(
     output          [2:0]                         load_type_o              ,
     output                                        jmp_flag_o                ,
     output          [31:0]                        jmp_target_o              ,
+    output          [11:0]                        csr_addr_o                ,
+    output          [2:0]                         csr_flag_o                ,
     output          [31:0]                        imm_o         
 );
     wire            [6:0]                          func7;
@@ -37,7 +39,11 @@ module ysyx_22041211_decoder(
     assign reg1_addr_o = inst_i[19:15];
     assign reg2_addr_o = inst_i[24:20];
     assign branch_target_o = pc_i + imm;
-
+    assign csr_addr_o = inst_i[31:20];
+    // always @(*) begin
+	// 	$display("csr_flag_o = [%b]",csr_flag_o);
+	// 	$display("jmp_flag_o = [%b]",jmp_flag_o);
+	// end
     
 // controller look-up lut
 // inst: R-type: wd_o aluop_o alusel_o
@@ -53,6 +59,10 @@ assign {wd_o, aluop_o, alusel_o, store_type_o, load_type_o} = ({opcode, func3, f
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_SRA_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_RIGHT_ARITH, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-sra
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_SLT_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_LESS_SIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-slt
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_SLTU_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_LESS_UNSIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-sltu
+                                                              ({inst_i}                     == {`TYPE_I_ECALL})                           ? {~`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_ZERO,`ALU_SEL1_CSR, `STORE_INVALID, `LOAD_INVALID}}  :       // I-ecall
+                                                              ({inst_i}                     == {`TYPE_I_MRET})                            ? {~`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_ZERO,`ALU_SEL1_CSR, `STORE_INVALID, `LOAD_INVALID}}  :       // I-mret
+                                                              ({opcode, func3}              == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRW_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_ZERO,`ALU_SEL1_CSR, `STORE_INVALID, `LOAD_INVALID}}  :        // I-csrrw
+                                                              ({opcode, func3}              == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRS_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_ZERO,`ALU_SEL1_CSR, `STORE_INVALID, `LOAD_INVALID}}  :        // I-csrrs
                                                               ({opcode, func3}              == {`TYPE_I_BASE_OPCODE, `TYPE_I_ADDI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}  :        // I-addi
                                                               ({opcode, func3}              == {`TYPE_I_BASE_OPCODE, `TYPE_I_XORI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_XOR, {`ALU_SEL2_IMM,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}  :        // I-xori
                                                               ({opcode, func3}              == {`TYPE_I_BASE_OPCODE, `TYPE_I_ORI_FUNC3}) ? {`EN_REG_WRITE, `ALU_OP_OR, {`ALU_SEL2_IMM,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}  :         // I-ori
@@ -76,21 +86,25 @@ assign {wd_o, aluop_o, alusel_o, store_type_o, load_type_o} = ({opcode, func3, f
                                                               ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BNE_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
                                                               ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BLT_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_LESS_SIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
                                                               ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BGE_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_LESS_SIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
-                                                              ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BLTU_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
-                                                              ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BGEU_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
+                                                              ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BLTU_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_LESS_UNSIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
+                                                              ({opcode, func3}              == {`TYPE_B_OPCODE, `TYPE_B_BGEU_FUNC3})       ? {~`EN_REG_WRITE, `ALU_OP_LESS_UNSIGNED, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}}:        // B-beq
                                                               ({opcode}                     == {`TYPE_U_AUIPC_OPCODE})                    ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_PC, `STORE_INVALID, `LOAD_INVALID}}    :        // U-auipc
                                                               ({opcode}                     == {`TYPE_U_LUI_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO, `STORE_INVALID, `LOAD_INVALID}}  :         // U-lui  
                                                               0;         
 
-assign  {branch_type_o, jmp_target_o, jmp_flag_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})             ? {`BRANCH_BEQ,     32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BNE_FUNC3})             ? {`BRANCH_BNE,     32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLT_FUNC3})             ? {`BRANCH_BLT,     32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGE_FUNC3})             ? {`BRANCH_BGE,     32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLTU_FUNC3})            ? {`BRANCH_BLTU,    32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGEU_FUNC3})            ? {`BRANCH_BGEU,    32'b0,             ~`EN_JMP}:         // B-beq
-                                                    ({opcode, func3} == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3})       ? {`BRANCH_INVALID, reg1_data_i + imm, `EN_JMP} :         // I-jalr
-                                                    ({opcode}        == {`TYPE_J_JAL_OPCODE})                            ? {`BRANCH_INVALID, pc_i + imm,        `EN_JMP} :         // J-jal 
-                                                    0;       
+assign  {branch_type_o, jmp_target_o, jmp_flag_o, csr_flag_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})             ? {`BRANCH_BEQ,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BNE_FUNC3})             ? {`BRANCH_BNE,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLT_FUNC3})             ? {`BRANCH_BLT,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGE_FUNC3})             ? {`BRANCH_BGE,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLTU_FUNC3})            ? {`BRANCH_BLTU,    32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGEU_FUNC3})            ? {`BRANCH_BGEU,    32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+                                                                ({opcode, func3} == {`TYPE_I_JALR_OPCODE, `TYPE_I_JALR_FUNC3})       ? {`BRANCH_INVALID, reg1_data_i + imm, `EN_JMP , `CSR_INVALID} :         // I-jalr
+                                                                ({opcode}        == {`TYPE_J_JAL_OPCODE})                            ? {`BRANCH_INVALID, pc_i + imm,        `EN_JMP, `CSR_INVALID} :         // J-jal 
+                                                                ({inst_i}        == {`TYPE_I_ECALL})                                 ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_ECALL}  :         // I-ecall 
+                                                                ({inst_i}        == {`TYPE_I_MRET})                                  ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_MRET}   :         // I-mret 
+                                                                ({opcode, func3} == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRW_FUNC3})       ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_CSRRW}  :         // I-csrrw
+                                                                ({opcode, func3} == {`TYPE_I_CSR_OPCODE, `TYPE_I_CSRRS_FUNC3})       ? {`BRANCH_INVALID, 32'b0,             ~`EN_JMP, `CSR_CSRRS}  :         // I-csrrs
+                                                                0;       
 
 ysyx_22041211_immGen my_gen (
     .inst       (inst_i),

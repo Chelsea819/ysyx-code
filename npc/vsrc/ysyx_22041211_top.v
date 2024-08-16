@@ -27,7 +27,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[2:0]				if_branch_type_i;
 	wire								if_branch_request_i;	
 	wire			[ADDR_LEN - 1:0]	if_jmp_target_i;
-	wire								if_jmp_flag_i;
+	wire								if_jmp_flag_i;	
+	wire			[ADDR_LEN - 1:0]	if_csr_pc_i;
 	// wire			[ADDR_LEN - 1:0]	pcPlus		;
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
@@ -55,9 +56,18 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[4:0]				ex_wreg_i		;
 	wire			[1:0]				ex_store_type_i	;
 	wire			[2:0]				ex_load_type_i	;
+	wire			[2:0]				ex_csr_flag_i	;
+	wire			[31:0]				ex_csr_rdata_i	;
+
+	// csr Unit
+	wire			[11:0]				csr_addr_i	;
+	wire			[DATA_LEN - 1:0]	csr_wdata_i		;
+	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
+	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 
 	// wb Unit
 	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
+	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
 	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
 	wire			[4:0]				wb_wreg_i		;
@@ -71,9 +81,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 				     ({id_inst_i[14:12], id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
 					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
 					 ((id_inst_i[6:0] == `TYPE_I_LOAD_OPCODE) & (id_inst_i[14:12] == `TYPE_I_LB_FUNC3 | id_inst_i[14:12] == `TYPE_I_LH_FUNC3 | id_inst_i[14:12] == `TYPE_I_LW_FUNC3 | id_inst_i[14:12] == `TYPE_I_LBU_FUNC3 | id_inst_i[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
+					 ((id_inst_i[6:0] == `TYPE_I_CSR_OPCODE) & (id_inst_i[14:12] == `TYPE_I_CSRRW_FUNC3 | id_inst_i[14:12] == `TYPE_I_CSRRS_FUNC3)) |	 //I-csrrw csrrs
 					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
 					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_SLTI_FUNC3 || id_inst_i[14:12] == `TYPE_I_SLTIU_FUNC3 || id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3 || id_inst_i[14:12] == `TYPE_I_XORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ANDI_FUNC3 || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
 					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
+					 (id_inst_i == `TYPE_I_ECALL) | 
+					 (id_inst_i == `TYPE_I_MRET)  | 
 					 (id_inst_i == `TYPE_I_EBREAK));
 	// 检测到ebreak
     import "DPI-C" function void ifebreak_func(int id_inst_i);
@@ -113,6 +126,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_flag_i  	  ( if_jmp_flag_i  ),
 		.jmp_target_i     ( if_jmp_target_i    ),
 		.pc_plus_4        ( if_pc_plus_4     ),
+		.csr_jmp_i     	  ( ex_csr_flag_i[2]  ),
+		.csr_pc_i         ( if_csr_pc_i      ),
 		.pc               ( id_pc_i               )
 	);
 
@@ -158,6 +173,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.jmp_target_o					(if_jmp_target_i),
 		.store_type_o					(ex_store_type_i),
 		.load_type_o					(ex_load_type_i),
+		.csr_addr_o						(csr_addr_i),
+		.csr_flag_o						(ex_csr_flag_i),  
 		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
@@ -170,6 +187,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.alu_control		(ex_aluop_i),
 		.alu_sel			(ex_alusel_i),		
 		.imm_i				(ex_imm_i),
+		.csr_rdata_i		(ex_csr_rdata_i),
+		.csr_flag_i			(ex_csr_flag_i),
 		.wd_i				(ex_wd_i),	
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
@@ -180,6 +199,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wreg_o				(wb_wreg_i),
 		.mem_wen_o			(wb_mem_wen_i),	
 		.mem_wdata_o		(wb_mem_wdata_i),	
+		.csr_wdata_o		(wb_csr_wdata_i),
+		.csr_mcause_o		(csr_mcause_i),
+		.pc_o				(csr_mepc_i),
 		.load_type_o		(wb_load_type_i),
 		.store_type_o		(wb_store_type_i),
 		.alu_result_o		(wb_alu_result_i)
@@ -192,13 +214,29 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.wd_i     		( wb_wd_i     ),
 		.wreg_i   		( wb_wreg_i   ),
 		.alu_result_i   ( wb_alu_result_i  	),
+		.csr_wdata_i	( wb_csr_wdata_i),
 		.mem_wen_i     	( wb_mem_wen_i   ),
 		.mem_wdata_i   	( wb_mem_wdata_i ),
 		.load_type_i	(wb_load_type_i),
 		.store_type_i	(wb_store_type_i),
+		.csr_wdata_o	( csr_wdata_i),
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )
+	);
+
+	ysyx_22041211_CSR#(
+		.DATA_WIDTH    ( 32 )
+	)u_ysyx_22041211_CSR(
+		.clk           ( clk           ),
+		.rst           ( rst           ),
+		.csr_addr      ( csr_addr_i      ),
+		.wdata         ( csr_wdata_i         ),
+		.csr_type_i    ( ex_csr_flag_i    ),
+		.csr_mepc_i    ( csr_mepc_i    ),
+		.csr_mcause_i  ( csr_mcause_i  ),
+		.csr_pc_o      ( if_csr_pc_i      ),
+		.r_data        ( ex_csr_rdata_i     )
 	);
 
 
