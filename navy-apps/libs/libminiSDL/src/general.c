@@ -2,7 +2,6 @@
 #include <assert.h>
 
 int SDL_Init(uint32_t flags) {
-  printf("NDL_Init begin!\n");
   return NDL_Init(flags);
 }
 
