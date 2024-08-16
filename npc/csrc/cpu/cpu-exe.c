@@ -221,6 +221,7 @@ static void trace_and_difftest(){
   return;
 }
 
+#ifdef CONFIG_FTRACE
 char *convertTo_2(char args){
   char *result = (char *)malloc(5);
   int num = 0;
@@ -250,6 +251,7 @@ char *convertTo_2(char args){
   result[4] = '\0';
   return result;
 }
+#endif
 
 void inst_get(int inst){
   s.isa.inst.val = inst;
