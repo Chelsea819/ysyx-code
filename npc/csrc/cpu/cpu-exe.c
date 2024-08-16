@@ -4,7 +4,6 @@
 #include "reg.h"
 #include <cpu/cpu.h>
 #include <locale.h>
-#include "sdb.h"
 #include <cpu/difftest.h>
 #include <debug.h>
 #include <config.h>

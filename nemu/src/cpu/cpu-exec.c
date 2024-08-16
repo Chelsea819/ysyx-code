@@ -82,18 +82,6 @@ typedef struct ftrace_file{
   struct ftrace_file *next;
 } Ftrace_file;
 
-// FILE *ftrace_fp = NULL;
-
-// Elf32_Ehdr Elf_header;
-// Elf32_Shdr Elf_sec;
-// Elf32_Off sym_off;
-// Elf32_Off str_off;
-// Elf32_Sym Elf_sym;
-// Elf32_Xword str_size;
-// Elf32_Xword sym_size;
-// int sym_num;
-
-// char *strtab = NULL;
 
 int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
@@ -242,8 +230,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 }
 
 
-uint32_t convert_16(char *args);
 
+#ifdef CONFIG_FTRACE
 // 将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
 char *convertTo_2(char args)
 {
@@ -282,7 +270,6 @@ char *convertTo_2(char args)
   return result;
 }
 
-#ifdef CONFIG_FTRACE
 struct func_call
 {
   char *func_name;
