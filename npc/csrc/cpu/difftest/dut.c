@@ -1,11 +1,14 @@
+#include <cstdint>
 #include <dlfcn.h>
 
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <memory/paddr.h>
+#include <string.h>
 #include <utils.h>
 #include <difftest-def.h>
 #include <debug.h>
+#include "common.h"
 #include "reg.h"
 #include "config.h"
 
@@ -128,7 +131,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   if ((flag = isa_difftest_checkregs(ref, pc)) != 0) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
-    for(int i = 0; i < 32; i++){
+    for(int i = 0; i < RISCV_GPR_NUM; i++){
       if (flag == i + 1) 
         printf("\033[105m %d:  \t0x%08x\033[0m  \033[106m %s:  \t0x%08x\033[0m\n",i,ref->gpr[i],regs[i],cpu.gpr[i]);
       else
@@ -138,12 +141,29 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
       printf("\033[105m ref->pc: \033[0m \t0x%08x  \033[106m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
     else
       printf("\033[103m ref->pc: \033[0m \t0x%08x  \033[104m cpu.pc: \033[0m \t0x%08x\n",ref->pc,cpu.pc);
+    if (flag >= 34 && flag <= 37) {
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",0,ref->mcause,"macuse",cpu.mcause);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",1,ref->mepc,"mepc",cpu.mepc);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",2,ref->mstatus,"mstatus",cpu.mstatus);
+        printf("\033[103m %d: \033[0m \t0x%08x  \033[104m %s: \033[0m \t0x%08x\n",3,ref->mtvec,"mtvec",cpu.mtvec);
+    }
     dut->final();
   #ifdef CONFIG_WAVE
     m_trace->close();
   #endif
     Assert(0,"Catch difference!\n");
   }
+}
+
+static void check_mem(void *buf, vaddr_t pc, int len, paddr_t addr) {
+  paddr_t* dut = (paddr_t*)(guest_to_host(addr));
+  int ret = memcmp(dut, buf, len);
+  if (ret != 0) {
+    for (int i = 0;i < len;i ++){
+      printf("\033[105m 0x%08x: \033[0m \t0x%08x-----ref: \t0x%08x\n",addr + i,paddr_read(addr + i,4), ((uint32_t *)buf)[i]);
+    }
+  }
+  Assert(ret == 0, "mem difference!");
 }
 
 //进行逐条指令执行后的状态对比
@@ -180,6 +200,9 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 // dut 0x8004 0x8008 0x800c 0x800f
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+  uint8_t ref_mem[4096] = {0};
+  ref_difftest_memcpy(0x8009df00, ref_mem, 256, DIFFTEST_TO_DUT);
+  check_mem(ref_mem, pc, 256,0x8009df00 );
   checkregs(&ref_r, pc);
 }
 #else

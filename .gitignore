@@ -13,3 +13,6 @@
 /fceux-am
 /nvboard
 /am-kernels
+/npc/.history/*
+/npc.prev/*
+npc_bnk_yosys/*

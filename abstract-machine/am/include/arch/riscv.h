@@ -1,12 +1,28 @@
 #ifndef ARCH_H__
 #define ARCH_H__
 
+// struct Context {
+//   // TODO: fix the order of these members to match trap.S
+//   uintptr_t gpr[MUXDEF(__riscv_e, 16, 32)], mcause, mstatus, mepc;
+//   void *pdir; 
+  
+// };
+
+#ifdef __riscv_e
+struct Context {
+  // TODO: fix the order of these members to match trap.S
+  uintptr_t gpr[16], mcause, mstatus, mepc;
+  void *pdir; 
+  
+};
+#else
 struct Context {
   // TODO: fix the order of these members to match trap.S
   uintptr_t gpr[32], mcause, mstatus, mepc;
   void *pdir; 
   
 };
+#endif
 
 #ifdef __riscv_e
 #define GPR1 gpr[15] // a5

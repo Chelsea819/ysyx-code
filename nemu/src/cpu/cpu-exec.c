@@ -21,7 +21,7 @@
 #include <elf.h>
 
 #include <isa.h>
-#include "../isa/riscv32/local-include/reg.h"
+#include "reg.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -82,18 +82,6 @@ typedef struct ftrace_file{
   struct ftrace_file *next;
 } Ftrace_file;
 
-// FILE *ftrace_fp = NULL;
-
-// Elf32_Ehdr Elf_header;
-// Elf32_Shdr Elf_sec;
-// Elf32_Off sym_off;
-// Elf32_Off str_off;
-// Elf32_Sym Elf_sym;
-// Elf32_Xword str_size;
-// Elf32_Xword sym_size;
-// int sym_num;
-
-// char *strtab = NULL;
 
 int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 {
@@ -169,64 +157,6 @@ int init_ftrace(Ftrace_file *file_header, Ftrace_file *file_cur)
 }
 
 
-// int init_ftrace(const char *ftrace_file)
-// {
-//   FILE *fp = NULL;
-
-//   // 检查文件是否能正常读取
-//   Assert(ftrace_file, "ftrace_file is NULL!\n");
-
-//   fp = fopen(ftrace_file, "r");
-//   Assert(fp, "Can not open '%s'", ftrace_file);
-
-//   ftrace_fp = fp;
-
-//   // 读取ELF header
-//   int ret = fread(&Elf_header, sizeof(Elf32_Ehdr), 1, ftrace_fp);
-//   if (ret != 1){
-//     perror("Error reading from file");
-//   }
-//   if (Elf_header.e_ident[0] != '\x7f' || memcmp(&(Elf_header.e_ident[1]), "ELF", 3) != 0){
-//     Assert(0, "Not an ELF file!\n");
-//   }
-
-//   Assert(Elf_header.e_ident[EI_CLASS] == ELFCLASS32, "Not a 32-bit ELF file\n");
-//   Assert(Elf_header.e_type == ET_EXEC, "Not an exec file\n");
-
-//   // 移到.strtab的位置，并进行读取
-//   fseek(ftrace_fp, Elf_header.e_shoff + Elf_header.e_shentsize * (Elf_header.e_shstrndx - 1), SEEK_SET);
-//   ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-//   if (ret != 1){
-//     perror("Error reading from file");
-//   }
-//   str_off = Elf_sec.sh_offset;
-//   str_size = Elf_sec.sh_size;
-//   strtab = malloc(str_size);
-
-//   fseek(ftrace_fp, str_off, SEEK_SET);
-//   ret = fread(strtab, str_size, 1, ftrace_fp);
-//   if (ret != 1){
-//     perror("Error reading from file");
-//   }
-
-//   // get .symtab
-//   for (int n = 0; n < Elf_header.e_shnum; n++){
-//     fseek(ftrace_fp, Elf_header.e_shoff + n * Elf_header.e_shentsize, SEEK_SET);
-//     ret = fread(&Elf_sec, Elf_header.e_shentsize, 1, ftrace_fp);
-//     if (ret != 1){
-//       perror("Error reading from file");
-//     }
-//     if (Elf_sec.sh_type == SHT_SYMTAB){
-//       sym_off = Elf_sec.sh_offset;
-//       sym_size = Elf_sec.sh_entsize;
-//       sym_num = Elf_sec.sh_size / Elf_sec.sh_entsize;
-//       continue;
-//     }
-//   }
-
-//   return 0;
-// }
-
 void free_strtab()
 {
   for(int i = 0; i < fileNum; i ++){
@@ -299,14 +229,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   return;
 }
 
-const char *reg[] = {
-    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-    "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-    "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
-uint32_t convert_16(char *args);
 
+#ifdef CONFIG_FTRACE
 // 将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
 char *convertTo_2(char args)
 {
@@ -345,7 +270,6 @@ char *convertTo_2(char args)
   return result;
 }
 
-#ifdef CONFIG_FTRACE
 struct func_call
 {
   char *func_name;
@@ -556,7 +480,7 @@ static void exec_once(Decode *s, vaddr_t pc)
         #ifdef CONFIG_FTRACE_PASS
         if(strcmp(name,"putch") != 0) 
           for(int i = 10; i < 15; i++){
-            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg[i],gpr(i));
+            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
           }
         #endif
         index++;

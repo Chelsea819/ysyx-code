@@ -17,23 +17,9 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
-# ifdef CONFIG_DIFFTEST
-GUEST_ISA = riscv32
-CONFIG_DIFFTEST_REF_NAME = nemu-interpreter
-DIFF_REF_PATH = /home/chelsea/ysyx-workbench/nemu
-DIFF_REF_SO = $(DIFF_REF_PATH)/build/$(GUEST_ISA)-$(CONFIG_DIFFTEST_REF_NAME)-so
-MKFLAGS = GUEST_ISA=$(GUEST_ISA) SHARE=1 ENGINE=interpreter
-ARGS_DIFF = --diff=$(DIFF_REF_SO)
-
-# ifndef CONFIG_DIFFTEST_REF_NEMU
-# $(DIFF_REF_SO):
-# 	$(MAKE) -s -C $(DIFF_REF_PATH) $(MKFLAGS)
-# endif
-# endif
-
 NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
 NPCFLAGS += $(ARGS_DIFF)
-NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf
+NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf --diff=$(NPC_HOME)/diff-ref/riscv32-nemu-interpreter-so
 
 CFLAGS += -I$(AM_HOME)/am/include -I$(AM_HOME)/am/src/riscv/npc/libgcc -I$(AM_HOME)/am/src/riscv/npc/include
 
@@ -49,8 +35,7 @@ gdb: image
 
 run: image
 	$(info DIFF_REF_SO:$(DIFF_REF_SO))
-	$(info ARGS_DIFF:$(ARGS_DIFF))
-# -$(MAKE) -C $(NEMU_HOME) ISA=riscv32 run ARGS="$(NEMUFLAGS)"  IMG=$(IMAGE).bin
-# $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin  BUILD_DIR="$(BUILD_DIR)"
+	$(info ARGS_DIFF:$(ARGS_DIFF)) 
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+# bear --output ~/ysyx-workbench/npc/build/compile_commands.json -- $(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
 

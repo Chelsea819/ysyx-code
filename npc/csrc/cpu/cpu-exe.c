@@ -4,7 +4,6 @@
 #include "reg.h"
 #include <cpu/cpu.h>
 #include <locale.h>
-#include "sdb.h"
 #include <cpu/difftest.h>
 #include <debug.h>
 #include <config.h>
@@ -189,7 +188,7 @@ static void trace_and_difftest(){
   while (index != NULL){
     addr = expr(index->target, &success);
     Assert(success,"Make_token fail!");
-    printf("index->target: %s, addr: 0x%08x, index->data: 0x%08x\n",index->target,addr,index->data);
+    // printf("index->target: %s, addr: 0x%08x, index->data: 0x%08x\n",index->target,addr,index->data);
     if(addr != index->data){
       npc_state.state = NPC_STOP;
       index->times += 1;
@@ -210,6 +209,10 @@ static void trace_and_difftest(){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
+  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
+  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
+  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
+  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
  IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
@@ -218,6 +221,7 @@ static void trace_and_difftest(){
   return;
 }
 
+#ifdef CONFIG_FTRACE
 char *convertTo_2(char args){
   char *result = (char *)malloc(5);
   int num = 0;
@@ -247,6 +251,7 @@ char *convertTo_2(char args){
   result[4] = '\0';
   return result;
 }
+#endif
 
 void inst_get(int inst){
   s.isa.inst.val = inst;

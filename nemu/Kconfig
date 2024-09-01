@@ -211,6 +211,10 @@ config IRINGBUF
   bool "Enable iringbuf"
   default y
 
+config AUTO_Q
+  bool "Auto running program and auto quitting"
+  default n
+
 choice
   prompt "Reference design"
   default DIFFTEST_REF_SPIKE if ISA_riscv

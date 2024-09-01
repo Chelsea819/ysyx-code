@@ -149,8 +149,8 @@ static int cmd_help(char *args);
 
 static int cmd_w(char *args){
   if(too_lessArg(args) == 1) return 0;
-  WP* ret =new_wp(args);
-  if(ret==NULL) printf("%s already in wp_pool!\n",args);
+  WP* ret = new_wp(args);
+  if(ret == NULL) printf("%s already in wp_pool!\n",args);
   // if(head != NULL) printf("\n head \nNO:%d  target:%s   %p   data: %x\n",head->NO,head->target,head->target,head->data);
   watchPoints_display();
 // printf("printf address of head target:%p\n",head->target);
@@ -294,7 +294,11 @@ void sdb_mainloop()
     cmd_c(NULL);
     //return;
   }
-  // cmd_q(NULL);return;
+#ifdef CONFIG_AUTO_Q
+  cmd_c(NULL);
+  cmd_q(NULL);return;
+#endif
+  
   for (char *str; (str = rl_gets()) != NULL;)
   {
     char *str_end = str + strlen(str);

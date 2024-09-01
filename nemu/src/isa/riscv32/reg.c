@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include "local-include/reg.h"
+#include "reg.h"
 
 uint32_t convert_ten(char *args);
 
@@ -26,7 +26,7 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-  for(int i = 0; i < 32; i++){
+  for(int i = 0; i < REG_NUM; i++){
     printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
   }
   printf("\033[102m PC: \033[0m \t0x%08x\n",cpu.pc);
@@ -39,13 +39,13 @@ word_t isa_reg_str2val(char *s, bool *success) {
   if(strcmp("pc",s) == 0){
       *success = true;
       //printf("strcmp(pc,s) == 0\n");
-      free(s);
+      // free(s);
       return cpu.pc;
   }  
   for(int i = 0; i < 32; i++){
     if(strcmp(regs[i],s) == 0){
       *success = true;
-      free(s);
+      // free(s);
       return gpr(i);
     }
   } 

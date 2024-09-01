@@ -38,7 +38,7 @@ char *strcpy(char *dst, const char *src) {
 
 char *strncpy(char *dst, const char *src, size_t n) {
   int i = 0;
-  for(i = 0; i < n ; i ++){
+  for(i = 0; i < n && src[i] != '\0' ; i ++){
     dst[i] = src[i];
   }
   for(; i < n; i++){
@@ -82,9 +82,9 @@ int strncmp(const char *s1, const char *s2, size_t n) {
     if((unsigned char)s1[i] > (unsigned char)s2[i]) return 1;
     if((unsigned char)s1[i] < (unsigned char)s2[i]) return -1;
   }
+  if(s1[i] == s2[i]) return 0;
   if(s1[i] == '\0') return -1;
-  if(s2[i] == '\0') return 1;
-  return 0;
+  return 1;
   //panic("Not implemented");
 }
 

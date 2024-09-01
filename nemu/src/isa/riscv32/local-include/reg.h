@@ -17,14 +17,14 @@
 #define __RISCV_REG_H__
 
 #include <common.h>
-
+extern const char *regs[];
 /*check register index*/
 static inline int check_reg_idx(int idx) {
   /* if index in certain range */
   IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < MUXDEF(CONFIG_RVE, 16, 32)));
   return idx;
 }
-
+#define REG_NUM MUXDEF(CONFIG_RVE, 16, 32)
 static inline int check_csr_reg_idx(int idx) {
   /* if index in certain range */
   IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < 4096));
@@ -32,7 +32,10 @@ static inline int check_csr_reg_idx(int idx) {
 }
 
 #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(idx) (cpu.csr[check_csr_reg_idx(idx)])
+#define CSR_MCAUSE_REG (cpu.mcause)
+#define CSR_MEPC_REG (cpu.mepc)
+#define CSR_MSTATUS_REG (cpu.mstatus)
+#define CSR_MTVEC_REG (cpu.mtvec)
 
 static inline const char* reg_name(int idx) {
   extern const char* regs[];

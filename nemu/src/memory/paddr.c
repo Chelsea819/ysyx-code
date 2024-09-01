@@ -32,7 +32,7 @@ static word_t pmem_read(paddr_t addr, int len) {
   
   word_t ret = host_read(guest_to_host(addr), len);
   #ifdef CONFIG_MTRACE
-      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,ret);
+      // Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,ret);
   #endif
   return ret;
 }
@@ -65,7 +65,7 @@ void init_mem() {
   uint32_t *p = (uint32_t *)pmem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
-    p[i] = rand();
+    p[i] = 0;
   }
 #endif
   /*打印日志,输出初始化的内存区域的地址范围,
