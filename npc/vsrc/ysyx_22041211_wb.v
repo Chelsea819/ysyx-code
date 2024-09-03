@@ -73,7 +73,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	end
 
     always @(posedge clk) begin
-        if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
+        if(rst)
+            finish           <=     1'b1;
+        else if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
             wd_o	         <=     wd; 
             wreg_o	         <=     wreg;  	
             csr_wdata_o	     <=     csr_wdata;  
