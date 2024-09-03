@@ -1,147 +1,55 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_decoder(
-    input									      clk				        ,
-    input									      rst				        ,
     input           [31:0]                        inst_i                    ,
     input           [31:0]                        reg1_data_i               ,
     input           [31:0]                        reg2_data_i               ,
     input           [31:0]                        pc_i                      ,
-    input                                         ifu_valid                 ,
-    input                                         exu_ready                 ,
-    output                                        idu_ready_o                 ,
-    output                                        idu_valid_o                 ,
-    output  reg     [3:0]                         aluop_o                   ,
-    output  reg     [3:0]                         alusel_o                  ,
-    output  reg     [31:0]                        pc_o                      ,
-    output  reg     [31:0]                        reg1_o                    ,
-    output  reg     [31:0]                        reg2_o                    ,
-    output	reg                		              wd_o                      ,
-    output	reg     [4:0]		                  wreg_o                    ,
-    output  reg     [4:0]                         reg1_addr_o               ,
-    output  reg     [4:0]                         reg2_addr_o               ,
-    output  reg     [2:0]                         branch_type_o             ,
-    output  reg     [31:0]                        branch_target_o           ,
-    output  reg     [1:0]                         store_type_o              ,
-    output  reg     [2:0]                         load_type_o              ,
-    output  reg                                   jmp_flag_o                ,
-    output  reg     [31:0]                        jmp_target_o              ,
-    output  reg     [11:0]                        csr_addr_o                ,
-    output  reg     [2:0]                         csr_flag_o                ,
-    output  reg     [31:0]                        imm_o         
+    output          [3:0]                         aluop_o                   ,
+    output          [3:0]                         alusel_o                  ,
+    output          [31:0]                        pc_o                      ,
+    output          [31:0]                        reg1_o                    ,
+    output          [31:0]                        reg2_o                    ,
+    output		                		          wd_o                      ,
+    output		    [4:0]		                  wreg_o                    ,
+    output          [4:0]                         reg1_addr_o               ,
+    output          [4:0]                         reg2_addr_o               ,
+    output          [2:0]                         branch_type_o             ,
+    output          [31:0]                        branch_target_o           ,
+    output          [1:0]                         store_type_o              ,
+    output          [2:0]                         load_type_o              ,
+    output                                        jmp_flag_o                ,
+    output          [31:0]                        jmp_target_o              ,
+    output          [11:0]                        csr_addr_o                ,
+    output          [2:0]                         csr_flag_o                ,
+    output          [31:0]                        imm_o         
 );
     wire            [6:0]                          func7;
     wire            [2:0]                          func3;
     wire            [6:0]                          opcode;
     wire            [31:0]                         imm;
 
-    wire          [3:0]                         aluop                   ;
-    wire          [3:0]                         alusel                  ;
-    wire          [31:0]                        pc                      ;
-    wire          [31:0]                        reg1                    ;
-    wire          [31:0]                        reg2                    ;
-    wire		                		        wd                      ;
-    wire		  [4:0]		                    wreg                    ;
-    wire          [4:0]                         reg1_addr               ;
-    wire          [4:0]                         reg2_addr               ;
-    wire          [2:0]                         branch_type             ;
-    wire          [31:0]                        branch_target           ;
-    wire          [1:0]                         store_type              ;
-    wire          [2:0]                         load_type               ;
-    wire                                        jmp_flag                ;
-    wire          [31:0]                        jmp_target              ;
-    wire          [11:0]                        csr_addr                ;
-    wire          [2:0]                         csr_flag                ;
-
     assign func3 = inst_i[14:12];
     assign func7 = inst_i[31:25];
     assign opcode = inst_i[6:0];
-    assign pc = pc_i;
-    assign reg1 = reg1_data_i;
-    assign reg2 = reg2_data_i;
-    assign wreg = inst_i[11:7];
-    assign reg1_addr = inst_i[19:15];
-    assign reg2_addr = inst_i[24:20];
-    assign branch_target = pc_i + imm;
-    assign csr_addr = inst_i[31:20];
-    assign idu_ready_o = 1'b1;
-    assign idu_valid_o = 1'b1;
+    assign pc_o = pc_i;
+    assign imm_o = imm;
+    assign reg1_o = reg1_data_i;
+    assign reg2_o = reg2_data_i;
+    assign wreg_o = inst_i[11:7];
+    assign reg1_addr_o = inst_i[19:15];
+    assign reg2_addr_o = inst_i[24:20];
+    assign branch_target_o = pc_i + imm;
+    assign csr_addr_o = inst_i[31:20];
     // always @(*) begin
 	// 	$display("csr_flag_o = [%b]",csr_flag_o);
 	// 	$display("jmp_flag_o = [%b]",jmp_flag_o);
 	// end
-    reg			[1:0]			        	con_state	;
-	reg			[1:0]			        	next_state	;
-    parameter [1:0] IDU_WAIT_IFU_VALID = 2'b00, IDU_WAIT_IDU_VALID = 2'b01, IDU_WAIT_EXU_READY = 2'b10;
-
-	// state trans
-	always @(posedge clk ) begin
-		if(rst)
-			con_state <= IDU_WAIT_IFU_VALID;
-		else 
-			con_state <= next_state;
-	end
-
-	// next_state
-	always @(*) begin
-		case(con_state) 
-            // 等待ifu取指，下一个时钟周期开始译码
-			IDU_WAIT_IFU_VALID: begin
-				if (ifu_valid == 1'b0) begin
-					next_state = IDU_WAIT_IFU_VALID;
-				end else begin 
-					next_state = IDU_WAIT_IDU_VALID;
-				end
-			end
-            // 等待idu完成译码
-			IDU_WAIT_IDU_VALID: begin 
-				if (idu_valid_o == 1'b0) begin
-					next_state = IDU_WAIT_IDU_VALID;
-				end else begin 
-					next_state = IDU_WAIT_EXU_READY;
-				end
-			end
-            // 等待exu空闲，下个时钟周期传递信息
-            IDU_WAIT_EXU_READY: begin 
-				if (exu_ready == 1'b0) begin
-					next_state = IDU_WAIT_EXU_READY;
-				end else begin 
-					next_state = IDU_WAIT_IFU_VALID;
-				end
-			end
-            default: begin 
-				next_state = 2'b11;
-			end
-		endcase
-	end
-
-    always @(posedge clk) begin
-        if(con_state == IDU_WAIT_EXU_READY && next_state == IDU_WAIT_IFU_VALID) begin
-            aluop_o         <=     aluop;
-            alusel_o        <=     alusel;
-            pc_o            <=     pc;
-            reg1_o          <=     reg1;
-            reg2_o          <=     reg2;
-            wd_o            <=     wd;
-            wreg_o          <=     wreg;
-            reg1_addr_o     <=     reg1_addr;
-            reg2_addr_o     <=     reg2_addr;
-            branch_type_o   <=     branch_type;
-            branch_target_o <=     branch_target;
-            store_type_o    <=     store_type;
-            load_type_o     <=     load_type;
-            jmp_flag_o      <=     jmp_flag;
-            jmp_target_o    <=     jmp_target;
-            csr_addr_o      <=     csr_addr;
-            csr_flag_o      <=     csr_flag;
-            imm_o           <=     imm;
-        end
-	end
     
 // controller look-up lut
 // inst: R-type: wd_o aluop_o alusel_o
 // alu_sel  [1:0] res1/pc/0, [3:2] res2/imm/4/0
 // alu_op + - 
-assign {wd, aluop, alusel, store_type, load_type} = ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-add
+assign {wd_o, aluop_o, alusel_o, store_type_o, load_type_o} = ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_ADD_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-add
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_SUB_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_SUB, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-sub
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_XOR_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_XOR, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-xor
                                                               ({opcode, func3, func7}       == {`TYPE_R_OPCODE, `TYPE_R_OR_FUNC})        ? {`EN_REG_WRITE, `ALU_OP_OR, {`ALU_SEL2_REG2,`ALU_SEL1_REG1, `STORE_INVALID, `LOAD_INVALID}} :        // R-or
@@ -184,7 +92,7 @@ assign {wd, aluop, alusel, store_type, load_type} = ({opcode, func3, func7}     
                                                               ({opcode}                     == {`TYPE_U_LUI_OPCODE})                      ? {`EN_REG_WRITE, `ALU_OP_ADD, {`ALU_SEL2_IMM,`ALU_SEL1_ZERO, `STORE_INVALID, `LOAD_INVALID}}  :         // U-lui  
                                                               0;         
 
-assign  {branch_type, jmp_target, jmp_flag, csr_flag} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})             ? {`BRANCH_BEQ,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
+assign  {branch_type_o, jmp_target_o, jmp_flag_o, csr_flag_o} = ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BEQ_FUNC3})             ? {`BRANCH_BEQ,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BNE_FUNC3})             ? {`BRANCH_BNE,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BLT_FUNC3})             ? {`BRANCH_BLT,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq
                                                                 ({opcode, func3} == {`TYPE_B_OPCODE, `TYPE_B_BGE_FUNC3})             ? {`BRANCH_BGE,     32'b0,             ~`EN_JMP, `CSR_INVALID}:         // B-beq

@@ -1,6 +1,5 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
-    input									      rst				        ,
     input		                		wd_i		,
     input		                		clk		,
     input		[4:0]		            wreg_i		,
@@ -10,13 +9,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input       [2:0]                   load_type_i , 
     input       [1:0]                   store_type_i , 
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
-    input                               exu_valid   ,
-    output                              wb_ready_o  ,
-    output  reg                         finish      ,
-    output	reg	                		wd_o		,
-    output	reg	[4:0]		            wreg_o		,
-    output  reg [DATA_LEN - 1:0]        csr_wdata_o	,
-    output	reg	[DATA_LEN - 1:0]		wdata_o
+    output		                		wd_o		,
+    output		[4:0]		            wreg_o		,
+    output      [DATA_LEN - 1:0]        csr_wdata_o	,
+    output		[DATA_LEN - 1:0]		wdata_o
 );
     wire [31:0] mem_waddr;
     wire [31:0] mem_raddr;
@@ -25,65 +21,13 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     wire [7:0]  mem_rmask;
     wire [7:0]  mem_wmask;
     wire        mem_to_reg;
-
-
-    wire		[4:0]		                wreg		;
-    wire        [DATA_LEN - 1:0]            csr_wdata	;
-    wire		[DATA_LEN - 1:0]		    wdata       ;
-    wire	                		        wd		    ;
-    assign wd = wd_i;
-    assign wreg = wreg_i;
+    assign wd_o = wd_i;
+    assign wreg_o = wreg_i;
     assign mem_to_reg = |load_type_i;
-    assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
+    assign wdata_o = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
     assign mem_waddr = alu_result_i;
     assign mem_raddr = alu_result_i;
-    assign csr_wdata = csr_wdata_i;
-
-    reg							        	con_state	;
-	reg							        	next_state	;
-    
-	parameter WB_BUSY = 1, WB_WAIT_EXU_VALID = 0;
-
-	// state trans
-	always @(posedge clk ) begin
-		if(rst)
-			con_state <= WB_WAIT_EXU_VALID;
-		else 
-			con_state <= next_state;
-	end
-
-	// next_state
-	always @(*) begin
-		case(con_state) 
-			WB_WAIT_EXU_VALID: begin
-				if (exu_valid == 1'b0) begin
-					next_state = WB_WAIT_EXU_VALID;
-				end else begin 
-					next_state = WB_BUSY;
-				end
-			end
-			WB_BUSY: begin 
-				if (wb_ready_o == 1'b0) begin
-					next_state = WB_BUSY;
-				end else begin 
-					next_state = WB_WAIT_EXU_VALID;
-				end
-			end
-		endcase
-	end
-
-    always @(posedge clk) begin
-        if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
-            wd_o	         <=     wd; 
-            wreg_o	         <=     wreg;  	
-            csr_wdata_o	     <=     csr_wdata;  
-            wdata_o          <=     wdata;  
-            finish           <=     1'b1;
-        end
-        else begin 
-            finish           <=     1'b0;
-        end
-	end
+    assign csr_wdata_o = csr_wdata_i;
 
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
                        (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 

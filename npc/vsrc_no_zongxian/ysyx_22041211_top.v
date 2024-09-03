@@ -21,9 +21,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[4:0]				reg_waddr_i		;
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
 
-	//my_IFU
-	wire								idu_ready_o	;
-	wire								if_last_finish_i;
+	//my_counter
+	wire			[ADDR_LEN - 1:0]	if_pc_plus_4	;
 	wire			[ADDR_LEN - 1:0]	if_branch_target_i;
 	wire			[2:0]				if_branch_type_i;
 	wire								if_branch_request_i;	
@@ -34,15 +33,16 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// wire			[ADDR_LEN - 1:0]	pcBranch	;
 	// wire			[1:0]				pcSrc		;
 
+	//my_ifetch
+	reg  			[DATA_LEN - 1:0]    if_inst			;
+
 	//my_decoder
-	wire								ifu_valid_o		;
-	wire								exu_ready_o		;
-	wire								idu_valid_o		;
 	wire			[ADDR_LEN - 1:0]	id_pc_i			;
 	wire			[ADDR_LEN - 1:0]	id_inst_i		;
 	wire			[ADDR_LEN - 1:0]	id_reg1_data_i	;
 	wire			[ADDR_LEN - 1:0]	id_reg2_data_i	;
 
+	
 
 	// execute
 	wire			[3:0]				ex_aluop_i		;
@@ -70,8 +70,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
 	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
-	wire								wb_ready_o			;
-	wire								exu_valid_o			;
 	wire			[4:0]				wb_wreg_i		;
 	wire			[DATA_LEN - 1:0]	wb_alu_result_i	;
 	wire			[2:0]				wb_load_type_i	;
@@ -100,29 +98,47 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
     always @(*)
         inst_get(id_inst_i);
 
+	import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
+	
+	//取指令
+	always @(*) begin
+		if(~rst) begin
+        	if_inst = pmem_read_task(id_pc_i, 8'b00001111);
+		end
+		else  begin
+			if_inst = 32'b0;
+		end
+	end
+
 	// always @(*) begin
 	// 		$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, if_inst, invalid);
 	// end
+	assign id_inst_i = if_inst;
 
-ysyx_22041211_IFU#(
-    .ADDR_WIDTH       ( 32 ),
-    .DATA_WIDTH       ( 32 )
-)u_ysyx_22041211_IFU(
-    .clk              ( clk              ),
-    .rst              ( rst              ),
-    .valid            ( ifu_valid_o           ),
-    .last_finish      ( if_last_finish_i    ),
-    .ready            ( idu_ready_o 			),
-    .branch_request_i ( if_branch_request_i ),
-	.branch_target_i  ( if_branch_target_i  ),
-	.branch_flag_i    ( |if_branch_type_i    ),
-	.jmp_flag_i  	  ( if_jmp_flag_i  ),
-	.jmp_target_i     ( if_jmp_target_i    ),
-	.csr_jmp_i     	  ( ex_csr_flag_i[2]  ),
-	.csr_pc_i         ( if_csr_pc_i      ),
-    .inst_o           ( id_inst_i           ),
-    .pc               ( id_pc_i             )
-);
+	ysyx_22041211_counter#(
+		.ADDR_LEN         ( 32 )
+	)u_ysyx_22041211_counter(
+		.clk              ( clk              ),
+		.rst              ( rst              ),
+		.branch_request_i ( if_branch_request_i ),
+		.branch_target_i  ( if_branch_target_i  ),
+		.branch_flag_i    ( |if_branch_type_i    ),
+		.jmp_flag_i  	  ( if_jmp_flag_i  ),
+		.jmp_target_i     ( if_jmp_target_i    ),
+		.pc_plus_4        ( if_pc_plus_4     ),
+		.csr_jmp_i     	  ( ex_csr_flag_i[2]  ),
+		.csr_pc_i         ( if_csr_pc_i      ),
+		.pc               ( id_pc_i               )
+	);
+
+
+	ysyx_22041211_pcPlus#(
+		.DATA_LEN ( 32 )
+	)u_ysyx_22041211_pcPlus(
+		.pc_old ( id_pc_i ),
+		.rst    ( rst    ),
+		.pc_new  ( if_pc_plus_4  )
+	);
 
 
 	ysyx_22041211_RegisterFile my_RegisterFile(
@@ -138,18 +154,10 @@ ysyx_22041211_IFU#(
 	);
 
 	ysyx_22041211_decoder my_decoder(
-		.clk              				( clk              ),
-		.rst              				( rst              ),
 		.inst_i							(id_inst_i),
 		.reg1_data_i					(id_reg1_data_i),
 		.reg2_data_i					(id_reg2_data_i),
 		.pc_i       					(id_pc_i),	
-
-		.ifu_valid    					(ifu_valid_o),	
-		.exu_ready   					(exu_ready_o),
-		.idu_ready_o       				(idu_ready_o),
-		.idu_valid_o     				(idu_valid_o),
-
 		.aluop_o    					(ex_aluop_i),	
 		.alusel_o   					(ex_alusel_i),
 		.pc_o       					(ex_pc_i),
@@ -172,8 +180,6 @@ ysyx_22041211_IFU#(
 	);
 
 	ysyx_22041211_EXE my_execute(
-		.clk              	( clk     ),
-		.rst              	( rst     ),
 		.reg1_i				(ex_reg1_i),
 		.reg2_i				(ex_reg2_i),
 		.pc_i				(ex_pc_i),
@@ -186,12 +192,6 @@ ysyx_22041211_IFU#(
 		.wd_i				(ex_wd_i),	
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
-
-		.idu_valid			(idu_valid_o),
-		.wb_ready			(wb_ready_o),	
-		.exu_ready_o		(exu_ready_o),
-		.exu_valid_o		(exu_valid_o),
-
 		.store_type_i		(ex_store_type_i),	
 		.load_type_i		(ex_load_type_i),
 		.branch_request_o	(if_branch_request_i),
@@ -211,7 +211,6 @@ ysyx_22041211_IFU#(
 		.DATA_LEN ( 32 )
 	)u_ysyx_22041211_wb(
 		.clk			(clk),
-		.rst            ( rst     ),
 		.wd_i     		( wb_wd_i     ),
 		.wreg_i   		( wb_wreg_i   ),
 		.alu_result_i   ( wb_alu_result_i  	),
@@ -221,11 +220,6 @@ ysyx_22041211_IFU#(
 		.load_type_i	(wb_load_type_i),
 		.store_type_i	(wb_store_type_i),
 		.csr_wdata_o	( csr_wdata_i),
-
-		.exu_valid     	( exu_valid_o   ),
-		.wb_ready_o   	( wb_ready_o ),
-		.finish  		( if_last_finish_i ),
-
 		.wd_o     		( reg_wen_i   ),
 		.wreg_o   		( reg_waddr_i ),
 		.wdata_o  		( reg_wdata_i )

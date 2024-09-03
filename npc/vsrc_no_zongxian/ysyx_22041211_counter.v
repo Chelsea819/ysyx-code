@@ -16,8 +16,6 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
     input       [31:0]                   	jmp_target_i,
 	input									csr_jmp_i	,
 	input		[ADDR_LEN - 1:0]			csr_pc_i	,
-	input									con_state	,
-	input									ready		,
 	// input	[ADDR_LEN - 1:0]			ce		,
 	output reg	[ADDR_LEN - 1:0]			pc
 );	
@@ -35,10 +33,8 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 					 pc_plus_4;
 	
 	always @ (posedge clk) begin
-		if (con_state == 1'b1 && ready == 1'b1) 
-			pc <= pc_next;
+		pc <= pc_next;
 	end
-	
 	import "DPI-C" function void pc_get(int pc, int dnpc);
 		always @(*)
 			pc_get(pc, pc_next);
