@@ -16,8 +16,8 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
     input       [31:0]                   	jmp_target_i,
 	input									csr_jmp_i	,
 	input		[ADDR_LEN - 1:0]			csr_pc_i	,
-	input									con_state	,
-	input									ready		,
+	input		[1:0]						con_state	,
+	input									last_finish	,
 	// input	[ADDR_LEN - 1:0]			ce		,
 	output reg	[ADDR_LEN - 1:0]			pc
 );	
@@ -37,7 +37,7 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	always @ (posedge clk) begin
 		if(rst)
 			pc <= 32'h80000000;
-		else if (con_state == 1'b1 && ready == 1'b1) 
+		else if (con_state == 2'b10 && last_finish == 1'b1) 
 			pc <= pc_next;
 	end
 	

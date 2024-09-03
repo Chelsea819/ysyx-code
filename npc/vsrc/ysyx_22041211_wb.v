@@ -46,9 +46,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	parameter WB_BUSY = 1, WB_WAIT_EXU_VALID = 0;
 
     always @(posedge clk ) begin
-        if(rst)
-            finish <= 1'b1;
-		else if(next_state == WB_BUSY)
+        if(next_state == WB_BUSY)
 			finish <= 1'b1;
 		else 
 			finish <= 1'b0;

@@ -31,8 +31,8 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	output reg	[ADDR_WIDTH - 1:0]			pc
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
-	reg							        	con_state	;
-	reg							        	next_state	;
+	reg			[1:0]				        con_state	;
+	reg			[1:0]			        	next_state	;
 	reg			[DATA_WIDTH - 1:0]      	inst	;
 
 	assign invalid = ~((inst[6:0] == `TYPE_U_LUI_OPCODE) | (inst[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
@@ -48,7 +48,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (inst == `TYPE_I_MRET)  | 
 					 (inst == `TYPE_I_EBREAK));
 
-	parameter IFU_IDLE = 0, IFU_WAIT_READY = 1;
+	parameter [1:0] IFU_IDLE = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10;
 
 	always @(posedge clk ) begin
 		if(next_state == IFU_IDLE)
@@ -79,9 +79,18 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 				if (ready == 1'b0) begin
 					next_state = IFU_WAIT_READY;
 				end else begin 
+					next_state = IFU_WAIT_FINISH;
+				end
+			end
+			IFU_WAIT_FINISH: begin 
+				if (last_finish == 1'b0) begin
+					next_state = IFU_WAIT_FINISH;
+				end else begin 
 					next_state = IFU_IDLE;
 				end
 			end
+			default:
+				next_state = 2'b0;
 		endcase
 	end
 
@@ -106,7 +115,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
         .csr_jmp_i        ( csr_jmp_i        ),
         .csr_pc_i         ( csr_pc_i         ),
 		.con_state        ( con_state        ),
-        .ready         	  ( ready         ),
+        .last_finish      ( last_finish         ),
         .pc               ( pc               )
     );
 	import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
