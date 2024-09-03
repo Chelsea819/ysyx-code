@@ -101,7 +101,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     //fetch instruction
 	always @(*) begin
 		if(~rst) begin
-			$display("rst = %d, pc = %x",rst, pc);
+			$display("rst = %d, pc = %x con_state = %d ",rst, pc, con_state);
         	inst = pmem_read_task(pc, 8'b00001111);
 			valid = 1'b1;
 		end else begin  

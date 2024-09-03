@@ -35,7 +35,9 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 					 pc_plus_4;
 	
 	always @ (posedge clk) begin
-		if (con_state == 1'b1 && ready == 1'b1) 
+		if(rst)
+			pc <= 32'h80000000;
+		else if (con_state == 1'b1 && ready == 1'b1) 
 			pc <= pc_next;
 	end
 	
