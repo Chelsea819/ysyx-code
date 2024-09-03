@@ -69,7 +69,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	always @(*) begin
 		case(con_state) 
 			IFU_IDLE: begin
-				if (valid == 1'b0 || last_finish == 1'b0) begin
+				if (valid == 1'b0) begin
 					next_state = IFU_IDLE;
 				end else begin 
 					next_state = IFU_WAIT_READY;
@@ -83,7 +83,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 				end
 			end
 			IFU_WAIT_FINISH: begin 
-				if (last_finish == 1'b0) begin
+				if (last_finish == 1'b0 || last_finish == 1'b0) begin
 					next_state = IFU_WAIT_FINISH;
 				end else begin 
 					next_state = IFU_IDLE;
