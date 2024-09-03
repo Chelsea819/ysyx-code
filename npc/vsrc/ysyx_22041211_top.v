@@ -1,17 +1,11 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
-	// input								clk ,
-	// input								rst	,
-	// // input			[DATA_LEN - 1:0]	id_inst_i,
-	// output			[ADDR_LEN - 1:0]	pc			,
-	// output								invalid
 	input								clk ,
 	input								rst ,
-	// input			[DATA_LEN - 1:0]	id_inst_i,
 	output			[ADDR_LEN - 1:0]	pc			,
 	output								invalid
 );
-
+	wire			[ADDR_LEN - 1:0]	inst			; // 正在执行的指令
 	// //registerFile
 	// wire								reg_re1_i		;
 	wire			[4:0]				reg_raddr1_i	;
@@ -50,7 +44,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	ex_reg1_i		;
 	wire			[DATA_LEN - 1:0]	ex_reg2_i		;
 	wire			[DATA_LEN - 1:0]	ex_imm_i		;
-	// wire			[DATA_LEN - 1:0]	ex_inst_i		;
+	wire			[DATA_LEN - 1:0]	ex_inst_i		;
 	wire			[DATA_LEN - 1:0]	ex_pc_i			;
 	wire								ex_wd_i			;
 	wire			[4:0]				ex_wreg_i		;
@@ -70,8 +64,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
 	wire								wb_mem_wen_i	;
 	wire								wb_wd_i			;
-	wire								wb_ready_o			;
-	wire								exu_valid_o			;
+	wire								wb_ready_o		;
+	wire								exu_valid_o		;
 	wire			[4:0]				wb_wreg_i		;
 	wire			[DATA_LEN - 1:0]	wb_alu_result_i	;
 	wire			[2:0]				wb_load_type_i	;
@@ -80,17 +74,17 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	assign pc = id_pc_i;
 	
 	// 检测到ebreak
-    import "DPI-C" function void ifebreak_func(int id_inst_i);
+    import "DPI-C" function void ifebreak_func(int inst);
     always @(*)
-        ifebreak_func(id_inst_i);
+        ifebreak_func(inst);
 
 	// 为ITRACE提供指令
     import "DPI-C" context function void inst_get(int inst);
     always @(*)
-        inst_get(id_inst_i);
+        inst_get(inst);
 
 	always @(*) begin
-		$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, id_inst_i, invalid);
+		$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, inst, invalid);
 	end
 
 ysyx_22041211_IFU#(
@@ -109,7 +103,8 @@ ysyx_22041211_IFU#(
 	.jmp_target_i     ( if_jmp_target_i    ),
 	.csr_jmp_i     	  ( ex_csr_flag_i[2]  ),
 	.csr_pc_i         ( if_csr_pc_i      ),
-    .inst_o           ( id_inst_i           ),
+    .inst_o           ( inst           ),
+	.id_inst_i        ( id_inst_i           ),
     .invalid          ( invalid           ),
     .pc               ( id_pc_i             )
 );

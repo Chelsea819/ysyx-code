@@ -27,13 +27,16 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// output	[ADDR_LEN - 1:0]			ce		,
     // input		[DATA_WIDTH - 1:0]			inst_i	,
     output									invalid	,
-    output reg	[DATA_WIDTH - 1:0]			inst_o	,
+    output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
+	output 		[DATA_WIDTH - 1:0]			inst_o		,
 	output reg	[ADDR_WIDTH - 1:0]			pc
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
 	reg			[1:0]				        con_state	;
 	reg			[1:0]			        	next_state	;
 	reg			[DATA_WIDTH - 1:0]      	inst	;
+
+	assign inst_o = inst;
 
 	assign invalid = ~((inst[6:0] == `TYPE_U_LUI_OPCODE) | (inst[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (inst[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
@@ -96,7 +99,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 
 	always @(posedge clk) begin
         if(con_state == IFU_IDLE && next_state == IFU_WAIT_READY) begin
-            inst_o         <=     inst;
+            id_inst_i         <=     inst;
         end
 	end
 
