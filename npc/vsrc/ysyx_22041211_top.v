@@ -100,9 +100,9 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
     always @(*)
         inst_get(id_inst_i);
 
-	// always @(*) begin
-	// 		$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, if_inst, invalid);
-	// end
+	always @(*) begin
+		$display("pc: [%h] inst: [%b] invalid: [%h]",id_pc_i, id_inst_i, invalid);
+	end
 
 ysyx_22041211_IFU#(
     .ADDR_WIDTH       ( 32 ),
