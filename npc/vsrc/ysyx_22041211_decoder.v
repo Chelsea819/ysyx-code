@@ -9,7 +9,7 @@ module ysyx_22041211_decoder(
     input                                         ifu_valid                 ,
     input                                         exu_ready                 ,
     output                                        idu_ready_o                 ,
-    output                                        idu_valid_o                 ,
+    output  reg                                   idu_valid_o                 ,
     output  reg     [3:0]                         aluop_o                   ,
     output  reg     [3:0]                         alusel_o                  ,
     output  reg     [31:0]                        pc_o                      ,
@@ -64,7 +64,7 @@ module ysyx_22041211_decoder(
     assign branch_target = pc_i + imm;
     assign csr_addr = inst_i[31:20];
     assign idu_ready_o = 1'b1;
-    assign idu_valid_o = 1'b1;
+    // assign idu_valid_o = 1'b1;
     // always @(*) begin
 	// 	$display("csr_flag_o = [%b]",csr_flag_o);
 	// 	$display("jmp_flag_o = [%b]",jmp_flag_o);
@@ -72,6 +72,13 @@ module ysyx_22041211_decoder(
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
     parameter [1:0] IDU_WAIT_IFU_VALID = 2'b00, IDU_WAIT_IDU_VALID = 2'b01, IDU_WAIT_EXU_READY = 2'b10;
+
+    always @(posedge clk ) begin
+		if(next_state == IDU_WAIT_IDU_VALID)
+			idu_valid_o <= 1'b1;
+		else 
+			idu_valid_o <= 1'b0;
+	end
 
 	// state trans
 	always @(posedge clk ) begin
@@ -114,8 +121,9 @@ module ysyx_22041211_decoder(
 		endcase
 	end
 
+
     always @(posedge clk) begin
-        if(con_state == IDU_WAIT_EXU_READY && next_state == IDU_WAIT_IFU_VALID) begin
+        if(con_state == IDU_WAIT_IDU_VALID && next_state == IDU_WAIT_EXU_READY) begin
             aluop_o         <=     aluop;
             alusel_o        <=     alusel;
             pc_o            <=     pc;

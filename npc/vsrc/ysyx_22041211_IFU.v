@@ -12,7 +12,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     // hand signal
 	input									ready			,
 	input									last_finish		,
-    output		reg							valid	        ,
+    output	reg								valid	        ,
 
     // refresh pc
 	input									branch_request_i,	
@@ -50,6 +50,13 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 
 	parameter IFU_IDLE = 0, IFU_WAIT_READY = 1;
 
+	always @(posedge clk ) begin
+		if(next_state == IFU_IDLE)
+			valid <= 1'b1;
+		else 
+			valid <= 1'b0;
+	end
+
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
@@ -62,14 +69,14 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	always @(*) begin
 		case(con_state) 
 			IFU_IDLE: begin
-				if (valid == 1'b0) begin
+				if (valid == 1'b0 || last_finish == 1'b0) begin
 					next_state = IFU_IDLE;
 				end else begin 
 					next_state = IFU_WAIT_READY;
 				end
 			end
 			IFU_WAIT_READY: begin 
-				if (ready == 1'b0 || last_finish == 1'b0) begin
+				if (ready == 1'b0) begin
 					next_state = IFU_WAIT_READY;
 				end else begin 
 					next_state = IFU_IDLE;
@@ -79,7 +86,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	end
 
 	always @(posedge clk) begin
-        if(con_state == IFU_WAIT_READY && next_state == IFU_IDLE) begin
+        if(con_state == IFU_IDLE && next_state == IFU_WAIT_READY) begin
             inst_o         <=     inst;
         end
 	end
@@ -111,16 +118,16 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.rst    ( rst    ),
 		.pc_new ( pc_plus_4  )
 	);
-
+	// assign valid = 1'b1;
     //fetch instruction
 	always @(*) begin
 		if(~rst) begin
 			// $display("rst = %d, pc = %x con_state = %d ",rst, pc, con_state);
         	inst = pmem_read_task(pc, 8'b00001111);
-			valid = 1'b1;
+			// valid = 1'b1;
 		end else begin  
 			inst = 32'b0;
-			valid = 1'b0;
+			// valid = 1'b0;
 		end
 	end
 

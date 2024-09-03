@@ -25,7 +25,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input                                         idu_valid                 ,
     input                                         wb_ready                 ,
     output                                        exu_ready_o                 ,
-    output                                        exu_valid_o                 ,
+    output  reg                                   exu_valid_o                 ,
 	output  reg    [2:0]                load_type_o 	,
 	output  reg    [1:0]				store_type_o	,
 	output	reg							branch_request_o,	
@@ -39,7 +39,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
     output	reg	[DATA_LEN - 1:0]		alu_result_o
 );
 	assign exu_ready_o = 1'b1;
-	assign exu_valid_o = 1'b1;
+	// assign exu_valid_o = 1'b1;
 	wire 	    [2:0]               	load_type  	;
 	wire 	    [1:0]					store_type 	;
 	wire 								branch_request ;	
@@ -73,6 +73,13 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
     parameter [1:0] EXU_WAIT_IDU_VALID = 2'b00, EXU_WAIT_EXU_VALID = 2'b01, EXU_WAIT_WB_READY = 2'b10;
+
+	always @(posedge clk ) begin
+		if(next_state == EXU_WAIT_EXU_VALID)
+			exu_valid_o <= 1'b1;
+		else 
+			exu_valid_o <= 1'b0;
+	end
 
 	// state trans
 	always @(posedge clk ) begin
@@ -116,7 +123,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	end
 
     always @(posedge clk) begin
-        if(con_state == EXU_WAIT_WB_READY && next_state == EXU_WAIT_IDU_VALID) begin
+        if(con_state == EXU_WAIT_EXU_VALID && next_state == EXU_WAIT_WB_READY) begin
             load_type_o			<=		load_type; 	
 			store_type_o		<=		store_type;	
 			branch_request_o	<=		branch_request;	

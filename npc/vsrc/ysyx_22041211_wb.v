@@ -1,6 +1,6 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
-    input									      rst				        ,
+    input									     rst,
     input		                		wd_i		,
     input		                		clk		,
     input		[4:0]		            wreg_i		,
@@ -38,11 +38,21 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     assign mem_waddr = alu_result_i;
     assign mem_raddr = alu_result_i;
     assign csr_wdata = csr_wdata_i;
+    assign wb_ready_o = 1'b1;
 
     reg							        	con_state	;
 	reg							        	next_state	;
     
 	parameter WB_BUSY = 1, WB_WAIT_EXU_VALID = 0;
+
+    always @(posedge clk ) begin
+        if(rst)
+            finish <= 1'b1;
+		else if(next_state == WB_BUSY)
+			finish <= 1'b1;
+		else 
+			finish <= 1'b0;
+	end
 
 	// state trans
 	always @(posedge clk ) begin
@@ -73,17 +83,11 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	end
 
     always @(posedge clk) begin
-        if(rst)
-            finish           <=     1'b1;
-        else if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
+        if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
             wd_o	         <=     wd; 
             wreg_o	         <=     wreg;  	
             csr_wdata_o	     <=     csr_wdata;  
             wdata_o          <=     wdata;  
-            finish           <=     1'b1;
-        end
-        else begin 
-            finish           <=     1'b0;
         end
 	end
 
