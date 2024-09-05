@@ -1,4 +1,5 @@
 #include <cpu/decode.h>
+#include <cstdio>
 #include <isa.h>
 #include <elf.h>
 #include "reg.h"
@@ -280,6 +281,7 @@ void per_inst_cycle(){
     per_clk_cycle();
     printf("unfinshed!\n");
   }
+  printf("finished!\n");
 }
 
 
