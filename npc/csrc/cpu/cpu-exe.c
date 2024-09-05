@@ -264,26 +264,35 @@ void inst_get(int inst){
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
+void cycle_run(){
+  for(int n = 2; n > 0; n --){
+    dut->clk ^= 1;
+    dut->eval();
+    #ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+    #endif
+  }
+}
+
+
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
-  dut->clk ^= 1;
-  dut->eval();
-  #ifdef CONFIG_WAVE
-  m_trace->dump(sim_time);
-	sim_time++;
-  #endif
-		
-  if(dut->clk == 0 && dut->invalid == 1){
+  cycle_run();
+	
+  // inst invalid check
+  if(dut->invalid == 1){
     invalid_inst(dut->pc);
   }
 
-  if(ifbreak && dut->clk == 0){
+  // ebreak check
+  if(ifbreak){
     printf("\nebreak!\n");
     // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
     NPCTRAP(dut->pc, 0);
   }
-  if(dut->clk == 0 && !ifbreak)    return; 
+
   #if (defined CONFIG_TRACE) || (defined CONFIG_TRACE)
   s.snpc = s.pc + 4;
   #endif
@@ -532,7 +541,7 @@ static void execute(uint64_t n) {
     //所以这里要整个往后延迟一个周期
     if(cpu.pc != 0x80000000 && dut->clk == 1) {
       trace_and_difftest();
-    }
+}
   #ifdef CONFIG_DIFFTEST
     diff.pc = s.pc;
     diff.dnpc = s.dnpc;
