@@ -27,29 +27,29 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// output	[ADDR_LEN - 1:0]			ce		,
     // input		[DATA_WIDTH - 1:0]			inst_i	,
     output									invalid	,
-    output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
-	output 		[DATA_WIDTH - 1:0]			inst_o		,
+    output 		[DATA_WIDTH - 1:0]			id_inst_i	,
+	output reg	[DATA_WIDTH - 1:0]			inst_o		,	// 外部api 当前周期正在执行的指令
 	output reg	[ADDR_WIDTH - 1:0]			pc
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
 	reg			[1:0]				        con_state	;
 	reg			[1:0]			        	next_state	;
-	reg			[DATA_WIDTH - 1:0]      	inst	;
+	wire									r_inst_en	;
 
-	assign inst_o = inst;
+	assign r_inst_en = (con_state == IFU_IDLE && next_state == IFU_WAIT_READY);
 
-	assign invalid = ~((inst[6:0] == `TYPE_U_LUI_OPCODE) | (inst[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
-					 (inst[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
-				     ({inst[14:12], inst[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
-					 ({inst[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
-					 ((inst[6:0] == `TYPE_I_LOAD_OPCODE) & (inst[14:12] == `TYPE_I_LB_FUNC3 | inst[14:12] == `TYPE_I_LH_FUNC3 | inst[14:12] == `TYPE_I_LW_FUNC3 | inst[14:12] == `TYPE_I_LBU_FUNC3 | inst[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
-					 ((inst[6:0] == `TYPE_I_CSR_OPCODE) & (inst[14:12] == `TYPE_I_CSRRW_FUNC3 | inst[14:12] == `TYPE_I_CSRRS_FUNC3)) |	 //I-csrrw csrrs
-					 ((inst[6:0] == `TYPE_S_OPCODE) & (inst[14:12] == `TYPE_S_SB_FUNC3 | inst[14:12] == `TYPE_S_SH_FUNC3 | inst[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
-					 ((inst[6:0] == `TYPE_I_BASE_OPCODE) & (inst[14:12] == `TYPE_I_SLTI_FUNC3 || inst[14:12] == `TYPE_I_SLTIU_FUNC3 || inst[14:12] == `TYPE_I_ADDI_FUNC3 || inst[14:12] == `TYPE_I_XORI_FUNC3 || inst[14:12] == `TYPE_I_ORI_FUNC3 || inst[14:12] == `TYPE_I_ANDI_FUNC3 || {inst[14:12], inst[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {inst[14:12], inst[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {inst[14:12], inst[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
-					 (inst[6:0] == `TYPE_R_OPCODE) | //R
-					 (inst == `TYPE_I_ECALL) | 
-					 (inst == `TYPE_I_MRET)  | 
-					 (inst == `TYPE_I_EBREAK));
+	assign invalid = ~((inst_o[6:0] == `TYPE_U_LUI_OPCODE) | (inst_o[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
+					 (inst_o[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
+				     ({inst_o[14:12], inst_o[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
+					 ({inst_o[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
+					 ((inst_o[6:0] == `TYPE_I_LOAD_OPCODE) & (inst_o[14:12] == `TYPE_I_LB_FUNC3 | inst_o[14:12] == `TYPE_I_LH_FUNC3 | inst_o[14:12] == `TYPE_I_LW_FUNC3 | inst_o[14:12] == `TYPE_I_LBU_FUNC3 | inst_o[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
+					 ((inst_o[6:0] == `TYPE_I_CSR_OPCODE) & (inst_o[14:12] == `TYPE_I_CSRRW_FUNC3 | inst_o[14:12] == `TYPE_I_CSRRS_FUNC3)) |	 //I-csrrw csrrs
+					 ((inst_o[6:0] == `TYPE_S_OPCODE) & (inst_o[14:12] == `TYPE_S_SB_FUNC3 | inst_o[14:12] == `TYPE_S_SH_FUNC3 | inst_o[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
+					 ((inst_o[6:0] == `TYPE_I_BASE_OPCODE) & (inst_o[14:12] == `TYPE_I_SLTI_FUNC3 || inst_o[14:12] == `TYPE_I_SLTIU_FUNC3 || inst_o[14:12] == `TYPE_I_ADDI_FUNC3 || inst_o[14:12] == `TYPE_I_XORI_FUNC3 || inst_o[14:12] == `TYPE_I_ORI_FUNC3 || inst_o[14:12] == `TYPE_I_ANDI_FUNC3 || {inst_o[14:12], inst_o[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {inst_o[14:12], inst_o[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {inst_o[14:12], inst_o[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
+					 (inst_o[6:0] == `TYPE_R_OPCODE) | //R
+					 (inst_o == `TYPE_I_ECALL) | 
+					 (inst_o == `TYPE_I_MRET)  | 
+					 (inst_o == `TYPE_I_EBREAK));
 
 	parameter [1:0] IFU_IDLE = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10;
 
@@ -97,12 +97,6 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		endcase
 	end
 
-	always @(posedge clk) begin
-        if(con_state == IFU_IDLE && next_state == IFU_WAIT_READY) begin
-            id_inst_i         <=     inst;
-        end
-	end
-
     // get new pc
     ysyx_22041211_counter#(
         .ADDR_LEN         ( 32 )
@@ -118,10 +112,9 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
         .csr_jmp_i        ( csr_jmp_i        ),
         .csr_pc_i         ( csr_pc_i         ),
 		.con_state        ( con_state        ),
-        .last_finish      ( last_finish         ),
+        .last_finish      ( last_finish      ),
         .pc               ( pc               )
     );
-	import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
 
 	ysyx_22041211_pcPlus#(
 		.DATA_LEN ( 32 )
@@ -130,17 +123,18 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.rst    ( rst    ),
 		.pc_new ( pc_plus_4  )
 	);
-	// assign valid = 1'b1;
-    //fetch instruction
-	always @(*) begin
-		if(~rst) begin
-			// $display("rst = %d, pc = %x con_state = %d ",rst, pc, con_state);
-        	inst = pmem_read_task(pc, 8'b00001111);
-			// valid = 1'b1;
-		end else begin  
-			inst = 32'b0;
-			// valid = 1'b0;
-		end
-	end
+
+	ysyx_22041211_SRAM#(
+		.ADDR_LEN ( 32 ),
+		.DATA_LEN ( 32 )
+	)u_ysyx_22041211_SRAM(
+		.clk      ( clk      ),
+		.rst      ( rst      ),
+		.ren      ( r_inst_en),
+		.pc       ( pc       ),
+		.inst     ( inst_o     ),
+		.id_inst_i( id_inst_i)
+	);
+
 
 endmodule
