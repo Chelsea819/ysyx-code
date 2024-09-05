@@ -41,15 +41,12 @@ module ysyx_22041211_decoder(
     wire          [31:0]                        reg2                    ;
     wire		                		        wd                      ;
     wire		  [4:0]		                    wreg                    ;
-    wire          [4:0]                         reg1_addr               ;
-    wire          [4:0]                         reg2_addr               ;
     wire          [2:0]                         branch_type             ;
     wire          [31:0]                        branch_target           ;
     wire          [1:0]                         store_type              ;
     wire          [2:0]                         load_type               ;
     wire                                        jmp_flag                ;
     wire          [31:0]                        jmp_target              ;
-    wire          [11:0]                        csr_addr                ;
     wire          [2:0]                         csr_flag                ;
 
     assign func3 = inst_i[14:12];
@@ -59,10 +56,10 @@ module ysyx_22041211_decoder(
     assign reg1 = reg1_data_i;
     assign reg2 = reg2_data_i;
     assign wreg = inst_i[11:7];
-    assign reg1_addr = inst_i[19:15];
-    assign reg2_addr = inst_i[24:20];
+    assign reg1_addr_o = inst_i[19:15];
+    assign reg2_addr_o = inst_i[24:20];
     assign branch_target = pc_i + imm;
-    assign csr_addr = inst_i[31:20];
+    assign csr_addr_o = inst_i[31:20];
     assign idu_ready_o = 1'b1;
     // assign idu_valid_o = 1'b1;
     // always @(*) begin
@@ -131,15 +128,12 @@ module ysyx_22041211_decoder(
             reg2_o          <=     reg2;
             wd_o            <=     wd;
             wreg_o          <=     wreg;
-            reg1_addr_o     <=     reg1_addr;
-            reg2_addr_o     <=     reg2_addr;
             branch_type_o   <=     branch_type;
             branch_target_o <=     branch_target;
             store_type_o    <=     store_type;
             load_type_o     <=     load_type;
             jmp_flag_o      <=     jmp_flag;
             jmp_target_o    <=     jmp_target;
-            csr_addr_o      <=     csr_addr;
             csr_flag_o      <=     csr_flag;
             imm_o           <=     imm;
         end
