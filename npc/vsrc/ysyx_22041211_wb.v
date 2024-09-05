@@ -80,13 +80,19 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
-    always @(posedge clk) begin
-        if(con_state == WB_BUSY && next_state == WB_WAIT_EXU_VALID) begin
-            wd_o	         <=     wd; 
-            wreg_o	         <=     wreg;  	
-            csr_wdata_o	     <=     csr_wdata;  
-            wdata_o          <=     wdata;  
+    always @(*) begin
+        if(con_state == WB_BUSY) begin
+            wd_o	         =     wd; 
+            wreg_o	         =     wreg;  	
+            csr_wdata_o	     =     csr_wdata;  
+            wdata_o          =     wdata;  
+        end else begin 
+            wd_o	         =     0; 
+            wreg_o	         =     0;  	
+            csr_wdata_o	     =     0;  
+            wdata_o          =     0; 
         end
+
 	end
 
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
