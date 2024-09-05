@@ -264,7 +264,7 @@ void inst_get(int inst){
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
-void cycle_run(){
+void per_clk_cycle(){
   for(int n = 2; n > 0; n --){
     dut->clk ^= 1;
     dut->eval();
@@ -275,11 +275,17 @@ void cycle_run(){
   }
 }
 
+void per_inst_cycle(){
+  while(dut->finish == 0){
+    per_clk_cycle();
+  }
+}
+
 
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
-  cycle_run();
+  per_inst_cycle();
 	
   // inst invalid check
   if(dut->invalid == 1){
@@ -536,10 +542,10 @@ static void execute(uint64_t n) {
   {
     // if(cpu.pc != 0x0)
     exec_once();
-    if(dut->clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
+    g_nr_guest_inst++;  //记录客户指令的计时器
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
-    if(cpu.pc != 0x80000000 && dut->clk == 1) {
+    if(cpu.pc != 0x80000000) {
       trace_and_difftest();
 }
   #ifdef CONFIG_DIFFTEST

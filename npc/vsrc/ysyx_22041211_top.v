@@ -1,9 +1,10 @@
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
-	input								clk ,
-	input								rst ,
+	input								clk 		,
+	input								rst 		,
 	output			[ADDR_LEN - 1:0]	pc			,
-	output								invalid
+	output								invalid		,
+	output								finish
 );
 	wire			[ADDR_LEN - 1:0]	inst			; // 正在执行的指令
 	// //registerFile
@@ -72,6 +73,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[1:0]				wb_store_type_i	;
 	
 	assign pc = id_pc_i;
+	assign finish = if_last_finish_i;
 	
 	// 检测到ebreak
     import "DPI-C" function void ifebreak_func(int inst);
