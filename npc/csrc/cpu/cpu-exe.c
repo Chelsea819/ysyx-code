@@ -266,7 +266,7 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
 void per_clk_cycle(){
-  {
+  do {
     dut->clk ^= 1;
     dut->eval();
     #ifdef CONFIG_WAVE
@@ -274,12 +274,11 @@ void per_clk_cycle(){
     sim_time++;
     #endif
     
-  }while(dut->clk == 0);
+  }while(dut->clk == 1);
   printf("clk = %d\n",dut->clk);
 }
-
 void per_inst_cycle(){
-  {
+  do {
     per_clk_cycle();
     printf("unfinshed!\n");
   }while(dut->finish == 0);
