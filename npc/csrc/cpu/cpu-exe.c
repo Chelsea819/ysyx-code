@@ -273,8 +273,8 @@ void per_clk_cycle(){
     m_trace->dump(sim_time);
     sim_time++;
     #endif
-    printf("clk = %d\n",dut->clk);
-  }
+    
+  }printf("clk = %d\n",dut->clk);
 }
 
 void per_inst_cycle(){
