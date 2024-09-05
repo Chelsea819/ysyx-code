@@ -17,15 +17,15 @@ module ysyx_22041211_decoder(
     output  reg     [31:0]                        reg2_o                    ,
     output	reg                		              wd_o                      ,
     output	reg     [4:0]		                  wreg_o                    ,
-    output  reg     [4:0]                         reg1_addr_o               ,
-    output  reg     [4:0]                         reg2_addr_o               ,
+    output          [4:0]                         reg1_addr_o               ,
+    output          [4:0]                         reg2_addr_o               ,
     output  reg     [2:0]                         branch_type_o             ,
     output  reg     [31:0]                        branch_target_o           ,
     output  reg     [1:0]                         store_type_o              ,
     output  reg     [2:0]                         load_type_o              ,
     output  reg                                   jmp_flag_o                ,
     output  reg     [31:0]                        jmp_target_o              ,
-    output  reg     [11:0]                        csr_addr_o                ,
+    output          [11:0]                        csr_addr_o                ,
     output  reg     [2:0]                         csr_flag_o                ,
     output  reg     [31:0]                        imm_o         
 );
