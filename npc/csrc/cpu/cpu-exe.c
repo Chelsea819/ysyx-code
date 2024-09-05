@@ -282,7 +282,7 @@ void per_inst_cycle(){
     per_clk_cycle();
     printf("unfinshed!\n");
   }while(dut->finish == 0);
-  // printf("finished dut.pc = [0x%08x]!\n",dut->pc);
+  printf("finished dut.pc = [0x%08x]!\n",dut->pc);
 }
 
 
