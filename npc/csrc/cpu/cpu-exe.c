@@ -278,6 +278,7 @@ void per_clk_cycle(){
 void per_inst_cycle(){
   while(dut->finish == 0){
     per_clk_cycle();
+    printf("unfinshed!\n");
   }
 }
 
@@ -286,7 +287,6 @@ void per_inst_cycle(){
 static void exec_once()
 {
   per_inst_cycle();
-	
   // inst invalid check
   if(dut->invalid == 1){
     invalid_inst(dut->pc);
