@@ -273,6 +273,7 @@ void per_clk_cycle(){
     m_trace->dump(sim_time);
     sim_time++;
     #endif
+    printf("clk = %d\n",dut->clk);
   }
 }
 
@@ -281,7 +282,7 @@ void per_inst_cycle(){
     per_clk_cycle();
     printf("unfinshed!\n");
   }
-  printf("finished dut.pc = [0x%08x]!\n",dut->pc);
+  // printf("finished dut.pc = [0x%08x]!\n",dut->pc);
 }
 
 
