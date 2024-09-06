@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <cstdio>
 #include <memory/host.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
@@ -133,6 +134,7 @@ vaddr_t paddr_read(paddr_t addr,int len) {
     // #endif
     return rdata;
   }
+  printf("read device\n");
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
