@@ -29,6 +29,7 @@ static bool g_print_step = false;
 bool ifbreak = false;
 
 extern "C" void pc_get(int pc, int dnpc){
+  printf("pc = %x dpc = %x\n",pc,dnpc);
   cpu.pc = pc;
   # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
     s.pc = pc;
@@ -550,7 +551,7 @@ static void execute(uint64_t n) {
     //所以这里要整个往后延迟一个周期
     // if(cpu.pc != 0x80000000) {
     printf("trace and diff\n");
-      trace_and_difftest();
+    trace_and_difftest();
 // }
   #ifdef CONFIG_DIFFTEST
     diff.pc = s.pc;
