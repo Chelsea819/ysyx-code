@@ -22,10 +22,10 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		[1:0]					store_type_i,
 	input       [2:0]                   load_type_i ,
 	input		[2:0]					branch_type_i,
-	input                                         idu_valid                 ,
-    input                                         isu_ready                 ,
-    output                                        exu_ready_o                 ,
-    output  reg                                   exu_valid_o                 ,
+	input                                         ifu_valid                 ,
+    // input                                         isu_ready                 ,
+    // output                                        exu_ready_o                 ,
+    // output  reg                                   exu_valid_o                 ,
 	output  reg    [2:0]                load_type_o 	,
 	output  reg    [1:0]				store_type_o	,
 	output	reg							branch_request_o,	
@@ -38,32 +38,21 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	output	reg	[DATA_LEN - 1:0]		pc_o			,
     output	reg	[DATA_LEN - 1:0]		alu_result_o
 );
-	assign exu_ready_o = 1'b1;
+	// assign exu_ready_o = 1'b1;
 	// assign exu_valid_o = 1'b1;
-	wire 	    [2:0]               	load_type  	;
-	wire 	    [1:0]					store_type 	;
-	wire 								branch_request ;	
-    wire 		                		mem_wen 		;
-	wire 		[DATA_LEN - 1:0]		mem_wdata 		;
-    wire 		                		wd 			;
-    wire 		[4:0]		            wreg 			;
-	wire 	    [DATA_LEN - 1:0]     	csr_wdata 		;
-	wire 	    [DATA_LEN - 1:0]     	csr_mcause 	;
-	wire 		[DATA_LEN - 1:0]		pc 			;
-    wire 		[DATA_LEN - 1:0]		alu_result 	;	
-
+	reg                                   exu_valid_o    ;
 	wire [31:0] src1;
 	wire [31:0] src2;
 	wire 		alu_zero;
 	wire 		alu_less;
-	assign wd  = wd_i;
-	assign wreg  = wreg_i;
-	assign mem_wen  = |store_type_i;
-	assign mem_wdata  = reg2_i;
-	assign load_type  = load_type_i;
-	assign store_type  = store_type_i;
-	assign pc  = pc_i;
-	assign csr_mcause  = 32'hb;
+	assign wd_o  = wd_i;
+	assign wreg_o  = wreg_i;
+	assign mem_wen_o  = |store_type_i;
+	assign mem_wdata_o  = reg2_i;
+	assign load_type_o  = load_type_i;
+	assign store_type_o  = store_type_i;
+	assign pc_o  = pc_i;
+	assign csr_mcause_o  = 32'hb;
 
 
 	// always @(*) begin
@@ -94,7 +83,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		case(con_state) 
             // 等待ifu取指，下一个时钟周期开始译码
 			EXU_WAIT_IDU_VALID: begin
-				if (idu_valid == 1'b0) begin
+				if (ifu_valid == 1'b0) begin
 					next_state = EXU_WAIT_IDU_VALID;
 				end else begin 
 					next_state = EXU_WAIT_EXU_VALID;
@@ -110,11 +99,11 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 			end
             // 等待exu空闲，下个时钟周期传递信息
             EXU_WAIT_WB_READY: begin 
-				if (isu_ready == 1'b0) begin
-					next_state = EXU_WAIT_WB_READY;
-				end else begin 
+				// if (isu_ready == 1'b0) begin
+				// 	next_state = EXU_WAIT_WB_READY;
+				// end else begin 
 					next_state = EXU_WAIT_IDU_VALID;
-				end
+				// end
 			end
             default: begin 
 				next_state = 2'b11;
@@ -122,23 +111,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
-    always @(posedge clk) begin
-        if(con_state == EXU_WAIT_EXU_VALID && next_state == EXU_WAIT_WB_READY) begin
-            load_type_o			<=		load_type; 	
-			store_type_o		<=		store_type;	
-			branch_request_o	<=		branch_request;	
-			mem_wen_o			<=		mem_wen;			
-			mem_wdata_o			<=		mem_wdata;				
-			wd_o				<=		wd;					
-			wreg_o				<=		wreg;					
-			csr_wdata_o			<=		csr_wdata;					
-			csr_mcause_o		<=		csr_mcause;				
-			pc_o				<=		pc;						
-			alu_result_o		<=		alu_result;			
-        end
-	end
-
-	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request_mux (branch_request , branch_type_i, 1'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(6,3,1) branch_request_mux (branch_request_o , branch_type_i, 1'b0, {
 		`BRANCH_BEQ, alu_zero,
 		`BRANCH_BNE, ~alu_zero,
 		`BRANCH_BLT, alu_less,
@@ -147,7 +120,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		`BRANCH_BGEU, ~alu_less
 	});
 
-	ysyx_22041211_MuxKeyWithDefault #(2,3,32) csr_wdata_choose (csr_wdata , csr_flag_i, 32'b0, {
+	ysyx_22041211_MuxKeyWithDefault #(2,3,32) csr_wdata_choose (csr_wdata_o , csr_flag_i, 32'b0, {
 		`CSR_CSRRW, reg1_i,
 		`CSR_CSRRS, reg1_i | csr_rdata_i
 	});
@@ -156,7 +129,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		.src1				(src1),
 		.src2				(src2),
 		.alu_control		(alu_control),
-		.result				(alu_result ),
+		.result				(alu_result_o ),
 		.alu_less_o 		(alu_less),
 		.alu_zero_o  		(alu_zero)
 	);

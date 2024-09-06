@@ -6,7 +6,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input		[4:0]		            wreg_i		,
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
     input       [DATA_LEN - 1:0]        reg_wdata_i	,
-    input                               exu_valid   ,
+    input                               lsu_valid   ,
     output                              wb_ready_o  ,
     output  reg                         finish      ,
     output	reg	                		wd_o		,
@@ -14,12 +14,12 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     output  reg [DATA_LEN - 1:0]        csr_wdata_o	,
     output	reg	[DATA_LEN - 1:0]		wdata_o
 );
-    assign wb_ready_o = 1'b1;
+    // assign wb_ready_o = 1'b1;
 
     reg							        	con_state	;
 	reg							        	next_state	;
     
-	parameter WB_BUSY = 1, WB_WAIT_EXU_VALID = 0;
+	parameter WB_BUSY = 1, WB_WAIT_VALID = 0;
 
     always @(posedge clk ) begin
         if(con_state == WB_BUSY)
@@ -31,7 +31,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
-			con_state <= WB_WAIT_EXU_VALID;
+			con_state <= WB_WAIT_VALID;
 		else 
 			con_state <= next_state;
 	end
@@ -39,19 +39,19 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	// next_state
 	always @(*) begin
 		case(con_state) 
-			WB_WAIT_EXU_VALID: begin
-				if (exu_valid == 1'b0) begin
-					next_state = WB_WAIT_EXU_VALID;
+			WB_WAIT_VALID: begin
+				if (lsu_valid == 1'b0) begin
+					next_state = WB_WAIT_VALID;
 				end else begin 
 					next_state = WB_BUSY;
 				end
 			end
 			WB_BUSY: begin 
-				if (wb_ready_o == 1'b0) begin
-					next_state = WB_BUSY;
-				end else begin 
-					next_state = WB_WAIT_EXU_VALID;
-				end
+				// if (wb_ready_o == 1'b0) begin
+				// 	next_state = WB_BUSY;
+				// end else begin 
+					next_state = WB_WAIT_VALID;
+				// end
 			end
 		endcase
 	end

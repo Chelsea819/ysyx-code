@@ -17,7 +17,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire	        [DATA_LEN - 1:0]    reg_wdata_i		;
 
 	//my_IFU
-	wire								idu_ready_o	;
+	// wire								idu_ready_o	;
 	wire								if_last_finish_i;
 	wire			[ADDR_LEN - 1:0]	if_branch_target_i;
 	wire			[2:0]				if_branch_type_i;
@@ -31,8 +31,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	//my_decoder
 	wire								ifu_valid_o		;
-	wire								exu_ready_o		;
-	wire								idu_valid_o		;
+	// wire								exu_ready_o		;
+	// wire								idu_valid_o		;
 	wire			[ADDR_LEN - 1:0]	id_pc_i			;
 	wire			[ADDR_LEN - 1:0]	id_inst_i		;
 	wire			[ADDR_LEN - 1:0]	id_reg1_data_i	;
@@ -65,7 +65,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	lsu_csr_wdata_i	;
 	wire								lsu_mem_wen_i	;
 	wire								lsu_wd_i		;
-	wire								exu_valid_o		;
+	// wire								exu_valid_o		;
 	wire								lsu_ready_o		;
 	wire								lsu_valid_o		;
 	wire			[4:0]				lsu_wreg_i		;
@@ -105,7 +105,7 @@ ysyx_22041211_IFU#(
     .rst              ( rst              ),
     .valid            ( ifu_valid_o           ),
     .last_finish      ( if_last_finish_i    ),
-    .ready            ( idu_ready_o 			),
+    // .ready            ( idu_ready_o 			),
     .branch_request_i ( if_branch_request_i ),
 	.branch_target_i  ( if_branch_target_i  ),
 	.branch_flag_i    ( |if_branch_type_i    ),
@@ -141,9 +141,9 @@ ysyx_22041211_IFU#(
 		.pc_i       					(id_pc_i),	
 
 		.ifu_valid    					(ifu_valid_o),	
-		.exu_ready   					(exu_ready_o),
-		.idu_ready_o       				(idu_ready_o),
-		.idu_valid_o     				(idu_valid_o),
+		// .exu_ready   					(exu_ready_o),
+		// .idu_ready_o       				(idu_ready_o),
+		// .idu_valid_o     				(idu_valid_o),
 
 		.aluop_o    					(ex_aluop_i),	
 		.alusel_o   					(ex_alusel_i),
@@ -180,10 +180,10 @@ ysyx_22041211_IFU#(
 		.wreg_i				(ex_wreg_i),
 		.branch_type_i		(if_branch_type_i),	
 
-		.idu_valid			(idu_valid_o),
-		.isu_ready			(lsu_ready_o),	
-		.exu_ready_o		(exu_ready_o),
-		.exu_valid_o		(exu_valid_o),
+		.ifu_valid			(ifu_valid_o),
+		// .isu_ready			(lsu_ready_o),	
+		// .exu_ready_o		(exu_ready_o),
+		// .exu_valid_o		(exu_valid_o),
 
 		.store_type_i		(ex_store_type_i),	
 		.load_type_i		(ex_load_type_i),
@@ -213,9 +213,9 @@ ysyx_22041211_IFU#(
 		.load_type_i	( lsu_load_type_i	),
 		.store_type_i	( lsu_store_type_i	),
 		.csr_wdata_i	( lsu_csr_wdata_i	),
-		.exu_valid     	( exu_valid_o   	),
-		.wb_ready_o   	( wb_ready_o 		),
-		.lsu_ready_o    ( lsu_ready_o   	),
+		.ifu_valid     	( ifu_valid_o   	),
+		// .wb_ready_o   	( wb_ready_o 		),
+		// .lsu_ready_o    ( lsu_ready_o   	),
 		.lsu_valid_o    ( lsu_valid_o   	),
 		.wd_o     		( wb_reg_wen_i   		),
 		.wreg_o   		( wb_wreg_i 		),
@@ -232,7 +232,7 @@ ysyx_22041211_IFU#(
 		.wreg_i       ( wb_wreg_i       ),
 		.csr_wdata_i  ( wb_csr_wdata_i  ),
 		.reg_wdata_i  ( wb_reg_wdata_i  ),
-		.exu_valid    ( lsu_valid_o    ),
+		.lsu_valid    ( lsu_valid_o    ),
 		.wb_ready_o   ( wb_ready_o   ),
 		.finish       ( if_last_finish_i ),
 		.wd_o     	  ( reg_wen_i   ),

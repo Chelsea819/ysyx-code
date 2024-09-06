@@ -15,11 +15,11 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     input		                		mem_wen_i	,
 	input		[DATA_LEN - 1:0]		mem_wdata_i	,
     input       [2:0]                   load_type_i , 
-    input       [1:0]                   store_type_i , 
+    input       [1:0]                   store_type_i, 
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
-    input                               exu_valid   , 
-    input                               wb_ready_o  ,
-    output                              lsu_ready_o ,
+    input                               ifu_valid   , 
+    // input                               wb_ready_o  ,
+    // output                              lsu_ready_o ,
     output  reg                         lsu_valid_o ,
     output	reg	                		wd_o		,
     output	reg	[4:0]		            wreg_o		,
@@ -40,11 +40,11 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
 
     
-    assign lsu_ready_o = 1'b1;
+    // assign lsu_ready_o = 1'b1;
 
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
-    parameter [1:0] LSU_WAIT_EXU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10;
+    parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10;
 
 	always @(posedge clk ) begin
 		if(next_state == LSU_WAIT_LSU_VALID)
@@ -56,7 +56,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
-			con_state <= LSU_WAIT_EXU_VALID;
+			con_state <= LSU_WAIT_IFU_VALID;
 		else 
 			con_state <= next_state;
 	end
@@ -65,9 +65,9 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	always @(*) begin
 		case(con_state) 
             // 等待ifu取指，下一个时钟周期开始译码
-			LSU_WAIT_EXU_VALID: begin
-				if (exu_valid == 1'b0) begin
-					next_state = LSU_WAIT_EXU_VALID;
+			LSU_WAIT_IFU_VALID: begin
+				if (ifu_valid == 1'b0) begin
+					next_state = LSU_WAIT_IFU_VALID;
 				end else begin 
 					next_state = LSU_WAIT_LSU_VALID;
 				end
@@ -82,11 +82,11 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 			end
             // 等待exu空闲，下个时钟周期传递信息
             LSU_WAIT_WB_READY: begin 
-				if (wb_ready_o == 1'b0) begin
-					next_state = LSU_WAIT_WB_READY;
-				end else begin 
-					next_state = LSU_WAIT_EXU_VALID;
-				end
+				// if (wb_ready_o == 1'b0) begin
+				// 	next_state = LSU_WAIT_WB_READY;
+				// end else begin 
+				next_state = LSU_WAIT_IFU_VALID;
+				// end
 			end
             default: begin 
 				next_state = 2'b11;

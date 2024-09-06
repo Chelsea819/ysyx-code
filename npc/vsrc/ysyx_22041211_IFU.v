@@ -10,7 +10,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input									rst				,
 
     // hand signal
-	input									ready			,
+	// input									ready			,
 	input									last_finish		,
     output	reg								valid	        ,
 
@@ -79,11 +79,11 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 				end
 			end
 			IFU_WAIT_READY: begin 
-				if (ready == 1'b0) begin
-					next_state = IFU_WAIT_READY;
-				end else begin 
+				// if (ready == 1'b0) begin
+				// 	next_state = IFU_WAIT_READY;
+				// end else begin 
 					next_state = IFU_WAIT_FINISH;
-				end
+				// end
 			end
 			IFU_WAIT_FINISH: begin 
 				if (last_finish == 1'b0 || last_finish == 1'b0) begin
