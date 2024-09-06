@@ -554,7 +554,7 @@ static void execute(uint64_t n) {
     diff.dnpc = s.dnpc;
     #endif
     // if(cpu.pc != 0x80000000) {
-    printf("trace and diff\n");
+    // printf("trace and diff\n");
     trace_and_difftest();
 // }
   
