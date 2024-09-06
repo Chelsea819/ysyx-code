@@ -136,6 +136,7 @@ vaddr_t paddr_read(paddr_t addr,int len) {
   }
   printf("read device\n");
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  printf("read device---out of bound\n");
   out_of_bound(addr);
   return 0;
 }
@@ -148,5 +149,7 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   printf("write device\n");
 
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  printf("paddr_write device---out of bound\n");
+
   out_of_bound(addr);
 }
