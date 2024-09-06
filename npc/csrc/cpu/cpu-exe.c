@@ -549,14 +549,15 @@ static void execute(uint64_t n) {
     g_nr_guest_inst++;  //记录客户指令的计时器
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
+    #ifdef CONFIG_DIFFTEST
+    diff.pc = s.pc;
+    diff.dnpc = s.dnpc;
+    #endif
     // if(cpu.pc != 0x80000000) {
     printf("trace and diff\n");
     trace_and_difftest();
 // }
-  #ifdef CONFIG_DIFFTEST
-    diff.pc = s.pc;
-    diff.dnpc = s.dnpc;
-  #endif
+  
     
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
