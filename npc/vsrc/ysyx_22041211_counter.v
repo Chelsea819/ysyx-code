@@ -42,6 +42,8 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	end
 	
 	import "DPI-C" function void pc_get(int pc, int dnpc);
-		always @(*)
+		always @(*) begin
+			$display("pc = %x dpc = %x\n",pc,pc_next);
 			pc_get(pc, pc_next);
+		end
 endmodule
