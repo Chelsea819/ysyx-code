@@ -29,7 +29,7 @@ static bool g_print_step = false;
 bool ifbreak = false;
 
 extern "C" void pc_get(int pc, int dnpc){
-  printf("pc = %x dpc = %x\n",pc,dnpc);
+  // printf("pc = %x dpc = %x\n",pc,dnpc);
   cpu.pc = pc;
   # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
     s.pc = pc;
@@ -276,7 +276,7 @@ void per_clk_cycle(){
     #endif
     
   }while(dut->clk == 1);
-  printf("clk = %d\n",dut->clk);
+  // printf("clk = %d\n",dut->clk);
 }
 void per_inst_cycle(){
   do {
