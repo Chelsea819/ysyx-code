@@ -60,17 +60,25 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 
-	// wb Unit
-	wire			[DATA_LEN - 1:0]	wb_mem_wdata_i	;
-	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
-	wire								wb_mem_wen_i	;
-	wire								wb_wd_i			;
-	wire								wb_ready_o		;
+	// lsu
+	wire			[DATA_LEN - 1:0]	lsu_mem_wdata_i	;
+	wire			[DATA_LEN - 1:0]	lsu_csr_wdata_i	;
+	wire								lsu_mem_wen_i	;
+	wire								lsu_wd_i		;
 	wire								exu_valid_o		;
+	wire								lsu_ready_o		;
+	wire								lsu_valid_o		;
+	wire			[4:0]				lsu_wreg_i		;
+	wire			[DATA_LEN - 1:0]	lsu_alu_result_i	;
+	wire			[2:0]				lsu_load_type_i	;
+	wire			[1:0]				lsu_store_type_i	;
+
+	// wb Unit
+	wire			[DATA_LEN - 1:0]	wb_reg_wdata_i	;
+	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
+	wire								wb_reg_wen_i	;
 	wire			[4:0]				wb_wreg_i		;
-	wire			[DATA_LEN - 1:0]	wb_alu_result_i	;
-	wire			[2:0]				wb_load_type_i	;
-	wire			[1:0]				wb_store_type_i	;
+	wire								wb_ready_o		;
 	
 	assign pc = id_pc_i;
 	assign finish = if_last_finish_i;
@@ -154,7 +162,6 @@ ysyx_22041211_IFU#(
 		.load_type_o					(ex_load_type_i),
 		.csr_addr_o						(csr_addr_i),
 		.csr_flag_o						(ex_csr_flag_i),  
-		// .inst_o     					(ex_inst_i),
 		.imm_o      					(ex_imm_i)
 	);
 
@@ -164,7 +171,6 @@ ysyx_22041211_IFU#(
 		.reg1_i				(ex_reg1_i),
 		.reg2_i				(ex_reg2_i),
 		.pc_i				(ex_pc_i),
-		// .inst			(ex_inst_i),
 		.alu_control		(ex_aluop_i),
 		.alu_sel			(ex_alusel_i),		
 		.imm_i				(ex_imm_i),
@@ -175,48 +181,66 @@ ysyx_22041211_IFU#(
 		.branch_type_i		(if_branch_type_i),	
 
 		.idu_valid			(idu_valid_o),
-		.wb_ready			(wb_ready_o),	
+		.isu_ready			(lsu_ready_o),	
 		.exu_ready_o		(exu_ready_o),
 		.exu_valid_o		(exu_valid_o),
 
 		.store_type_i		(ex_store_type_i),	
 		.load_type_i		(ex_load_type_i),
 		.branch_request_o	(if_branch_request_i),
-		.wd_o				(wb_wd_i),	
-		.wreg_o				(wb_wreg_i),
-		.mem_wen_o			(wb_mem_wen_i),	
-		.mem_wdata_o		(wb_mem_wdata_i),	
-		.csr_wdata_o		(wb_csr_wdata_i),
+		.wd_o				(lsu_wd_i),	
+		.wreg_o				(lsu_wreg_i),
+		.mem_wen_o			(lsu_mem_wen_i),	
+		.mem_wdata_o		(lsu_mem_wdata_i),	
+		.csr_wdata_o		(lsu_csr_wdata_i),
 		.csr_mcause_o		(csr_mcause_i),
 		.pc_o				(csr_mepc_i),
-		.load_type_o		(wb_load_type_i),
-		.store_type_o		(wb_store_type_i),
-		.alu_result_o		(wb_alu_result_i)
+		.load_type_o		(lsu_load_type_i),
+		.store_type_o		(lsu_store_type_i),
+		.alu_result_o		(lsu_alu_result_i)
 	);
 
-	ysyx_22041211_wb #(
-		.DATA_LEN ( 32 )
+	ysyx_22041211_LSU#(
+		.DATA_LEN      ( 32 )
+	)u_ysyx_22041211_LSU(
+		.rst           ( rst           ),
+		.wd_i          ( lsu_wd_i          ),
+		.clk           ( clk           		),
+		.wreg_i   		( lsu_wreg_i   		),
+		.alu_result_i   ( lsu_alu_result_i  	),
+		.mem_wen_i     	( lsu_mem_wen_i   	),
+		.mem_wdata_i   	( lsu_mem_wdata_i 	),
+		.load_type_i	( lsu_load_type_i	),
+		.store_type_i	( lsu_store_type_i	),
+		.csr_wdata_i	( lsu_csr_wdata_i	),
+		.exu_valid     	( exu_valid_o   	),
+		.wb_ready_o   	( wb_ready_o 		),
+		.lsu_ready_o    ( lsu_ready_o   	),
+		.lsu_valid_o    ( lsu_valid_o   	),
+		.wd_o     		( wb_reg_wen_i   		),
+		.wreg_o   		( wb_wreg_i 		),
+		.wdata_o  		( wb_reg_wdata_i 	),
+		.csr_wdata_o    ( wb_csr_wdata_i   	)
+	);
+
+	ysyx_22041211_wb#(
+		.DATA_LEN     ( 32 )
 	)u_ysyx_22041211_wb(
-		.clk			(clk),
-		.rst            ( rst     ),
-		.wd_i     		( wb_wd_i     ),
-		.wreg_i   		( wb_wreg_i   ),
-		.alu_result_i   ( wb_alu_result_i  	),
-		.csr_wdata_i	( wb_csr_wdata_i),
-		.mem_wen_i     	( wb_mem_wen_i   ),
-		.mem_wdata_i   	( wb_mem_wdata_i ),
-		.load_type_i	(wb_load_type_i),
-		.store_type_i	(wb_store_type_i),
-		.csr_wdata_o	( csr_wdata_i),
-
-		.exu_valid     	( exu_valid_o   ),
-		.wb_ready_o   	( wb_ready_o ),
-		.finish  		( if_last_finish_i ),
-
-		.wd_o     		( reg_wen_i   ),
-		.wreg_o   		( reg_waddr_i ),
-		.wdata_o  		( reg_wdata_i )
+		.rst          ( rst          ),
+		.wd_i         ( wb_reg_wen_i ),
+		.clk          ( clk          ),
+		.wreg_i       ( wb_wreg_i       ),
+		.csr_wdata_i  ( wb_csr_wdata_i  ),
+		.reg_wdata_i  ( wb_reg_wdata_i  ),
+		.exu_valid    ( lsu_valid_o    ),
+		.wb_ready_o   ( wb_ready_o   ),
+		.finish       ( if_last_finish_i ),
+		.wd_o     	  ( reg_wen_i   ),
+		.wreg_o   	  ( reg_waddr_i ),
+		.wdata_o  	  ( reg_wdata_i ),
+		.csr_wdata_o  ( csr_wdata_i  )
 	);
+
 
 	ysyx_22041211_CSR#(
 		.DATA_WIDTH    ( 32 )
@@ -231,36 +255,5 @@ ysyx_22041211_IFU#(
 		.csr_pc_o      ( if_csr_pc_i      ),
 		.r_data        ( ex_csr_rdata_i     )
 	);
-
-
-	// ysyx_22041211_pcPlusBranch my_pcPlusBranch (
-	// 	.offset		(imm),
-	// 	.pc_old		(id_pc_i),
-	// 	.pcBranch	(pcBranch)
-	// );
-
-	// ysyx_22041211_branchJmp my_branchJmp(
-	// 	.zero		(zero),
-	// 	.SF			(ALUResult[0]),
-	// 	.branch		(branch),
-	// 	.invalid	(invalid),
-	// 	.jmp		(jmp),
-	// 	.PCSrc		(pcSrc)
-	// );
-	
-
-	// ysyx_22041211_MuxKey #(2,1,32) ALUSrc_choosing (srcB,ALUSrc, {
-	// 	1'b1, imm,
-	// 	1'b0, reg_data2
-	// });
-
-	// ysyx_22041211_MuxKey #(4,2,32) memToReg_choosing (WriteData, memToReg_tmp, {
-	// 	2'b00, ALUResult,
-	// 	2'b01, ReadData_tmp	,
-	// 	2'b10, pcPlus	,
-	// 	2'b11, pcBranch
-	// });
-
-
 
 endmodule

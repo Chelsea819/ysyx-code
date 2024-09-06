@@ -23,7 +23,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input       [2:0]                   load_type_i ,
 	input		[2:0]					branch_type_i,
 	input                                         idu_valid                 ,
-    input                                         wb_ready                 ,
+    input                                         isu_ready                 ,
     output                                        exu_ready_o                 ,
     output  reg                                   exu_valid_o                 ,
 	output  reg    [2:0]                load_type_o 	,
@@ -110,7 +110,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 			end
             // 等待exu空闲，下个时钟周期传递信息
             EXU_WAIT_WB_READY: begin 
-				if (wb_ready == 1'b0) begin
+				if (isu_ready == 1'b0) begin
 					next_state = EXU_WAIT_WB_READY;
 				end else begin 
 					next_state = EXU_WAIT_IDU_VALID;

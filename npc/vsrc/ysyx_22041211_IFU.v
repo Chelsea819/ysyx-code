@@ -124,10 +124,10 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.pc_new ( pc_plus_4  )
 	);
 
-	ysyx_22041211_SRAM#(
+	ysyx_22041211_inst_SRAM#(
 		.ADDR_LEN ( 32 ),
 		.DATA_LEN ( 32 )
-	)u_ysyx_22041211_SRAM(
+	)u_ysyx_22041211_inst_SRAM(
 		.clk      ( clk      ),
 		.rst      ( rst      ),
 		.ren      ( r_inst_en),
