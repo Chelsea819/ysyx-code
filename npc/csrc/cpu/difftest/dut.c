@@ -203,7 +203,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   uint8_t ref_mem[4096] = {0};
   ref_difftest_memcpy(0x8009df00, ref_mem, 256, DIFFTEST_TO_DUT);
   check_mem(ref_mem, pc, 256,0x8009df00 );
-  checkregs(&ref_r, pc);
+  checkregs(&ref_r, npc);
 }
 #else
 void init_difftest(char *ref_so_file, long img_size, int port) { }
