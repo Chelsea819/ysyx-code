@@ -22,10 +22,10 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     // output                              lsu_ready_o ,
     output                              memory_inst_o ,
     output  reg                         lsu_valid_o ,
-    output	reg	                		wd_o		,
-    output	reg	[4:0]		            wreg_o		,
-    output  reg [DATA_LEN - 1:0]        csr_wdata_o	,
-    output	reg	[DATA_LEN - 1:0]		wdata_o
+    output	   	                		wd_o		,
+    output	   	[4:0]		            wreg_o		,
+    output      [DATA_LEN - 1:0]        csr_wdata_o	,
+    output	   	[DATA_LEN - 1:0]		wdata_o
 );	
 	wire [31:0] mem_waddr;
     wire [31:0] mem_raddr;
@@ -136,12 +136,10 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
                        (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 
                        mem_rdata_rare;
 
-    always @(posedge clk) begin
-        if(con_state == LSU_WAIT_LSU_VALID && next_state == LSU_WAIT_WB_READY) begin				
-            wd_o	         <=     wd_i; 
-            wreg_o	         <=     wreg_i;  	
-            csr_wdata_o	     <=     csr_wdata_i;  
-            wdata_o          <=     wdata; 
-        end
+    always @(*) begin
+            wd_o	         =     wd_i; 
+            wreg_o	         =     wreg_i;  	
+            csr_wdata_o	     =     csr_wdata_i;  
+            wdata_o          =     wdata; 
 	end
 endmodule
