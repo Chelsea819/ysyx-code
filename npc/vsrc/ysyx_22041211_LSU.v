@@ -96,7 +96,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	end
 
     always @(*) begin
-        if(con_state == LSU_WAIT_LSU_VALID) begin				
+        if(con_state == LSU_WAIT_LSU_VALID || con_state == LSU_WAIT_WB_READY) begin				
             mem_to_reg = |load_type_i;
             mem_wen = mem_wen_i;
         end else begin
