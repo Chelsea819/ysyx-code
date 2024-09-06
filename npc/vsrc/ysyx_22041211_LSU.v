@@ -30,9 +30,9 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     wire [31:0] mem_raddr;
     wire [31:0] mem_rdata;
     reg  [31:0] mem_rdata_rare;
-    wire [7:0]  mem_rmask;
+    reg  [7:0]  mem_rmask;
     wire [7:0]  mem_wmask;
-    wire        mem_to_reg;
+    reg        mem_to_reg;
 
     // 写寄存器的信息
     wire		[DATA_LEN - 1:0]		    wdata       ;
@@ -93,6 +93,20 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
+    always @(*) begin
+        if(con_state == LSU_WAIT_LSU_VALID) begin				
+            mem_to_reg = |load_type_i;
+            mem_rmask  = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
+                        (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
+                        (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
+                        0;
+        end else begin
+            mem_to_reg =    0;
+            mem_rmask  =    0;
+
+        end
+	end
+
     ysyx_22041211_data_SRAM#(
         .ADDR_LEN     ( 32 ),
         .DATA_LEN     ( 32 )
@@ -116,11 +130,11 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
                        (store_type_i == `STORE_SW_32) ? `MEM_MASK_32 : 
                        0;
     // load
-    assign mem_to_reg = |load_type_i;
-    assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
-                       (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
-                       (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
-                       0;
+    // assign mem_to_reg = |load_type_i;
+    // assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
+    //                    (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
+    //                    (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
+    //                    0;
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
                        (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 
                        mem_rdata_rare;
