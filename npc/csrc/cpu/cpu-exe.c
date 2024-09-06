@@ -549,6 +549,7 @@ static void execute(uint64_t n) {
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
     // if(cpu.pc != 0x80000000) {
+    printf("trace and diff\n");
       trace_and_difftest();
 // }
   #ifdef CONFIG_DIFFTEST
