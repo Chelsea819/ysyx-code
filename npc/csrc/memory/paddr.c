@@ -55,9 +55,9 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
     #ifdef CONFIG_RTC_MMIO 
     if(raddr == CONFIG_RTC_MMIO) { 
       // Log("Read device --- [addr: 0x%08x  len: %d]",raddr,len);  
-      // time_t current_time;
-      // time(&current_time); // 获取系统时间戳
-      // return current_time;
+      time_t current_time;
+      time(&current_time); // 获取系统时间戳
+      return current_time;
     }
     #endif
     #ifdef CONFIG_SERIAL_MMIO 
