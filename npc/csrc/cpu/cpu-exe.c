@@ -29,6 +29,7 @@ static bool g_print_step = false;
 bool ifbreak = false;
 
 extern "C" void pc_get(int pc, int dnpc){
+  printf("pc = [0x%08x] npc = [0x%08x]\n",pc,dnpc);
   cpu.pc = pc;
   # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
     s.pc = pc;
