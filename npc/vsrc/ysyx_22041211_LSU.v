@@ -48,7 +48,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10;
 
 	always @(posedge clk ) begin
-		if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY )
+		if(next_state == LSU_WAIT_LSU_VALID)
 			lsu_valid_o <= 1'b1;
 		else 
 			lsu_valid_o <= 1'b0;
@@ -95,13 +95,19 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
+    always @(posedge clk) begin
+        if(con_state == LSU_WAIT_LSU_VALID || con_state == LSU_WAIT_WB_READY) begin				
+            mem_wen <= mem_wen_i;
+        end else begin
+            mem_wen <= 0;
+        end
+	end
+
     always @(*) begin
         if(con_state == LSU_WAIT_LSU_VALID || con_state == LSU_WAIT_WB_READY) begin				
             mem_to_reg = |load_type_i;
-            mem_wen = mem_wen_i;
         end else begin
             mem_to_reg =    0;
-            mem_wen = 0;
         end
 	end
 
