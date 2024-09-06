@@ -145,6 +145,8 @@ void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
   #endif
   if (likely(in_pmem(addr))) { return pmem_write(addr, len, data);}
+  printf("write device\n");
+
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
