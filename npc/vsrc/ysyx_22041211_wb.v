@@ -6,7 +6,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input		[4:0]		            wreg_i		,
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
     input       [DATA_LEN - 1:0]        reg_wdata_i	,
+    input                               ifu_valid   ,
     input                               lsu_valid   ,
+    input                               memory_inst_i ,
     output                              wb_ready_o  ,
     output  reg                         finish      ,
     output	reg	                		wd_o		,
@@ -16,13 +18,13 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 );
     // assign wb_ready_o = 1'b1;
 
-    reg							        	con_state	;
-	reg							        	next_state	;
+    reg		[1:0]					        	con_state	;
+	reg		[1:0]					        	next_state	;
     
-	parameter WB_BUSY = 1, WB_WAIT_VALID = 0;
+	parameter [1:0] WB_WAIT_IFU_VALID = 0, WB_WAIT_CTRL_VALID = 2'b01, WB_WAIT_MEM = 2'b10, WB_WAIT_REG_VALID = 2'b11;
 
     always @(posedge clk ) begin
-        if(con_state == WB_BUSY)
+        if(next_state == WB_WAIT_REG_VALID)
 			finish <= 1'b1;
 		else 
 			finish <= 1'b0;
@@ -31,7 +33,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
-			con_state <= WB_WAIT_VALID;
+			con_state <= WB_WAIT_IFU_VALID;
 		else 
 			con_state <= next_state;
 	end
@@ -39,25 +41,35 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	// next_state
 	always @(*) begin
 		case(con_state) 
-			WB_WAIT_VALID: begin
-				if (lsu_valid == 1'b0) begin
-					next_state = WB_WAIT_VALID;
+			WB_WAIT_IFU_VALID: begin
+				if (ifu_valid == 1'b0) begin
+					next_state = WB_WAIT_IFU_VALID;
 				end else begin 
-					next_state = WB_BUSY;
+					next_state = WB_WAIT_CTRL_VALID;
 				end
 			end
-			WB_BUSY: begin 
-				// if (wb_ready_o == 1'b0) begin
-				// 	next_state = WB_BUSY;
-				// end else begin 
-					next_state = WB_WAIT_VALID;
-				// end
+			WB_WAIT_CTRL_VALID: begin 
+				if (memory_inst_i == 1'b1) begin
+					next_state = WB_WAIT_MEM;
+				end else begin 
+					next_state = WB_WAIT_REG_VALID;
+				end
+			end
+			WB_WAIT_MEM: begin
+				if (lsu_valid == 1'b0) begin
+					next_state = WB_WAIT_MEM;
+				end else begin 
+					next_state = WB_WAIT_REG_VALID;
+				end
+			end
+			WB_WAIT_REG_VALID: begin 
+					next_state = WB_WAIT_IFU_VALID;
 			end
 		endcase
 	end
 
     always @(*) begin
-        if(con_state == WB_BUSY) begin
+        if(next_state == WB_WAIT_REG_VALID) begin
             wd_o	         =     wd_i; 
             wreg_o	         =     wreg_i;  	
             csr_wdata_o	     =     csr_wdata_i;  

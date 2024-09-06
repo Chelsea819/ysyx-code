@@ -22,7 +22,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	input		[1:0]					store_type_i,
 	input       [2:0]                   load_type_i ,
 	input		[2:0]					branch_type_i,
-	input                                         ifu_valid                 ,
+	input                               ifu_valid    ,
     // input                                         isu_ready                 ,
     // output                                        exu_ready_o                 ,
     // output  reg                                   exu_valid_o                 ,

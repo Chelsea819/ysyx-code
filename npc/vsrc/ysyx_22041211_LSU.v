@@ -20,6 +20,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     input                               ifu_valid   , 
     // input                               wb_ready_o  ,
     // output                              lsu_ready_o ,
+    output                              memory_inst_o ,
     output  reg                         lsu_valid_o ,
     output	reg	                		wd_o		,
     output	reg	[4:0]		            wreg_o		,
@@ -38,7 +39,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     // 写寄存器的信息
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
-
+    assign memory_inst_o = mem_to_reg | mem_wen;
     
     // assign lsu_ready_o = 1'b1;
 

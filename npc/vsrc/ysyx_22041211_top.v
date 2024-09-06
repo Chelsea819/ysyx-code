@@ -78,6 +78,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
 	wire								wb_reg_wen_i	;
 	wire			[4:0]				wb_wreg_i		;
+	wire								wb_memory_inst_i;
 	wire								wb_ready_o		;
 	
 	assign pc = id_pc_i;
@@ -181,10 +182,9 @@ ysyx_22041211_IFU#(
 		.branch_type_i		(if_branch_type_i),	
 
 		.ifu_valid			(ifu_valid_o),
-		// .isu_ready			(lsu_ready_o),	
+		// .isu_ready		(lsu_ready_o),	
 		// .exu_ready_o		(exu_ready_o),
 		// .exu_valid_o		(exu_valid_o),
-
 		.store_type_i		(ex_store_type_i),	
 		.load_type_i		(ex_load_type_i),
 		.branch_request_o	(if_branch_request_i),
@@ -210,6 +210,7 @@ ysyx_22041211_IFU#(
 		.alu_result_i   ( lsu_alu_result_i  	),
 		.mem_wen_i     	( lsu_mem_wen_i   	),
 		.mem_wdata_i   	( lsu_mem_wdata_i 	),
+		.memory_inst_o  ( wb_memory_inst_i ),
 		.load_type_i	( lsu_load_type_i	),
 		.store_type_i	( lsu_store_type_i	),
 		.csr_wdata_i	( lsu_csr_wdata_i	),
@@ -232,6 +233,8 @@ ysyx_22041211_IFU#(
 		.wreg_i       ( wb_wreg_i       ),
 		.csr_wdata_i  ( wb_csr_wdata_i  ),
 		.reg_wdata_i  ( wb_reg_wdata_i  ),
+		.memory_inst_i( wb_memory_inst_i ),
+		.ifu_valid    ( ifu_valid_o    ),
 		.lsu_valid    ( lsu_valid_o    ),
 		.wb_ready_o   ( wb_ready_o   ),
 		.finish       ( if_last_finish_i ),
@@ -250,7 +253,7 @@ ysyx_22041211_IFU#(
 		.csr_addr      ( csr_addr_i      ),
 		.wdata         ( csr_wdata_i         ),
 		.csr_type_i    ( ex_csr_flag_i    ),
-		.csr_mepc_i    ( csr_mepc_i    ),
+		.csr_mepc_i    ( csr_mepc_i    ),  
 		.csr_mcause_i  ( csr_mcause_i  ),
 		.csr_pc_o      ( if_csr_pc_i      ),
 		.r_data        ( ex_csr_rdata_i     )
