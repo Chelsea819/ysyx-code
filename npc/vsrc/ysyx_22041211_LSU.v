@@ -96,7 +96,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	end
 
     always @(*) begin
-		$display("mem_wen: [%d] con_state: [%d] next_state: [%d]",mem_wen, con_state, next_state);
+		$display("store_type_i = [%b] mem_wen: [%d] con_state: [%d] next_state: [%d]",store_type_i, mem_wen, con_state, next_state);
 	end
 
     always @(posedge clk) begin
