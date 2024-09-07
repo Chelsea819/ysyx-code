@@ -32,7 +32,7 @@ module ysyx_22041211_data_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
 	always @(posedge clk) begin
   		if (mem_wen_i) begin // 有写请求时
-			$display("mem_wen_i = %d mem_wmask = %x mem_waddr = %x\n",mem_wen_i, mem_wmask, mem_waddr_i);
+			// $display("mem_wen_i = %d mem_wmask = %x mem_waddr = %x\n",mem_wen_i, mem_wmask, mem_waddr_i);
             pmem_write_task(mem_waddr_i, mem_wdata_i, mem_wmask);
 		end
 	end
