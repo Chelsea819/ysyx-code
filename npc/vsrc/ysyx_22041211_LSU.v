@@ -122,7 +122,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
         .rst          ( rst          ),
         .clk          ( clk          ),
         .ren          ( mem_to_reg   ),
-        .mem_wen_i    ( mem_wen_i    ),
+        .mem_wen_i    ( mem_wen    ),
         .mem_wdata_i  ( mem_wdata_i  ),
         .mem_waddr_i  ( mem_waddr    ),
         .mem_raddr_i  ( mem_raddr  ),
