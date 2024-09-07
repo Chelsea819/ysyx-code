@@ -124,17 +124,40 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.pc_new ( pc_plus_4  )
 	);
 
-	ysyx_22041211_inst_SRAM#(
-		.ADDR_LEN ( 32 ),
-		.DATA_LEN ( 32 )
-	)u_ysyx_22041211_inst_SRAM(
-		.clk      ( clk      ),
-		.rst      ( rst      ),
-		.ren      ( r_inst_en),
-		.pc       ( pc       ),
-		.inst     ( inst_o     ),
-		.id_inst_i( id_inst_i)
+	// ysyx_22041211_inst_SRAM#(
+	// 	.ADDR_LEN ( 32 ),
+	// 	.DATA_LEN ( 32 )
+	// )u_ysyx_22041211_inst_SRAM(
+	// 	.clk      ( clk      ),
+	// 	.rst      ( rst      ),
+	// 	.ren      ( r_inst_en),
+	// 	.pc       ( pc       ),
+	// 	.inst     ( inst_o     ),
+	// 	.id_inst_i( id_inst_i)
+	// );
+
+	ysyx_22041211_SRAM#(
+		.ADDR_LEN     ( 32 ),
+		.DATA_LEN     ( 32 )
+	)u_ysyx_22041211_SRAM(
+		.rst          ( rst          ),
+		.clk          ( clk          ),
+		.ren          ( r_inst_en    ),
+		.mem_wen_i    ( 0    ),
+		.mem_wdata_i  ( 0  ),
+		.mem_waddr_i  ( 0  ),
+		.mem_raddr_i  ( pc  ),
+		.mem_wmask    ( 0    ),
+		.mem_rmask    ( 8'b00001111 ),
+		.mem_rdata_usigned_o  ( inst_o  )
 	);
+
+	always @(posedge clk) begin
+        if(r_inst_en) begin
+            id_inst_i   <=   inst_o;
+        end
+	end
+
 
 
 endmodule

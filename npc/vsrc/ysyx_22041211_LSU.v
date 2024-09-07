@@ -118,7 +118,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
         end
 	end
 
-    ysyx_22041211_data_SRAM#(
+    ysyx_22041211_SRAM#(
         .ADDR_LEN     ( 32 ),
         .DATA_LEN     ( 32 )
     )u_ysyx_22041211_data_SRAM(
