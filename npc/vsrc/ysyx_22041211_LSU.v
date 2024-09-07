@@ -95,9 +95,9 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
-    // always @(*) begin
-	// 	$display("mem_wen: [%d] con_state: [%d] next_state: [%d]",mem_wen, con_state, next_state);
-	// end
+    always @(*) begin
+		$display("mem_wen: [%d] con_state: [%d] next_state: [%d]",mem_wen, con_state, next_state);
+	end
 
     always @(posedge clk) begin
         if(next_state == LSU_WAIT_LSU_VALID) begin				
