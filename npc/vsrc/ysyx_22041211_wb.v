@@ -9,7 +9,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input                               ifu_valid   ,
     input                               lsu_valid   ,
     input                               memory_inst_i ,
-    output                              wb_ready_o  ,
+    // output                              wb_ready_o  ,
     output  reg                         finish      ,
     output	reg	                		wd_o		,
     output	reg	[4:0]		            wreg_o		,
@@ -66,6 +66,10 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 					next_state = WB_WAIT_IFU_VALID;
 			end
 		endcase
+	end
+
+	always @(*) begin
+		$display("ifu_valid: [%d] lsu_valid: [%d]  con_state: [%d] next_state: [%d]",ifu_valid, lsu_valid, con_state, next_state);
 	end
 
     always @(*) begin

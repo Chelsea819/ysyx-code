@@ -236,7 +236,7 @@ ysyx_22041211_IFU#(
 		.memory_inst_i( wb_memory_inst_i ),
 		.ifu_valid    ( ifu_valid_o    ),
 		.lsu_valid    ( lsu_valid_o    ),
-		.wb_ready_o   ( wb_ready_o   ),
+		// .wb_ready_o   ( wb_ready_o   ),
 		.finish       ( if_last_finish_i ),
 		.wd_o     	  ( reg_wen_i   ),
 		.wreg_o   	  ( reg_waddr_i ),
