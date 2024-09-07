@@ -68,9 +68,9 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 		endcase
 	end
 
-	always @(*) begin
-		$display("ifu_valid: [%d] lsu_valid: [%d]  con_state: [%d] next_state: [%d]",ifu_valid, lsu_valid, con_state, next_state);
-	end
+	// always @(*) begin
+	// 	$display("ifu_valid: [%d] lsu_valid: [%d]  con_state: [%d] next_state: [%d]",ifu_valid, lsu_valid, con_state, next_state);
+	// end
 
     always @(*) begin
         if(next_state == WB_WAIT_REG_VALID) begin
