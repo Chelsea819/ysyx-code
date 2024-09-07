@@ -31,9 +31,9 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 
 	assign r_data = csr[csr_idx];
 
-	// always @(*) begin
-	// 	$display("csr_type_i = [%b] csr_idx = [%b]  wdata = [%b]",csr_type_i,csr_idx,wdata);
-	// end
+	always @(*) begin
+		$display("csr_type_i = [%b] csr_idx = [%b]  wdata = [%b] csr_pc_o = [%x] csr_type_i = [%b]",csr_type_i,csr_idx,wdata, csr_pc_o, csr_type_i);
+	end
 
 	always @(posedge clk) begin
 		if(rst)
