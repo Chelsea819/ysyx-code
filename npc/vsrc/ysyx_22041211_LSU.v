@@ -96,7 +96,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	end
 
     always @(*) begin
-		$display("load_type_i = [%b] mem_to_reg: [%d] mem_raddr: [%x] con_state: [%d] next_state: [%d]",load_type_i, mem_to_reg, mem_raddr, con_state, next_state);
+		$display("load_type_i = [%b] mem_to_reg: [%d] rmask: [%d] mem_raddr: [%x] con_state: [%d] next_state: [%d]",load_type_i, mem_to_reg,mem_rmask, mem_raddr, con_state, next_state);
 	end
 
     always @(posedge clk) begin
