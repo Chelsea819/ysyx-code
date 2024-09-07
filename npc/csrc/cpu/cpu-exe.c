@@ -8,6 +8,7 @@
 #include <cpu/difftest.h>
 #include <debug.h>
 #include <config.h>
+#include "sdb.h"
 
 word_t expr(char *e, bool *success);
 Decode s;
