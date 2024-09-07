@@ -34,6 +34,7 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
     output	reg	                		wd_o			,
     output	reg	[4:0]		            wreg_o			,
 	output  reg    [DATA_LEN - 1:0]     csr_wdata_o		,
+	output  reg    [2:0]			    csr_type_o		,
 	output  reg    [DATA_LEN - 1:0]     csr_mcause_o	,
 	output	reg	[DATA_LEN - 1:0]		pc_o			,
     output	reg	[DATA_LEN - 1:0]		alu_result_o
@@ -124,6 +125,8 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 		`CSR_CSRRW, reg1_i,
 		`CSR_CSRRS, reg1_i | csr_rdata_i
 	});
+
+	assign csr_type_o = csr_flag_i;
 
 	ysyx_22041211_ALU my_alu(
 		.src1				(src1),

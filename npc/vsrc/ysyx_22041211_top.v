@@ -57,12 +57,14 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// csr Unit
 	wire			[11:0]				csr_addr_i	;
 	wire			[DATA_LEN - 1:0]	csr_wdata_i		;
+	wire			[2:0]				csr_type_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mepc_i		;
 	wire	        [DATA_LEN - 1:0]    csr_mcause_i	;
 
 	// lsu
 	wire			[DATA_LEN - 1:0]	lsu_mem_wdata_i	;
 	wire			[DATA_LEN - 1:0]	lsu_csr_wdata_i	;
+	wire			[2:0]				lsu_csr_type_i	;
 	wire								lsu_mem_wen_i	;
 	wire								lsu_wd_i		;
 	// wire								exu_valid_o		;
@@ -76,6 +78,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// wb Unit
 	wire			[DATA_LEN - 1:0]	wb_reg_wdata_i	;
 	wire			[DATA_LEN - 1:0]	wb_csr_wdata_i	;
+	wire			[2:0]				wb_csr_type_i	;
 	wire								wb_reg_wen_i	;
 	wire			[4:0]				wb_wreg_i		;
 	wire								wb_memory_inst_i;
@@ -193,6 +196,7 @@ ysyx_22041211_IFU#(
 		.mem_wen_o			(lsu_mem_wen_i),	
 		.mem_wdata_o		(lsu_mem_wdata_i),	
 		.csr_wdata_o		(lsu_csr_wdata_i),
+		.csr_type_o			(lsu_csr_type_i),
 		.csr_mcause_o		(csr_mcause_i),
 		.pc_o				(csr_mepc_i),
 		.load_type_o		(lsu_load_type_i),
@@ -214,6 +218,7 @@ ysyx_22041211_IFU#(
 		.load_type_i	( lsu_load_type_i	),
 		.store_type_i	( lsu_store_type_i	),
 		.csr_wdata_i	( lsu_csr_wdata_i	),
+		.csr_type_i		( lsu_csr_type_i	),
 		.ifu_valid     	( ifu_valid_o   	),
 		// .wb_ready_o   	( wb_ready_o 		),
 		// .lsu_ready_o    ( lsu_ready_o   	),
@@ -221,6 +226,7 @@ ysyx_22041211_IFU#(
 		.wd_o     		( wb_reg_wen_i   		),
 		.wreg_o   		( wb_wreg_i 		),
 		.wdata_o  		( wb_reg_wdata_i 	),
+		.csr_type_o		( wb_csr_type_i	),
 		.csr_wdata_o    ( wb_csr_wdata_i   	)
 	);
 
@@ -232,6 +238,7 @@ ysyx_22041211_IFU#(
 		.clk          ( clk          ),
 		.wreg_i       ( wb_wreg_i       ),
 		.csr_wdata_i  ( wb_csr_wdata_i  ),
+		.csr_type_i   ( wb_csr_type_i  ),
 		.reg_wdata_i  ( wb_reg_wdata_i  ),
 		.memory_inst_i( wb_memory_inst_i ),
 		.ifu_valid    ( ifu_valid_o    ),
@@ -241,6 +248,7 @@ ysyx_22041211_IFU#(
 		.wd_o     	  ( reg_wen_i   ),
 		.wreg_o   	  ( reg_waddr_i ),
 		.wdata_o  	  ( reg_wdata_i ),
+		.csr_type_o   ( csr_type_i  ),
 		.csr_wdata_o  ( csr_wdata_i  )
 	);
 
@@ -252,7 +260,7 @@ ysyx_22041211_IFU#(
 		.rst           ( rst           ),
 		.csr_addr      ( csr_addr_i      ),
 		.wdata         ( csr_wdata_i         ),
-		.csr_type_i    ( ex_csr_flag_i    ),
+		.csr_type_i    ( csr_type_i    ),
 		.csr_mepc_i    ( csr_mepc_i    ),  
 		.csr_mcause_i  ( csr_mcause_i  ),
 		.csr_pc_o      ( if_csr_pc_i      ),

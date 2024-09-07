@@ -5,6 +5,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input		                		clk		    ,
     input		[4:0]		            wreg_i		,
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
+    input       [2:0]		            csr_type_i	,
     input       [DATA_LEN - 1:0]        reg_wdata_i	,
     input                               ifu_valid   ,
     input                               lsu_valid   ,
@@ -14,6 +15,8 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     output	reg	                		wd_o		,
     output	reg	[4:0]		            wreg_o		,
     output  reg [DATA_LEN - 1:0]        csr_wdata_o	,
+    output      [2:0]		            csr_type_o	,
+
     output	reg	[DATA_LEN - 1:0]		wdata_o
 );
     // assign wb_ready_o = 1'b1;
@@ -76,12 +79,14 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
         if(next_state == WB_WAIT_REG_VALID) begin
             wd_o	         =     wd_i; 
             wreg_o	         =     wreg_i;  	
-            csr_wdata_o	     =     csr_wdata_i;  
+            csr_wdata_o	     =     csr_wdata_i; 
+			csr_type_o		 =	   csr_type_i; 
             wdata_o          =     reg_wdata_i;  
         end else begin 
             wd_o	         =     0; 
             wreg_o	         =     0;  	
-            csr_wdata_o	     =     0;  
+            csr_wdata_o	     =     0; 
+			csr_type_o		 =	   0; 
             wdata_o          =     0; 
         end
 	end

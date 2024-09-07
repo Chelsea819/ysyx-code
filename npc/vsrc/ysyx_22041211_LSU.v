@@ -17,6 +17,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     input       [2:0]                   load_type_i , 
     input       [1:0]                   store_type_i, 
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
+    input       [2:0]                   csr_type_i	,
     input                               ifu_valid   , 
     // input                               wb_ready_o  ,
     // output                              lsu_ready_o ,
@@ -25,6 +26,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     output	   	                		wd_o		,
     output	   	[4:0]		            wreg_o		,
     output      [DATA_LEN - 1:0]        csr_wdata_o	,
+    output      [2:0]                   csr_type_o	,
+
     output	   	[DATA_LEN - 1:0]		wdata_o
 );	
 	wire [31:0] mem_waddr;
@@ -150,6 +153,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
             wd_o	         =     wd_i; 
             wreg_o	         =     wreg_i;  	
             csr_wdata_o	     =     csr_wdata_i;  
+            csr_type_o	     =     csr_type_i;  
             wdata_o          =     wdata; 
 	end
 endmodule
