@@ -100,7 +100,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 	end
 
     always @(posedge clk) begin
-        if(next_state == LSU_WAIT_LSU_VALID) begin				
+        if(con_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY) begin				
             mem_wen <= mem_wen_i;
         end else begin
             mem_wen <= 0;
