@@ -23,10 +23,10 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 );	
 	wire 		[ADDR_LEN - 1:0]			pc_next;
 
-	// always @(*) begin
-	// 	$display("csr_jmp_i = [%b]",csr_jmp_i);
-	// 	$display("jmp_flag_i = [%b]",jmp_flag_i);
-	// end
+	always @(*) begin
+		$display("csr_jmp_i = [%b] ",csr_jmp_i);
+		$display("csr_pc_i = [%b]\n",csr_pc_i);
+	end
 
 	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
 	assign pc_next = (branch_flag_i & branch_request_i) ? branch_target_i : 
