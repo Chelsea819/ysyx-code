@@ -27,8 +27,8 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// output	[ADDR_LEN - 1:0]			ce		,
     // input		[DATA_WIDTH - 1:0]			inst_i	,
     output									invalid	,
-    output 		[DATA_WIDTH - 1:0]			id_inst_i	,
-	output reg	[DATA_WIDTH - 1:0]			inst_o		,	// 外部api 当前周期正在执行的指令
+    output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
+	output 		[DATA_WIDTH - 1:0]			inst_o		,	// 外部api 当前周期正在执行的指令
 	output reg	[ADDR_WIDTH - 1:0]			pc
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
@@ -151,6 +151,10 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.mem_rmask    ( 8'b00001111 ),
 		.mem_rdata_usigned_o  ( inst_o  )
 	);
+
+	always @(*) begin
+		$display("pc: [%x] id_inst_i: [%x] inst: [%b] invalid: [%h]",pc, id_inst_i,  inst_o, invalid);
+	end
 
 	always @(posedge clk) begin
         if(r_inst_en) begin
