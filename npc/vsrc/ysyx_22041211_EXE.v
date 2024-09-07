@@ -55,9 +55,9 @@ module ysyx_22041211_EXE #(parameter DATA_LEN = 32)(
 	assign csr_mcause_o  = 32'hb;
 
 
-	// always @(*) begin
-	// 	$display("mem_wdata_o = [%h] mem_wen_o = [%b] reg2_i = [%h]",mem_wdata_o,mem_wen_o, reg2_i);
-	// end
+	always @(*) begin
+		$display("mem_wen_o = [%h] mem_wen_o = [%b]",mem_wen_o,mem_wen_o);
+	end
 
 	reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
