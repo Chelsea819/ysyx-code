@@ -153,9 +153,9 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.mem_rdata_usigned_o  ( inst_o  )
 	);
 
-	always @(*) begin
-		$display("pc: [%x] id_inst_i: [%x] inst: [%b] invalid: [%h]",pc, id_inst_i,  inst_o, inst_invalid_o);
-	end
+	// always @(*) begin
+	// 	$display("pc: [%x] id_inst_i: [%x] inst: [%b] invalid: [%h]",pc, id_inst_i,  inst_o, inst_invalid_o);
+	// end
 
 	always @(posedge clk) begin
         if(r_inst_en) begin

@@ -119,7 +119,7 @@ ysyx_22041211_IFU#(
 	.csr_pc_i         ( if_csr_pc_i      ),
     .inst_o           ( inst           ),
 	.id_inst_i        ( id_inst_i           ),
-    .inst_invalid_o          ( invalid           ),
+    .inst_invalid_o   ( invalid           ),
     .pc               ( id_pc_i             )
 );
 
