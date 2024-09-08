@@ -212,10 +212,10 @@ static void trace_and_difftest(){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
-  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
-  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
-  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
-  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
+  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
+  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
+  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
+  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
  IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
