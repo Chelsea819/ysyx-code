@@ -13,7 +13,7 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 	input		[2:0]					csr_type_i,
 	input		[DATA_WIDTH - 1:0]		csr_mepc_i	,
 	input		[DATA_WIDTH - 1:0]		csr_mcause_i	,
-	output		[DATA_WIDTH - 1:0]		csr_pc_o	,
+	output	reg	[DATA_WIDTH - 1:0]		csr_pc_o	,
 	output		[DATA_WIDTH - 1:0]		r_data	
 );
 	reg 	[DATA_WIDTH - 1:0] 		csr [3:0]	;
@@ -25,14 +25,24 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 					 (csr_addr == `CSR_MTVEC_ADDR)	? `CSR_MTVEC_IDX :
 					 `CSR_MTVEC_IDX ;
 
-	assign csr_pc_o = (csr_type_i == `CSR_ECALL)	? csr[`CSR_MTVEC_IDX] :
-					  (csr_type_i == `CSR_MRET)		? csr[`CSR_MEPC_IDX] :
-					  32'b0 ;
+	// assign csr_pc_o = (csr_type_i == `CSR_ECALL)	? csr[`CSR_MTVEC_IDX] :
+	// 				  (csr_type_i == `CSR_MRET)		? csr[`CSR_MEPC_IDX] :
+	// 				  32'b0 ;
+	
+	always @(posedge clk) begin
+		if(rst)
+			csr_pc_o <= 32'b0;
+		else if (csr_type_i == `CSR_ECALL) 
+			csr_pc_o <= csr[`CSR_MTVEC_IDX];
+		else if(csr_type_i == `CSR_MRET) begin
+			csr_pc_o <= csr[`CSR_MEPC_IDX];
+		end
+	end
 
 	assign r_data = csr[csr_idx];
 
 	// always @(*) begin
-	// 	$display("csr_type_i = [%b] csr_idx = [%b]  wdata = [%b]",csr_type_i,csr_idx,wdata);
+	// 	$display("MTVEC = [%x] csr_idx = [%b]  wdata = [%b] csr_pc_o = [%x] csr_type_i = [%b]",csr[`CSR_MTVEC_IDX],csr_idx,wdata, csr_pc_o, csr_type_i);
 	// end
 
 	always @(posedge clk) begin

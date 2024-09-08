@@ -17,7 +17,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 
-NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt
+NPCFLAGS += --log=$(shell dirname $(IMAGE).elf)/npc-log.txt #--batch
 NPCFLAGS += $(ARGS_DIFF)
 NPCFLAGS += --ftrace=$(shell dirname $(IMAGE).elf)/$(ALL)-$(ARCH).elf --diff=$(NPC_HOME)/diff-ref/riscv32-nemu-interpreter-so
 

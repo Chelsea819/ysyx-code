@@ -1,4 +1,5 @@
 #include <cpu/decode.h>
+#include <cstdio>
 #include <isa.h>
 #include <elf.h>
 #include "reg.h"
@@ -7,6 +8,7 @@
 #include <cpu/difftest.h>
 #include <debug.h>
 #include <config.h>
+#include "sdb.h"
 
 word_t expr(char *e, bool *success);
 Decode s;
@@ -28,6 +30,7 @@ static bool g_print_step = false;
 bool ifbreak = false;
 
 extern "C" void pc_get(int pc, int dnpc){
+  // printf("pc = %x dpc = %x\n",pc,dnpc);
   cpu.pc = pc;
   # if (defined CONFIG_DIFFTEST) || (defined CONFIG_TRACE)
     s.pc = pc;
@@ -209,10 +212,10 @@ static void trace_and_difftest(){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
-  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
-  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
-  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
-  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
+  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
+  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
+  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
+  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
  IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
@@ -264,26 +267,43 @@ void inst_get(int inst){
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
+void per_clk_cycle(){
+  do {
+    dut->clk ^= 1;
+    dut->eval();
+    #ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+    #endif
+    
+  }while(dut->clk == 1);
+  // printf("clk = %d\n",dut->clk);
+}
+void per_inst_cycle(){
+  do {
+    per_clk_cycle();
+    // printf("unfinshed!\n");
+  }while(dut->finish == 0);
+  // printf("finished dut.pc = [0x%08x]!\n",dut->pc);
+}
+
+
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
-  dut->clk ^= 1;
-  dut->eval();
-  #ifdef CONFIG_WAVE
-  m_trace->dump(sim_time);
-	sim_time++;
-  #endif
-		
-  if(dut->clk == 0 && dut->invalid == 1){
+  per_inst_cycle();
+  // inst invalid check
+  if(dut->invalid == 1){
     invalid_inst(dut->pc);
   }
 
-  if(ifbreak && dut->clk == 0){
+  // ebreak check
+  if(ifbreak){
     printf("\nebreak!\n");
     // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
     NPCTRAP(dut->pc, 0);
   }
-  if(dut->clk == 0 && !ifbreak)    return; 
+
   #if (defined CONFIG_TRACE) || (defined CONFIG_TRACE)
   s.snpc = s.pc + 4;
   #endif
@@ -525,18 +545,20 @@ static void exec_once()
 static void execute(uint64_t n) {
   for (; n > 0; n--)
   {
-    if(cpu.pc != 0x0)
+    // if(cpu.pc != 0x0)
     exec_once();
-    if(dut->clk == 1) g_nr_guest_inst++;  //记录客户指令的计时器
+    g_nr_guest_inst++;  //记录客户指令的计时器
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
     //所以这里要整个往后延迟一个周期
-    if(cpu.pc != 0x80000000 && dut->clk == 1) {
-      trace_and_difftest();
-    }
-  #ifdef CONFIG_DIFFTEST
+    #ifdef CONFIG_DIFFTEST
     diff.pc = s.pc;
     diff.dnpc = s.dnpc;
-  #endif
+    #endif
+    // if(cpu.pc != 0x80000000) {
+    // printf("trace and diff\n");
+    trace_and_difftest();
+// }
+  
     
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)

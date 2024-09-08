@@ -28,7 +28,7 @@ static inline int check_reg_idx(int idx) {
   return idx;
 }
 
-#define R(idx) (dut->rootp->ysyx_22041211_top__DOT__my_RegisterFile__DOT__rf[check_reg_idx(idx)])
+#define R(idx) (dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211_cpu__DOT__my_RegisterFile__DOT__rf[check_reg_idx(idx)])
 
 // #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
 

@@ -143,5 +143,3 @@
 `define CSR_MSTATUS_IDX      2'b01
 `define CSR_MEPC_IDX         2'b10
 `define CSR_MTVEC_IDX        2'b11
-
-`define CSR_MTVEC_IDX        2'b11
