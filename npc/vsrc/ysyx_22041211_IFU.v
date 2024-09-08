@@ -22,13 +22,13 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     input       [31:0]                   	jmp_target_i    ,
 	input									csr_jmp_i	    ,
 	input		[ADDR_WIDTH - 1:0]			csr_pc_i	    ,
+	// input 		[DATA_WIDTH - 1:0]			inst_i		,
 
     // get instruction
-	// output	[ADDR_LEN - 1:0]			ce		,
-    // input		[DATA_WIDTH - 1:0]			inst_i	,
+	output									ce		,
+    input		[DATA_WIDTH - 1:0]			inst_i	,
     output reg								inst_invalid_o	,
     output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
-	output 		[DATA_WIDTH - 1:0]			inst_o		,	// 外部api 当前周期正在执行的指令
 	output reg	[ADDR_WIDTH - 1:0]			pc
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
@@ -36,7 +36,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg			[1:0]			        	next_state	;
 	wire									r_inst_en	;
 	wire									inst_invalid;
-
+	assign ce = r_inst_en;
 	assign r_inst_en = (con_state == IFU_IDLE && next_state == IFU_WAIT_READY);
 
 	assign inst_invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
@@ -125,33 +125,22 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.pc_new ( pc_plus_4  )
 	);
 
-	// ysyx_22041211_inst_SRAM#(
-	// 	.ADDR_LEN ( 32 ),
-	// 	.DATA_LEN ( 32 )
-	// )u_ysyx_22041211_inst_SRAM(
-	// 	.clk      ( clk      ),
-	// 	.rst      ( rst      ),
-	// 	.ren      ( r_inst_en),
-	// 	.pc       ( pc       ),
-	// 	.inst     ( inst_o     ),
-	// 	.id_inst_i( id_inst_i)
-	// );
 
-	ysyx_22041211_SRAM#(
-		.ADDR_LEN     ( 32 ),
-		.DATA_LEN     ( 32 )
-	)u_ysyx_22041211_SRAM(
-		.rst          ( rst          ),
-		.clk          ( clk          ),
-		.ren          ( r_inst_en    ),
-		.mem_wen_i    ( 0    ),
-		.mem_wdata_i  ( 0  ),
-		.mem_waddr_i  ( 0  ),
-		.mem_raddr_i  ( pc  ),
-		.mem_wmask    ( 0    ),
-		.mem_rmask    ( 8'b00001111 ),
-		.mem_rdata_usigned_o  ( inst_o  )
-	);
+	// ysyx_22041211_SRAM#(
+	// 	.ADDR_LEN     ( 32 ),
+	// 	.DATA_LEN     ( 32 )
+	// )u_ysyx_22041211_SRAM(
+	// 	.rst          ( rst          ),
+	// 	.clk          ( clk          ),
+	// 	.ren          ( r_inst_en    ),
+	// 	.mem_wen_i    ( 0    ),
+	// 	.mem_wdata_i  ( 0  ),
+	// 	.mem_waddr_i  ( 0  ),
+	// 	.mem_raddr_i  ( pc  ),
+	// 	.mem_wmask    ( 0    ),
+	// 	.mem_rmask    ( 8'b00001111 ),
+	// 	.mem_rdata_usigned_o  ( inst_o  )
+	// );
 
 	// always @(*) begin
 	// 	$display("pc: [%x] id_inst_i: [%x] inst: [%b] invalid: [%h]",pc, id_inst_i,  inst_o, inst_invalid_o);
@@ -159,20 +148,10 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 
 	always @(posedge clk) begin
         if(r_inst_en) begin
-            id_inst_i   <=   inst_o;
+            id_inst_i   <=   inst_i;
         end
 	end
 
-	// always @(posedge clk) begin
-    //     if(r_inst_en) begin
-    //         inst_invalid_o   <=   inst_invalid;
-    //     end
-	// end
-
 	assign inst_invalid_o = inst_invalid;
-
-	
-
-
 
 endmodule

@@ -6,7 +6,7 @@
  ************************************************************************/
 // clk rst waddr wdata wen wmask
 `include "./ysyx_22041211_define.v"
-module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
+module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								rst			,
     input		                		wd_i		,
     input		                		clk			,
@@ -28,21 +28,30 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
     output      [DATA_LEN - 1:0]        csr_wdata_o	,
     output      [2:0]                   csr_type_o	,
 
+    input	        [DATA_LEN - 1:0]    mem_rdata_rare_i	,
+    output		                		mem_ren_o	,
+    output	reg                		    mem_wen_o	,
+	output		    [DATA_LEN - 1:0]	mem_wdata_o	,
+	output		    [ADDR_LEN - 1:0]	mem_waddr_o	,
+	output		    [ADDR_LEN - 1:0]	mem_raddr_o	,
+	output		    [7:0]  				mem_wmask_o	,
+	output		    [7:0]  				mem_rmask_o	,
+
     output	   	[DATA_LEN - 1:0]		wdata_o
 );	
-	wire [31:0] mem_waddr;
-    wire [31:0] mem_raddr;
+	// wire [31:0] mem_waddr;
+    // wire [31:0] mem_raddr;
     wire [31:0] mem_rdata;
-    reg  [31:0] mem_rdata_rare;
-    reg  [7:0]  mem_rmask;
-    wire [7:0]  mem_wmask;
+    // reg  [31:0] mem_rdata_rare_i;
+    // reg  [7:0]  mem_rmask;
+    // wire [7:0]  mem_wmask;
     reg        mem_to_reg;
-    reg        mem_wen;
+    // reg        mem_wen;
 
     // 写寄存器的信息
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
-    assign memory_inst_o = mem_to_reg | mem_wen;
+    assign memory_inst_o = mem_to_reg | mem_wen_i;
     
     // assign lsu_ready_o = 1'b1;
 
@@ -104,9 +113,9 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
 
     always @(posedge clk) begin
         if(next_state == LSU_WAIT_WB_READY) begin				
-            mem_wen <= mem_wen_i;
+            mem_wen_o <= mem_wen_i;
         end else begin
-            mem_wen <= 0;
+            mem_wen_o <= 0;
         end
 	end
 
@@ -118,36 +127,40 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32)(
         end
 	end
 
-    ysyx_22041211_SRAM#(
-        .ADDR_LEN     ( 32 ),
-        .DATA_LEN     ( 32 )
-    )u_ysyx_22041211_data_SRAM(
-        .rst          ( rst          ),
-        .clk          ( clk          ),
-        .ren          ( mem_to_reg   ),
-        .mem_wen_i    ( mem_wen    ),
-        .mem_wdata_i  ( mem_wdata_i  ),
-        .mem_waddr_i  ( mem_waddr    ),
-        .mem_raddr_i  ( mem_raddr  ),
-        .mem_wmask    ( mem_wmask    ),
-        .mem_rmask    ( mem_rmask    ),
-        .mem_rdata_usigned_o( mem_rdata_rare)
-    );
-    assign mem_waddr = alu_result_i;
-    assign mem_raddr = alu_result_i;
+    // ysyx_22041211_SRAM#(
+    //     .ADDR_LEN     ( 32 ),
+    //     .DATA_LEN     ( 32 )
+    // )u_ysyx_22041211_data_SRAM(
+    //     .rst          ( rst          ),
+    //     .clk          ( clk          ),
+    //     .ren          ( mem_to_reg   ),
+    //     .mem_wen_i    ( mem_wen    ),
+    //     .mem_wdata_i  ( mem_wdata_i  ),
+    //     .mem_waddr_i  ( mem_waddr    ),
+    //     .mem_raddr_i  ( mem_raddr  ),
+    //     .mem_wmask    ( mem_wmask    ),
+    //     .mem_rmask    ( mem_rmask    ),
+    //     .mem_rdata_usigned_o( mem_rdata_rare_i)
+    // );
+
+    assign mem_ren_o = mem_to_reg;
+    assign mem_wdata_o = mem_wdata_i;
+
+    assign mem_waddr_o = alu_result_i;
+    assign mem_raddr_o = alu_result_i;
     // store
-	assign mem_wmask = (store_type_i == `STORE_SB_8)  ? `MEM_MASK_8 : 
+	assign mem_wmask_o = (store_type_i == `STORE_SB_8)  ? `MEM_MASK_8 : 
                        (store_type_i == `STORE_SH_16) ? `MEM_MASK_16 :
                        (store_type_i == `STORE_SW_32) ? `MEM_MASK_32 : 
                        0;
     // load
-    assign mem_rmask = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
+    assign mem_rmask_o = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
                        (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
                        (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
                        0;
-    assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare[7]}}, mem_rdata_rare[7:0]} : 
-                       (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare[15]}}, mem_rdata_rare[15:0]}: 
-                       mem_rdata_rare;
+    assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare_i[7]}}, mem_rdata_rare_i[7:0]} : 
+                       (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
+                       mem_rdata_rare_i;
 
     always @(*) begin
             wd_o	         =     wd_i; 

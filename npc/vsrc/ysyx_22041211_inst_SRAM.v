@@ -18,7 +18,7 @@ module ysyx_22041211_inst_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
     //fetch instruction
 	always @(*) begin
 		if(~rst) begin
-        	mem_rdata_usigned_o = pmem_read_task(mem_raddr_i, 8'b00001111);
+			mem_rdata_usigned_o = pmem_read_task(mem_raddr_i, 8'b00001111);
 		end else begin  
 			mem_rdata_usigned_o = 32'b0;
 		end
