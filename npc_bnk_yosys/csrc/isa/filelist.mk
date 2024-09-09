@@ -1,1 +1,0 @@
-DIRS-y += $(NPC_HOME)/csrc/isa
