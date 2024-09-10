@@ -18,7 +18,7 @@
 #include <config.h>
 #include <verilated_vcd_c.h>
 
-void init_npc(int argc,char *argv[]);
+void init_npc_monitor(int argc,char *argv[]);
 void engine_start();
 
 vluint64_t sim_time = 0;
@@ -36,7 +36,7 @@ int main(int argc, char** argv, char** env) {
 #else	
 	Verilated::traceEverOn(false); 
 #endif
-	init_npc(argc, argv);
+	init_npc_monitor(argc, argv);
 
 #ifdef CONFIG_WAVE
 	contextp->traceEverOn(true);

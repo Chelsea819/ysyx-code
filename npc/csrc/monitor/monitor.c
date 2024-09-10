@@ -143,7 +143,7 @@ static int parseArgs(int argc, char *argv[]) {
   return 0;
 }
 
-void init_npc(int argc,char *argv[]){
+void init_npc_monitor(int argc,char *argv[]){
 
     //parse shell arguments
     parseArgs(argc, argv);
