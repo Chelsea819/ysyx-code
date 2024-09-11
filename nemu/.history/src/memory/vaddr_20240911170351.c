@@ -25,7 +25,6 @@ word_t vaddr_read(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }
 
-// 虚拟内存访问接口，虚拟地址
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   paddr_write(addr, len, data);
 }

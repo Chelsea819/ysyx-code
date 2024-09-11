@@ -82,7 +82,6 @@ word_t paddr_read(paddr_t addr, int len) {
   out_of_bound(addr);
   return 0;
 }
-
 // 物理地址访问
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }

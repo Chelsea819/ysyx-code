@@ -18,7 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sdb.h>
-#include <vaddr.h>
+#include <memory/vaddr.h>
 #include "config.h"
 
 void init_wp_pool();
@@ -169,7 +169,7 @@ static int cmd_x(char *args){
   printf("addr = %08x\n",addr);
 
   for (int i = 0;i < len;i ++){
-    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,paddr_read(addr + i,4));
+    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i,vaddr_read(addr + i,4));
   }
   return 0; 
 }
