@@ -559,6 +559,7 @@ static void execute(uint64_t n) {
     trace_and_difftest();
 // }
   
+    
     //当npc_state.state被设置为NPC_STOP时，npc停止执行指令
     if (npc_state.state != NPC_RUNNING)
       break;

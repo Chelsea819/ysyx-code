@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <common.h>
+
 extern uint64_t g_nr_guest_inst;
 FILE *log_fp = NULL;
 
@@ -32,10 +33,10 @@ void init_log(const char *log_file) {
   //调用Log函数,打印日志初始化信息
   //如果log_file为空,则日志输出到stdout
   //如果指定了文件,则日志输出到该文件
-  // printf("output to input.txt!\n");
+  printf("output to input.txt!\n");
 }
 
 bool log_enable() {
   return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-        (g_nr_guest_inst <= CONFIG_TRACE_END), false);
+         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
 }

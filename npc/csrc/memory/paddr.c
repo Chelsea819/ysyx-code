@@ -12,8 +12,9 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
+
+#include <cstdio>
 #include <memory/host.h>
-#include <memory/vaddr.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
@@ -39,7 +40,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
   // printf("read!\n");
   // printf("raddr = 0x%08x\n",raddr); 
-  // vaddr_t rdata = vaddr_read((paddr_t)(raddr & ~0x3u), 4);
+  // vaddr_t rdata = paddr_read((paddr_t)(raddr & ~0x3u), 4);
   if (wmask == 0) {
     return 0;
   }
@@ -69,7 +70,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
     }
     #endif
   #endif
-  return vaddr_read((paddr_t)raddr, len);
+  return paddr_read((paddr_t)raddr, len);
 }
 extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
@@ -97,7 +98,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
       IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }
-    vaddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
+    paddr_write((vaddr_t)waddr, (vaddr_t)len, (word_t)wdata);
   // }
 }
 

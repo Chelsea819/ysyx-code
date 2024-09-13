@@ -19,9 +19,9 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <memory/vaddr.h>
+#include <vaddr.h>
 
-vaddr_t vaddr_read(paddr_t addr,int len);
+vaddr_t paddr_read(paddr_t addr,int len);
 
 enum {
   TK_NOTYPE = 256,  //space
@@ -319,7 +319,7 @@ uint32_t eval(int p, int q){
     /* We should do more things here. */
     //printf("before main finding\n");
     if(tokens[p].type == DEREF){
-      return vaddr_read(convert_16(tokens[p + 1].str),4);
+      return paddr_read(convert_16(tokens[p + 1].str),4);
     }
     op = find_main(p,q);
     op_type1 = op_type;
