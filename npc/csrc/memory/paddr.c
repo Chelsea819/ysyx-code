@@ -12,8 +12,6 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
-#include <cstdio>
 #include <memory/host.h>
 #include <memory/vaddr.h>
 #include <memory/paddr.h>

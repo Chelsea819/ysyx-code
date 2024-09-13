@@ -177,6 +177,6 @@ static int decode_exec(Decode *s) {
 int isa_exec_once(Decode *s) {
   //读取指令
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
-  
+  // printf("C(CSR_MEPC) = 0x%08x\n",C(CSR_MEPC));
   return decode_exec(s);
 }
