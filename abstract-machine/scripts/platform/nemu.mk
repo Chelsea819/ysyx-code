@@ -19,7 +19,7 @@ CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
 .PHONY: $(AM_HOME)/am/src/platform/nemu/trm.c
 
 # $(IMAGE).elf：要跑的应用程序生成的目标文件、am、lib库
-image: $(IMAGE).                                                                             
+image: $(IMAGE).elf                                                                             
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
