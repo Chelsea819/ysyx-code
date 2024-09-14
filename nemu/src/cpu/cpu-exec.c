@@ -236,43 +236,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
 
 
 #ifdef CONFIG_FTRACE
-// 将十六进制数的每个十六进制位（数字或字母）转换为对应的四位二进制数
-char *convertTo_2(char args)
-{
-  char *result = malloc(5);
-  int num = 0;
-
-  if (args >= 'a' && args <= 'f')
-  {
-    num = (int)args - (int)'a' + 10;
-  }
-  else
-  {
-    num = (int)args - (int)'0';
-  }
-
-  int flag = 8;
-  // 15 -> 8 + 4 + 2 + 1
-  // 5 -> 4 + 1
-  // 0
-  for (int n = 0; n < 4; n++)
-  {
-    // 为0 则该位之后的低位均为0
-    if (!num)
-    {
-      for (; n < 4; n++)
-        result[n] = '0';
-      break;
-    }
-
-    result[n] = num / flag + '0';
-    if (num / flag)
-      num -= flag;
-    flag /= 2;
-  }
-  result[4] = '\0';
-  return result;
-}
 
 struct func_call
 {
@@ -328,7 +291,7 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   // printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
 
-  // 2.判断函数调用/函数返回
+  // 1.判断函数调用/函数返回
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
@@ -463,7 +426,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   
   #else
 
-  
     strcpy(curre->rbuf, s->logbuf);
 
   #endif

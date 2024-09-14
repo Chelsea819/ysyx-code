@@ -27,7 +27,7 @@ assign inst_addr = pc;
         ifebreak_func(inst);
 
 // 为ITRACE提供指令
-    import "DPI-C" context function void inst_get(int inst);
+    import "DPI-C" function void inst_get(int inst);
     always @(*)
         inst_get(inst);
 
@@ -85,7 +85,5 @@ assign inst_addr = pc;
         .mem_rmask    ( mem_rmask_i    ),
         .mem_rdata_usigned_o( mem_rdata_rare_o)
     );
-
-
 
 endmodule

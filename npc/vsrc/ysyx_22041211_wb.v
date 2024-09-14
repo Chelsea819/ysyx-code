@@ -9,7 +9,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input       [DATA_LEN - 1:0]        reg_wdata_i	,
     input                               ifu_valid   ,
     input                               lsu_valid   ,
-    input                               memory_inst_i ,
+    input                               memory_inst_i,
     // output                              wb_ready_o  ,
     output  reg                         finish      ,
     output	reg	                		wd_o		,

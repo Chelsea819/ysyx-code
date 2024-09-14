@@ -14,7 +14,6 @@ const char *regs[] = {
 };
 
 Context* __am_irq_handle(Context *c) {
-  assert(user_handler);
   if (user_handler) {
     Event ev = {0}; // 事件初始化声明
 
@@ -28,20 +27,9 @@ Context* __am_irq_handle(Context *c) {
         break;
       default: ev.event = EVENT_ERROR; break;
     }
-    // for(int i = 0; i < 32; i++){
-    //   printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],c->gpr[i]);
-    // }
-    // printf("c->mstatus: 0x%08x\n",c->mstatus);
-    // printf("c->mepc: 0x%08x\n",c->mepc);
     c->mepc += 4;
-    // printf("c->mepc: 0x%08x\n",c->mepc);
-    // printf("&c: 0x%08x\n",&c); 
-    // printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c 
 
     c = user_handler(ev, c); // 根据不同事件进行不同操作
-    // printf("after c->mepc: 0x%08x\n",c->mepc);
-    // printf("&c: 0x%08x\n",&c); // &c->mepc: 0x80099f9c
-    // printf("&c->mepc: 0x%08x\n",&c->mepc); // &c->mepc: 0x80099f9c
     assert(c != NULL);
   }
   else assert(0);
@@ -75,7 +63,6 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) { // 创建内�
   con->mepc = (uintptr_t)entry;
   con->gpr[REG_A0] = (uintptr_t)arg;
   con->mstatus = 0x1800;
-  // printf("entry = 0x%08x\n",entry);
   return con;
 }
 

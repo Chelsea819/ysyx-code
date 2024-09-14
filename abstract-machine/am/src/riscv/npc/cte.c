@@ -17,9 +17,9 @@ Context* __am_irq_handle(Context *c) {
         ev.event = EVENT_IRQ_TIMER; 
         break;
       default: 
-        printf("c->mcause: [0x%08x]\n",c->mcause);
-        printf("c->mepc: [0x%08x]\n",c->mepc);
-        printf("c->mstatus: [0x%08x]\n",c->mstatus);
+        // printf("c->mcause: [0x%08x]\n",c->mcause);
+        // printf("c->mepc: [0x%08x]\n",c->mepc);
+        // printf("c->mstatus: [0x%08x]\n",c->mstatus);
         ev.event = EVENT_ERROR; break;
     }
     c->mepc += 4;
