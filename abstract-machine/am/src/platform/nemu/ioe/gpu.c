@@ -20,7 +20,7 @@ void __am_gpu_init() {
   // int h = H;// TODO: get the correct height
   // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   // for (i = 0; i < w * h; i ++) fb[i] = i;
-  // outl(SYNC_ADDR, 1);
+  // outl(SYNCADDR, 1);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
@@ -46,7 +46,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
         fb[WIDTH * i + j] = p[k++];
       }
     }
-    outl(SYNC_ADDR, 1);
+    outl(SYNC_ADDR, 1); // 刷新一次 将帧缓冲中的内容同步到屏幕上
 }
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
