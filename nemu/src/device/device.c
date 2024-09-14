@@ -62,6 +62,24 @@ void device_update() {
         break;
       }
 #endif
+      case SDL_WINDOWEVENT:
+        switch (event.window.event) {
+          case SDL_WINDOWEVENT_MINIMIZED:
+            // 处理窗口最小化
+            SDL_MinimizeWindow(SDL_GetWindowFromID(event.window.windowID));
+            break;
+          case SDL_WINDOWEVENT_MAXIMIZED:
+            // 处理窗口最大化
+            SDL_MaximizeWindow(SDL_GetWindowFromID(event.window.windowID));
+            break;
+          case SDL_WINDOWEVENT_RESTORED:
+            // 处理窗口从最小化或最大化还原
+            SDL_RestoreWindow(SDL_GetWindowFromID(event.window.windowID));
+            break;
+          default:
+            break;
+        }
+        break;
       default: break;
     }
   }
