@@ -16,7 +16,7 @@
   ({ for (const char *p = s; *p; p++) putch(*p); })
 
 
-// 简化了对寄存器的读取putch('\n');
+// 简化了对寄存器的读取
 #define io_read(reg) \
   ({ reg##_T __io_param; \
     ioe_read(reg, &__io_param); \
