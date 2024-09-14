@@ -46,7 +46,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
         fb[WIDTH * i + j] = p[k++];
       }
     }
-    outl(SYNC_ADDR, 1); // 刷新一次 将帧缓冲中的内容同步到屏幕上
+    outl(SYNC_ADDR, ctl->sync); // 刷新一次 将帧缓冲中的内容同步到屏幕上
 }
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
