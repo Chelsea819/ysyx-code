@@ -13,6 +13,7 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
+#include <assert.h>
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
@@ -363,6 +364,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       if_conduct = true;
     }
     else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
+      assert(0);
       if_recursion = true;
       if_return = false;
       if_conduct = true;
