@@ -1,6 +1,6 @@
 #include <am.h>
 #include <nemu.h>
-// #define MODE_800x600
+#define MODE_800x600
 #ifdef MODE_800x600
 # define W    800
 # define H    600
@@ -8,6 +8,9 @@
 # define W    400
 # define H    300
 #endif
+
+#define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 400))
+#define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 300))
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
