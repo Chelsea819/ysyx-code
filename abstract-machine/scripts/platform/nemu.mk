@@ -22,7 +22,11 @@ CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
 image: $(IMAGE).elf                                                                             
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
-	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
+	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin  
+# OBJCOPY将ELF格式的可执行文件转换为二进制格式
+#-S从目标文件中剥离（strip）符号表和调试信息,可减小输出文件的大小，符号表和调试信息通常对运行时是不必要的。
+# .bss=alloc 未初始化的全局变量和静态变量在加载时分配空间
+# -O binary 生成一个没有ELF头信息的原始二进制文件
 
 run: image
 	$(info ARCHIVES = $(ARCHIVES))
