@@ -31,7 +31,8 @@ image: $(IMAGE).elf
 run: image
 	$(info ARCHIVES = $(ARCHIVES))
 	$(info ARCHIVE = $(ARCHIVE))
-	bear --output ~/ysyx-workbench/.vscode/compile_commands.json -- $(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+# bear --output ~/ysyx-workbench/.vscode/compile_commands.json -- $(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 
 gdb: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
