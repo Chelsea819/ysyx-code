@@ -26,8 +26,6 @@ static void rtc_io_handler(uint32_t offset, int len, bool is_write) {
     // printf("time is 0x%lx\n",us);
     rtc_port_base[0] = (uint32_t)us;
     rtc_port_base[1] = us >> 32;
-    // printf("rtc_port_base[0] is 0x%08x\n",rtc_port_base[0]);
-    // printf("rtc_port_base[1] is 0x%08x\n",rtc_port_base[1]);
   }
 }
 
