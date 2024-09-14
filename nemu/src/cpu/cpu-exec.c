@@ -332,8 +332,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
-  bool if_recursion = false;
-  bool if_same = false;
+  // bool if_recursion = false;
 
   // opcode rd rs1
   uint32_t opcode = BITS(m, 6, 0);
@@ -365,7 +364,7 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
     else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
       assert(0);
-      if_recursion = true;
+      // if_recursion = true;
       if_return = false;
       if_conduct = true;
     }
@@ -383,7 +382,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     char *name = malloc(20);
     memset(name, 0, 20);
 
-    // printf("s->logbuf: %s\n",s->logbuf);
     for(indx = 0; indx < fileNum; indx ++){
       int n = elf_header[indx].sym_num - 1;
       for(; n >= 0; n--){
@@ -408,88 +406,35 @@ static void exec_once(Decode *s, vaddr_t pc)
       }
       if(n >= 0) break;
       if (indx == fileNum - 1){
-          if_same = true;
           Assert(0, "Fail in searching!");
       }
     }
-    
-    if(!if_same){
-      // 取出函数名称
-      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
-      // printf("name: %s\n",name); 
-      // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-      static int index = 1;
-      struct func_call *func;
-      static struct func_call *func_cur = NULL;
+  
+    // 取出函数名称
+    strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
+    // printf("name: %s\n",name); 
+    // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+    static int index = 1;
 
-      if (if_return || if_recursion){
-        // 函数返回，将函数名所在链表节点抽出
-        // while (1){
-          Assert(func_cur, "func_cur NULL!");
-          Assert(func_cur->func_name, "func_cur->func_name NULL!");
-          Assert(name, "name NULL!");
-          // int flag = 0;
-          printf("name:%s func_cur->func_name:%s\n",name, func_cur->func_name);
-          Assert(strcmp(func_cur->func_name, name) == 0, "strcmp(func_cur->func_name, name) != 0\n");
-          // if (strcmp(func_cur->func_name, name) == 0)
-          //   flag = 1;
-          // if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-          if (!if_recursion) {
-            printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-          }
-          else {
-            printf("index %d[recursion]-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-          }
-          index++;
-          // printf("name:%s\n",name);
-
-          free(func_cur->func_name);
-
-          // 抽出节点
-          if (func_cur->past == NULL)
-          {
-            free(func_cur);
-          }
-          else
-          {
-            func_cur = func_cur->past;
-            free(func_cur->next);
-            func_cur->next = NULL;
-          }
-
-          // if (flag) break;
-
-          // printf("flag = %d\n",flag);
-        // }     
-      }
-      if (!if_return){
-        // 函数调用，将函数名放入链表
-        func = malloc(sizeof(struct func_call));
-        func->func_name = malloc(20);
-        strcpy(func->func_name, name);
-        func->past = func_cur;
-        func->next = NULL;
-        if (!func_cur)
-        {
-          func_cur = func;
-        }
-        else
-        {
-          func_cur->next = func;
-          func_cur = func;
-        }
-        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
-        #ifdef CONFIG_FTRACE_PASS
-        if(strcmp(name,"putch") != 0) 
-          for(int i = 10; i < 15; i++){
-            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
-          }
-        #endif
+    if (if_return){
+      // 函数返回，将函数名所在链表节点抽出
+        Assert(name, "name NULL!");
+        if(strcmp(name,"putch") != 0) printf("index %d[recursion]-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, name);
         index++;
-      }
-      Assert(func_cur, "func_cur NULL!");
-      free(name);
     }
+    else{
+      // 函数调用，将函数名放入链表
+      if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+      #ifdef CONFIG_FTRACE_PASS
+      if(strcmp(name,"putch") != 0) 
+        for(int i = 10; i < 15; i++){
+          printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
+        }
+      #endif
+      index++;
+    }
+    free(name);
+
     
   }
 
