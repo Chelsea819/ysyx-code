@@ -343,7 +343,7 @@ static void exec_once()
 
   // 1.判断函数调用/函数返回
   uint32_t m = s.isa.inst.val;
-  printf("m = %08x\n",m);
+  // printf("m = %08x\n",m);
   bool if_return = false;
   bool if_conduct = false;
   // bool if_recursion = false;
