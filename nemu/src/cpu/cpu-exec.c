@@ -351,7 +351,6 @@ static void exec_once(Decode *s, vaddr_t pc)
 
   // 判断出jalr
   else if (opcode == OPCODE_JALR){
-
     // 函数返回 jalr rs1 = x1, rd = x0 POP
     if ((!(rd == 1 || rd == 5)) && (rs1 == 1 || rs1 == 5)){
       if_return = true;
@@ -363,7 +362,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       if_conduct = true;
     }
     else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
-      assert(0);
+      // assert(0);
       // if_recursion = true;
       if_return = false;
       if_conduct = true;
@@ -412,19 +411,18 @@ static void exec_once(Decode *s, vaddr_t pc)
   
     // 取出函数名称
     strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
-    // printf("name: %s\n",name); 
     // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
     static int index = 1;
 
     if (if_return){
       // 函数返回，将函数名所在链表节点抽出
         Assert(name, "name NULL!");
-        if(strcmp(name,"putch") != 0) printf("index %d[recursion]-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, name);
+        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, name);
         index++;
     }
     else{
       // 函数调用，将函数名放入链表
-      if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
+      if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s @0x%08x] \033[m\n", index, cpu.pc, name, s->dnpc);
       #ifdef CONFIG_FTRACE_PASS
       if(strcmp(name,"putch") != 0) 
         for(int i = 10; i < 15; i++){
@@ -434,8 +432,6 @@ static void exec_once(Decode *s, vaddr_t pc)
       index++;
     }
     free(name);
-
-    
   }
 
 #endif
