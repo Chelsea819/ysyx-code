@@ -22,14 +22,7 @@
 void init_map();
 void init_serial();
 void init_timer();
-void init_vga();
-void init_i8042();
-void init_audio();
-void init_disk();
-void init_sdcard();
 void init_alarm();
-void send_key(uint8_t, bool);
-void vga_update_screen();
 
 void device_update() {
   // 检查距离上次设备更新是否已经超过了一定时间，若是，则会尝试刷新屏幕
@@ -39,39 +32,8 @@ void device_update() {
     return;  // 直接返回，避免检查过于频繁
   }
   last = now;
-
-  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
-
-// 进一步检查是否有按键按下/释放，以及是否点击了窗口的X按钮
-#ifndef CONFIG_TARGET_AM
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    switch (event.type) {
-      case SDL_QUIT:
-        npc_state.state = NPC_QUIT;
-        break;
-#ifdef CONFIG_HAS_KEYBOARD
-      // If a key was pressed
-      case SDL_KEYDOWN:
-      case SDL_KEYUP: {
-        uint8_t k = event.key.keysym.scancode;
-        bool is_keydown = (event.key.type == SDL_KEYDOWN);
-        send_key(k, is_keydown);
-        break;
-      }
-#endif
-      default: break;
-    }
-  }
-#endif
 }
 
-void sdl_clear_event_queue() {
-#ifndef CONFIG_TARGET_AM
-  SDL_Event event;
-  while (SDL_PollEvent(&event));
-#endif
-}
 
 void init_device() {
   IFDEF(CONFIG_TARGET_AM, ioe_init());

@@ -10,6 +10,9 @@
 #include <config.h>
 #include "sdb.h"
 
+#define OPCODE_JAL  0b1101111
+#define OPCODE_JALR 0b1100111
+
 word_t expr(char *e, bool *success);
 Decode s;
 
@@ -337,89 +340,48 @@ static void exec_once()
 #endif
 
 #ifdef CONFIG_FTRACE
-  //   static int j = 0;
-  // if(j < 100){
-  // 根据指令判断函数调用/函数返回
 
-  // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
-  int k = 12;
-  char *ins_tmp_16 = (char*)malloc(9);
-  memset(ins_tmp_16, 0, 9);
-  char *ins = (char*)malloc(33);
-  memset(ins, 0, 33);
-
-  // 1.1将logbuf中的指令存入临时数组
-  for (int n = 0; n < 8; n++)
-  {
-    ins_tmp_16[n++] = s.logbuf[k++]; // 0 12 //2 15 //4 //6
-    ins_tmp_16[n] = s.logbuf[k];     // 1 13 //3 16 //5 //7
-    k += 2;
-  }
-  ins_tmp_16[8] = '\0';
-
-  // 1.2将十六进制形式的指令转换为二进制
-  // 1.2.1 转换为二进制形式
-  // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
-  for (int n = 0; n < 8; n++)
-  {
-    char *per = convertTo_2(ins_tmp_16[n]);
-    strcat(ins, per);
-    free(per);
-    per = NULL;
-  }
-  ins[32] = '\0';
-
-  free(ins_tmp_16);
-
-  // 2.判断函数调用/函数返回
+  // 1.判断函数调用/函数返回
   uint32_t m = s.isa.inst.val;
+  // printf("m = %08x\n",m);
   bool if_return = false;
   bool if_conduct = false;
-  bool if_same = false;
-  // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
-  // 函数调用 jal,  rd = x1, imm = ***
-  // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
-  // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
+  // bool if_recursion = false;
 
   // opcode rd rs1
-  char *opcode = (char*)malloc(8);
-  memset(opcode, 0, 8);
-  strncpy(opcode, &ins[25], 7);
-  opcode[7] = '\0';
-  int rd = BITS(m, 11, 7);
-  int rs1 = BITS(m, 19, 15);
+  uint32_t opcode = BITS(m, 6, 0);
+  uint32_t rd = BITS(m, 11, 7);
+  uint32_t rs1 = BITS(m, 19, 15);
 
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1){
+  if (opcode == OPCODE_JAL && (rd == 1 || rd == 5)){
     if_return = false;
     if_conduct = true;
   }
 
   // 2.1.2 jalr 函数调用 or 函数返回
-  // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
-  // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
-  // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
-
-  // 函数返回 jalr rs1 = x1, rd = x0
-  // 函数调用 jalr, rd = x0
-  // 函数调用 jalr, rd = x1
 
   // 判断出jalr
-  else if (strcmp(opcode, "1100111") == 0){
-
-    // 函数返回 jalr rs1 = x1, rd = x0
-    if (rd == 0 && rs1 == 1){
+  else if (opcode == OPCODE_JALR){
+    // 函数返回 jalr rs1 = x1, rd = x0 POP
+    if ((!(rd == 1 || rd == 5)) && (rs1 == 1 || rs1 == 5)){
       if_return = true;
-      if_conduct = false;
+      if_conduct = true;
     }
-    // 函数调用
-    else if (rd == 1){
+    // 函数调用 PUSH
+    else if ((rd == 1 || rd == 5) && (!(rs1 == 1 || rs1 == 5))){
       if_return = false;
       if_conduct = true;
     }
-    else if (rd == 0){
+    else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
+      // assert(0);
+      // if_recursion = true;
+      if_return = false;
+      if_conduct = true;
+    }
+    else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd == rs1){
       if_return = false;
       if_conduct = true;
     }
@@ -430,10 +392,8 @@ static void exec_once()
     Elf32_Sym sym;
     int ret = 0;
     int indx = 0;
-    char *name = (char*)malloc(20);
-    memset(name, 0, 20);
+    char name[20] = {0};
 
-    // printf("s.logbuf: %s\n",s.logbuf);
     for(indx = 0; indx < fileNum; indx ++){
       int n = elf_header[indx].sym_num - 1;
       for(; n >= 0; n--){
@@ -458,84 +418,35 @@ static void exec_once()
       }
       if(n >= 0) break;
       if (indx == fileNum - 1){
-          if_same = true;
-          // Assert(0, "Fail in searching!");
+          // if_same = true;
+          Assert(0, "Fail in searching!");
         }
     }
     
-    if(!if_same){
+    
       // 取出函数名称
-      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
-      // printf("name: %s\n",name); 
-      // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
-      static int index = 1;
-      struct func_call *func;
-      static struct func_call *func_cur = NULL;
+       strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
+    // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
+    static int index = 1;
 
-      if (!if_return){
-        // 函数调用，将函数名放入链表
-        func = (func_call*)malloc(sizeof(struct func_call));
-        func->func_name = (char *)malloc(20);
-        strcpy(func->func_name, name);
-        func->past = func_cur;
-        func->next = NULL;
-        if (!func_cur)
-        {
-          func_cur = func;
-        }
-        else
-        {
-          func_cur->next = func;
-          func_cur = func;
-        }
-        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s@0x%08x] \033[m\n", index, s.pc, name, s.dnpc);
-        #ifdef CONFIG_FTRACE_PASS
-        if(strcmp(name,"putch") != 0) 
-          for(int i = 10; i < 15; i++){
-            printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg[i],gpr(i));
-          }
-        #endif
+    if (if_return){
+      // 函数返回，将函数名所在链表节点抽出
+        // Assert(name, "name NULL!");
+        if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, name);
         index++;
-      }
-      else{
-        // 函数返回，将函数名所在链表节点抽出
-        while (1){
-          Assert(func_cur, "func_cur NULL!");
-          Assert(func_cur->func_name, "func_cur->func_name NULL!");
-          Assert(name, "name NULL!");
-          int flag = 0;
-          if (strcmp(func_cur->func_name, name) == 0)
-            flag = 1;
-          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, s.pc, func_cur->func_name);
-          index++;
-          // printf("name:%s\n",name);
-
-          free(func_cur->func_name);
-
-          // 抽出节点
-          if (func_cur->past == NULL)
-          {
-            free(func_cur);
-          }
-          else
-          {
-            func_cur = func_cur->past;
-            free(func_cur->next);
-            func_cur->next = NULL;
-          }
-
-          if (flag) break;
-
-          printf("flag = %d\n",flag);
-        }
-      }
-      Assert(func_cur, "func_cur NULL!");
-      free(name);
     }
-    
+    else{
+      // 函数调用，将函数名放入链表
+      if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[102m call[%s @0x%08x] \033[m\n", index, cpu.pc, name, s.dnpc);
+      #ifdef CONFIG_FTRACE_PASS
+      if(strcmp(name,"putch") != 0) 
+        for(int i = 10; i < 15; i++){
+          printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,regs[i],gpr(i));
+        }
+      #endif
+      index++;
+    }
   }
-  free(opcode);
-  free(ins);
 
 #endif
 
