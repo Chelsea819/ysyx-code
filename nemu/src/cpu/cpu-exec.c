@@ -23,6 +23,8 @@
 #include <isa.h>
 #include "reg.h"
 
+#define OPCODE_JAL  0b1101111
+#define OPCODE_JALR 0b1100111
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -309,8 +311,6 @@ static void exec_once(Decode *s, vaddr_t pc)
   memset(p, ' ', space_len);
   p += space_len;
 
-
-
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
@@ -321,91 +321,50 @@ static void exec_once(Decode *s, vaddr_t pc)
 
 #endif
 
-
 #ifdef CONFIG_FTRACE
   // 根据指令判断函数调用/函数返回
 
-  // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
-  // printf("s->logbuf = %s\n",s->logbuf);
-  printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
-  int k = 12;
-  char *ins_tmp_16 = malloc(9);
-  memset(ins_tmp_16, 0, 9);
-  char *ins = malloc(33);
-  memset(ins, 0, 33);
-
-  // 1.1将logbuf中的指令存入临时数组
-  for (int n = 0; n < 8; n++)
-  {
-    ins_tmp_16[n++] = s->logbuf[k++]; // 0 12 //2 15 //4 //6
-    ins_tmp_16[n] = s->logbuf[k];     // 1 13 //3 16 //5 //7
-    k += 2;
-  }
-  ins_tmp_16[8] = '\0';
-
-  // 1.2将十六进制形式的指令转换为二进制
-  // 1.2.1 转换为二进制形式
-  // 8067 -> 0000 0000 0000 0000 1000 0000 0110 0111
-  for (int n = 0; n < 8; n++)
-  {
-    char *per = convertTo_2(ins_tmp_16[n]);
-    strcat(ins, per);
-    free(per);
-    per = NULL;
-  }
-  ins[32] = '\0';
-
-  free(ins_tmp_16);
+  // printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
 
   // 2.判断函数调用/函数返回
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
   bool if_same = false;
-  // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
-  // 函数调用 jal,  rd = x1, imm = ***
-  // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
-  // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
 
   // opcode rd rs1
-  char *opcode = malloc(8);
-  memset(opcode, 0, 8);
-  strncpy(opcode, &ins[25], 7);
-  opcode[7] = '\0';
-  int rd = BITS(m, 11, 7);
-  int rs1 = BITS(m, 19, 15);
+  uint32_t opcode = BITS(m, 6, 0);
+  uint32_t rd = BITS(m, 11, 7);
+  uint32_t rs1 = BITS(m, 19, 15);
 
   // 2.1 jal or jalr
 
   // 2.1.1 jal  函数调用 jal,  rd = x1, imm = ***
-  if (strcmp(opcode, "1101111") == 0 && rd == 1){
+  if (opcode == OPCODE_JAL && (rd == 1 || rd == 5)){
     if_return = false;
     if_conduct = true;
   }
 
   // 2.1.2 jalr 函数调用 or 函数返回
-  // 函数返回 jalr, rd = x0, rs1 = x1, imm = 0
-  // 函数调用 jalr, rd = x1, rs1 = a5, imm = 0
-  // 函数调用 jalr, rd = x0, rs1 = a5, imm = 0
-
-  // 函数返回 jalr rs1 = x1, rd = x0
-  // 函数调用 jalr, rd = x0
-  // 函数调用 jalr, rd = x1
 
   // 判断出jalr
-  else if (strcmp(opcode, "1100111") == 0){
+  else if (opcode == OPCODE_JALR){
 
-    // 函数返回 jalr rs1 = x1, rd = x0
-    if (rd == 0 && rs1 == 1){
+    // 函数返回 jalr rs1 = x1, rd = x0 POP
+    if ((!(rd == 1 || rd == 5)) && (rs1 == 1 || rs1 == 5)){
       if_return = true;
-      if_conduct = false;
+      if_conduct = true;
     }
-    // 函数调用
-    else if (rd == 1){
+    // 函数调用 PUSH
+    else if ((rd == 1 || rd == 5) && (!(rs1 == 1 || rs1 == 5))){
       if_return = false;
       if_conduct = true;
     }
-    else if (rd == 0){
+    else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
+      if_return = false;
+      if_conduct = true;
+    }
+    else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd == rs1){
       if_return = false;
       if_conduct = true;
     }
@@ -445,8 +404,8 @@ static void exec_once(Decode *s, vaddr_t pc)
       if(n >= 0) break;
       if (indx == fileNum - 1){
           if_same = true;
-          // Assert(0, "Fail in searching!");
-        }
+          Assert(0, "Fail in searching!");
+      }
     }
     
     if(!if_same){
@@ -520,8 +479,6 @@ static void exec_once(Decode *s, vaddr_t pc)
     }
     
   }
-  free(opcode);
-  free(ins);
 
 #endif
 
