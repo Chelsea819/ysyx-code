@@ -21,6 +21,7 @@
 #include <elf.h>
 
 #include <isa.h>
+#include "debug.h"
 #include "reg.h"
 
 #define OPCODE_JAL  0b1101111
@@ -330,6 +331,7 @@ static void exec_once(Decode *s, vaddr_t pc)
   uint32_t m = s->isa.inst.val;
   bool if_return = false;
   bool if_conduct = false;
+  bool if_recursion = false;
   bool if_same = false;
 
   // opcode rd rs1
@@ -361,6 +363,7 @@ static void exec_once(Decode *s, vaddr_t pc)
       if_conduct = true;
     }
     else if ((rd == 1 || rd == 5) && (rs1 == 1 || rs1 == 5) && rd != rs1){
+      if_recursion = true;
       if_return = false;
       if_conduct = true;
     }
@@ -417,6 +420,46 @@ static void exec_once(Decode *s, vaddr_t pc)
       struct func_call *func;
       static struct func_call *func_cur = NULL;
 
+      if (if_return || if_recursion){
+        // 函数返回，将函数名所在链表节点抽出
+        // while (1){
+          Assert(func_cur, "func_cur NULL!");
+          Assert(func_cur->func_name, "func_cur->func_name NULL!");
+          Assert(name, "name NULL!");
+          // int flag = 0;
+          printf("name:%s func_cur->func_name:%s\n",name, func_cur->func_name);
+          Assert(strcmp(func_cur->func_name, name) == 0, "strcmp(func_cur->func_name, name) != 0\n");
+          // if (strcmp(func_cur->func_name, name) == 0)
+          //   flag = 1;
+          // if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          if (!if_recursion) {
+            printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          }
+          else {
+            printf("index %d[recursion]-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
+          }
+          index++;
+          // printf("name:%s\n",name);
+
+          free(func_cur->func_name);
+
+          // 抽出节点
+          if (func_cur->past == NULL)
+          {
+            free(func_cur);
+          }
+          else
+          {
+            func_cur = func_cur->past;
+            free(func_cur->next);
+            func_cur->next = NULL;
+          }
+
+          // if (flag) break;
+
+          // printf("flag = %d\n",flag);
+        // }     
+      }
       if (!if_return){
         // 函数调用，将函数名放入链表
         func = malloc(sizeof(struct func_call));
@@ -441,39 +484,6 @@ static void exec_once(Decode *s, vaddr_t pc)
           }
         #endif
         index++;
-      }
-      else{
-        // 函数返回，将函数名所在链表节点抽出
-        while (1){
-          Assert(func_cur, "func_cur NULL!");
-          Assert(func_cur->func_name, "func_cur->func_name NULL!");
-          Assert(name, "name NULL!");
-          int flag = 0;
-          printf("name:%s func_cur->func_name:%s\n",name, func_cur->func_name);
-          if (strcmp(func_cur->func_name, name) == 0)
-            flag = 1;
-          if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
-          index++;
-          // printf("name:%s\n",name);
-
-          free(func_cur->func_name);
-
-          // 抽出节点
-          if (func_cur->past == NULL)
-          {
-            free(func_cur);
-          }
-          else
-          {
-            func_cur = func_cur->past;
-            free(func_cur->next);
-            func_cur->next = NULL;
-          }
-
-          if (flag) break;
-
-          printf("flag = %d\n",flag);
-        }
       }
       Assert(func_cur, "func_cur NULL!");
       free(name);
