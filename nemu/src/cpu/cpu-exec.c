@@ -449,6 +449,7 @@ static void exec_once(Decode *s, vaddr_t pc)
           Assert(func_cur->func_name, "func_cur->func_name NULL!");
           Assert(name, "name NULL!");
           int flag = 0;
+          printf("name:%s func_cur->func_name:%s\n",name, func_cur->func_name);
           if (strcmp(func_cur->func_name, name) == 0)
             flag = 1;
           if(strcmp(name,"putch") != 0) printf("index %d-> 0x%08x: \033[106m ret [%s] \033[m\n", index, cpu.pc, func_cur->func_name);
