@@ -323,13 +323,11 @@ static void exec_once(Decode *s, vaddr_t pc)
 
 
 #ifdef CONFIG_FTRACE
-  //   static int j = 0;
-  // if(j < 100){
   // 根据指令判断函数调用/函数返回
 
   // 1.把指令展开 放入一个char数组 12 13 15 16 18 19 21 22
   // printf("s->logbuf = %s\n",s->logbuf);
-  // printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
+  printf("s->isa.inst.val = 0x%08x\n",s->isa.inst.val);
   int k = 12;
   char *ins_tmp_16 = malloc(9);
   memset(ins_tmp_16, 0, 9);
