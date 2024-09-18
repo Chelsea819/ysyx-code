@@ -2,6 +2,41 @@
 module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input								clk 		,
 	input								rst 		,
+
+	// IFU-AXI
+	// Addr Read
+	output		                		inst_addr_r_valid_o,
+	input		                		inst_addr_r_ready_i,
+
+	// Read data
+	// input		[DATA_LEN - 1:0]		inst_r_data_i	,
+	input		[1:0]					inst_r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	input		                		inst_r_valid_i	,
+	output		                		inst_r_ready_o	,
+
+	// data AXI
+	// Read data
+	// input		[DATA_LEN - 1:0]		data_r_data_i	,
+	// input		[1:0]					data_r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	// input		                		data_r_valid_i	,
+	// output		                		data_r_ready_o	,
+
+	// // Addr Write
+	// output		[ADDR_LEN - 1:0]		data_addr_w_addr_o,	// 写地址
+	// output		                		data_addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
+	// input		                		data_addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
+
+	// // Write data
+	// output		[DATA_LEN - 1:0]		data_w_data_o	,	// 写出的数据
+	// output		[3:0]					data_w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	// output		                		data_w_valid_o	,	// 主设备给出的数据和字节选通信号有效
+	// input		                		data_w_ready_i	,	// 从设备已准备好接收数据选通信号
+
+	// // Backward
+	// input		[1:0]					data_bkwd_resp_i,	// 写回复信号，写操作是否成功
+	// input		                		data_bkwd_valid_i,	// 从设备给出的写回复信号是否有效
+	// output		                		data_bkwd_ready_o,	// 主设备已准备好接收写回复信号
+
 	input	        [DATA_LEN - 1:0]    inst_i		,
 	input	        [DATA_LEN - 1:0]    mem_rdata_i	,
     output		                		mem_ren_o	,
@@ -106,6 +141,15 @@ ysyx_22041211_IFU#(
 )u_ysyx_22041211_IFU(
     .clk              ( clk              ),
     .rst              ( rst              ),
+	
+    .addr_r_valid_o   ( inst_addr_r_valid_o              ),
+    .addr_r_ready_i   ( inst_addr_r_ready_i              ),
+    .r_data_i         ( inst_i              ),
+    .r_resp_i         ( inst_r_resp_i              ),
+    .r_valid_i        ( inst_r_valid_i              ),
+    .r_ready_o        ( inst_r_ready_o              ),
+	
+
     .valid            ( ifu_valid_o           ),
     .last_finish      ( if_last_finish_i    ),
     // .ready            ( idu_ready_o 			),
@@ -119,7 +163,6 @@ ysyx_22041211_IFU#(
 	.inst_i           ( inst_i           ),
 	.id_inst_i        ( id_inst_i           ),
     .inst_invalid_o   ( invalid           ),
-	.ce				  (	inst_ren			),
     .pc               ( id_pc_i             )
 );
 

@@ -12,7 +12,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     // hand signal
 	// input									ready			,
 	input									last_finish		,
-    output	reg								valid	        ,
+	output	reg								valid	        ,
 
     // refresh pc
 	input									branch_request_i,	
@@ -25,19 +25,40 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// input 		[DATA_WIDTH - 1:0]			inst_i		,
 
     // get instruction
-	output									ce		,
+	// output									ce		,
     input		[DATA_WIDTH - 1:0]			inst_i	,
     output reg								inst_invalid_o	,
     output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
-	output reg	[ADDR_WIDTH - 1:0]			pc
+	output reg	[ADDR_WIDTH - 1:0]			pc			,
+
+	// IFU-AXI
+	// Addr Read
+	output		                		addr_r_valid_o,
+	input		                		addr_r_ready_i,
+
+	// Read data
+	input		[DATA_WIDTH - 1:0]		r_data_i	,
+	input		[1:0]					r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	input		                		r_valid_i	,
+	output		                		r_ready_o	
 );
 	wire		[ADDR_WIDTH - 1:0]	        pc_plus_4	;
 	reg			[1:0]				        con_state	;
 	reg			[1:0]			        	next_state	;
 	wire									r_inst_en	;
 	wire									inst_invalid;
-	assign ce = r_inst_en;
-	assign r_inst_en = (con_state == IFU_IDLE && next_state == IFU_WAIT_READY);
+	// assign ce = r_inst_en;
+	assign r_inst_en = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
+
+	assign addr_r_valid_o = con_state == IFU_WAIT_ADDR_PASS;
+	assign r_ready_o = con_state == IFU_WAIT_INST_LOAD;
+
+	always @(posedge clk ) begin
+		if(next_state == IFU_WAIT_INST_LOAD)
+			valid <= 1'b1;
+		else 
+			valid <= 1'b0;
+	end
 
 	assign inst_invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (id_inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
@@ -52,19 +73,13 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (id_inst_i == `TYPE_I_MRET)  | 
 					 (id_inst_i == `TYPE_I_EBREAK));
 
-	parameter [1:0] IFU_IDLE = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10;
+	parameter [1:0] IFU_WAIT_ADDR_PASS = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10, IFU_WAIT_INST_LOAD = 2'b11;
 
-	always @(posedge clk ) begin
-		if(next_state == IFU_IDLE)
-			valid <= 1'b1;
-		else 
-			valid <= 1'b0;
-	end
 
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
-			con_state <= IFU_IDLE;
+			con_state <= IFU_WAIT_ADDR_PASS;
 		else 
 			con_state <= next_state;
 	end
@@ -72,11 +87,18 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// next_state
 	always @(*) begin
 		case(con_state) 
-			IFU_IDLE: begin
-				if (valid == 1'b0) begin
-					next_state = IFU_IDLE;
+			IFU_WAIT_ADDR_PASS: begin
+				if (addr_r_ready_i == 1'b1 && addr_r_valid_o == 1'b1) begin
+					next_state = IFU_WAIT_INST_LOAD;
 				end else begin 
+					next_state = IFU_WAIT_ADDR_PASS;
+				end
+			end
+			IFU_WAIT_INST_LOAD: begin
+				if (r_ready_o == 1'b1 && r_valid_i == 1'b1 && r_resp_i == 2'b11) begin
 					next_state = IFU_WAIT_READY;
+				end else begin 
+					next_state = IFU_WAIT_INST_LOAD;
 				end
 			end
 			IFU_WAIT_READY: begin 
@@ -90,7 +112,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 				if (last_finish == 1'b0 || last_finish == 1'b0) begin
 					next_state = IFU_WAIT_FINISH;
 				end else begin 
-					next_state = IFU_IDLE;
+					next_state = IFU_WAIT_ADDR_PASS;
 				end
 			end
 			default:
@@ -125,26 +147,6 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.pc_new ( pc_plus_4  )
 	);
 
-
-	// ysyx_22041211_SRAM#(
-	// 	.ADDR_LEN     ( 32 ),
-	// 	.DATA_LEN     ( 32 )
-	// )u_ysyx_22041211_SRAM(
-	// 	.rst          ( rst          ),
-	// 	.clk          ( clk          ),
-	// 	.ren          ( r_inst_en    ),
-	// 	.mem_wen_i    ( 0    ),
-	// 	.mem_wdata_i  ( 0  ),
-	// 	.mem_waddr_i  ( 0  ),
-	// 	.mem_raddr_i  ( pc  ),
-	// 	.mem_wmask    ( 0    ),
-	// 	.mem_rmask    ( 8'b00001111 ),
-	// 	.mem_rdata_usigned_o  ( inst_o  )
-	// );
-
-	// always @(*) begin
-	// 	$display("pc: [%x] id_inst_i: [%x] inst: [%b] invalid: [%h]",pc, id_inst_i,  inst_o, inst_invalid_o);
-	// end
 
 	always @(posedge clk) begin
         if(r_inst_en) begin

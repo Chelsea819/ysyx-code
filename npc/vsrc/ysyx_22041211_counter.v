@@ -23,6 +23,8 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 );	
 	wire 		[ADDR_LEN - 1:0]			pc_next;
 
+	parameter IFU_WAIT_FINISH = 2'b10;
+
 	// always @(*) begin
 	// 	$display("csr_jmp_i = [%b] ",csr_jmp_i);
 	// 	$display("csr_pc_i = [%b]\n",csr_pc_i);
@@ -37,7 +39,7 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	always @ (posedge clk) begin
 		if(rst)
 			pc <= 32'h80000000;
-		else if (con_state == 2'b10 && last_finish == 1'b1) 
+		else if (con_state == IFU_WAIT_FINISH && last_finish == 1'b1) 
 			pc <= pc_next;
 	end
 	
