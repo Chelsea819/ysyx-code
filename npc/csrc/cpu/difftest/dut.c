@@ -152,7 +152,8 @@ static void checkregs(CPU_state *ref, vaddr_t npc) {
     m_trace->close();
   #endif
     printf("\33[1;31m Catch difference! \33[0m\n");
-    NPCTRAP(npc, 0);
+    set_npc_state(NPC_ABORT, npc, 0);
+    // NEMUTRAP(thispc, npc);
     // Assert(0,"Catch difference!\n");
   }
 }
