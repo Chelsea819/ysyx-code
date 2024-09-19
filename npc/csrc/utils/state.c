@@ -22,6 +22,6 @@ int is_exit_status_bad() {
   printf("state: %d\n",npc_state.state);
   int good = (npc_state.state == NPC_END && npc_state.halt_ret == 0) ||
     (npc_state.state == NPC_QUIT);
-  printf("good: %d\n",good);
+  // printf("good: %d\n",good);
   return !good;
 }
