@@ -21,6 +21,7 @@
 #include <sdb.h>
 #include <memory/vaddr.h>
 #include "config.h"
+#include "utils.h"
 
 void init_wp_pool();
 
@@ -118,7 +119,8 @@ static int cmd_si(char *args){
 
 static int cmd_q(char *args)
 {
-  npc_state.state = NPC_QUIT;
+  if(npc_state.state != NPC_ABORT)
+    npc_state.state = NPC_QUIT;
   return -1;
 }
 

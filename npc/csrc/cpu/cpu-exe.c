@@ -41,7 +41,6 @@ extern "C" void pc_get(int pc, int dnpc){
   #endif
 }
 
-
 #ifdef CONFIG_FTRACE
 
 typedef struct elf_table{
