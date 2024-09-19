@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <memory/paddr.h>
 #include <verilated_vcd_c.h>
-
+int is_exit_status_bad();
 void init_npc_monitor(int argc, char *argv[]);
 void engine_start();
 
@@ -65,5 +65,5 @@ int main(int argc, char **argv, char **env) {
 #ifdef CONFIG_WAVE
   m_trace->close(); //关闭波形跟踪文件
 #endif
-  exit(EXIT_SUCCESS);
+  exit(is_exit_status_bad());
 }
