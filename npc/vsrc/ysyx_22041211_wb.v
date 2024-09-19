@@ -58,6 +58,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 					next_state = WB_WAIT_REG_VALID;
 				end
 			end
+			// load store指令都需要
 			WB_WAIT_MEM: begin
 				if (lsu_valid == 1'b0) begin
 					next_state = WB_WAIT_MEM;

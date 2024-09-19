@@ -43,14 +43,6 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
   if (wmask == 0) {
     return 0;
   }
-  int len = 0;
-  switch (wmask){
-      case 0x1: len = 1; break;
-      case 0x3: len = 2; break;
-      case 0xf: len = 4; break;
-      IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
-      IFDEF(CONFIG_RT_CHECK, default: assert(0));
-    }
   #ifdef CONFIG_DEVICE
     #ifdef CONFIG_RTC_MMIO 
     if(raddr == CONFIG_RTC_MMIO) { 
@@ -69,7 +61,7 @@ extern "C" int pmem_read_task(int raddr, char wmask) {
     }
     #endif
   #endif
-  return vaddr_read((paddr_t)raddr, len);
+  return vaddr_read((paddr_t)raddr, 4);
 }
 extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
@@ -92,8 +84,8 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
     int len = 0; 
     switch (wmask){
       case 0x1: len = 1; break;
-      case 0x3: len = 2; break;
-      case 0xf: len = 4; break;
+      case 0x2: len = 2; break;
+      case 0x4: len = 4; break;
       IFDEF(CONFIG_ISA64, case 0x8: len = 8; return);
       IFDEF(CONFIG_RT_CHECK, default: assert(0));
     }

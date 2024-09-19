@@ -29,35 +29,70 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     output      [2:0]                   csr_type_o	,
 
     input	        [DATA_LEN - 1:0]    mem_rdata_rare_i	,
-    output		                		mem_ren_o	,
-    output	reg                		    mem_wen_o	,
-	output		    [DATA_LEN - 1:0]	mem_wdata_o	,
-	output		    [ADDR_LEN - 1:0]	mem_waddr_o	,
-	output		    [ADDR_LEN - 1:0]	mem_raddr_o	,
-	output		    [7:0]  				mem_wmask_o	,
-	output		    [7:0]  				mem_rmask_o	,
+    // output		                		mem_ren_o	,
+    // output	reg                		    mem_wen_o	,
 
-    output	   	[DATA_LEN - 1:0]		wdata_o
+    // AXI
+    //Addr Read
+	output		[ADDR_LEN - 1:0]		addr_r_addr_o,
+	output		                		addr_r_valid_o,
+	input		                		addr_r_ready_i,
+
+	// Read data
+	input		[DATA_LEN - 1:0]		r_data_i	,
+	input		[1:0]					r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	input		                		r_valid_i	,
+	output		                		r_ready_o	,
+
+	// Addr Write
+	output		[ADDR_LEN - 1:0]		addr_w_addr_o,	// 写地址
+	output		                		addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
+	input		                		addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
+
+	// Write data
+	output		[DATA_LEN - 1:0]		w_data_o	,	// 写出的数据
+	output		[3:0]					w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	output		                		w_valid_o	,	// 主设备给出的数据和字节选通信号有效
+	input		                		w_ready_i	,	// 从设备已准备好接收数据选通信号
+
+	// Backward
+	input		[1:0]					bkwd_resp_i,	// 写回复信号，写操作是否成功
+	input		                		bkwd_valid_i,	// 从设备给出的写回复信号是否有效
+	output		                		bkwd_ready_o,	// 主设备已准备好接收写回复信号
+    
+    output     [DATA_LEN - 1:0]		    wdata_o
 );	
-	// wire [31:0] mem_waddr;
-    // wire [31:0] mem_raddr;
     wire [31:0] mem_rdata;
-    // reg  [31:0] mem_rdata_rare_i;
     // reg  [7:0]  mem_rmask;
-    // wire [7:0]  mem_wmask;
     reg        mem_to_reg;
-    // reg        mem_wen;
 
     // 写寄存器的信息
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
-    assign memory_inst_o = mem_to_reg | mem_wen_i;
+    assign memory_inst_o = mem_to_reg | mem_wen_i;  // load or store
     
-    // assign lsu_ready_o = 1'b1;
+    assign addr_r_addr_o = alu_result_i;
+    assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg; // addr valid and load inst
+
+    assign r_ready_o = con_state == LSU_WAIT_LSU_VALID;
+
+    assign addr_w_addr_o = alu_result_i;
+    assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;  // addr valid and store inst
+    assign w_data_o = mem_wdata_i;
+
+    assign wdata_o = wdata;
+    // store
+	assign w_strb_o = (store_type_i == `STORE_SB_8)? 4'b1 :
+                    (store_type_i == `STORE_SH_16) ? 4'b10 :
+                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
+                    0;
+
+    assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;
+    assign bkwd_ready_o = ~rst;
 
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
-    parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10;
+    parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10, LSU_WAIT_ADDR_PASS = 2'b11;
 
 	always @(posedge clk ) begin
 		if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY)
@@ -82,15 +117,27 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 				if (ifu_valid == 1'b0) begin
 					next_state = LSU_WAIT_IFU_VALID;
 				end else begin 
+					next_state = LSU_WAIT_ADDR_PASS;
+				end
+			end
+            // 等待addr wdata握手
+			LSU_WAIT_ADDR_PASS: begin 
+                if(~(mem_to_reg | mem_wen_i)) begin 
+                    next_state = LSU_WAIT_IFU_VALID; 
+                end else if (addr_r_valid_o & addr_r_ready_i) begin // read
 					next_state = LSU_WAIT_LSU_VALID;
+                end else if (addr_w_valid_o & addr_w_ready_i & w_ready_i & w_valid_o) begin // read
+					next_state = LSU_WAIT_LSU_VALID;
+				end else begin 
+					next_state = LSU_WAIT_ADDR_PASS;
 				end
 			end
             // 等待idu完成译码
 			LSU_WAIT_LSU_VALID: begin 
-				if (lsu_valid_o == 1'b0) begin
-					next_state = LSU_WAIT_LSU_VALID;
-				end else begin 
+				if (r_valid_i & r_ready_o & ~|bkwd_resp_i & bkwd_valid_i & bkwd_ready_o) begin
 					next_state = LSU_WAIT_WB_READY;
+				end else begin 
+					next_state = LSU_WAIT_LSU_VALID;
 				end
 			end
             // 等待exu空闲，下个时钟周期传递信息
@@ -111,62 +158,33 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// 	$display("load_type_i = [%b] mem_to_reg: [%d] rmask: [%d] mem_raddr: [%x] con_state: [%d] next_state: [%d]",load_type_i, mem_to_reg,mem_rmask, mem_raddr, con_state, next_state);
 	// end
 
-    always @(posedge clk) begin
-        if(next_state == LSU_WAIT_WB_READY) begin				
-            mem_wen_o <= mem_wen_i;
-        end else begin
-            mem_wen_o <= 0;
-        end
-	end
+    // always @(posedge clk) begin
+    //     if(next_state == LSU_WAIT_WB_READY) begin				
+    //         mem_wen_o <= mem_wen_i;
+    //     end else begin
+    //         mem_wen_o <= 0;
+    //     end
+	// end
 
     always @(*) begin
-        if(con_state == LSU_WAIT_LSU_VALID || con_state == LSU_WAIT_WB_READY) begin				
+        if(con_state != LSU_WAIT_IFU_VALID) begin				
             mem_to_reg = |load_type_i;
         end else begin
             mem_to_reg = 0;
         end
 	end
 
-    // ysyx_22041211_SRAM#(
-    //     .ADDR_LEN     ( 32 ),
-    //     .DATA_LEN     ( 32 )
-    // )u_ysyx_22041211_data_SRAM(
-    //     .rst          ( rst          ),
-    //     .clk          ( clk          ),
-    //     .ren          ( mem_to_reg   ),
-    //     .mem_wen_i    ( mem_wen    ),
-    //     .mem_wdata_i  ( mem_wdata_i  ),
-    //     .mem_waddr_i  ( mem_waddr    ),
-    //     .mem_raddr_i  ( mem_raddr  ),
-    //     .mem_wmask    ( mem_wmask    ),
-    //     .mem_rmask    ( mem_rmask    ),
-    //     .mem_rdata_usigned_o( mem_rdata_rare_i)
-    // );
-
-    assign mem_ren_o = mem_to_reg;
-    assign mem_wdata_o = mem_wdata_i;
-
-    assign mem_waddr_o = alu_result_i;
-    assign mem_raddr_o = alu_result_i;
-    // store
-	assign mem_wmask_o = (store_type_i == `STORE_SB_8)  ? `MEM_MASK_8 : 
-                       (store_type_i == `STORE_SH_16) ? `MEM_MASK_16 :
-                       (store_type_i == `STORE_SW_32) ? `MEM_MASK_32 : 
-                       0;
+    // assign mem_ren_o = mem_to_reg;
+    
     // load
-    assign mem_rmask_o = (load_type_i == `LOAD_LB_8 || load_type_i == `LOAD_LBU_8)   ? `MEM_MASK_8 : 
-                       (load_type_i == `LOAD_LH_16 || load_type_i == `LOAD_LHU_16) ? `MEM_MASK_16 :
-                       (load_type_i == `LOAD_LW_32)                                ? `MEM_MASK_32 : 
-                       0;
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare_i[7]}}, mem_rdata_rare_i[7:0]} : 
-                       (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
-                       mem_rdata_rare_i;
+                    (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
+                    mem_rdata_rare_i;
 
     always @(*) begin
             wd_o	         =     wd_i; 
             wreg_o	         =     wreg_i;  	
             csr_wdata_o	     =     csr_wdata_i;  
             csr_type_o	     =     csr_type_i;  
-            wdata_o          =     wdata; 
 	end
 endmodule

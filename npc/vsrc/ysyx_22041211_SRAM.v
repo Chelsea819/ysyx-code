@@ -15,7 +15,6 @@ module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input		[ADDR_LEN - 1:0]		mem_waddr_i	,
 	input		[ADDR_LEN - 1:0]		mem_raddr_i	,
 	input		[7:0]  					mem_wmask	,
-	input		[7:0]  					mem_rmask	,
     output	reg	[DATA_LEN - 1:0]		mem_rdata_usigned_o
 );	
 
@@ -24,7 +23,7 @@ module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	always @(*) begin
         if(ren && ~rst)begin 
 			// $display("mem_to_reg: [%d] rmask: [%d] mem_raddr: [%x]",ren ,mem_rmask, mem_raddr_i);
-            mem_rdata_usigned_o = pmem_read_task(mem_raddr_i, mem_rmask);
+            mem_rdata_usigned_o = pmem_read_task(mem_raddr_i, {8{ren}});
             end
         else begin
             mem_rdata_usigned_o = 0;

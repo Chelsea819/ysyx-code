@@ -15,37 +15,35 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	output		                		inst_r_ready_o	,
 
 	// data AXI
+	 //Addr Read
+	output		[ADDR_LEN - 1:0]		data_addr_r_addr_o,
+	output		                		data_addr_r_valid_o,
+	input		                		data_addr_r_ready_i,
+
+
 	// Read data
-	// input		[DATA_LEN - 1:0]		data_r_data_i	,
-	// input		[1:0]					data_r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
-	// input		                		data_r_valid_i	,
-	// output		                		data_r_ready_o	,
+	input		[DATA_LEN - 1:0]		data_r_data_i	,
+	input		[1:0]					data_r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	input		                		data_r_valid_i	,
+	output		                		data_r_ready_o	,
 
-	// // Addr Write
-	// output		[ADDR_LEN - 1:0]		data_addr_w_addr_o,	// 写地址
-	// output		                		data_addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
-	// input		                		data_addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
+	// Addr Write
+	output		[ADDR_LEN - 1:0]		data_addr_w_addr_o,	// 写地址
+	output		                		data_addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
+	input		                		data_addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
 
-	// // Write data
-	// output		[DATA_LEN - 1:0]		data_w_data_o	,	// 写出的数据
-	// output		[3:0]					data_w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
-	// output		                		data_w_valid_o	,	// 主设备给出的数据和字节选通信号有效
-	// input		                		data_w_ready_i	,	// 从设备已准备好接收数据选通信号
+	// Write data
+	output		[DATA_LEN - 1:0]		data_w_data_o	,	// 写出的数据
+	output		[3:0]					data_w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	output		                		data_w_valid_o	,	// 主设备给出的数据和字节选通信号有效
+	input		                		data_w_ready_i	,	// 从设备已准备好接收数据选通信号
 
-	// // Backward
-	// input		[1:0]					data_bkwd_resp_i,	// 写回复信号，写操作是否成功
-	// input		                		data_bkwd_valid_i,	// 从设备给出的写回复信号是否有效
-	// output		                		data_bkwd_ready_o,	// 主设备已准备好接收写回复信号
+	// Backward
+	input		[1:0]					data_bkwd_resp_i,	// 写回复信号，写操作是否成功
+	input		                		data_bkwd_valid_i,	// 从设备给出的写回复信号是否有效
+	output		                		data_bkwd_ready_o,	// 主设备已准备好接收写回复信号
 
 	input	        [DATA_LEN - 1:0]    inst_i		,
-	input	        [DATA_LEN - 1:0]    mem_rdata_i	,
-    output		                		mem_ren_o	,
-    output		                		mem_wen_o	,
-	output		    [DATA_LEN - 1:0]	mem_wdata_o	,
-	output		    [ADDR_LEN - 1:0]	mem_waddr_o	,
-	output		    [ADDR_LEN - 1:0]	mem_raddr_o	,
-	output		    [7:0]  				mem_wmask_o	,
-	output		    [7:0]  				mem_rmask_o	,
 	output			[ADDR_LEN - 1:0]	pc			,
 	output								inst_ren	,
 	output								invalid		,
@@ -247,7 +245,8 @@ ysyx_22041211_IFU#(
 	);
 
 	ysyx_22041211_LSU#(
-		.DATA_LEN      ( 32 )
+		.DATA_LEN          ( 32 ),
+		.ADDR_LEN          ( 32 )
 	)u_ysyx_22041211_LSU(
 		.rst           ( rst           ),
 		.wd_i          ( lsu_wd_i          ),
@@ -256,20 +255,12 @@ ysyx_22041211_IFU#(
 		.alu_result_i   ( lsu_alu_result_i  	),
 		.mem_wen_i     	( lsu_mem_wen_i   	),
 		.mem_wdata_i   	( lsu_mem_wdata_i 	),
+
 		.memory_inst_o  ( wb_memory_inst_i ),
 		.load_type_i	( lsu_load_type_i	),
 		.store_type_i	( lsu_store_type_i	),
 		.csr_wdata_i	( lsu_csr_wdata_i	),
 		.csr_type_i		( lsu_csr_type_i	),
-
-		.mem_rdata_rare_i( mem_rdata_i   	),
-		.mem_ren_o   	( mem_ren_o 		),
-		.mem_wen_o   	( mem_wen_o   	),
-		.mem_wdata_o    ( mem_wdata_o   	),
-		.mem_waddr_o    ( mem_waddr_o   		),
-		.mem_raddr_o    ( mem_raddr_o 		),
-		.mem_wmask_o  	( mem_wmask_o 	),
-		.mem_rmask_o	( mem_rmask_o	),
 
 		.ifu_valid     	( ifu_valid_o   	),
 		// .wb_ready_o   	( wb_ready_o 		),
@@ -279,8 +270,66 @@ ysyx_22041211_IFU#(
 		.wreg_o   		( wb_wreg_i 		),
 		.wdata_o  		( wb_reg_wdata_i 	),
 		.csr_type_o		( wb_csr_type_i	),
-		.csr_wdata_o    ( wb_csr_wdata_i   	)
+		.csr_wdata_o    ( wb_csr_wdata_i   	),
+
+		.mem_rdata_rare_i  ( data_r_data_i   	),
+
+		.addr_r_addr_o     ( data_addr_r_addr_o     ),
+		.addr_r_valid_o    ( data_addr_r_valid_o    ),
+		.addr_r_ready_i    ( data_addr_r_ready_i    ),
+		.r_data_i          ( data_r_data_i          ),
+		.r_resp_i          ( data_r_resp_i          ),
+		.r_valid_i         ( data_r_valid_i         ),
+		.r_ready_o         ( data_r_ready_o         ),
+		.addr_w_addr_o     ( data_addr_w_addr_o     ),
+		.addr_w_valid_o    ( data_addr_w_valid_o    ),
+		.addr_w_ready_i    ( data_addr_w_ready_i    ),
+		.w_data_o          ( data_w_data_o          ),
+		.w_strb_o          ( data_w_strb_o          ),
+		.w_valid_o         ( data_w_valid_o         ),
+		.w_ready_i         ( data_w_ready_i         ),
+		.bkwd_resp_i       ( data_bkwd_resp_i       ),
+		.bkwd_valid_i      ( data_bkwd_valid_i      ),
+		.bkwd_ready_o      ( data_bkwd_ready_o      )
 	);
+
+
+	// ysyx_22041211_LSU#(
+	// 	.DATA_LEN      ( 32 )
+	// )u_ysyx_22041211_LSU(
+	// 	.rst           ( rst           ),
+	// 	.wd_i          ( lsu_wd_i          ),
+	// 	.clk           ( clk           		),
+	// 	.wreg_i   		( lsu_wreg_i   		),
+	// 	.alu_result_i   ( lsu_alu_result_i  	),
+	// 	.mem_wen_i     	( lsu_mem_wen_i   	),
+	// 	.mem_wdata_i   	( lsu_mem_wdata_i 	),
+
+	// 	.memory_inst_o  ( wb_memory_inst_i ),
+	// 	.load_type_i	( lsu_load_type_i	),
+	// 	.store_type_i	( lsu_store_type_i	),
+	// 	.csr_wdata_i	( lsu_csr_wdata_i	),
+	// 	.csr_type_i		( lsu_csr_type_i	),
+
+	// 	.mem_rdata_rare_i( data_r_data_i   	),
+	// 	.mem_ren_o   	( mem_ren_o 		),
+	// 	.mem_wen_o   	( mem_wen_o   	),
+	// 	.mem_wdata_o    ( mem_wdata_o   	),
+	// 	.mem_waddr_o    ( mem_waddr_o   		),
+	// 	.mem_raddr_o    ( mem_raddr_o 		),
+	// 	.mem_wmask_o  	( mem_wmask_o 	),
+	// 	.mem_rmask_o	( mem_rmask_o	),
+
+	// 	.ifu_valid     	( ifu_valid_o   	),
+	// 	// .wb_ready_o   	( wb_ready_o 		),
+	// 	// .lsu_ready_o    ( lsu_ready_o   	),
+	// 	.lsu_valid_o    ( lsu_valid_o   	),
+	// 	.wd_o     		( wb_reg_wen_i   		),
+	// 	.wreg_o   		( wb_wreg_i 		),
+	// 	.wdata_o  		( wb_reg_wdata_i 	),
+	// 	.csr_type_o		( wb_csr_type_i	),
+	// 	.csr_wdata_o    ( wb_csr_wdata_i   	)
+	// );
 
 	ysyx_22041211_wb#(
 		.DATA_LEN     ( 32 )
