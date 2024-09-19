@@ -73,7 +73,6 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
   }
 }
 
-
 void init_skip_pool(){
   for (int i = 0; i < NR_SKIP; i ++) {
     skip_pool[i].is_skip_ref_bool = false;
