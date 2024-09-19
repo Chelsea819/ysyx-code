@@ -129,9 +129,9 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	assign pc = id_pc_i;
 	assign finish = if_last_finish_i;
 	
-	always @(*) begin
-		$display("pc: [%h] inst: [%b] invalid: [%h]",pc, id_inst_i, invalid);
-	end
+	// always @(*) begin
+	// 	$display("pc: [%h] inst: [%b] invalid: [%h]",pc, id_inst_i, invalid);
+	// end
 
 ysyx_22041211_IFU#(
     .ADDR_WIDTH       ( 32 ),
