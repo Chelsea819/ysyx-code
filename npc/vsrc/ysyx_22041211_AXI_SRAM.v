@@ -42,9 +42,9 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	reg								        con_state	;
 	reg							        	next_state	;
 
-	assign addr_r_ready_o = con_state == WAIT_ADDR;
-	assign r_valid_o = con_state == WAIT_DATA_GET;
-	assign r_resp_o = {2{(con_state == WAIT_DATA_GET)}};
+	assign addr_r_ready_o = (con_state == WAIT_ADDR) && ~rst;
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && ~rst;
+	assign r_resp_o = {2{(con_state == WAIT_DATA_GET) & ~rst}};
 
 	// state trans
 	always @(posedge clk ) begin
