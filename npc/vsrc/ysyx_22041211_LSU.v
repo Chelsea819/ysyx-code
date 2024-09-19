@@ -181,6 +181,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // load
     assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare_i[7]}}, mem_rdata_rare_i[7:0]} : 
                     (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
+                    (load_type_i == `LOAD_LBU_8) ? {{16{1'b0}}, mem_rdata_rare_i[15:0]}: 
+                    (load_type_i == `LOAD_LHU_16) ? {{24{1'b0}}, mem_rdata_rare_i[7:0]}: 
                     mem_rdata_rare_i;
 
     // always @(*) begin
