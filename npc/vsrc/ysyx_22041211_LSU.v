@@ -22,7 +22,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // input                               wb_ready_o  ,
     // output                              lsu_ready_o ,
     output                              memory_inst_o ,
-    output  reg                         lsu_valid_o ,
+    output                              lsu_valid_o ,
     output	   	                		wd_o		,
     output	   	[4:0]		            wreg_o		,
     output      [DATA_LEN - 1:0]        csr_wdata_o	,
@@ -94,12 +94,14 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	reg			[1:0]			        	next_state	;
     parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10, LSU_WAIT_ADDR_PASS = 2'b11;
 
-	always @(posedge clk ) begin
-		if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY)
-			lsu_valid_o <= 1'b1;
-		else 
-			lsu_valid_o <= 1'b0;
-	end
+	// always @(*) begin
+	// 	if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY)
+	// 		lsu_valid_o = 1'b1;
+	// 	else 
+	// 		lsu_valid_o = 1'b0;
+	// end
+
+    assign lsu_valid_o = (next_state == LSU_WAIT_LSU_VALID);
 
 	// state trans
 	always @(posedge clk ) begin
@@ -134,7 +136,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 			end
             // 等待idu完成译码
 			LSU_WAIT_LSU_VALID: begin 
-				if (r_valid_i & r_ready_o & ~|bkwd_resp_i & bkwd_valid_i & bkwd_ready_o) begin
+				if ((r_valid_i & r_ready_o) | (~|bkwd_resp_i & bkwd_valid_i & bkwd_ready_o)) begin
 					next_state = LSU_WAIT_WB_READY;
 				end else begin 
 					next_state = LSU_WAIT_LSU_VALID;
@@ -181,10 +183,16 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
                     (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
                     mem_rdata_rare_i;
 
-    always @(*) begin
-            wd_o	         =     wd_i; 
-            wreg_o	         =     wreg_i;  	
-            csr_wdata_o	     =     csr_wdata_i;  
-            csr_type_o	     =     csr_type_i;  
-	end
+    // always @(*) begin
+    //         wd_o	         =     wd_i; 
+    //         wreg_o	         =     wreg_i;  	
+    //         csr_wdata_o	     =     csr_wdata_i;  
+    //         csr_type_o	     =     csr_type_i;  
+	// end
+
+    assign wd_o = wd_i;
+    assign wreg_o = wreg_i;
+    assign csr_wdata_o	     =     csr_wdata_i;  
+    assign csr_type_o	     =     csr_type_i;  
+
 endmodule
