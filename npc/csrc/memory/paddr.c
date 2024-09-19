@@ -120,9 +120,9 @@ vaddr_t paddr_read(paddr_t addr,int len) {
   
 	if (likely(in_pmem(addr))) {
     word_t rdata = pmem_read(addr,len);
-    // #ifdef CONFIG_MTRACE
-    //   Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
-    // #endif
+    #ifdef CONFIG_MTRACE
+      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
+    #endif
     return rdata;
   }
   // printf("read device\n");
