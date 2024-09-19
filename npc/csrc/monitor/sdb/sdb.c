@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <cpu/cpu.h>
+#include <cpu/difftest.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sdb.h>
@@ -173,6 +174,28 @@ static int cmd_x(char *args){
   }
   return 0; 
 }
+#ifdef CONFIG_DIFFTEST
+static int cmd_xref(char *args){
+  if(too_lessArg(args) == 1) return 0;
+
+  char *arg1 = strtok(NULL," ");
+  char *arg2 = strtok(NULL," ");
+  if(too_lessArg(arg2) == 1) return 0;
+
+  int len = convert_ten(arg1);
+  vaddr_t addr = convert_16(arg2);
+
+  uint32_t ref_mem[len] = {0};
+  ref_difftest_memcpy(addr, ref_mem, len * 4, DIFFTEST_TO_DUT);
+
+  printf("addr = %08x\n",addr);
+
+  for (int i = 0;i < len;i ++){
+    printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i, ref_mem[i]);
+  }
+  return 0; 
+}
+#endif
 
 static int cmd_info(char *args){
   if (too_lessArg(args) == 1) return 0; 
@@ -217,7 +240,9 @@ static struct
     {"x","Scan the memory.",cmd_x},
     {"w","Set a watchpoint.",cmd_w},
     {"d","Delete certain watchpoint.",cmd_d},
-
+    #ifdef CONFIG_DIFFTEST
+    {"xref","Scan the memory of reference in difftest.",cmd_xref},
+    #endif
     /* TODO: Add more commands */
 
 };
