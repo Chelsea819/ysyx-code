@@ -101,7 +101,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// 		lsu_valid_o = 1'b0;
 	// end
 
-    assign lsu_valid_o = (next_state == LSU_WAIT_LSU_VALID);
+    assign lsu_valid_o = (con_state == LSU_WAIT_ADDR_PASS);
 
 	// state trans
 	always @(posedge clk ) begin
