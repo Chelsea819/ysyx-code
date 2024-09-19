@@ -65,5 +65,6 @@ int main(int argc, char **argv, char **env) {
 #ifdef CONFIG_WAVE
   m_trace->close(); //关闭波形跟踪文件
 #endif
-  exit(is_exit_status_bad());
+  // exit(EXIT_SUCCESS);
+  return is_exit_status_bad();
 }
