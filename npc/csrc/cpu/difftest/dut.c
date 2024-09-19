@@ -151,7 +151,9 @@ static void checkregs(CPU_state *ref, vaddr_t npc) {
   #ifdef CONFIG_WAVE
     m_trace->close();
   #endif
-    Assert(0,"Catch difference!\n");
+    printf("\33[1;31m Catch difference! \33[0m\n");
+    NPCTRAP(npc, 0);
+    // Assert(0,"Catch difference!\n");
   }
 }
 
