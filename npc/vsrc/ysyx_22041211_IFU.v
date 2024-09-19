@@ -95,7 +95,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 				end
 			end
 			IFU_WAIT_INST_LOAD: begin
-				if (r_ready_o == 1'b1 && r_valid_i == 1'b1 && r_resp_i == 2'b11) begin
+				if (r_ready_o == 1'b1 && r_valid_i == 1'b1 && r_resp_i == 2'b00) begin
 					next_state = IFU_WAIT_READY;
 				end else begin 
 					next_state = IFU_WAIT_INST_LOAD;
