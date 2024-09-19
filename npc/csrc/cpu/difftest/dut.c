@@ -1,8 +1,8 @@
-#include <cstdint>
 #include <dlfcn.h>
 
 #include <isa.h>
 #include <cpu/cpu.h>
+#include <memory/vaddr.h>
 #include <memory/paddr.h>
 #include <string.h>
 #include <utils.h>
