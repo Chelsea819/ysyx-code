@@ -110,7 +110,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 				if (bkwd_valid_o & ~|bkwd_resp_o & bkwd_ready_i) begin
 					next_state = WAIT_ADDR;
 				end else begin 
-					next_state = WAIT_DATA_GET;
+					next_state = WAIT_DATA_WRITE;
 				end
 			end
 			default:
