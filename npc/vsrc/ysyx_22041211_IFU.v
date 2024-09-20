@@ -48,7 +48,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	wire									r_inst_en	;
 	wire									inst_invalid;
 	// assign ce = r_inst_en;
-	assign r_inst_en = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
+	assign r_inst_en = (con_state == IFU_WAIT_READY && next_state == IFU_WAIT_FINISH);
 
 	assign addr_r_valid_o = con_state == IFU_WAIT_ADDR_PASS;
 	assign r_ready_o = con_state == IFU_WAIT_INST_LOAD;
