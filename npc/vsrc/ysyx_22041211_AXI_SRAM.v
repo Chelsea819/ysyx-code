@@ -16,7 +16,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	output		                		addr_r_ready_o,
 
 	// Read data
-	output		[DATA_LEN - 1:0]		r_data_o	,
+	output	reg	[DATA_LEN - 1:0]		r_data_o	,
 	output		[1:0]					r_resp_o	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
 	output		                		r_valid_o	,
 	input		                		r_ready_i	,
@@ -43,6 +43,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	reg				[1:0]		        	next_state	;
 	wire						        	mem_ren	;
 	wire						        	mem_wen	;
+	wire			[DATA_LEN - 1:0]	    r_data  ;
 
 	assign addr_r_ready_o = (con_state == WAIT_ADDR) && ~rst;
 	assign r_valid_o = (con_state == WAIT_DATA_GET) && ~rst;
@@ -109,8 +110,18 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		.mem_waddr_i  ( addr_w_addr_i),
 		.mem_raddr_i  ( addr_r_addr_i),
 		.mem_wmask    ( {4'b0, w_strb_i}),
-		.mem_rdata_usigned_o (  r_data_o	)
+		.mem_rdata_usigned_o (  r_data	)
 	);
+
+	always @(posedge clk ) begin
+		if(rst) begin
+			r_data_o <= 0;
+		end else if(con_state == WAIT_DATA_GET && next_state == WAIT_ADDR) begin
+			r_data_o <= r_data;
+		end else begin 
+			r_data_o <= 0;
+		end
+	end
 
 	
 
