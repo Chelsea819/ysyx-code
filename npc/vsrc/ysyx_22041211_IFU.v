@@ -54,12 +54,14 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	assign addr_r_valid_o = con_state == IFU_WAIT_ADDR_PASS;
 	assign r_ready_o = con_state == IFU_WAIT_INST_LOAD;
 
-	always @(posedge clk ) begin
-		if(next_state == IFU_WAIT_READY)
-			valid <= 1'b1;
-		else 
-			valid <= 1'b0;
-	end
+	assign valid = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
+
+	// always @(posedge clk ) begin
+	// 	if(next_state == IFU_WAIT_READY)
+	// 		valid <= 1'b1;
+	// 	else 
+	// 		valid <= 1'b0;
+	// end
 
 	assign inst_invalid = ~((inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
