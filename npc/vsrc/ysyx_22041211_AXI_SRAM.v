@@ -43,7 +43,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
 	wire						        	mem_ren	;
-	wire						        	mem_wen	;
+	reg						        		mem_wen	;
 	wire			[DATA_LEN - 1:0]	    r_data  ;
 
 	assign addr_r_ready_o = (con_state == WAIT_ADDR) && rstn;
@@ -57,7 +57,15 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 
 	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
-	assign mem_wen = (con_state == WAIT_DATA_WRITE) && rstn;
+	// assign mem_wen = (con_state == WAIT_DATA_WRITE) && rstn;
+
+	// mem_wen
+	always @(posedge clk ) begin
+		if(rstn & (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
+			mem_wen <= 1'b1;
+		else 
+			mem_wen <= 1'b0;
+	end
 
 	// state trans
 	always @(posedge clk ) begin
