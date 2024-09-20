@@ -39,7 +39,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 );	
 	parameter [1:0] WAIT_ADDR = 2'b00, WAIT_DATA_GET = 2'b01, WAIT_DATA_WRITE = 2'b10;
-	parameter [3:0] DELAY = 4'b101;
+	parameter [3:0] DELAY = 4'b111;
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
 	wire						        	mem_ren	;
