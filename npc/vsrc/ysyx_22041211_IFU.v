@@ -54,7 +54,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	assign r_ready_o = con_state == IFU_WAIT_INST_LOAD;
 
 	always @(posedge clk ) begin
-		if(next_state == IFU_WAIT_INST_LOAD)
+		if(next_state == IFU_WAIT_READY)
 			valid <= 1'b1;
 		else 
 			valid <= 1'b0;
