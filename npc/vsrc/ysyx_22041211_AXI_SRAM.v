@@ -39,22 +39,29 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 );	
 	parameter [1:0] WAIT_ADDR = 2'b00, WAIT_DATA_GET = 2'b01, WAIT_DATA_WRITE = 2'b10;
-	parameter [3:0] DELAY = 4'b111, WRITE_DELAY = 4'b101;
+	// parameter [3:0] DELAY = 4'b111, WRITE_DELAY = 4'b101;
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
 	wire						        	mem_ren	;
 	reg						        		mem_wen	;
 	wire			[DATA_LEN - 1:0]	    r_data  ;
+	reg				[3:0]		        	RANDOM_DELAY;
+	wire			[3:0]		        	delay_num;
 
 	assign addr_r_ready_o = (con_state == WAIT_ADDR) && rstn;
-	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_data_delay == DELAY);
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_data_delay == RANDOM_DELAY);
 	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
 	assign addr_w_ready_o = (con_state == WAIT_ADDR) && rstn;
 	assign w_ready_o = (con_state == WAIT_ADDR) && rstn;
-	assign bkwd_resp_o = {2{~((con_state == WAIT_DATA_WRITE) & rstn & (w_data_delay == WRITE_DELAY))}};
-	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (w_data_delay == WRITE_DELAY);
+	assign bkwd_resp_o = {2{~((con_state == WAIT_DATA_WRITE) & rstn & (w_data_delay == RANDOM_DELAY))}};
+	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (w_data_delay == RANDOM_DELAY);
 
-
+	always @(posedge clk ) begin
+		if (~rstn) 
+			RANDOM_DELAY <= 0;
+		else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_GET) || (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
+			RANDOM_DELAY <= delay_num;
+	end
 
 	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
 	// assign mem_wen = (con_state == WAIT_DATA_WRITE) && rstn;
@@ -125,6 +132,12 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 				next_state = 2'b11;
 		endcase
 	end
+	ysyx_22041211_LFSR u_LFSR(
+		.clk          ( clk          ),
+		.rstn         ( rstn         ),
+		.initial_var  ( 4'b1  		 ),
+		.result       ( delay_num    )
+	);
 
 
 	ysyx_22041211_SRAM#(
