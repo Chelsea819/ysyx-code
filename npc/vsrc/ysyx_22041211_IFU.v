@@ -33,6 +33,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 
 	// IFU-AXI
 	// Addr Read
+	output	reg	[ADDR_WIDTH - 1:0]		addr_r_addr_o,
 	output		                		addr_r_valid_o,
 	input		                		addr_r_ready_i,
 
@@ -146,6 +147,13 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.rst    ( rst    ),
 		.pc_new ( pc_plus_4  )
 	);
+
+	always @(posedge clk ) begin
+		if(rst)
+			addr_r_addr_o <= 0;
+		else if(con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD)
+			addr_r_addr_o <= pc;
+	end
 
 
 	always @(posedge clk) begin

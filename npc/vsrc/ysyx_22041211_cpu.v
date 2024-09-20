@@ -5,6 +5,7 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	// IFU-AXI
 	// Addr Read
+	output		[ADDR_LEN - 1:0]		inst_addr_r_addr_o,
 	output		                		inst_addr_r_valid_o,
 	input		                		inst_addr_r_ready_i,
 
@@ -139,7 +140,7 @@ ysyx_22041211_IFU#(
 )u_ysyx_22041211_IFU(
     .clk              ( clk              ),
     .rst              ( rst              ),
-	
+	.addr_r_addr_o    ( inst_addr_r_addr_o              ),		
     .addr_r_valid_o   ( inst_addr_r_valid_o              ),
     .addr_r_ready_i   ( inst_addr_r_ready_i              ),
     .r_data_i         ( inst_i              ),

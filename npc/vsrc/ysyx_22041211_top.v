@@ -22,6 +22,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	// IFU-AXI
 	// Addr Read
+	wire	[ADDR_LEN - 1:0]			inst_addr_r_addr_o;
 	wire	                			inst_addr_r_valid_o;
 	wire	                			inst_addr_r_ready_i;
 
@@ -76,6 +77,7 @@ assign inst_addr = pc;
 	)u_ysyx_22041211_cpu(
 		.clk                 ( clk                 ),
 		.rst                 ( rst                 ),
+		.inst_addr_r_addr_o	 ( inst_addr_r_addr_o  ),
 		.inst_addr_r_valid_o ( inst_addr_r_valid_o ),
 		.inst_addr_r_ready_i ( inst_addr_r_ready_i ),
 		.inst_r_resp_i       ( inst_r_resp_i       ),
@@ -138,7 +140,7 @@ assign inst_addr = pc;
 	)u_ysyx_22041211_inst_AXI_SRAM(
 		.rst            ( rst            ),
 		.clk            ( clk            ),
-		.addr_r_addr_i  ( pc  ),
+		.addr_r_addr_i  ( inst_addr_r_addr_o  ),
 		.addr_r_valid_i ( inst_addr_r_valid_o ),
 		.addr_r_ready_o ( inst_addr_r_ready_i      ),
 		.r_data_o  		( inst  ),
