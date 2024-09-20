@@ -4,10 +4,10 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clk rstn waddr wdata wen wmask
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
-	input								rst			,
+	input								rstn			,
     input		                		wd_i		,
     input		                		clk			,
     input		[4:0]		            wreg_i		,
@@ -71,12 +71,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
     assign memory_inst_o = mem_to_reg | mem_wen_i;  // load or store
     always @(posedge clk ) begin
-		if(rst) begin
-            addr_r_addr_o <= 0;
-            addr_w_addr_o <= 0;
-            w_data_o <= 0;
-            w_strb_o <= 0;
-        end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
+		if(rstn) begin
             addr_r_addr_o <= alu_result_i;
             addr_w_addr_o <= alu_result_i;
             w_data_o <= mem_wdata_i;
@@ -84,20 +79,25 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
                     (store_type_i == `STORE_SH_16) ? 4'b10 :
                     (store_type_i == `STORE_SW_32) ? 4'b100 : 
                     0;
+        end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
+            addr_r_addr_o <= 0;
+            addr_w_addr_o <= 0;
+            w_data_o <= 0;
+            w_strb_o <= 0;
 
         end
 	end
 
-    assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg; // addr valid and load inst
+    assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg & rstn; // addr valid and load inst
 
     assign r_ready_o = con_state == LSU_WAIT_LSU_VALID;
 
-    assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;  // addr valid and store inst
+    assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn;  // addr valid and store inst
 
     assign wdata_o = wdata;
 
-    assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;
-    assign bkwd_ready_o = ~rst;
+    assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn;
+    assign bkwd_ready_o = rstn;
 
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
@@ -114,10 +114,10 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	// state trans
 	always @(posedge clk ) begin
-		if(rst)
-			con_state <= LSU_WAIT_IFU_VALID;
+		if(rstn)
+            con_state <= next_state;
 		else 
-			con_state <= next_state;
+			con_state <= LSU_WAIT_IFU_VALID;
 	end
 
 	// next_state
@@ -193,13 +193,6 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
                     (load_type_i == `LOAD_LBU_8) ? {{24{1'b0}}, mem_rdata_rare_i[7:0]}: 
                     (load_type_i == `LOAD_LHU_16) ? {{16{1'b0}}, mem_rdata_rare_i[15:0]}: 
                     mem_rdata_rare_i;
-
-    // always @(*) begin
-    //         wd_o	         =     wd_i; 
-    //         wreg_o	         =     wreg_i;  	
-    //         csr_wdata_o	     =     csr_wdata_i;  
-    //         csr_type_o	     =     csr_type_i;  
-	// end
 
     assign wd_o = wd_i;
     assign wreg_o = wreg_i;

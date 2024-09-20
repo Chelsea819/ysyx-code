@@ -249,7 +249,7 @@ ysyx_22041211_IFU#(
 		.DATA_LEN          ( 32 ),
 		.ADDR_LEN          ( 32 )
 	)u_ysyx_22041211_LSU(
-		.rst           ( rst           ),
+		.rstn           ( ~rst           ),
 		.wd_i          ( lsu_wd_i          ),
 		.clk           ( clk           		),
 		.wreg_i   		( lsu_wreg_i   		),

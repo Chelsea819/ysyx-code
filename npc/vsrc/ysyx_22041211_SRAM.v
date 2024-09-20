@@ -7,7 +7,7 @@
 // clk rst waddr wdata wen wmask
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
-	input								rst			,
+	input								rstn			,
     input		                		clk			,
     input		                		ren			,
     input		                		mem_wen_i	,
@@ -21,7 +21,7 @@ module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	// 访存指令
     import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
 	always @(*) begin
-        if(ren && ~rst)begin 
+        if(ren & rstn)begin 
 			// $display("mem_to_reg: [%d] rmask: [%d] mem_raddr: [%x]",ren ,mem_rmask, mem_raddr_i);
             mem_rdata_usigned_o = pmem_read_task(mem_raddr_i, {8{ren}});
             end

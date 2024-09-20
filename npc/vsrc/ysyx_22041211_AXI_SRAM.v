@@ -7,7 +7,7 @@
 // clk rst waddr wdata wen wmask
 `include "./ysyx_22041211_define.v"
 module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
-	input								rst			,
+	input								rstn		,
     input		                		clk			,
 
 	//Addr Read
@@ -45,25 +45,25 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	wire						        	mem_wen	;
 	wire			[DATA_LEN - 1:0]	    r_data  ;
 
-	assign addr_r_ready_o = (con_state == WAIT_ADDR) && ~rst;
-	assign r_valid_o = (con_state == WAIT_DATA_GET) && ~rst;
-	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | rst}};
-	assign addr_w_ready_o = (con_state == WAIT_ADDR) && ~rst;
-	assign w_ready_o = (con_state == WAIT_ADDR) && ~rst;
-	assign bkwd_resp_o = {2{~(con_state == WAIT_DATA_WRITE) | rst}};
-	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && ~rst;
+	assign addr_r_ready_o = (con_state == WAIT_ADDR) && rstn;
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn;
+	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
+	assign addr_w_ready_o = (con_state == WAIT_ADDR) && rstn;
+	assign w_ready_o = (con_state == WAIT_ADDR) && rstn;
+	assign bkwd_resp_o = {2{~(con_state == WAIT_DATA_WRITE) | ~rstn}};
+	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn;
 
 
 
-	assign mem_ren = (con_state == WAIT_DATA_GET) && ~rst;
-	assign mem_wen = (con_state == WAIT_DATA_WRITE) && ~rst;
+	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
+	assign mem_wen = (con_state == WAIT_DATA_WRITE) && rstn;
 
 	// state trans
 	always @(posedge clk ) begin
-		if(rst)
-			con_state <= WAIT_ADDR;
-		else 
+		if(rstn)
 			con_state <= next_state;
+		else 
+			con_state <= WAIT_ADDR;
 	end
 
 	// next_state
@@ -102,7 +102,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		.ADDR_LEN     ( 32 ),
 		.DATA_LEN     ( 32 )
 	)u_ysyx_22041211_SRAM(
-		.rst          ( rst         ),
+		.rstn          ( rstn         ),
 		.clk          ( clk         ),
 		.ren          ( mem_ren     ),
 		.mem_wen_i    ( mem_wen		),
@@ -114,7 +114,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	);
 
 	always @(posedge clk ) begin
-		if(rst) begin
+		if(~rstn) begin
 			r_data_o <= 0;
 		end else if(con_state == WAIT_DATA_GET && next_state == WAIT_ADDR) begin
 			r_data_o <= r_data;

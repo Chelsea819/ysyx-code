@@ -138,7 +138,7 @@ assign inst_addr = pc;
 		.ADDR_LEN       ( 32 ),
 		.DATA_LEN       ( 32 )
 	)u_ysyx_22041211_inst_AXI_SRAM(
-		.rst            ( rst            ),
+		.rstn            ( ~rst            ),
 		.clk            ( clk            ),
 		.addr_r_addr_i  ( inst_addr_r_addr_o  ),
 		.addr_r_valid_i ( inst_addr_r_valid_o ),
@@ -198,7 +198,7 @@ assign inst_addr = pc;
 		.ADDR_LEN       ( 32 ),
 		.DATA_LEN       ( 32 )
 	)u_ysyx_22041211_data_AXI_SRAM(
-		.rst            ( rst            ),
+		.rstn            ( ~rst            ),
 		.clk            ( clk            ),
 		.addr_r_addr_i  ( data_addr_r_addr_o  ),
 		.addr_r_valid_i ( data_addr_r_valid_o ),
