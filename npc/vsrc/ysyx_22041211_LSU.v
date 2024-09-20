@@ -45,13 +45,13 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	output		                		r_ready_o	,
 
 	// Addr Write
-	output		[ADDR_LEN - 1:0]		addr_w_addr_o,	// 写地址
+	output	reg	[ADDR_LEN - 1:0]		addr_w_addr_o,	// 写地址
 	output		                		addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
 	input		                		addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
 
 	// Write data
 	output	reg	[DATA_LEN - 1:0]		w_data_o	,	// 写出的数据
-	output		[3:0]					w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	output	reg	[3:0]					w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
 	output		                		w_valid_o	,	// 主设备给出的数据和字节选通信号有效
 	input		                		w_ready_i	,	// 从设备已准备好接收数据选通信号
 
@@ -75,10 +75,15 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
             addr_r_addr_o <= 0;
             addr_w_addr_o <= 0;
             w_data_o <= 0;
+            w_strb_o <= 0;
         end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
             addr_r_addr_o <= alu_result_i;
             addr_w_addr_o <= alu_result_i;
             w_data_o <= mem_wdata_i;
+            w_strb_o <= (store_type_i == `STORE_SB_8)? 4'b1 :
+                    (store_type_i == `STORE_SH_16) ? 4'b10 :
+                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
+                    0;
 
         end
 	end
@@ -90,11 +95,6 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;  // addr valid and store inst
 
     assign wdata_o = wdata;
-    // store
-	assign w_strb_o = (store_type_i == `STORE_SB_8)? 4'b1 :
-                    (store_type_i == `STORE_SH_16) ? 4'b10 :
-                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
-                    0;
 
     assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i;
     assign bkwd_ready_o = ~rst;
