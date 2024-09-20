@@ -97,7 +97,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign wdata_o = wdata;
 
     assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn;
-    assign bkwd_ready_o = rstn;
+    assign bkwd_ready_o = (con_state == LSU_WAIT_LSU_VALID) & rstn;
 
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
