@@ -34,7 +34,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
     // AXI
     //Addr Read
-	output		[ADDR_LEN - 1:0]		addr_r_addr_o,
+	output	reg	[ADDR_LEN - 1:0]		addr_r_addr_o,
 	output		                		addr_r_valid_o,
 	input		                		addr_r_ready_i,
 
@@ -70,8 +70,14 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
     assign memory_inst_o = mem_to_reg | mem_wen_i;  // load or store
-    
-    assign addr_r_addr_o = alu_result_i;
+    always @(posedge clk ) begin
+		if(rst)
+            addr_r_addr_o <= 0;
+        else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID)
+            addr_r_addr_o <= alu_result_i;
+	end
+
+    // assign addr_r_addr_o = alu_result_i;
     assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg; // addr valid and load inst
 
     assign r_ready_o = con_state == LSU_WAIT_LSU_VALID;
