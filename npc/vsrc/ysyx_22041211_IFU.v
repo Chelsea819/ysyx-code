@@ -61,18 +61,18 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 			valid <= 1'b0;
 	end
 
-	assign inst_invalid = ~((id_inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (id_inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
-					 (id_inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
-				     ({id_inst_i[14:12], id_inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
-					 ({id_inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
-					 ((id_inst_i[6:0] == `TYPE_I_LOAD_OPCODE) & (id_inst_i[14:12] == `TYPE_I_LB_FUNC3 | id_inst_i[14:12] == `TYPE_I_LH_FUNC3 | id_inst_i[14:12] == `TYPE_I_LW_FUNC3 | id_inst_i[14:12] == `TYPE_I_LBU_FUNC3 | id_inst_i[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
-					 ((id_inst_i[6:0] == `TYPE_I_CSR_OPCODE) & (id_inst_i[14:12] == `TYPE_I_CSRRW_FUNC3 | id_inst_i[14:12] == `TYPE_I_CSRRS_FUNC3)) |	 //I-csrrw csrrs
-					 ((id_inst_i[6:0] == `TYPE_S_OPCODE) & (id_inst_i[14:12] == `TYPE_S_SB_FUNC3 | id_inst_i[14:12] == `TYPE_S_SH_FUNC3 | id_inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
-					 ((id_inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (id_inst_i[14:12] == `TYPE_I_SLTI_FUNC3 || id_inst_i[14:12] == `TYPE_I_SLTIU_FUNC3 || id_inst_i[14:12] == `TYPE_I_ADDI_FUNC3 || id_inst_i[14:12] == `TYPE_I_XORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ORI_FUNC3 || id_inst_i[14:12] == `TYPE_I_ANDI_FUNC3 || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {id_inst_i[14:12], id_inst_i[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
-					 (id_inst_i[6:0] == `TYPE_R_OPCODE) | //R
-					 (id_inst_i == `TYPE_I_ECALL) | 
-					 (id_inst_i == `TYPE_I_MRET)  | 
-					 (id_inst_i == `TYPE_I_EBREAK));
+	assign inst_invalid = ~((inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
+					 (inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
+				     ({inst_i[14:12], inst_i[6:0]} == {`TYPE_I_JALR_FUNC3, `TYPE_I_JALR_OPCODE}) |			 //I-jalr
+					 ({inst_i[6:0]} == `TYPE_B_OPCODE) |			 //B-beq
+					 ((inst_i[6:0] == `TYPE_I_LOAD_OPCODE) & (inst_i[14:12] == `TYPE_I_LB_FUNC3 | inst_i[14:12] == `TYPE_I_LH_FUNC3 | inst_i[14:12] == `TYPE_I_LW_FUNC3 | inst_i[14:12] == `TYPE_I_LBU_FUNC3 | inst_i[14:12] == `TYPE_I_LHU_FUNC3)) |	 //I-lb lh lw lbu lhu
+					 ((inst_i[6:0] == `TYPE_I_CSR_OPCODE) & (inst_i[14:12] == `TYPE_I_CSRRW_FUNC3 | inst_i[14:12] == `TYPE_I_CSRRS_FUNC3)) |	 //I-csrrw csrrs
+					 ((inst_i[6:0] == `TYPE_S_OPCODE) & (inst_i[14:12] == `TYPE_S_SB_FUNC3 | inst_i[14:12] == `TYPE_S_SH_FUNC3 | inst_i[14:12] == `TYPE_S_SW_FUNC3))	|		//S-sb sh sw
+					 ((inst_i[6:0] == `TYPE_I_BASE_OPCODE) & (inst_i[14:12] == `TYPE_I_SLTI_FUNC3 || inst_i[14:12] == `TYPE_I_SLTIU_FUNC3 || inst_i[14:12] == `TYPE_I_ADDI_FUNC3 || inst_i[14:12] == `TYPE_I_XORI_FUNC3 || inst_i[14:12] == `TYPE_I_ORI_FUNC3 || inst_i[14:12] == `TYPE_I_ANDI_FUNC3 || {inst_i[14:12], inst_i[31:25]} == `TYPE_I_SLLI_FUNC3_IMM || {inst_i[14:12], inst_i[31:25]} == `TYPE_I_SRLI_FUNC3_IMM || {inst_i[14:12], inst_i[31:25]} == `TYPE_I_SRAI_FUNC3_IMM)) |	 //I-addi slli srli srai xori ori andi
+					 (inst_i[6:0] == `TYPE_R_OPCODE) | //R
+					 (inst_i == `TYPE_I_ECALL) | 
+					 (inst_i == `TYPE_I_MRET)  | 
+					 (inst_i == `TYPE_I_EBREAK));
 
 	parameter [1:0] IFU_WAIT_ADDR_PASS = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10, IFU_WAIT_INST_LOAD = 2'b11;
 
@@ -154,13 +154,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		else if(con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD)
 			addr_r_addr_o <= pc;
 	end
-
-
-	always @(posedge clk) begin
-        if(r_inst_en) begin
-            id_inst_i   <=   inst_i;
-        end
-	end
+	assign id_inst_i = inst_i;
 
 	assign inst_invalid_o = inst_invalid;
 

@@ -118,8 +118,6 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			r_data_o <= 0;
 		end else if(con_state == WAIT_DATA_GET && next_state == WAIT_ADDR) begin
 			r_data_o <= r_data;
-		end else begin 
-			r_data_o <= 0;
 		end
 	end
 
