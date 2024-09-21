@@ -51,17 +51,44 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	// assign ce = r_inst_en;
 	assign r_inst_en = (con_state == IFU_WAIT_READY && next_state == IFU_WAIT_FINISH);
 
-	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst;
-	assign r_ready_o = con_state == IFU_WAIT_INST_LOAD;
+	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst & (addr_r_valid_delay == RANDOM_DELAY);
+	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);;
 
 	assign valid = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
 
-	// always @(posedge clk ) begin
-	// 	if(next_state == IFU_WAIT_READY)
-	// 		valid <= 1'b1;
-	// 	else 
-	// 		valid <= 1'b0;
-	// end
+	reg				[3:0]		        	RANDOM_DELAY;
+	wire			[3:0]		        	delay_num;
+
+	reg			[3:0]		addr_r_valid_delay;
+	reg			[3:0]		r_ready_delay;
+	// r addr delay
+	always @(posedge clk ) begin
+		if(next_state == IFU_WAIT_ADDR_PASS)
+			addr_r_valid_delay <= addr_r_valid_delay + 1;
+		else 
+			addr_r_valid_delay <= 4'b0;
+	end
+
+	always @(posedge clk ) begin
+		if(next_state == IFU_WAIT_INST_LOAD)
+			r_ready_delay <= r_ready_delay + 1;
+		else 
+			r_ready_delay <= 4'b0;
+	end
+
+	ysyx_22041211_LFSR u_LFSR(
+		.clk          ( clk          ),
+		.rstn         ( ~rst         ),
+		.initial_var  ( 4'b1  		 ),
+		.result       ( delay_num    )
+	);
+
+	always @(posedge clk ) begin
+		if (rst) 
+			RANDOM_DELAY <= 0;
+		else if((con_state == IFU_WAIT_FINISH && next_state == IFU_WAIT_ADDR_PASS) || (con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD))
+			RANDOM_DELAY <= delay_num;
+	end
 
 	assign inst_invalid = ~((inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
