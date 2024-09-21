@@ -65,7 +65,9 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	always @(posedge clk ) begin
 		if(next_state == IFU_WAIT_ADDR_PASS && addr_r_valid_delay != RANDOM_DELAY)
 			addr_r_valid_delay <= addr_r_valid_delay + 1;
-		else 
+		else if (next_state == WAIT_DATA_WRITE && bkwd_valid_delay != RANDOM_DELAY) begin
+			bkwd_valid_delay <= bkwd_valid_delay + 1;
+		end else 
 			addr_r_valid_delay <= 4'b0;
 	end
 

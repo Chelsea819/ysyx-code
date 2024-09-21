@@ -79,7 +79,7 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			r_valid_delay <= r_valid_delay;
 		else if (next_state == WAIT_DATA_GET && r_valid_delay != RANDOM_DELAY) begin
 			r_valid_delay <= r_valid_delay + 1;
-		end
+		end else
 			r_valid_delay <= 4'b0;
 	end
 
