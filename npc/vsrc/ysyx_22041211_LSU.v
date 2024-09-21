@@ -134,7 +134,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 
 	always @(posedge clk ) begin
 		if (~rstn) 
-			RANDOM_DELAY <= 0;
+			RANDOM_DELAY <= 4'b1;
 		else if((con_state == LSU_WAIT_IFU_VALID && next_state == LSU_WAIT_ADDR_PASS) || (con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID))
 			RANDOM_DELAY <= delay_num;
 	end
