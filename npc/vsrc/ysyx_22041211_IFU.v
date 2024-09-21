@@ -5,6 +5,8 @@
 	> Created Time: 2023年08月04日 星期五 18时19分21秒
  ************************************************************************/
 `include "ysyx_22041211_define.v"
+`include "ysyx_22041211_define_delay.v"
+
 module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input									clk				,
 	input									rst				,
@@ -48,19 +50,41 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg			[1:0]			        	next_state	;
 	wire									r_inst_en	;
 	wire									inst_invalid;
-	// assign ce = r_inst_en;
-	assign r_inst_en = (con_state == IFU_WAIT_READY && next_state == IFU_WAIT_FINISH);
+
+	// delay test
+`ifdef DELAY_TEST
+	// random delay
+	`ifdef RAN_DELAY
+		reg				[3:0]		        	RANDOM_DELAY;
+		wire			[3:0]		        	delay_num;
+
+		ysyx_22041211_LFSR u_LFSR(
+			.clk          ( clk          ),
+			.rstn         ( ~rst         ),
+			.initial_var  ( 4'b1  		 ),
+			.result       ( delay_num    )
+		);
+		
+		always @(posedge clk ) begin
+			if (rst) 
+				RANDOM_DELAY <= 4'b1;
+			else if((con_state == IFU_WAIT_FINISH && next_state == IFU_WAIT_ADDR_PASS) || (con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD))
+				RANDOM_DELAY <= delay_num;
+		end
+
+	// fixed var delay
+	`elsif VAR_DELAY
+		// 当 RAN_DELAY 未定义，但 VAR_DELAY 被定义时，编译这段代码
+		wire				[3:0]		        	RANDOM_DELAY;
+		assign RANDOM_DELAY = `VAR_DELAY;
+	`endif
+
+	reg			[3:0]		addr_r_valid_delay;
+	reg			[3:0]		r_ready_delay;
 
 	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst & (addr_r_valid_delay == RANDOM_DELAY);
 	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);
 
-	assign valid = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
-
-	reg				[3:0]		        	RANDOM_DELAY;
-	wire			[3:0]		        	delay_num;
-
-	reg			[3:0]		addr_r_valid_delay;
-	reg			[3:0]		r_ready_delay;
 	// r addr delay
 	always @(posedge clk ) begin
 		if (next_state == IFU_WAIT_ADDR_PASS && (addr_r_valid_delay != RANDOM_DELAY || addr_r_valid_delay == 0))
@@ -79,20 +103,14 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		else  
 			r_ready_delay <= 4'b0;
 	end
-
-	ysyx_22041211_LFSR u_LFSR(
-		.clk          ( clk          ),
-		.rstn         ( ~rst         ),
-		.initial_var  ( 4'b1  		 ),
-		.result       ( delay_num    )
-	);
-
-	always @(posedge clk ) begin
-		if (rst) 
-			RANDOM_DELAY <= 4'b1;
-		else if((con_state == IFU_WAIT_FINISH && next_state == IFU_WAIT_ADDR_PASS) || (con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD))
-			RANDOM_DELAY <= delay_num;
-	end
+// no delay
+`else
+	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst;
+	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD);
+`endif
+	// assign ce = r_inst_en;
+	assign r_inst_en = (con_state == IFU_WAIT_READY && next_state == IFU_WAIT_FINISH);
+	assign valid = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
 
 	assign inst_invalid = ~((inst_i[6:0] == `TYPE_U_LUI_OPCODE) | (inst_i[6:0] == `TYPE_U_AUIPC_OPCODE) | //U-auipc lui
 					 (inst_i[6:0] == `TYPE_J_JAL_OPCODE) | 	 					     //jal
@@ -108,7 +126,6 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (inst_i == `TYPE_I_EBREAK));
 
 	parameter [1:0] IFU_WAIT_ADDR_PASS = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10, IFU_WAIT_INST_LOAD = 2'b11;
-
 
 	// state trans
 	always @(posedge clk ) begin
