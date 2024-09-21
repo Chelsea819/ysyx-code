@@ -217,7 +217,7 @@ static int cmd_d(char *args){
       free_wp(index);
       watchPoints_display();
 
-      return 0;;
+      return 0;
     }
     index = index->next;
   }

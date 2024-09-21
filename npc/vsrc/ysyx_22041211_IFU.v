@@ -52,7 +52,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	assign r_inst_en = (con_state == IFU_WAIT_READY && next_state == IFU_WAIT_FINISH);
 
 	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst & (addr_r_valid_delay == RANDOM_DELAY);
-	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);;
+	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);
 
 	assign valid = (con_state == IFU_WAIT_INST_LOAD && next_state == IFU_WAIT_READY);
 
@@ -89,7 +89,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 
 	always @(posedge clk ) begin
 		if (rst) 
-			RANDOM_DELAY <= 0;
+			RANDOM_DELAY <= 4'b1;
 		else if((con_state == IFU_WAIT_FINISH && next_state == IFU_WAIT_ADDR_PASS) || (con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD))
 			RANDOM_DELAY <= delay_num;
 	end
