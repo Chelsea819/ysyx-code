@@ -49,12 +49,12 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	wire			[3:0]		        	delay_num;
 
 	assign addr_r_ready_o = (con_state == WAIT_ADDR) && rstn;
-	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_data_delay == RANDOM_DELAY);
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_valid_delay == RANDOM_DELAY);
 	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
 	assign addr_w_ready_o = (con_state == WAIT_ADDR) && rstn;
 	assign w_ready_o = (con_state == WAIT_ADDR) && rstn;
-	assign bkwd_resp_o = {2{~((con_state == WAIT_DATA_WRITE) & rstn & (w_data_delay == RANDOM_DELAY))}};
-	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (w_data_delay == RANDOM_DELAY);
+	assign bkwd_resp_o = {2{~((con_state == WAIT_DATA_WRITE) & rstn)}};
+	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (bkwd_valid_delay == RANDOM_DELAY);
 
 	always @(posedge clk ) begin
 		if (~rstn) 
@@ -82,23 +82,21 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			con_state <= WAIT_ADDR;
 	end
 
-	// reg			[3:0]		r_addr_delay;
-	reg			[3:0]		r_data_delay;
-	// reg			[3:0]		w_addr_delay;
-	reg			[3:0]		w_data_delay;
+	reg			[3:0]		r_valid_delay;
+	reg			[3:0]		bkwd_valid_delay;
 	// r addr delay
 	always @(posedge clk ) begin
 		if(next_state == WAIT_DATA_GET)
-			r_data_delay <= r_data_delay + 1;
+			r_valid_delay <= r_valid_delay + 1;
 		else 
-			r_data_delay <= 4'b0;
+			r_valid_delay <= 4'b0;
 	end
 
 	always @(posedge clk ) begin
 		if(next_state == WAIT_DATA_WRITE)
-			w_data_delay <= w_data_delay + 1;
+			bkwd_valid_delay <= bkwd_valid_delay + 1;
 		else 
-			w_data_delay <= 4'b0;
+			bkwd_valid_delay <= 4'b0;
 	end
 
 

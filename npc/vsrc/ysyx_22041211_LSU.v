@@ -66,6 +66,76 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // reg  [7:0]  mem_rmask;
     reg        mem_to_reg;
 
+    reg				[3:0]		        	RANDOM_DELAY;
+    reg				[3:0]		        	RANDOM_W_DATA_DELAY;
+	wire			[3:0]		        	delay_num;
+	wire			[3:0]		        	delay_num_w_data;
+
+	reg			[3:0]		addr_r_valid_delay;
+	reg			[3:0]		addr_w_valid_delay;
+	reg			[3:0]		w_data_valid_delay;
+	reg			[3:0]		r_ready_delay;
+	reg			[3:0]		bkwd_ready_delay;
+	// r addr delay
+	always @(posedge clk ) begin
+		if(next_state == LSU_WAIT_ADDR_PASS)
+			addr_r_valid_delay <= addr_r_valid_delay + 1;
+		else 
+			addr_r_valid_delay <= 4'b0;
+	end
+	always @(posedge clk ) begin
+		if(next_state == LSU_WAIT_ADDR_PASS && addr_w_valid_delay != RANDOM_DELAY)
+			addr_w_valid_delay <= addr_w_valid_delay + 1;
+		else 
+			addr_w_valid_delay <= 4'b0;
+	end
+	always @(posedge clk ) begin
+		if(next_state == LSU_WAIT_ADDR_PASS && addr_r_valid_delay != RANDOM_W_DATA_DELAY)
+			w_data_valid_delay <= w_data_valid_delay + 1;
+		else 
+			w_data_valid_delay <= 4'b0;
+	end
+
+	always @(posedge clk ) begin
+		if(next_state == LSU_WAIT_LSU_VALID)
+			r_ready_delay <= r_ready_delay + 1;
+		else 
+			r_ready_delay <= 4'b0;
+	end
+	always @(posedge clk ) begin
+		if(next_state == LSU_WAIT_LSU_VALID)
+			bkwd_ready_delay <= bkwd_ready_delay + 1;
+		else 
+			bkwd_ready_delay <= 4'b0;
+	end
+
+	ysyx_22041211_LFSR u_LFSR(
+		.clk          ( clk          ),
+		.rstn         ( rstn         ),
+		.initial_var  ( 4'b1  		 ),
+		.result       ( delay_num    )
+	);
+	ysyx_22041211_LFSR u_LFSR_w_data(
+		.clk          ( clk          ),
+		.rstn         ( rstn         ),
+		.initial_var  ( 4'b1  		 ),
+		.result       ( delay_num_w_data    )
+	);
+
+	always @(posedge clk ) begin
+		if (~rstn) 
+			RANDOM_DELAY <= 0;
+		else if((con_state == LSU_WAIT_IFU_VALID && next_state == LSU_WAIT_ADDR_PASS) || (con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID))
+			RANDOM_DELAY <= delay_num;
+	end
+
+    always @(posedge clk ) begin
+		if (~rstn) 
+			RANDOM_W_DATA_DELAY <= 0;
+		else if((con_state == LSU_WAIT_IFU_VALID && next_state == LSU_WAIT_ADDR_PASS))
+			RANDOM_W_DATA_DELAY <= delay_num_w_data;
+	end
+
     // 写寄存器的信息
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
@@ -88,16 +158,16 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
         end
 	end
 
-    assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg & rstn; // addr valid and load inst
+    assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg & rstn & (addr_r_valid_delay == RANDOM_DELAY); // addr valid and load inst
 
-    assign r_ready_o = con_state == LSU_WAIT_LSU_VALID;
+    assign r_ready_o = (con_state == LSU_WAIT_LSU_VALID) & (r_ready_delay == RANDOM_DELAY);
 
-    assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn;  // addr valid and store inst
+    assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (addr_w_valid_delay == RANDOM_DELAY);  // addr valid and store inst
 
     assign wdata_o = wdata;
 
-    assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn;
-    assign bkwd_ready_o = (con_state == LSU_WAIT_LSU_VALID) & rstn;
+    assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (w_data_valid_delay == RANDOM_W_DATA_DELAY);
+    assign bkwd_ready_o = (con_state == LSU_WAIT_LSU_VALID) & rstn & (bkwd_ready_delay == RANDOM_DELAY);
 
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
