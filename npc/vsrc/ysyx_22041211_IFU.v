@@ -63,20 +63,20 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg			[3:0]		r_ready_delay;
 	// r addr delay
 	always @(posedge clk ) begin
-		if(next_state == IFU_WAIT_ADDR_PASS && addr_r_valid_delay == RANDOM_DELAY)
-			addr_r_valid_delay <= addr_r_valid_delay;
-		else if (next_state == IFU_WAIT_ADDR_PASS && addr_r_valid_delay != RANDOM_DELAY) begin
+		if (next_state == IFU_WAIT_ADDR_PASS && (addr_r_valid_delay != RANDOM_DELAY || addr_r_valid_delay == 0))
 			addr_r_valid_delay <= addr_r_valid_delay + 1;
-		end else 
+		else if(next_state == IFU_WAIT_ADDR_PASS && addr_r_valid_delay == RANDOM_DELAY)
+			addr_r_valid_delay <= addr_r_valid_delay;
+		else 
 			addr_r_valid_delay <= 4'b0;
 	end
 
 	always @(posedge clk ) begin
-		if(next_state == IFU_WAIT_INST_LOAD && r_ready_delay == RANDOM_DELAY)
-			r_ready_delay <= r_ready_delay;
-		else if (next_state == IFU_WAIT_ADDR_PASS && r_ready_delay != RANDOM_DELAY) begin
+		if (next_state == IFU_WAIT_ADDR_PASS && ((r_ready_delay != RANDOM_DELAY || r_ready_delay == 0)))
 			r_ready_delay <= r_ready_delay + 1;
-		end else  
+		else if(next_state == IFU_WAIT_INST_LOAD && r_ready_delay == RANDOM_DELAY)
+			r_ready_delay <= r_ready_delay;
+		else  
 			r_ready_delay <= 4'b0;
 	end
 

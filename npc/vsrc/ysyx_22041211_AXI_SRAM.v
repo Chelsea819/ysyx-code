@@ -75,20 +75,20 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
   // r addr delay
 	always @(posedge clk ) begin
-		if(next_state == WAIT_DATA_GET && r_valid_delay == RANDOM_DELAY)
-			r_valid_delay <= r_valid_delay;
-		else if (next_state == WAIT_DATA_GET && r_valid_delay != RANDOM_DELAY) begin
+		if (next_state == WAIT_DATA_GET && (r_valid_delay != RANDOM_DELAY || r_valid_delay == 0))
 			r_valid_delay <= r_valid_delay + 1;
-		end else
+		else if(next_state == WAIT_DATA_GET && r_valid_delay == RANDOM_DELAY)
+			r_valid_delay <= r_valid_delay;
+		else
 			r_valid_delay <= 4'b0;
 	end
 
 	always @(posedge clk ) begin
-		if(next_state == WAIT_DATA_WRITE && bkwd_valid_delay == RANDOM_DELAY)
-			bkwd_valid_delay <= bkwd_valid_delay;
-		else if (next_state == WAIT_DATA_WRITE && bkwd_valid_delay != RANDOM_DELAY) begin
+		if (next_state == WAIT_DATA_WRITE && (bkwd_valid_delay != RANDOM_DELAY || bkwd_valid_delay == 0)) 
 			bkwd_valid_delay <= bkwd_valid_delay + 1;
-		end else
+		else if(next_state == WAIT_DATA_WRITE && bkwd_valid_delay == RANDOM_DELAY)
+			bkwd_valid_delay <= bkwd_valid_delay;
+		else
 			bkwd_valid_delay <= 4'b0;
 	end
 // no delay
