@@ -63,7 +63,6 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	// fixed var delay
 	`elsif VAR_DELAY
 		// 当 RAN_DELAY 未定义，但 VAR_DELAY 被定义时，编译这段代码
-
 		wire				[3:0]		        	RANDOM_DELAY;
 		assign RANDOM_DELAY = `VAR_DELAY;
 	`endif
