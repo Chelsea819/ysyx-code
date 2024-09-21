@@ -1,4 +1,4 @@
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_decoder(
     input									      clk				        ,
     input									      rst				        ,

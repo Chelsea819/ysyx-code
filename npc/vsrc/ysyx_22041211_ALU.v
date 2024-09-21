@@ -4,7 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时24分15秒
  ************************************************************************/
- `include "./ysyx_22041211_define.v"
+ `include "ysyx_22041211_define.v"
 module ysyx_22041211_ALU #(parameter DATA_LEN = 32)(
 	input		[DATA_LEN - 1:0]		src1		,
 	input		[DATA_LEN - 1:0]		src2		,

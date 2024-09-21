@@ -5,7 +5,7 @@
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
 // clk rst waddr wdata wen wmask
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								rst			,
     input		                		wd_i		,

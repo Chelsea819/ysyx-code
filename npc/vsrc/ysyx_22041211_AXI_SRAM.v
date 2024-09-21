@@ -5,7 +5,8 @@
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
 // clk rst waddr wdata wen wmask
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
+`include "ysyx_22041211_define_delay.v"
 module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input								rstn		,
     input		                		clk			,
@@ -39,29 +40,73 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 );	
 	parameter [1:0] WAIT_ADDR = 2'b00, WAIT_DATA_GET = 2'b01, WAIT_DATA_WRITE = 2'b10;
-	// parameter [3:0] DELAY = 4'b111, WRITE_DELAY = 4'b101;
+// delay test
+`ifdef DELAY_TEST
+	// random delay
+	`ifdef RAN_DELAY
+		reg				[3:0]		        	RANDOM_DELAY;
+		wire			[3:0]		        	delay_num;
+
+		ysyx_22041211_LFSR u_LFSR(
+			.clk          ( clk          ),
+			.rstn         ( rstn         ),
+			.initial_var  ( 4'b1  		 ),
+			.result       ( delay_num    )
+		);
+		
+		always @(posedge clk ) begin
+			if (~rstn) 
+				RANDOM_DELAY <= 0;
+			else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_GET) || (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
+				RANDOM_DELAY <= delay_num;
+		end
+	// fixed var delay
+	`elsif VAR_DELAY
+		// 当 RAN_DELAY 未定义，但 VAR_DELAY 被定义时，编译这段代码
+
+		wire				[3:0]		        	RANDOM_DELAY;
+		assign RANDOM_DELAY = `VAR_DELAY;
+	`endif
+
+	reg			[3:0]		r_valid_delay;
+	reg			[3:0]		bkwd_valid_delay;
+
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_valid_delay == RANDOM_DELAY);
+	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (bkwd_valid_delay == RANDOM_DELAY);
+
+  // r addr delay
+	always @(posedge clk ) begin
+		if(next_state == WAIT_DATA_GET)
+			r_valid_delay <= r_valid_delay + 1;
+		else 
+			r_valid_delay <= 4'b0;
+	end
+
+	always @(posedge clk ) begin
+		if(next_state == WAIT_DATA_WRITE)
+			bkwd_valid_delay <= bkwd_valid_delay + 1;
+		else 
+			bkwd_valid_delay <= 4'b0;
+	end
+// no delay
+`else
+	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn;
+	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn;
+`endif	
+
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
 	wire						        	mem_ren	;
 	reg						        		mem_wen	;
 	wire			[DATA_LEN - 1:0]	    r_data  ;
-	reg				[3:0]		        	RANDOM_DELAY;
-	wire			[3:0]		        	delay_num;
+	
 
 	assign addr_r_ready_o = (con_state == WAIT_ADDR) && rstn;
-	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_valid_delay == RANDOM_DELAY);
 	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
 	assign addr_w_ready_o = (con_state == WAIT_ADDR) && rstn;
 	assign w_ready_o = (con_state == WAIT_ADDR) && rstn;
 	assign bkwd_resp_o = {2{~((con_state == WAIT_DATA_WRITE) & rstn)}};
-	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (bkwd_valid_delay == RANDOM_DELAY);
 
-	always @(posedge clk ) begin
-		if (~rstn) 
-			RANDOM_DELAY <= 0;
-		else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_GET) || (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
-			RANDOM_DELAY <= delay_num;
-	end
 
 	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
 	// assign mem_wen = (con_state == WAIT_DATA_WRITE) && rstn;
@@ -81,24 +126,6 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		else 
 			con_state <= WAIT_ADDR;
 	end
-
-	reg			[3:0]		r_valid_delay;
-	reg			[3:0]		bkwd_valid_delay;
-	// r addr delay
-	always @(posedge clk ) begin
-		if(next_state == WAIT_DATA_GET)
-			r_valid_delay <= r_valid_delay + 1;
-		else 
-			r_valid_delay <= 4'b0;
-	end
-
-	always @(posedge clk ) begin
-		if(next_state == WAIT_DATA_WRITE)
-			bkwd_valid_delay <= bkwd_valid_delay + 1;
-		else 
-			bkwd_valid_delay <= 4'b0;
-	end
-
 
 	// next_state
 	always @(*) begin
@@ -130,12 +157,6 @@ module ysyx_22041211_AXI_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 				next_state = 2'b11;
 		endcase
 	end
-	ysyx_22041211_LFSR u_LFSR(
-		.clk          ( clk          ),
-		.rstn         ( rstn         ),
-		.initial_var  ( 4'b1  		 ),
-		.result       ( delay_num    )
-	);
 
 
 	ysyx_22041211_SRAM#(

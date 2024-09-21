@@ -1,4 +1,4 @@
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     input								rst,
     input		                		wd_i		,

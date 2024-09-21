@@ -1,4 +1,4 @@
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input								clk 		,
 	input								rst 		,

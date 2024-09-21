@@ -4,7 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月04日 星期五 18时19分21秒
  ************************************************************************/
-`include "./ysyx_22041211_define.v"
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input									clk				,
 	input									rst				,
