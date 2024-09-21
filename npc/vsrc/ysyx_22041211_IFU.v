@@ -72,7 +72,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	end
 
 	always @(posedge clk ) begin
-		if (next_state == IFU_WAIT_ADDR_PASS && ((r_ready_delay != RANDOM_DELAY || r_ready_delay == 0)))
+		if (next_state == IFU_WAIT_INST_LOAD && ((r_ready_delay != RANDOM_DELAY || r_ready_delay == 0)))
 			r_ready_delay <= r_ready_delay + 1;
 		else if(next_state == IFU_WAIT_INST_LOAD && r_ready_delay == RANDOM_DELAY)
 			r_ready_delay <= r_ready_delay;
