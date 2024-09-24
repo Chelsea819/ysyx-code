@@ -7,6 +7,7 @@
 // clk rstn waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 `include "ysyx_22041211_define_delay.v"
+/* verilator lint_off UNOPTFLAT */
 module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								rstn			,
     input		                		wd_i		,
@@ -205,13 +206,6 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	reg			[1:0]			        	next_state	;
     parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10, LSU_WAIT_ADDR_PASS = 2'b11;
 
-	// always @(*) begin
-	// 	if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY)
-	// 		lsu_valid_o = 1'b1;
-	// 	else 
-	// 		lsu_valid_o = 1'b0;
-	// end
-
     assign lsu_valid_o = (con_state == LSU_WAIT_WB_READY);
 
 	// state trans
@@ -302,3 +296,4 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign csr_type_o	     =     csr_type_i;  
 
 endmodule
+/* verilator lint_on UNOPTFLAT */
