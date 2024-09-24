@@ -198,11 +198,13 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.pc_new ( pc_plus_4  )
 	);
 
-	always @(posedge clk ) begin
+	always @(* ) begin
 		if(rst)
-			addr_r_addr_o <= 0;
+			addr_r_addr_o = 0;
 		else if(con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD)
-			addr_r_addr_o <= pc;
+			addr_r_addr_o = pc;
+		else
+			addr_r_addr_o = 0;
 	end
 	assign id_inst_i = inst_i;
 
