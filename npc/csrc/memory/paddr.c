@@ -37,7 +37,7 @@ uint8_t* guest_to_host(paddr_t paddr) {
 
 extern "C" int pmem_read_task(int raddr, char wmask) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
-  // printf("read!\n");
+  printf("read!\n");
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = vaddr_read((paddr_t)(raddr & ~0x3u), 4);
   if (wmask == 0) {
@@ -67,7 +67,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  // printf("pc = 0x%08x\n",dut->pc);
+  printf("pmem_write_task pc = 0x%08x\n",dut->pc);
   // printf("wmask = 0x%01u\n",wmask);
   // printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
