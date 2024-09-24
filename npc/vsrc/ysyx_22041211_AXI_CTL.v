@@ -192,10 +192,12 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			end
 
 			AXI_CTL_BUSY_DATA: begin
-				sram_addr_r_addr_o	<= data_addr_r_addr_i;
-				sram_addr_w_addr_o	<= data_addr_w_addr_i;
-				sram_w_data_o		<= data_w_data_i;
-				sram_w_strb_o		<= data_w_strb_i;
+				if(con_state == AXI_CTL_IDLE) begin
+					sram_addr_r_addr_o	<= data_addr_r_addr_i;
+					sram_addr_w_addr_o	<= data_addr_w_addr_i;
+					sram_w_data_o		<= data_w_data_i;
+					sram_w_strb_o		<= data_w_strb_i;
+				end
 			end
 			default: begin 
 			end
