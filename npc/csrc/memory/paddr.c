@@ -37,7 +37,7 @@ uint8_t* guest_to_host(paddr_t paddr) {
 
 extern "C" int pmem_read_task(int raddr, char wmask) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回给`rdata`
-  printf("read!\n");
+  printf("read! wmask = %d\n", wmask);
   // printf("raddr = 0x%08x\n",raddr); 
   // vaddr_t rdata = vaddr_read((paddr_t)(raddr & ~0x3u), 4);
   if (wmask == 0) {
