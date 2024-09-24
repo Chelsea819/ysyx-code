@@ -35,6 +35,12 @@ uint8_t* new_space(int size) {
 // 查看地址空间是否合法
 static void check_bound(IOMap *map, paddr_t addr) {
   if (map == NULL) {
+    extern VerilatedVcdC *m_trace;
+    extern TOP_NAME *dut;
+    dut->final(); 
+    #ifdef CONFIG_WAVE
+      m_trace->close(); //关闭波形跟踪文件
+    #endif
     Assert(map != NULL, "address (" FMT_PADDR ") is out of bound at pc = " FMT_WORD, addr, cpu.pc);
   } else {
     Assert(addr <= map->high && addr >= map->low,
