@@ -139,14 +139,14 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	end
 	// NEXT: AXI-CTL-IDLE
 	// finish data read or write
-	assign {data_r_data_o, data_r_resp_o, data_r_valid_o, 
+	assign {data_r_resp_o, data_r_valid_o, 
 			data_bkwd_resp_o, data_bkwd_valid_o} 
-			= (con_state == AXI_CTL_BUSY_DATA && next_state == AXI_CTL_IDLE) ? {sram_r_data_i, sram_r_resp_i, sram_r_valid_i,
+			= (con_state == AXI_CTL_BUSY_DATA && next_state == AXI_CTL_IDLE) ? {sram_r_resp_i, sram_r_valid_i,
 																				sram_bkwd_resp_i, sram_bkwd_valid_i} : 
 																				0;
 	// finish inst read
-	assign {inst_r_data_o, inst_r_resp_o, inst_r_valid_o} 
-			= (con_state == AXI_CTL_BUSY_INST && next_state == AXI_CTL_IDLE) ? {sram_r_data_i, sram_r_resp_i, sram_r_valid_i} : 
+	assign {inst_r_resp_o, inst_r_valid_o} 
+			= (con_state == AXI_CTL_BUSY_INST && next_state == AXI_CTL_IDLE) ? {sram_r_resp_i, sram_r_valid_i} : 
 																				0;
 	// finish data read or write OR finish inst read
 	assign {sram_r_ready_o, sram_bkwd_ready_o} 
@@ -162,16 +162,40 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			= (next_state == AXI_CTL_BUSY_INST) ? sram_addr_r_ready_i : 0;
 
 	// NEXT: SRAM AXI_CTL_BUSY_DATA or AXI_CTL_BUSY_INST
-	assign {sram_addr_r_addr_o, sram_addr_r_valid_o,
-			sram_addr_w_valid_o, sram_addr_w_addr_o,
-			sram_w_data_o, sram_w_strb_o, sram_w_valid_o} 
-			= (next_state == AXI_CTL_BUSY_DATA) ? { data_addr_r_addr_i, data_addr_r_valid_i,
-													data_addr_w_valid_i, data_addr_w_addr_i,
-													data_w_data_i, data_w_strb_i, data_w_valid_i} : 
-				(next_state == AXI_CTL_BUSY_INST) ? { inst_addr_r_addr_i, inst_addr_r_valid_i,
-													1'b0, 32'b0,
-													32'b0, 4'b0, 1'b0} : 
+	assign {sram_addr_r_valid_o,
+			sram_addr_w_valid_o,
+			sram_w_valid_o} 
+			= (next_state == AXI_CTL_BUSY_DATA) ? { data_addr_r_valid_i,
+													data_addr_w_valid_i, 
+													data_w_valid_i} : 
+				(next_state == AXI_CTL_BUSY_INST) ? {inst_addr_r_valid_i,
+													1'b0,
+													1'b0} : 
 													0;
 
+	always @(posedge clk ) begin
+		case(next_state)
+			AXI_CTL_IDLE: begin
+				data_r_data_o <= sram_r_data_i;
+				inst_r_data_o <= sram_r_data_i;
+				
+			end
 
+			AXI_CTL_BUSY_INST: begin
+				sram_addr_r_addr_o	<= inst_addr_r_addr_i;
+				sram_addr_w_addr_o	<= 0;
+				sram_w_data_o		<= 0;
+				sram_w_strb_o		<= 0;
+			end
+
+			AXI_CTL_BUSY_DATA: begin
+				sram_addr_r_addr_o	<= data_addr_r_addr_i;
+				sram_addr_w_addr_o	<= data_addr_w_addr_i;
+				sram_w_data_o		<= data_w_data_i;
+				sram_w_strb_o		<= data_w_strb_i;
+			end
+			default: begin 
+			end
+		endcase
+	end
 endmodule
