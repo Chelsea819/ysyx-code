@@ -87,10 +87,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		                	sram_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
 	wire		                	sram_bkwd_ready_o	;	// 主设备已准备好接收写回复信号
 
-
-
-assign inst_addr = pc;
-
 // 检测到ebreak
     import "DPI-C" function void ifebreak_func(int inst);
     always @(*)
