@@ -83,6 +83,9 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
 
+	always @(*) begin
+		$display("con_state: [%b] next_state: [%b] sram_addr_r_ready_i: [%b] inst_addr_r_valid_i: [%b] data_addr_r_valid_i[%b]",con_state, next_state, sram_addr_r_ready_i, inst_addr_r_valid_i, data_addr_r_valid_i);
+	end
 	// state trans
 	always @(posedge clk ) begin
 		if(rst)
