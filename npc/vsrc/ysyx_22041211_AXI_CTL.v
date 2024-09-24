@@ -176,10 +176,12 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	always @(posedge clk ) begin
 		case(next_state)
 			AXI_CTL_IDLE: begin
-				data_r_data_o <= sram_r_data_i;
-				inst_r_data_o <= sram_r_data_i;
+				if(con_state == AXI_CTL_BUSY_DATA) begin
+					data_r_data_o <= sram_r_data_i;		
+				end else if(con_state == AXI_CTL_BUSY_INST) begin
+					inst_r_data_o <= sram_r_data_i;
+				end
 			end
-
 			AXI_CTL_BUSY_INST: begin
 				if(con_state == AXI_CTL_IDLE) begin
 					sram_addr_r_addr_o	<= inst_addr_r_addr_i;

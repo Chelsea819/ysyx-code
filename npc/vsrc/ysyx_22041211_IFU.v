@@ -40,7 +40,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	input		                		addr_r_ready_i,
 
 	// Read data
-	input		[DATA_WIDTH - 1:0]		r_data_i	,
+	// input		[DATA_WIDTH - 1:0]		r_data_i	,
 	input		[1:0]					r_resp_i	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
 	input		                		r_valid_i	,
 	output		                		r_ready_o	

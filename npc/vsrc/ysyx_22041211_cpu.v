@@ -143,7 +143,7 @@ ysyx_22041211_IFU#(
 	.addr_r_addr_o    ( inst_addr_r_addr_o              ),		
     .addr_r_valid_o   ( inst_addr_r_valid_o              ),
     .addr_r_ready_i   ( inst_addr_r_ready_i              ),
-    .r_data_i         ( inst_i              ),
+    // .r_data_i         ( inst_i              ),
     .r_resp_i         ( inst_r_resp_i              ),
     .r_valid_i        ( inst_r_valid_i              ),
     .r_ready_o        ( inst_r_ready_o              ),
