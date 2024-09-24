@@ -9,7 +9,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 );
 	wire			[DATA_LEN - 1:0]	inst		;
 	wire								inst_ren	;
-	wire			[ADDR_LEN - 1:0]	inst_addr	;
+	// wire			[ADDR_LEN - 1:0]	inst_addr	;
 
 	wire 			[DATA_LEN - 1:0] 	mem_waddr_i;
 	wire 			[DATA_LEN - 1:0] 	mem_wdata_i;
