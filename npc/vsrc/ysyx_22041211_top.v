@@ -1,4 +1,3 @@
-/* verilator lint_off UNOPTFLAT */
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input								clk 		,
@@ -8,17 +7,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	output								finish
 );
 	wire			[DATA_LEN - 1:0]	inst		;
-	wire								inst_ren	;
-	// wire			[ADDR_LEN - 1:0]	inst_addr	;
-
-	wire 			[DATA_LEN - 1:0] 	mem_waddr_i;
-	wire 			[DATA_LEN - 1:0] 	mem_wdata_i;
-    wire 			[DATA_LEN - 1:0] 	mem_raddr_i;
-    reg  			[DATA_LEN - 1:0] 	mem_rdata_rare_o;
-    reg  			[7:0]  				mem_rmask_i;
-    wire 			[7:0]  				mem_wmask_i;
-    wire  			      				mem_wen_i;
-    wire  			      				mem_ren_i;
 
 	// IFU-AXI
 	// Addr Read
@@ -31,7 +19,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		[1:0]					inst_r_resp_i	;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
 	wire		                		inst_r_valid_i	;
 	wire		                		inst_r_ready_o	;
-
 
 	wire	[ADDR_LEN - 1:0]		data_addr_r_addr_o	;
 	wire	                		data_addr_r_valid_o	;
@@ -128,7 +115,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.data_bkwd_ready_o   ( data_bkwd_ready_o   ),
 		.inst_i              ( inst              ),
 		.pc                  ( pc                  ),
-		.inst_ren            ( inst_ren            ),
 		.invalid             ( invalid             ),
 		.finish              ( finish              )
 	);
@@ -252,22 +238,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 	.mem_rdata_usigned_o  ( inst  )
 	// );
 
-	// ysyx_22041211_SRAM#(
-    //     .ADDR_LEN     ( 32 ),
-    //     .DATA_LEN     ( 32 )
-    // )u_ysyx_22041211_data_SRAM(
-    //     .rst          ( rst          ),
-    //     .clk          ( clk          ),
-    //     .ren          ( mem_ren_i   ),
-    //     .mem_wen_i    ( mem_wen_i    ),
-    //     .mem_wdata_i  ( mem_wdata_i  ),
-    //     .mem_waddr_i  ( mem_waddr_i    ),
-    //     .mem_raddr_i  ( mem_raddr_i  ),
-    //     .mem_wmask    ( mem_wmask_i    ),
-    //     .mem_rmask    ( mem_rmask_i    ),
-    //     .mem_rdata_usigned_o( mem_rdata_rare_o)
-    // );
-
 	// ysyx_22041211_AXI_SRAM#(
 	// 	.ADDR_LEN       ( 32 ),
 	// 	.DATA_LEN       ( 32 )
@@ -295,4 +265,3 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// );
 
 endmodule
-/* verilator lint_on UNOPTFLAT */
