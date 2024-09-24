@@ -7,7 +7,6 @@
 // clk rstn waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 `include "ysyx_22041211_define_delay.v"
-/* verilator lint_off UNOPTFLAT */
 module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input								rstn			,
     input		                		wd_i		,
@@ -183,23 +182,24 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign memory_inst_o = mem_to_reg | mem_wen_i;  // load or store
     always @(*) begin
 		if(~rstn) begin
-            addr_r_addr_o	= 0;
-            addr_w_addr_o	= 0;
-            w_data_o		= 0;
-            w_strb_o		= 0;
+			addr_r_addr_o = 0;
+            addr_w_addr_o = 0;
+            w_data_o = 0;
+            w_strb_o = 0;
         end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
-            addr_r_addr_o	= alu_result_i;
-            addr_w_addr_o	= alu_result_i;
-            w_data_o 		= mem_wdata_i;
-            w_strb_o		= (store_type_i == `STORE_SB_8)? 4'b1 :
-								(store_type_i == `STORE_SH_16) ? 4'b10 :
-								(store_type_i == `STORE_SW_32) ? 4'b100 : 
-								0;
-        end else
-			addr_r_addr_o	= 0;
-            addr_w_addr_o	= 0;
-            w_data_o		= 0;
-            w_strb_o		= 0;
+            addr_r_addr_o = alu_result_i;
+            addr_w_addr_o = alu_result_i;
+            w_data_o = mem_wdata_i;
+            w_strb_o = (store_type_i == `STORE_SB_8)? 4'b1 :
+                    (store_type_i == `STORE_SH_16) ? 4'b10 :
+                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
+                    0;
+		end else begin 
+			addr_r_addr_o = 0;
+            addr_w_addr_o = 0;
+            w_data_o = 0;
+            w_strb_o = 0;
+		end
 	end
 
     assign wdata_o = wdata;
@@ -208,6 +208,13 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     reg			[1:0]			        	con_state	;
 	reg			[1:0]			        	next_state	;
     parameter [1:0] LSU_WAIT_IFU_VALID = 2'b00, LSU_WAIT_LSU_VALID = 2'b01, LSU_WAIT_WB_READY = 2'b10, LSU_WAIT_ADDR_PASS = 2'b11;
+
+	// always @(*) begin
+	// 	if(next_state == LSU_WAIT_LSU_VALID || next_state == LSU_WAIT_WB_READY)
+	// 		lsu_valid_o = 1'b1;
+	// 	else 
+	// 		lsu_valid_o = 1'b0;
+	// end
 
     assign lsu_valid_o = (con_state == LSU_WAIT_WB_READY);
 
@@ -299,4 +306,3 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign csr_type_o	     =     csr_type_i;  
 
 endmodule
-/* verilator lint_on UNOPTFLAT */

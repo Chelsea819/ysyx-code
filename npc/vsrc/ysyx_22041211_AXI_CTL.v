@@ -173,7 +173,7 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 													1'b0} : 
 													0;
 
-	always @(posedge clk ) begin
+	always @(posedge clk) begin
 		case(next_state)
 			AXI_CTL_IDLE: begin
 				if(con_state == AXI_CTL_BUSY_DATA) begin
