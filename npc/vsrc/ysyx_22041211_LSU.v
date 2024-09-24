@@ -181,22 +181,25 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     wire		[DATA_LEN - 1:0]		    wdata       ;
     assign wdata = (mem_to_reg == 1'b1) ? mem_rdata : alu_result_i;
     assign memory_inst_o = mem_to_reg | mem_wen_i;  // load or store
-    always @(posedge clk ) begin
-		if(rstn) begin
-            addr_r_addr_o <= alu_result_i;
-            addr_w_addr_o <= alu_result_i;
-            w_data_o <= mem_wdata_i;
-            w_strb_o <= (store_type_i == `STORE_SB_8)? 4'b1 :
-                    (store_type_i == `STORE_SH_16) ? 4'b10 :
-                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
-                    0;
+    always @(*) begin
+		if(~rstn) begin
+            addr_r_addr_o	= 0;
+            addr_w_addr_o	= 0;
+            w_data_o		= 0;
+            w_strb_o		= 0;
         end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
-            addr_r_addr_o <= 0;
-            addr_w_addr_o <= 0;
-            w_data_o <= 0;
-            w_strb_o <= 0;
-
-        end
+            addr_r_addr_o	= alu_result_i;
+            addr_w_addr_o	= alu_result_i;
+            w_data_o 		= mem_wdata_i;
+            w_strb_o		= (store_type_i == `STORE_SB_8)? 4'b1 :
+								(store_type_i == `STORE_SH_16) ? 4'b10 :
+								(store_type_i == `STORE_SW_32) ? 4'b100 : 
+								0;
+        end else
+			addr_r_addr_o	= 0;
+            addr_w_addr_o	= 0;
+            w_data_o		= 0;
+            w_strb_o		= 0;
 	end
 
     assign wdata_o = wdata;
