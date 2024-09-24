@@ -18,6 +18,8 @@ module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
     output	reg	[DATA_LEN - 1:0]		mem_rdata_usigned_o
 );	
 
+	always @(*) $display("mren: [%d] mem_raddr_i: [%d] mem_raddr: [%x]",ren ,mem_raddr_i, mem_raddr_i);
+
 	// 访存指令
     import "DPI-C" context function int pmem_read_task(input int raddr, input byte wmask);
 	always @(*) begin
