@@ -83,7 +83,7 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 );	
 
-	wire						axi_device;
+	wire	[1:0]					axi_device;
 
 	assign axi_device = (axi_ctl_addr_w_addr_i == `SERIAL_PORT) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
 

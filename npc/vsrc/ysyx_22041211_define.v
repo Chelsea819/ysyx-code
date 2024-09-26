@@ -148,7 +148,7 @@
 `define SERIAL_PORT          `DEVICE_BASE + 32'h00003f8
 
 
-`define AXI_XBAR_UART        1'b0 
-`define AXI_XBAR_SRAM        1'b1 
+`define AXI_XBAR_UART        2'b01 
+`define AXI_XBAR_SRAM        2'b10 
 
 
