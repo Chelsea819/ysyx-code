@@ -69,7 +69,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   // printf("pmem_write_task pc = 0x%08x\n",dut->pc);
   // printf("wmask = 0x%01u\n",wmask);
-  // printf("waddr = 0x%08x\n",(paddr_t)waddr);
+  printf("waddr = 0x%08x\n",(paddr_t)waddr);
   // printf("wdata = 0x%08x\n",(paddr_t)wdata);
   if (wmask == 0) {
       return;
