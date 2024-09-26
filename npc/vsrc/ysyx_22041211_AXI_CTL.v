@@ -93,7 +93,8 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	always @(*) begin
 		if (con_state == AXI_CTL_IDLE) begin
 			if (data_addr_w_addr_i == `SERIAL_PORT) begin
-				xbar_device = `AXI_XBAR_UART;
+				// xbar_device = `AXI_XBAR_UART;
+				xbar_device = `AXI_XBAR_SRAM;
 			end else begin
 				xbar_device = `AXI_XBAR_SRAM;
 			end
@@ -107,9 +108,16 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		if (rst) begin
 			xbar_device_tmp <= 0;
 		end else begin
-			xbar_device_tmp <= xbar_device;
+			xbar_device_tmp <= `AXI_XBAR_SRAM;
 		end
 	end
+	// always @(posedge clk ) begin
+	// 	if (rst) begin
+	// 		xbar_device_tmp <= 0;
+	// 	end else begin
+	// 		xbar_device_tmp <= xbar_device;
+	// 	end
+	// end
 
 
 	// always @(*) begin
