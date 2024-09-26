@@ -44,7 +44,7 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 		always @(posedge clk ) begin
 			if (~rstn) 
 				RANDOM_DELAY <= 4'b1;
-			else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_GET) || (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
+			else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
 				RANDOM_DELAY <= delay_num;
 		end
 	// fixed var delay
