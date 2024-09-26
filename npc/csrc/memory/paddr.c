@@ -77,7 +77,7 @@ extern "C" void pmem_write_task(int waddr, int wdata, char wmask) {
   #ifdef CONFIG_DEVICE
     #ifdef CONFIG_SERIAL_MMIO 
       if(waddr == CONFIG_SERIAL_MMIO) {
-      // assert(0);
+      assert(0);
     // Log("Write device --- [addr: 0x%08x data: 0x%08x]",waddr,wdata);
     // putchar(wdata);
     }
