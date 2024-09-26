@@ -47,6 +47,50 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		                		data_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
 	wire		                		data_bkwd_ready_o	;	// 主设备已准备好接收写回复信号
 
+	// Xbar
+    //Addr Read
+	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o	;
+	wire		                		xbar_addr_r_valid_o	;
+	wire		                		xbar_addr_r_ready_i	;
+
+	// Read data
+	wire		[DATA_LEN - 1:0]		xbar_r_data_i		;
+	wire		[1:0]					xbar_r_resp_i		;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	wire		                		xbar_r_valid_i		;
+	wire		                		xbar_r_ready_o		;
+
+	// Addr Write
+	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_w_addr_o	;	// 写地址
+	wire		                		xbar_addr_w_valid_o	;	// 主设备给出的地址和相关控制信号有效
+	wire		                		xbar_addr_w_ready_i	; // 从设备已准备好接收地址和相关的控制信号
+
+	// Write data
+	wire	reg	[DATA_LEN - 1:0]		xbar_w_data_o	;	// 写出的数据
+	wire	reg	[3:0]					xbar_w_strb_o	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	wire		                		xbar_w_valid_o	;	// 主设备给出的数据和字节选通信号有效
+	wire		                		xbar_w_ready_i	;	// 从设备已准备好接收数据选通信号
+
+	// Backward
+	wire		[1:0]					xbar_bkwd_resp_i	;	// 写回复信号，写操作是否成功
+	wire		                		xbar_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
+	wire		                		xbar_bkwd_ready_o	;// 主设备已准备好接收写回复信号
+
+	// UART
+	// Addr Write
+	wire		                		uart_addr_w_valid_i;	// 主设备给出的地址和相关控制信号有效
+	wire		                		uart_addr_w_ready_o; // 从设备已准备好接收地址和相关的控制信号
+
+	// Write data
+	wire		[DATA_LEN - 1:0]		uart_w_data_i	;	// 写出的数据
+	wire		                		uart_w_valid_i	;	// 主设备给出的数据和字节选通信号有效
+	wire		                		uart_w_ready_o	;	// 从设备已准备好接收数据选通信号
+
+	// Backward
+	wire		[1:0]					uart_bkwd_resp_o	;	// 写回复信号，写操作是否成功
+	wire		                		uart_bkwd_valid_o	;	// 从设备给出的写回复信号是否有效
+	wire		                		uart_bkwd_ready_i	;	// 主设备已准备好接收写回复信号
+
+	// AXI-SRAM
 	wire	[ADDR_LEN - 1:0]		sram_addr_r_addr_o	;
 	wire	                		sram_addr_r_valid_o	;
 	wire	                		sram_addr_r_ready_i	;
@@ -149,24 +193,75 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.data_bkwd_resp_o    ( data_bkwd_resp_i    ),
 		.data_bkwd_valid_o   ( data_bkwd_valid_i   ),
 		.data_bkwd_ready_i   ( data_bkwd_ready_o   ),
-		.sram_addr_r_addr_o  ( sram_addr_r_addr_o  ),
-		.sram_addr_r_valid_o ( sram_addr_r_valid_o ),
-		.sram_addr_r_ready_i ( sram_addr_r_ready_i ),
-		.sram_r_data_i       ( sram_r_data_i       ),
-		.sram_r_resp_i       ( sram_r_resp_i       ),
-		.sram_r_valid_i      ( sram_r_valid_i      ),
-		.sram_r_ready_o      ( sram_r_ready_o      ),
-		.sram_addr_w_addr_o  ( sram_addr_w_addr_o  ),
-		.sram_addr_w_valid_o ( sram_addr_w_valid_o ),
-		.sram_addr_w_ready_i ( sram_addr_w_ready_i ),
-		.sram_w_data_o       ( sram_w_data_o       ),
-		.sram_w_strb_o       ( sram_w_strb_o       ),
-		.sram_w_valid_o      ( sram_w_valid_o      ),
-		.sram_w_ready_i      ( sram_w_ready_i      ),
-		.sram_bkwd_resp_i    ( sram_bkwd_resp_i    ),
-		.sram_bkwd_valid_i   ( sram_bkwd_valid_i   ),
-		.sram_bkwd_ready_o   ( sram_bkwd_ready_o   )
+		.xbar_addr_r_addr_o  ( xbar_addr_r_addr_o  ),
+		.xbar_addr_r_valid_o ( xbar_addr_r_valid_o ),
+		.xbar_addr_r_ready_i ( xbar_addr_r_ready_i ),
+		.xbar_r_data_i       ( xbar_r_data_i       ),
+		.xbar_r_resp_i       ( xbar_r_resp_i       ),
+		.xbar_r_valid_i      ( xbar_r_valid_i      ),
+		.xbar_r_ready_o      ( xbar_r_ready_o      ),
+		.xbar_addr_w_addr_o  ( xbar_addr_w_addr_o  ),
+		.xbar_addr_w_valid_o ( xbar_addr_w_valid_o ),
+		.xbar_addr_w_ready_i ( xbar_addr_w_ready_i ),
+		.xbar_w_data_o       ( xbar_w_data_o       ),
+		.xbar_w_strb_o       ( xbar_w_strb_o       ),
+		.xbar_w_valid_o      ( xbar_w_valid_o      ),
+		.xbar_w_ready_i      ( xbar_w_ready_i      ),
+		.xbar_bkwd_resp_i    ( xbar_bkwd_resp_i    ),
+		.xbar_bkwd_valid_i   ( xbar_bkwd_valid_i   ),
+		.xbar_bkwd_ready_o   ( xbar_bkwd_ready_o   )
 	);
+
+	ysyx_22041211_xbar#(
+		.ADDR_LEN               ( 32 ),
+		.DATA_LEN 		        ( 32 )
+	)u_ysyx_22041211_xbar(
+		.rstn                   ( ~rst                   ),
+		.clk                    ( clk                    ),
+		.axi_ctl_addr_r_addr_i  ( xbar_addr_r_addr_o  ),
+		.axi_ctl_addr_r_valid_i ( xbar_addr_r_valid_o ),
+		.axi_ctl_addr_r_ready_o ( xbar_addr_r_ready_i ),
+		.axi_ctl_r_data_o       ( xbar_r_data_i       ),
+		.axi_ctl_r_resp_o       ( xbar_r_resp_i       ),
+		.axi_ctl_r_valid_o      ( xbar_r_valid_i      ),
+		.axi_ctl_r_ready_i      ( xbar_r_ready_o      ),
+		.axi_ctl_addr_w_addr_i  ( xbar_addr_w_addr_o  ),
+		.axi_ctl_addr_w_valid_i ( xbar_addr_w_valid_o ),
+		.axi_ctl_addr_w_ready_o ( xbar_addr_w_ready_i ),
+		.axi_ctl_w_data_i       ( xbar_w_data_o       ),
+		.axi_ctl_w_strb_i       ( xbar_w_strb_o       ),
+		.axi_ctl_w_valid_i      ( xbar_w_valid_o      ),
+		.axi_ctl_w_ready_o      ( xbar_w_ready_i      ),
+		.axi_ctl_bkwd_resp_o    ( xbar_bkwd_resp_i    ),
+		.axi_ctl_bkwd_valid_o   ( xbar_bkwd_valid_i   ),
+		.axi_ctl_bkwd_ready_i   ( xbar_bkwd_ready_o   ),
+		.uart_addr_w_valid_i    ( uart_addr_w_valid_i    ),
+		.uart_addr_w_ready_o    ( uart_addr_w_ready_o    ),
+		.uart_w_data_i          ( uart_w_data_i          ),
+		.uart_w_valid_i         ( uart_w_valid_i         ),
+		.uart_w_ready_o         ( uart_w_ready_o         ),
+		.uart_bkwd_resp_o       ( uart_bkwd_resp_o       ),
+		.uart_bkwd_valid_o      ( uart_bkwd_valid_o      ),
+		.uart_bkwd_ready_i      ( uart_bkwd_ready_i      ),
+		.sram_addr_r_addr_o     ( sram_addr_r_addr_o     ),
+		.sram_addr_r_valid_o    ( sram_addr_r_valid_o    ),
+		.sram_addr_r_ready_i    ( sram_addr_r_ready_i    ),
+		.sram_r_data_i          ( sram_r_data_i          ),
+		.sram_r_resp_i          ( sram_r_resp_i          ),
+		.sram_r_valid_i         ( sram_r_valid_i         ),
+		.sram_r_ready_o         ( sram_r_ready_o         ),
+		.sram_addr_w_addr_o     ( sram_addr_w_addr_o     ),
+		.sram_addr_w_valid_o    ( sram_addr_w_valid_o    ),
+		.sram_addr_w_ready_i    ( sram_addr_w_ready_i    ),
+		.sram_w_data_o          ( sram_w_data_o          ),
+		.sram_w_strb_o          ( sram_w_strb_o          ),
+		.sram_w_valid_o         ( sram_w_valid_o         ),
+		.sram_w_ready_i         ( sram_w_ready_i         ),
+		.sram_bkwd_resp_i       ( sram_bkwd_resp_i       ),
+		.sram_bkwd_valid_i      ( sram_bkwd_valid_i      ),
+		.sram_bkwd_ready_o      ( sram_bkwd_ready_o      )
+	);
+
 
 	ysyx_22041211_AXI_SRAM#(
 		.ADDR_LEN       ( 32 ),
@@ -193,6 +288,22 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.bkwd_valid_o   ( sram_bkwd_valid_i ),
 		.bkwd_ready_i   ( sram_bkwd_ready_o )
 	);
+
+	ysyx_22041211_UART#(
+		.DATA_LEN       ( 32 )
+	)u_ysyx_22041211_AXI_UART(
+		.rstn           ( ~rst           ),
+		.clk            ( clk            ),
+		.addr_w_valid_i ( uart_addr_w_valid_i ),
+		.addr_w_ready_o ( uart_addr_w_ready_o ),
+		.w_data_i       ( uart_w_data_i       ),
+		.w_valid_i      ( uart_w_valid_i      ),
+		.w_ready_o      ( uart_w_ready_o      ),
+		.bkwd_resp_o    ( uart_bkwd_resp_o    ),
+		.bkwd_valid_o   ( uart_bkwd_valid_o   ),
+		.bkwd_ready_i   ( uart_bkwd_ready_i   )
+	);
+
 
 	// ysyx_22041211_AXI_SRAM#(
 	// 	.ADDR_LEN       ( 32 ),

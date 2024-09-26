@@ -143,3 +143,12 @@
 `define CSR_MSTATUS_IDX      2'b01
 `define CSR_MEPC_IDX         2'b10
 `define CSR_MTVEC_IDX        2'b11
+
+`define DEVICE_BASE          32'ha0000000
+`define SERIAL_PORT          `DEVICE_BASE + 32'h00003f8
+
+
+`define AXI_XBAR_UART        1'b0 
+`define AXI_XBAR_SRAM        1'b1 
+
+
