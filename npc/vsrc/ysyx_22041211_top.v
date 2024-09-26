@@ -49,6 +49,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	// Xbar
     //Addr Read
+	wire		[1:0]						xbar_device		;
 	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o	;
 	wire		                		xbar_addr_r_valid_o	;
 	wire		                		xbar_addr_r_ready_i	;
@@ -193,6 +194,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.data_bkwd_resp_o    ( data_bkwd_resp_i    ),
 		.data_bkwd_valid_o   ( data_bkwd_valid_i   ),
 		.data_bkwd_ready_i   ( data_bkwd_ready_o   ),
+		.xbar_device		 ( xbar_device 		   ),
 		.xbar_addr_r_addr_o  ( xbar_addr_r_addr_o  ),
 		.xbar_addr_r_valid_o ( xbar_addr_r_valid_o ),
 		.xbar_addr_r_ready_i ( xbar_addr_r_ready_i ),
@@ -218,6 +220,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	)u_ysyx_22041211_xbar(
 		.rstn                   ( ~rst                   ),
 		.clk                    ( clk                    ),
+		.axi_device				( xbar_device			 ),
 		.axi_ctl_addr_r_addr_i  ( xbar_addr_r_addr_o  ),
 		.axi_ctl_addr_r_valid_i ( xbar_addr_r_valid_o ),
 		.axi_ctl_addr_r_ready_o ( xbar_addr_r_ready_i ),

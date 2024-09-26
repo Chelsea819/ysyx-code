@@ -52,6 +52,7 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input		                		data_bkwd_ready_i,	// 主设备已准备好接收写回复信号
 
     // Xbar
+	output	[1:0]						xbar_device,
     //Addr Read
 	output	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o,
 	output		                		xbar_addr_r_valid_o,
@@ -83,6 +84,11 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 	reg				[1:0]			        con_state	;
 	reg				[1:0]		        	next_state	;
+
+	// wire			[31:0]						xbar_waddr;
+	
+	assign xbar_device = (data_addr_w_addr_i == `SERIAL_PORT) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
+
 
 	// always @(*) begin
 	// 	$display("con_state: [%b] next_state: [%b] xbar_addr_r_ready_i: [%b] inst_addr_r_valid_i: [%b] data_addr_r_valid_i[%b]",con_state, next_state, xbar_addr_r_ready_i, inst_addr_r_valid_i, data_addr_r_valid_i);

@@ -16,6 +16,9 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input		                		axi_ctl_addr_r_valid_i,
 	output		                		axi_ctl_addr_r_ready_o,
 
+	input	[1:0]						axi_device,
+
+
 	// Read data
 	output	reg	[DATA_LEN - 1:0]		axi_ctl_r_data_o	,
 	output		[1:0]					axi_ctl_r_resp_o	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
@@ -83,9 +86,8 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 );	
 
-	wire	[1:0]					axi_device;
 
-	assign axi_device = (axi_ctl_addr_w_addr_i == `SERIAL_PORT) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
+	// assign axi_device = (axi_ctl_addr_w_addr_i == `SERIAL_PORT) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
 
 	assign uart_w_data_i = axi_ctl_w_data_i;
 	assign sram_addr_r_addr_o = axi_ctl_addr_r_addr_i;
