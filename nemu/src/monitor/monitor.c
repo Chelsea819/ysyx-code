@@ -183,7 +183,6 @@ void init_monitor(int argc, char *argv[]) {
                                "bad"))) "-pc-linux-gnu"
   ));
 #endif
-  //init_ftrace();
 
   /* Display welcome message. */
   welcome();
