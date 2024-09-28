@@ -84,6 +84,7 @@ void init_regex() {
   //遍历正则规则数组rules[],共有NR_REGEX条规则
   for (i = 0; i < NR_REGEX; i ++) {
     /*第三个参数是匹配选项,这里是REG_EXTENDED表示支持扩展正则语法*/
+    // int regcomp(regex_t *preg, const char *regex, int cflags);
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -117,8 +118,8 @@ static bool make_token(char *e) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
-        //Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            //i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
