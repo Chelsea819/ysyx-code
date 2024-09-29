@@ -303,8 +303,8 @@ static void exec_once()
   if(ifbreak){
     printf("\nebreak!\n");
     // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
-    set_npc_state(NPC_STOP, dut->pc, 0);ifbreak = false;
-    // NPCTRAP(dut->pc, 0);
+    // set_npc_state(NPC_STOP, dut->pc, 0);ifbreak = false;
+    NPCTRAP(dut->pc, 0);
   }
 
   #if (defined CONFIG_TRACE) || (defined CONFIG_TRACE)
@@ -425,7 +425,7 @@ static void exec_once()
     
     
       // 取出函数名称
-       strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
+      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
     // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
     static int index = 1;
 

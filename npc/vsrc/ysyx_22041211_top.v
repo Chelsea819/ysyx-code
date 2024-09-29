@@ -8,6 +8,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 );
 	wire			[DATA_LEN - 1:0]	inst		;
 
+	// 检测到ebreak
+    // import "DPI-C" function void ifebreak_func(int inst);
+    // always @(posedge clk)
+    //     ifebreak_func(inst);
+
 	// IFU-AXI
 	// Addr Read
 	wire	[ADDR_LEN - 1:0]			inst_addr_r_addr_o;
