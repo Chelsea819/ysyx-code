@@ -46,7 +46,6 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	input	        [DATA_LEN - 1:0]    inst_i		,
 	output			[ADDR_LEN - 1:0]	pc			,
-	output								inst_ren	,
 	output								invalid		,
 	output								finish
 );

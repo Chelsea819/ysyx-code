@@ -1,4 +1,3 @@
-/* verilator lint_off UNOPTFLAT */
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input								clk 		,
@@ -8,17 +7,11 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	output								finish
 );
 	wire			[DATA_LEN - 1:0]	inst		;
-	wire								inst_ren	;
-	// wire			[ADDR_LEN - 1:0]	inst_addr	;
 
-	wire 			[DATA_LEN - 1:0] 	mem_waddr_i;
-	wire 			[DATA_LEN - 1:0] 	mem_wdata_i;
-    wire 			[DATA_LEN - 1:0] 	mem_raddr_i;
-    reg  			[DATA_LEN - 1:0] 	mem_rdata_rare_o;
-    reg  			[7:0]  				mem_rmask_i;
-    wire 			[7:0]  				mem_wmask_i;
-    wire  			      				mem_wen_i;
-    wire  			      				mem_ren_i;
+	// 检测到ebreak
+    import "DPI-C" function void clk_cycle_plus();
+    always @(posedge clk)
+        clk_cycle_plus();
 
 	// IFU-AXI
 	// Addr Read
@@ -31,7 +24,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		[1:0]					inst_r_resp_i	;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
 	wire		                		inst_r_valid_i	;
 	wire		                		inst_r_ready_o	;
-
 
 	wire	[ADDR_LEN - 1:0]		data_addr_r_addr_o	;
 	wire	                		data_addr_r_valid_o	;
@@ -60,6 +52,51 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		                		data_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
 	wire		                		data_bkwd_ready_o	;	// 主设备已准备好接收写回复信号
 
+	// Xbar
+    //Addr Read
+	wire		[1:0]						xbar_device		;
+	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o	;
+	wire		                		xbar_addr_r_valid_o	;
+	wire		                		xbar_addr_r_ready_i	;
+
+	// Read data
+	wire		[DATA_LEN - 1:0]		xbar_r_data_i		;
+	wire		[1:0]					xbar_r_resp_i		;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	wire		                		xbar_r_valid_i		;
+	wire		                		xbar_r_ready_o		;
+
+	// Addr Write
+	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_w_addr_o	;	// 写地址
+	wire		                		xbar_addr_w_valid_o	;	// 主设备给出的地址和相关控制信号有效
+	wire		                		xbar_addr_w_ready_i	; // 从设备已准备好接收地址和相关的控制信号
+
+	// Write data
+	wire	reg	[DATA_LEN - 1:0]		xbar_w_data_o	;	// 写出的数据
+	wire	reg	[3:0]					xbar_w_strb_o	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	wire		                		xbar_w_valid_o	;	// 主设备给出的数据和字节选通信号有效
+	wire		                		xbar_w_ready_i	;	// 从设备已准备好接收数据选通信号
+
+	// Backward
+	wire		[1:0]					xbar_bkwd_resp_i	;	// 写回复信号，写操作是否成功
+	wire		                		xbar_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
+	wire		                		xbar_bkwd_ready_o	;// 主设备已准备好接收写回复信号
+
+	// UART
+	// Addr Write
+	wire		                		uart_addr_w_valid_i;	// 主设备给出的地址和相关控制信号有效
+	wire		                		uart_addr_w_ready_o; // 从设备已准备好接收地址和相关的控制信号
+
+	// Write data
+	wire		[DATA_LEN - 1:0]		uart_w_data_i	;	// 写出的数据
+	wire		                		uart_w_valid_i	;	// 主设备给出的数据和字节选通信号有效
+	wire		                		uart_w_ready_o	;	// 从设备已准备好接收数据选通信号
+
+	// Backward
+	wire		[1:0]					uart_bkwd_resp_o	;	// 写回复信号，写操作是否成功
+	wire		                		uart_bkwd_valid_o	;	// 从设备给出的写回复信号是否有效
+	wire		                		uart_bkwd_ready_i	;	// 主设备已准备好接收写回复信号
+
+	// AXI-SRAM
 	wire	[ADDR_LEN - 1:0]		sram_addr_r_addr_o	;
 	wire	                		sram_addr_r_valid_o	;
 	wire	                		sram_addr_r_ready_i	;
@@ -86,6 +123,18 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		[1:0]				sram_bkwd_resp_i	;	// 写回复信号，写操作是否成功
 	wire		                	sram_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
 	wire		                	sram_bkwd_ready_o	;	// 主设备已准备好接收写回复信号
+
+	// CLINT
+	wire	[ADDR_LEN - 1:0]		clint_addr_r_addr_o	;
+	wire	                		clint_addr_r_valid_o	;
+	wire	                		clint_addr_r_ready_i	;
+
+
+	// Read data
+	wire		[DATA_LEN - 1:0]	clint_r_data_i	;
+	wire		[1:0]				clint_r_resp_i	;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	wire		                	clint_r_valid_i	;
+	wire		                	clint_r_ready_o	;
 
 // 检测到ebreak
     import "DPI-C" function void ifebreak_func(int inst);
@@ -128,7 +177,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.data_bkwd_ready_o   ( data_bkwd_ready_o   ),
 		.inst_i              ( inst              ),
 		.pc                  ( pc                  ),
-		.inst_ren            ( inst_ren            ),
 		.invalid             ( invalid             ),
 		.finish              ( finish              )
 	);
@@ -163,23 +211,82 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.data_bkwd_resp_o    ( data_bkwd_resp_i    ),
 		.data_bkwd_valid_o   ( data_bkwd_valid_i   ),
 		.data_bkwd_ready_i   ( data_bkwd_ready_o   ),
-		.sram_addr_r_addr_o  ( sram_addr_r_addr_o  ),
-		.sram_addr_r_valid_o ( sram_addr_r_valid_o ),
-		.sram_addr_r_ready_i ( sram_addr_r_ready_i ),
-		.sram_r_data_i       ( sram_r_data_i       ),
-		.sram_r_resp_i       ( sram_r_resp_i       ),
-		.sram_r_valid_i      ( sram_r_valid_i      ),
-		.sram_r_ready_o      ( sram_r_ready_o      ),
-		.sram_addr_w_addr_o  ( sram_addr_w_addr_o  ),
-		.sram_addr_w_valid_o ( sram_addr_w_valid_o ),
-		.sram_addr_w_ready_i ( sram_addr_w_ready_i ),
-		.sram_w_data_o       ( sram_w_data_o       ),
-		.sram_w_strb_o       ( sram_w_strb_o       ),
-		.sram_w_valid_o      ( sram_w_valid_o      ),
-		.sram_w_ready_i      ( sram_w_ready_i      ),
-		.sram_bkwd_resp_i    ( sram_bkwd_resp_i    ),
-		.sram_bkwd_valid_i   ( sram_bkwd_valid_i   ),
-		.sram_bkwd_ready_o   ( sram_bkwd_ready_o   )
+		.xbar_device		 ( xbar_device 		   ),
+		.xbar_addr_r_addr_o  ( xbar_addr_r_addr_o  ),
+		.xbar_addr_r_valid_o ( xbar_addr_r_valid_o ),
+		.xbar_addr_r_ready_i ( xbar_addr_r_ready_i ),
+		.xbar_r_data_i       ( xbar_r_data_i       ),
+		.xbar_r_resp_i       ( xbar_r_resp_i       ),
+		.xbar_r_valid_i      ( xbar_r_valid_i      ),
+		.xbar_r_ready_o      ( xbar_r_ready_o      ),
+		.xbar_addr_w_addr_o  ( xbar_addr_w_addr_o  ),
+		.xbar_addr_w_valid_o ( xbar_addr_w_valid_o ),
+		.xbar_addr_w_ready_i ( xbar_addr_w_ready_i ),
+		.xbar_w_data_o       ( xbar_w_data_o       ),
+		.xbar_w_strb_o       ( xbar_w_strb_o       ),
+		.xbar_w_valid_o      ( xbar_w_valid_o      ),
+		.xbar_w_ready_i      ( xbar_w_ready_i      ),
+		.xbar_bkwd_resp_i    ( xbar_bkwd_resp_i    ),
+		.xbar_bkwd_valid_i   ( xbar_bkwd_valid_i   ),
+		.xbar_bkwd_ready_o   ( xbar_bkwd_ready_o   )
+	);
+
+	ysyx_22041211_xbar#(
+		.ADDR_LEN               ( 32 ),
+		.DATA_LEN 		        ( 32 )
+	)u_ysyx_22041211_xbar(
+		.rstn                   ( ~rst                   ),
+		.clk                    ( clk                    ),
+		.axi_device				( xbar_device			 ),
+		.axi_ctl_addr_r_addr_i  ( xbar_addr_r_addr_o  ),
+		.axi_ctl_addr_r_valid_i ( xbar_addr_r_valid_o ),
+		.axi_ctl_addr_r_ready_o ( xbar_addr_r_ready_i ),
+		.axi_ctl_r_data_o       ( xbar_r_data_i       ),
+		.axi_ctl_r_resp_o       ( xbar_r_resp_i       ),
+		.axi_ctl_r_valid_o      ( xbar_r_valid_i      ),
+		.axi_ctl_r_ready_i      ( xbar_r_ready_o      ),
+		.axi_ctl_addr_w_addr_i  ( xbar_addr_w_addr_o  ),
+		.axi_ctl_addr_w_valid_i ( xbar_addr_w_valid_o ),
+		.axi_ctl_addr_w_ready_o ( xbar_addr_w_ready_i ),
+		.axi_ctl_w_data_i       ( xbar_w_data_o       ),
+		.axi_ctl_w_strb_i       ( xbar_w_strb_o       ),
+		.axi_ctl_w_valid_i      ( xbar_w_valid_o      ),
+		.axi_ctl_w_ready_o      ( xbar_w_ready_i      ),
+		.axi_ctl_bkwd_resp_o    ( xbar_bkwd_resp_i    ),
+		.axi_ctl_bkwd_valid_o   ( xbar_bkwd_valid_i   ),
+		.axi_ctl_bkwd_ready_i   ( xbar_bkwd_ready_o   ),
+		.uart_addr_w_valid_i    ( uart_addr_w_valid_i    ),
+		.uart_addr_w_ready_o    ( uart_addr_w_ready_o    ),
+		.uart_w_data_i          ( uart_w_data_i          ),
+		.uart_w_valid_i         ( uart_w_valid_i         ),
+		.uart_w_ready_o         ( uart_w_ready_o         ),
+		.uart_bkwd_resp_o       ( uart_bkwd_resp_o       ),
+		.uart_bkwd_valid_o      ( uart_bkwd_valid_o      ),
+		.uart_bkwd_ready_i      ( uart_bkwd_ready_i      ),
+		.sram_addr_r_addr_o     ( sram_addr_r_addr_o     ),
+		.sram_addr_r_valid_o    ( sram_addr_r_valid_o    ),
+		.sram_addr_r_ready_i    ( sram_addr_r_ready_i    ),
+		.sram_r_data_i          ( sram_r_data_i          ),
+		.sram_r_resp_i          ( sram_r_resp_i          ),
+		.sram_r_valid_i         ( sram_r_valid_i         ),
+		.sram_r_ready_o         ( sram_r_ready_o         ),
+		.sram_addr_w_addr_o     ( sram_addr_w_addr_o     ),
+		.sram_addr_w_valid_o    ( sram_addr_w_valid_o    ),
+		.sram_addr_w_ready_i    ( sram_addr_w_ready_i    ),
+		.sram_w_data_o          ( sram_w_data_o          ),
+		.sram_w_strb_o          ( sram_w_strb_o          ),
+		.sram_w_valid_o         ( sram_w_valid_o         ),
+		.sram_w_ready_i         ( sram_w_ready_i         ),
+		.sram_bkwd_resp_i       ( sram_bkwd_resp_i       ),
+		.sram_bkwd_valid_i      ( sram_bkwd_valid_i      ),
+		.sram_bkwd_ready_o      ( sram_bkwd_ready_o      ),
+		.clint_addr_r_addr_i    ( clint_addr_r_addr_o    ),
+		.clint_addr_r_valid_i   ( clint_addr_r_valid_o   ),
+		.clint_addr_r_ready_o   ( clint_addr_r_ready_i   ),
+		.clint_r_data_o         ( clint_r_data_i         ),
+		.clint_r_resp_o         ( clint_r_resp_i         ),
+		.clint_r_valid_o        ( clint_r_valid_i        ),
+		.clint_r_ready_i        ( clint_r_ready_o        )
 	);
 
 	ysyx_22041211_AXI_SRAM#(
@@ -207,6 +314,38 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.bkwd_valid_o   ( sram_bkwd_valid_i ),
 		.bkwd_ready_i   ( sram_bkwd_ready_o )
 	);
+
+	ysyx_22041211_UART#(
+		.DATA_LEN       ( 32 )
+	)u_ysyx_22041211_AXI_UART(
+		.rstn           ( ~rst           ),
+		.clk            ( clk            ),
+		.addr_w_valid_i ( uart_addr_w_valid_i ),
+		.addr_w_ready_o ( uart_addr_w_ready_o ),
+		.w_data_i       ( uart_w_data_i       ),
+		.w_valid_i      ( uart_w_valid_i      ),
+		.w_ready_o      ( uart_w_ready_o      ),
+		.bkwd_resp_o    ( uart_bkwd_resp_o    ),
+		.bkwd_valid_o   ( uart_bkwd_valid_o   ),
+		.bkwd_ready_i   ( uart_bkwd_ready_i   )
+	);
+
+	ysyx_22041211_CLINT#(
+		.ADDR_LEN       ( 32 ),
+		.DATA_LEN 	    ( 32 )
+	)u_ysyx_22041211_CLINT(
+		.rstn           ( ~rst           ),
+		.clk            ( clk            ),
+		.addr_r_addr_i  ( clint_addr_r_addr_o  ),
+		.addr_r_valid_i ( clint_addr_r_valid_o ),
+		.addr_r_ready_o ( clint_addr_r_ready_i ),
+		.r_data_o       ( clint_r_data_i       ),
+		.r_resp_o       ( clint_r_resp_i       ),
+		.r_valid_o      ( clint_r_valid_i      ),
+		.r_ready_i      ( clint_r_ready_o      )
+	);
+
+
 
 	// ysyx_22041211_AXI_SRAM#(
 	// 	.ADDR_LEN       ( 32 ),
@@ -252,22 +391,6 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 	.mem_rdata_usigned_o  ( inst  )
 	// );
 
-	// ysyx_22041211_SRAM#(
-    //     .ADDR_LEN     ( 32 ),
-    //     .DATA_LEN     ( 32 )
-    // )u_ysyx_22041211_data_SRAM(
-    //     .rst          ( rst          ),
-    //     .clk          ( clk          ),
-    //     .ren          ( mem_ren_i   ),
-    //     .mem_wen_i    ( mem_wen_i    ),
-    //     .mem_wdata_i  ( mem_wdata_i  ),
-    //     .mem_waddr_i  ( mem_waddr_i    ),
-    //     .mem_raddr_i  ( mem_raddr_i  ),
-    //     .mem_wmask    ( mem_wmask_i    ),
-    //     .mem_rmask    ( mem_rmask_i    ),
-    //     .mem_rdata_usigned_o( mem_rdata_rare_o)
-    // );
-
 	// ysyx_22041211_AXI_SRAM#(
 	// 	.ADDR_LEN       ( 32 ),
 	// 	.DATA_LEN       ( 32 )
@@ -295,4 +418,3 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// );
 
 endmodule
-/* verilator lint_on UNOPTFLAT */

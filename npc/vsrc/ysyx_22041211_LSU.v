@@ -186,7 +186,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
             addr_w_addr_o = 0;
             w_data_o = 0;
             w_strb_o = 0;
-        end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
+        // end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
+        end else if(con_state == LSU_WAIT_ADDR_PASS) begin
             addr_r_addr_o = alu_result_i;
             addr_w_addr_o = alu_result_i;
             w_data_o = mem_wdata_i;

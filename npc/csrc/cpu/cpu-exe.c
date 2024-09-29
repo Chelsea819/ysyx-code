@@ -1,4 +1,5 @@
 #include <cpu/decode.h>
+#include <cstdint>
 #include <cstdio>
 #include <isa.h>
 #include <elf.h>
@@ -290,6 +291,7 @@ void per_inst_cycle(){
 }
 
 
+
 /* let CPU conduct current command and renew PC */
 static void exec_once()
 {
@@ -303,6 +305,7 @@ static void exec_once()
   if(ifbreak){
     printf("\nebreak!\n");
     // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
+    // set_npc_state(NPC_STOP, dut->pc, 0);ifbreak = false;
     NPCTRAP(dut->pc, 0);
   }
 
@@ -424,7 +427,7 @@ static void exec_once()
     
     
       // 取出函数名称
-       strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
+      strncpy(name, elf_header[indx].strtab + sym.st_name, 19);
     // 4.调用的函数放入一个数据结构，返回函数放入一个数据结构
     static int index = 1;
 
@@ -476,14 +479,25 @@ static void execute(uint64_t n) {
   }
 }
 
+uint64_t clk_cycle = 0;
+
+void clk_cycle_plus(){
+  clk_cycle += 2;
+}
+
+// static void statistic_sim() {
+//   Log("simulation frequency = " NUMBERIC_FMT " cycle/s", clk_cycle * 1000000 / g_timer); 
+// }
+
 static void statistic()
 {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
-  if (g_timer > 0)
+  if (g_timer > 0){
     Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
+    Log("simulation frequency = " NUMBERIC_FMT " cycle/s", clk_cycle * 1000000 / g_timer);} 
   else
     Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
