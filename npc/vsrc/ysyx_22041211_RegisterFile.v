@@ -6,20 +6,20 @@
  ************************************************************************/
 
 module ysyx_22041211_RegisterFile #(parameter ADDR_WIDTH = 16, DATA_WIDTH = 32)(
-	input								clk		,
+	input								clock		,
 	input		[DATA_WIDTH - 1:0]		wdata	,
 	input	    [4:0]					rsc1	,
 	input	    [4:0]					rsc2	,
 	input	    [4:0]					rd		,
-	input								rst		,
+	input								reset		,
 	input								regWrite,
 	output		[DATA_WIDTH - 1:0]		r_data1	,
 	output		[DATA_WIDTH - 1:0]		r_data2	
 );
 	reg [DATA_WIDTH - 1:0] rf [ADDR_WIDTH - 1:0];
 
-	always @(posedge clk) begin
-		if (regWrite && rd != 0) rf[rd[3:0]] <= wdata & (~{32{rst}});
+	always @(posedge clock) begin
+		if (regWrite && rd != 0) rf[rd[3:0]] <= wdata & (~{32{reset}});
 		else if(regWrite && rd == 0) rf[rd[3:0]] <= 0;
 	end
 

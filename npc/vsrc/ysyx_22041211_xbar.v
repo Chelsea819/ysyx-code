@@ -4,12 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clock reset waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 `include "ysyx_22041211_define_delay.v"
 module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input								rstn		,
-    input		                		clk			,
+    input		                		clock			,
 
 	//Addr Read
 	input		[ADDR_LEN - 1:0]		axi_ctl_addr_r_addr_i,

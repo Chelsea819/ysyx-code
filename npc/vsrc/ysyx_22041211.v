@@ -1,7 +1,8 @@
 `include "ysyx_22041211_define.v"
-module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
-	input								clk 		,
-	input								rst 		,
+module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
+	input								clock 		,
+	input								reset 		,
+	input								reset 		,
 
 	// IFU-AXI
 	// Addr Read
@@ -130,15 +131,15 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	assign finish = if_last_finish_i;
 	
 	// always @(*) begin
-	// 	$display("pc: [%h] inst: [%b] invalid: [%h] rst: [%b] clk[%b]",pc, id_inst_i, invalid, rst, clk);
+	// 	$display("pc: [%h] inst: [%b] invalid: [%h] reset: [%b] clock[%b]",pc, id_inst_i, invalid, reset, clock);
 	// end
 
 ysyx_22041211_IFU#(
     .ADDR_WIDTH       ( 32 ),
     .DATA_WIDTH       ( 32 )
-)u_ysyx_22041211_IFU(
-    .clk              ( clk              ),
-    .rst              ( rst              ),
+)ysyx_22041211_IFU(
+    .clock              ( clock              ),
+    .reset              ( reset              ),
 	.addr_r_addr_o    ( inst_addr_r_addr_o              ),		
     .addr_r_valid_o   ( inst_addr_r_valid_o              ),
     .addr_r_ready_i   ( inst_addr_r_ready_i              ),
@@ -165,21 +166,21 @@ ysyx_22041211_IFU#(
 );
 
 
-	ysyx_22041211_RegisterFile my_RegisterFile(
-		.clk		(clk),
+	ysyx_22041211_RegisterFile ysyx_22041211_RegisterFile(
+		.clock		(clock),
 		.wdata		(reg_wdata_i),
 		.rd			(reg_waddr_i),
 		.rsc1		(reg_raddr1_i),
 		.rsc2		(reg_raddr2_i),
-		.rst		(rst)		 ,
+		.reset		(reset)		 ,
 		.regWrite	(reg_wen_i),
 		.r_data1	(id_reg1_data_i),
 		.r_data2	(id_reg2_data_i)
 	);
 
-	ysyx_22041211_decoder my_decoder(
-		.clk              				( clk              ),
-		.rst              				( rst              ),
+	ysyx_22041211_decoder ysyx_22041211_decoder(
+		.clock              				( clock              ),
+		.reset              				( reset              ),
 		.inst_i							(id_inst_i),
 		.reg1_data_i					(id_reg1_data_i),
 		.reg2_data_i					(id_reg2_data_i),
@@ -210,9 +211,9 @@ ysyx_22041211_IFU#(
 		.imm_o      					(ex_imm_i)
 	);
 
-	ysyx_22041211_EXE my_execute(
-		.clk              	( clk     ),
-		.rst              	( rst     ),
+	ysyx_22041211_EXE ysyx_22041211_EXE(
+		.clock              	( clock     ),
+		.reset              	( reset     ),
 		.reg1_i				(ex_reg1_i),
 		.reg2_i				(ex_reg2_i),
 		.pc_i				(ex_pc_i),
@@ -247,10 +248,10 @@ ysyx_22041211_IFU#(
 	ysyx_22041211_LSU#(
 		.DATA_LEN          ( 32 ),
 		.ADDR_LEN          ( 32 )
-	)u_ysyx_22041211_LSU(
-		.rstn           ( ~rst           ),
+	)ysyx_22041211_LSU(
+		.rstn           ( ~reset           ),
 		.wd_i          ( lsu_wd_i          ),
-		.clk           ( clk           		),
+		.clock           ( clock           		),
 		.wreg_i   		( lsu_wreg_i   		),
 		.alu_result_i   ( lsu_alu_result_i  	),
 		.mem_wen_i     	( lsu_mem_wen_i   	),
@@ -297,9 +298,9 @@ ysyx_22041211_IFU#(
 	// ysyx_22041211_LSU#(
 	// 	.DATA_LEN      ( 32 )
 	// )u_ysyx_22041211_LSU(
-	// 	.rst           ( rst           ),
+	// 	.reset           ( reset           ),
 	// 	.wd_i          ( lsu_wd_i          ),
-	// 	.clk           ( clk           		),
+	// 	.clock           ( clock           		),
 	// 	.wreg_i   		( lsu_wreg_i   		),
 	// 	.alu_result_i   ( lsu_alu_result_i  	),
 	// 	.mem_wen_i     	( lsu_mem_wen_i   	),
@@ -333,10 +334,10 @@ ysyx_22041211_IFU#(
 
 	ysyx_22041211_wb#(
 		.DATA_LEN     ( 32 )
-	)u_ysyx_22041211_wb(
-		.rst          ( rst          ),
+	)ysyx_22041211_wb(
+		.reset          ( reset          ),
 		.wd_i         ( wb_reg_wen_i ),
-		.clk          ( clk          ),
+		.clock          ( clock          ),
 		.wreg_i       ( wb_wreg_i       ),
 		.csr_wdata_i  ( wb_csr_wdata_i  ),
 		.csr_type_i   ( wb_csr_type_i  ),
@@ -356,9 +357,9 @@ ysyx_22041211_IFU#(
 
 	ysyx_22041211_CSR#(
 		.DATA_WIDTH    ( 32 )
-	)u_ysyx_22041211_CSR(
-		.clk           ( clk           ),
-		.rst           ( rst           ),
+	)ysyx_22041211_CSR(
+		.clock           ( clock           ),
+		.reset           ( reset           ),
 		.csr_addr      ( csr_addr_i      ),
 		.wdata         ( csr_wdata_i         ),
 		.csr_type_i    ( csr_type_i    ),

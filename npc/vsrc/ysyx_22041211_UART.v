@@ -4,12 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clock reset waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 `include "ysyx_22041211_define_delay.v"
 module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 	input								rstn		,
-    input		                		clk			,
+    input		                		clock			,
 
 	// Addr Write
 	input		                		addr_w_valid_i,	// 主设备给出的地址和相关控制信号有效
@@ -35,13 +35,13 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 		wire			[3:0]		        	delay_num;
 
 		ysyx_22041211_LFSR u_LFSR(
-			.clk          ( clk          ),
+			.clock          ( clock          ),
 			.rstn         ( rstn         ),
 			.initial_var  ( 4'b1  		 ),
 			.result       ( delay_num    )
 		);
 		
-		always @(posedge clk ) begin
+		always @(posedge clock ) begin
 			if (~rstn) 
 				RANDOM_DELAY <= 4'b1;
 			else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
@@ -57,7 +57,7 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 	assign bkwd_valid_o = (con_state == WAIT_DATA_WRITE) && rstn && (bkwd_valid_delay == RANDOM_DELAY);
 
 
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if (next_state == WAIT_DATA_WRITE && (bkwd_valid_delay != RANDOM_DELAY || bkwd_valid_delay == 0)) 
 			bkwd_valid_delay <= bkwd_valid_delay + 1;
 		else if(next_state == WAIT_DATA_WRITE && bkwd_valid_delay == RANDOM_DELAY)
@@ -81,7 +81,7 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 
 
 	// mem_wen
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if(rstn & (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
 			mem_wen <= 1'b1;
 		else 
@@ -89,7 +89,7 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 	end
 
 	// state trans
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if(rstn)
 			con_state <= next_state;
 		else 
@@ -117,7 +117,7 @@ module ysyx_22041211_UART #(parameter DATA_LEN = 32)(
 	end
 
 
-	always @(posedge clk) begin
+	always @(posedge clock) begin
   		if (mem_wen) begin // 有写请求时
 			$write("%c",w_data_i[7:0]);
 		end

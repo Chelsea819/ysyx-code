@@ -43,17 +43,17 @@ int main(int argc, char **argv, char **env) {
   dut->trace(m_trace, 5);
   m_trace->open("waveform.vcd");
 #endif
-  dut->rst = 1;
+  dut->reset = 1;
   dut->eval();
-  dut->clk = 0;
+  dut->clock = 0;
   dut->eval();
 #ifdef CONFIG_WAVE
   m_trace->dump(sim_time);
   sim_time++;
 #endif
-  dut->clk = 1;
+  dut->clock = 1;
   dut->eval();
-  dut->rst = 0;
+  dut->reset = 0;
   dut->eval();
 #ifdef CONFIG_WAVE
   m_trace->dump(sim_time);

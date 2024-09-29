@@ -1,7 +1,7 @@
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
-	input								clk 		,
-	input								rst 		,
+	input								clock 		,
+	input								reset 		,
 	output			[ADDR_LEN - 1:0]	pc			,
 	output								invalid		,
 	output								finish
@@ -10,7 +10,7 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	// 检测到ebreak
     import "DPI-C" function void clk_cycle_plus();
-    always @(posedge clk)
+    always @(posedge clock)
         clk_cycle_plus();
 
 	// IFU-AXI
@@ -146,12 +146,12 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
     always @(*)
         inst_get(inst);
 
-	ysyx_22041211_cpu#(
+	ysyx_22041211#(
 		.DATA_LEN            ( 32 ),
 		.ADDR_LEN 	         ( 32 )
-	)u_ysyx_22041211_cpu(
-		.clk                 ( clk                 ),
-		.rst                 ( rst                 ),
+	)ysyx_22041211(
+		.clock                 ( clock                 ),
+		.reset                 ( reset                 ),
 		.inst_addr_r_addr_o	 ( inst_addr_r_addr_o  ),
 		.inst_addr_r_valid_o ( inst_addr_r_valid_o ),
 		.inst_addr_r_ready_i ( inst_addr_r_ready_i ),
@@ -185,8 +185,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.ADDR_LEN            ( 32 ),
 		.DATA_LEN            ( 32 )
 	)u_ysyx_22041211_AXI_CTL(
-		.rst                 ( rst                ),
-		.clk                 ( clk                 ),
+		.reset                 ( reset                ),
+		.clock                 ( clock                 ),
 		.inst_addr_r_addr_i  ( inst_addr_r_addr_o  ),
 		.inst_addr_r_valid_i ( inst_addr_r_valid_o ),
 		.inst_addr_r_ready_o ( inst_addr_r_ready_i ),
@@ -235,8 +235,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.ADDR_LEN               ( 32 ),
 		.DATA_LEN 		        ( 32 )
 	)u_ysyx_22041211_xbar(
-		.rstn                   ( ~rst                   ),
-		.clk                    ( clk                    ),
+		.rstn                   ( ~reset                   ),
+		.clock                    ( clock                    ),
 		.axi_device				( xbar_device			 ),
 		.axi_ctl_addr_r_addr_i  ( xbar_addr_r_addr_o  ),
 		.axi_ctl_addr_r_valid_i ( xbar_addr_r_valid_o ),
@@ -293,8 +293,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.ADDR_LEN       ( 32 ),
 		.DATA_LEN       ( 32 )
 	)u_ysyx_22041211_AXI_SRAM(
-		.rstn            ( ~rst            ),
-		.clk            ( clk            ),
+		.rstn            ( ~reset            ),
+		.clock            ( clock            ),
 		.addr_r_addr_i  ( sram_addr_r_addr_o  ),
 		.addr_r_valid_i ( sram_addr_r_valid_o ),
 		.addr_r_ready_o ( sram_addr_r_ready_i      ),
@@ -318,8 +318,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	ysyx_22041211_UART#(
 		.DATA_LEN       ( 32 )
 	)u_ysyx_22041211_AXI_UART(
-		.rstn           ( ~rst           ),
-		.clk            ( clk            ),
+		.rstn           ( ~reset           ),
+		.clock            ( clock            ),
 		.addr_w_valid_i ( uart_addr_w_valid_i ),
 		.addr_w_ready_o ( uart_addr_w_ready_o ),
 		.w_data_i       ( uart_w_data_i       ),
@@ -334,8 +334,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.ADDR_LEN       ( 32 ),
 		.DATA_LEN 	    ( 32 )
 	)u_ysyx_22041211_CLINT(
-		.rstn           ( ~rst           ),
-		.clk            ( clk            ),
+		.rstn           ( ~reset           ),
+		.clock            ( clock            ),
 		.addr_r_addr_i  ( clint_addr_r_addr_o  ),
 		.addr_r_valid_i ( clint_addr_r_valid_o ),
 		.addr_r_ready_o ( clint_addr_r_ready_i ),
@@ -351,8 +351,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 	.ADDR_LEN       ( 32 ),
 	// 	.DATA_LEN       ( 32 )
 	// )u_ysyx_22041211_inst_AXI_SRAM(
-	// 	.rstn            ( ~rst            ),
-	// 	.clk            ( clk            ),
+	// 	.rstn            ( ~reset            ),
+	// 	.clock            ( clock            ),
 	// 	.addr_r_addr_i  ( inst_addr_r_addr_o  ),
 	// 	.addr_r_valid_i ( inst_addr_r_valid_o ),
 	// 	.addr_r_ready_o ( inst_addr_r_ready_i      ),
@@ -379,8 +379,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 	.ADDR_LEN     ( 32 ),
 	// 	.DATA_LEN     ( 32 )
 	// )u_ysyx_22041211_inst_SRAM(
-	// 	.rst          ( rst          ),
-	// 	.clk          ( clk          ),
+	// 	.reset          ( reset          ),
+	// 	.clock          ( clock          ),
 	// 	.ren          ( inst_ren    ),
 	// 	.mem_wen_i    ( 0    ),
 	// 	.mem_wdata_i  ( 0  ),
@@ -395,8 +395,8 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// 	.ADDR_LEN       ( 32 ),
 	// 	.DATA_LEN       ( 32 )
 	// )u_ysyx_22041211_data_AXI_SRAM(
-	// 	.rstn            ( ~rst            ),
-	// 	.clk            ( clk            ),
+	// 	.rstn            ( ~reset            ),
+	// 	.clock            ( clock            ),
 	// 	.addr_r_addr_i  ( data_addr_r_addr_o  ),
 	// 	.addr_r_valid_i ( data_addr_r_valid_o ),
 	// 	.addr_r_ready_o ( data_addr_r_ready_i      ),

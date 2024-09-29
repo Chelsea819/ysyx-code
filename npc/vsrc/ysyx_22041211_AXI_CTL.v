@@ -4,12 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clock reset waddr wdata wen wmask
 /* verilator lint_off UNOPTFLAT */
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
-	input								rst		,
-    input		                		clk		,
+	input								reset		,
+    input		                		clock		,
 
 	// IFU--inst-AXI
 	//Addr Read
@@ -105,8 +105,8 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	end
 
 
-	always @(posedge clk ) begin
-		if (rst) begin
+	always @(posedge clock ) begin
+		if (reset) begin
 			xbar_device_tmp <= 0;
 		end else begin
 			xbar_device_tmp <= xbar_device;
@@ -118,8 +118,8 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	// 	$display("con_state: [%b] next_state: [%b] xbar_addr_r_ready_i: [%b] inst_addr_r_valid_i: [%b] data_addr_r_valid_i[%b]",con_state, next_state, xbar_addr_r_ready_i, inst_addr_r_valid_i, data_addr_r_valid_i);
 	// end
 	// state trans
-	always @(posedge clk ) begin
-		if(rst)
+	always @(posedge clock ) begin
+		if(reset)
 			con_state <= AXI_CTL_IDLE;
 		else 
 			con_state <= next_state;
@@ -204,7 +204,7 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 													1'b0} : 
 													0;
 
-	always @(posedge clk) begin
+	always @(posedge clock) begin
 		case(next_state)
 			AXI_CTL_IDLE: begin
 				if(con_state == AXI_CTL_BUSY_DATA) begin

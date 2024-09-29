@@ -13,6 +13,12 @@
 /fceux-am
 /nvboard
 /am-kernels
-/npc/.history/*
-/npc.prev/*
-npc_bnk_yosys/*
+/npc/.history
+/npc.prev
+/npc_bnk_yosys
+/npc/include/config/cc/lto.h
+/npc/include/config/dtrace.h
+/npc/include/config/rve.h
+/npc/include/config/wave.h
+/nemu/.history
+/npc/vsrc.bnk

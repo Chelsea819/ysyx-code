@@ -6,8 +6,8 @@
  ************************************************************************/
 
 module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
-	input									clk				,
-	input									rst				,
+	input									clock				,
+	input									reset				,
 	input									branch_request_i,	
 	input		[ADDR_LEN - 1:0]			branch_target_i	,
 	input									branch_flag_i	,
@@ -30,14 +30,14 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	// 	$display("csr_pc_i = [%b]\n",csr_pc_i);
 	// end
 
-	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clk,rst,pc_next,1'b1,pc);
+	// ysyx_22041211_Reg #(ADDR_LEN, RESET_VAL) PC_Reg (clock,reset,pc_next,1'b1,pc);
 	assign pc_next = (branch_flag_i & branch_request_i) ? branch_target_i : 
 					 jmp_flag_i 						? jmp_target_i : 
 					 csr_jmp_i 							? csr_pc_i : 
 					 pc_plus_4;
 	
-	always @ (posedge clk) begin
-		if(rst)
+	always @ (posedge clock) begin
+		if(reset)
 			pc <= 32'h80000000;
 		else if (con_state == IFU_WAIT_FINISH && last_finish == 1'b1) 
 			pc <= pc_next;

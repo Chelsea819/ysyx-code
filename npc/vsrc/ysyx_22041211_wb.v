@@ -1,8 +1,8 @@
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
-    input								rst,
+    input								reset,
     input		                		wd_i		,
-    input		                		clk		    ,
+    input		                		clock		    ,
     input		[4:0]		            wreg_i		,
     input       [DATA_LEN - 1:0]        csr_wdata_i	,
     input       [2:0]		            csr_type_i	,
@@ -26,7 +26,7 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
     
 	parameter [1:0] WB_WAIT_IFU_VALID = 0, WB_WAIT_CTRL_VALID = 2'b01, WB_WAIT_MEM = 2'b10, WB_WAIT_REG_VALID = 2'b11;
 
-    always @(posedge clk ) begin
+    always @(posedge clock ) begin
         if(next_state == WB_WAIT_REG_VALID)
 			finish <= 1'b1;
 		else 
@@ -34,8 +34,8 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
 	end
 
 	// state trans
-	always @(posedge clk ) begin
-		if(rst)
+	always @(posedge clock ) begin
+		if(reset)
 			con_state <= WB_WAIT_IFU_VALID;
 		else 
 			con_state <= next_state;

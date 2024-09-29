@@ -4,11 +4,11 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clock reset waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input								rstn			,
-    input		                		clk			,
+    input		                		clock			,
     input		                		ren			,
     input		                		mem_wen_i	,
 	input		[DATA_LEN - 1:0]		mem_wdata_i	,
@@ -32,7 +32,7 @@ module ysyx_22041211_SRAM #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
         end
 	end
 	import "DPI-C" function void pmem_write_task(input int waddr, input int wdata, input byte wmask);
-	always @(posedge clk) begin
+	always @(posedge clock) begin
   		if (mem_wen_i) begin // 有写请求时
 			// $display("mem_wen_i = %d mem_wmask = %x mem_waddr = %x\n",mem_wen_i, mem_wmask, mem_waddr_i);
             pmem_write_task(mem_waddr_i, mem_wdata_i, mem_wmask);
