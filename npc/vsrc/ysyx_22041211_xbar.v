@@ -106,6 +106,7 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	assign sram_addr_w_addr_o = axi_ctl_addr_w_addr_i;
 	assign sram_w_data_o = axi_ctl_w_data_i;
 	assign sram_w_strb_o = axi_ctl_w_strb_i;
+	assign clint_addr_r_addr_i = axi_ctl_addr_r_addr_i;
 
 	assign {axi_ctl_addr_r_ready_o, axi_ctl_r_data_o, axi_ctl_r_resp_o, axi_ctl_r_valid_o, 
 			axi_ctl_addr_w_ready_o, axi_ctl_w_ready_o, 
