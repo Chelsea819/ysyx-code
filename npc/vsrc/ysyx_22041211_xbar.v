@@ -82,7 +82,19 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	// Backward
 	input		[1:0]					sram_bkwd_resp_i,	// 写回复信号，写操作是否成功
 	input		                		sram_bkwd_valid_i,	// 从设备给出的写回复信号是否有效
-	output		                		sram_bkwd_ready_o
+	output		                		sram_bkwd_ready_o,
+
+	// CLINT
+	//Addr Read
+	output		[ADDR_LEN - 1:0]		clint_addr_r_addr_i,
+	output		                		clint_addr_r_valid_i,
+	input		                		clint_addr_r_ready_o,
+
+	// Read data
+	input	reg	[DATA_LEN - 1:0]		clint_r_data_o	,
+	input		[1:0]					clint_r_resp_o	,	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	input		                		clint_r_valid_o	,
+	output		                		clint_r_ready_i	
 
 );	
 
@@ -103,6 +115,9 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 															(axi_device == `AXI_XBAR_SRAM) ? {sram_addr_r_ready_i, sram_r_data_i, sram_r_resp_i, sram_r_valid_i, 
 																							sram_addr_w_ready_i, sram_w_ready_i,
 																							sram_bkwd_resp_i, sram_bkwd_valid_i} :
+															(axi_device == `AXI_XBAR_CLINT) ? {clint_addr_r_ready_o, clint_r_data_o, clint_r_resp_o, clint_r_valid_o, 
+																							1'b0, 1'b0,
+																							2'b0, 1'b0} :
 																							0;
 
 	assign {uart_addr_w_valid_i, uart_w_valid_i, uart_bkwd_ready_i } = (axi_device == `AXI_XBAR_UART) ? 
@@ -112,6 +127,9 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			sram_addr_w_valid_o, sram_w_valid_o, sram_bkwd_ready_o} = (axi_device == `AXI_XBAR_SRAM) ? 
 																			{axi_ctl_addr_r_valid_i, axi_ctl_r_ready_i, 
 																			axi_ctl_addr_w_valid_i, axi_ctl_w_valid_i, axi_ctl_bkwd_ready_i} : 0;
+	
+	assign {clint_addr_r_valid_i, clint_r_ready_i} = (axi_device == `AXI_XBAR_CLINT) ? 
+																			{axi_ctl_addr_r_valid_i, axi_ctl_r_ready_i} : 0;
 	
 	
 

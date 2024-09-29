@@ -145,10 +145,12 @@
 `define CSR_MTVEC_IDX        2'b11
 
 `define DEVICE_BASE          32'ha0000000
-`define SERIAL_PORT          `DEVICE_BASE + 32'h00003f8
+`define SERIAL_PORT          (`DEVICE_BASE + 32'h00003f8)
+`define RTC_ADDR             (`DEVICE_BASE + 32'h0000048)
 
 
 `define AXI_XBAR_UART        2'b01 
 `define AXI_XBAR_SRAM        2'b10 
+`define AXI_XBAR_CLINT       2'b11 
 
 

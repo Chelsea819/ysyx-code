@@ -119,6 +119,18 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire		                	sram_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
 	wire		                	sram_bkwd_ready_o	;	// 主设备已准备好接收写回复信号
 
+	// CLINT
+	wire	[ADDR_LEN - 1:0]		clint_addr_r_addr_o	;
+	wire	                		clint_addr_r_valid_o	;
+	wire	                		clint_addr_r_ready_i	;
+
+
+	// Read data
+	wire		[DATA_LEN - 1:0]	clint_r_data_i	;
+	wire		[1:0]				clint_r_resp_i	;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
+	wire		                	clint_r_valid_i	;
+	wire		                	clint_r_ready_o	;
+
 // 检测到ebreak
     import "DPI-C" function void ifebreak_func(int inst);
     always @(*)
@@ -262,9 +274,15 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.sram_w_ready_i         ( sram_w_ready_i         ),
 		.sram_bkwd_resp_i       ( sram_bkwd_resp_i       ),
 		.sram_bkwd_valid_i      ( sram_bkwd_valid_i      ),
-		.sram_bkwd_ready_o      ( sram_bkwd_ready_o      )
+		.sram_bkwd_ready_o      ( sram_bkwd_ready_o      ),
+		.clint_addr_r_addr_i    ( clint_addr_r_addr_o    ),
+		.clint_addr_r_valid_i   ( clint_addr_r_valid_o   ),
+		.clint_addr_r_ready_o   ( clint_addr_r_ready_i   ),
+		.clint_r_data_o         ( clint_r_data_i         ),
+		.clint_r_resp_o         ( clint_r_resp_i         ),
+		.clint_r_valid_o        ( clint_r_valid_i        ),
+		.clint_r_ready_i        ( clint_r_ready_o        )
 	);
-
 
 	ysyx_22041211_AXI_SRAM#(
 		.ADDR_LEN       ( 32 ),
@@ -306,6 +324,22 @@ module ysyx_22041211_top #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		.bkwd_valid_o   ( uart_bkwd_valid_o   ),
 		.bkwd_ready_i   ( uart_bkwd_ready_i   )
 	);
+
+	ysyx_22041211_CLINT#(
+		.ADDR_LEN       ( 32 ),
+		.DATA_LEN 	    ( 32 )
+	)u_ysyx_22041211_CLINT(
+		.rstn           ( ~rst           ),
+		.clk            ( clk            ),
+		.addr_r_addr_i  ( clint_addr_r_addr_o  ),
+		.addr_r_valid_i ( clint_addr_r_valid_o ),
+		.addr_r_ready_o ( clint_addr_r_ready_i ),
+		.r_data_o       ( clint_r_data_i       ),
+		.r_resp_o       ( clint_r_resp_i       ),
+		.r_valid_o      ( clint_r_valid_i      ),
+		.r_ready_i      ( clint_r_ready_o      )
+	);
+
 
 
 	// ysyx_22041211_AXI_SRAM#(

@@ -94,6 +94,8 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		if (con_state == AXI_CTL_IDLE) begin
 			if (data_addr_w_addr_i == `SERIAL_PORT) begin
 				xbar_device = `AXI_XBAR_UART;
+			end else if (data_addr_r_addr_i == `RTC_ADDR || data_addr_r_addr_i == `RTC_ADDR + 32'b100) begin
+				xbar_device = `AXI_XBAR_CLINT;
 			end else begin
 				xbar_device = `AXI_XBAR_SRAM;
 			end
