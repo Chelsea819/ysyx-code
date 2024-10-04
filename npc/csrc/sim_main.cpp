@@ -34,7 +34,6 @@ extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
 
 int main(int argc, char **argv, char **env) {
-  printf("1\n");
   Verilated::commandArgs(argc, argv);
 #ifdef CONFIG_WAVE
   Verilated::traceEverOn(
@@ -48,7 +47,6 @@ int main(int argc, char **argv, char **env) {
   dut->trace(m_trace, 5);
   m_trace->open("waveform.vcd");
 #endif
-  printf("1\n");
   dut->reset = 1;
   dut->eval();
   dut->clock = 0;
@@ -66,7 +64,6 @@ int main(int argc, char **argv, char **env) {
   sim_time++;
 #endif
   /* Start engine. */
-  printf("1");
   engine_start();
   dut->final();
 #ifdef CONFIG_WAVE
