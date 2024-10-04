@@ -30,7 +30,11 @@ extern WP *head;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
 #endif
 
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
+
 int main(int argc, char **argv, char **env) {
+  Verilated::commandArgs(argc, argv);
 #ifdef CONFIG_WAVE
   Verilated::traceEverOn(
       true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
