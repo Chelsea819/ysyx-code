@@ -91,5 +91,11 @@ module ysyx_22041211_wb #(parameter DATA_LEN = 32)(
             wdata_o          =     0; 
         end
 	end
+
+	import "DPI-C" function void finish_get(byte finish);
+		always @(*) begin
+			// $display("pc = %x dpc = %x\n",pc,pc_next);
+			finish_get({7'b0,finish});
+		end
     
 endmodule

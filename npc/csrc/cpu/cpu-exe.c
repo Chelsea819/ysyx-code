@@ -170,7 +170,7 @@ extern WP *head;
 void device_update();
 
 void ifebreak_func(int inst){
-	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst)
+	// printf("while key = 0x%08x\n",inst);printf("ebreak-called: pc = 0x%08x inst = 0x%08x\n",cpu.pc,dut->inst)
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
@@ -215,10 +215,10 @@ static void trace_and_difftest(){
   for(int i = 0; i < RISCV_GPR_NUM; i ++){
     cpu.gpr[i] = R(i);
   }
-  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
-  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
-  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
-  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__u_ysyx_22041211__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
+  cpu.mcause = dut->rootp->ysyx_22041211_top__DOT__ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[0];
+  cpu.mepc = dut->rootp->ysyx_22041211_top__DOT__ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[2];
+  cpu.mstatus = dut->rootp->ysyx_22041211_top__DOT__ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[1];
+  cpu.mtvec = dut->rootp->ysyx_22041211_top__DOT__ysyx_22041211_cpu__DOT__u_ysyx_22041211_CSR__DOT__csr[3];
  IFDEF(CONFIG_DIFFTEST, difftest_step(diff.pc, diff.dnpc));
 #endif
 
@@ -266,6 +266,23 @@ void inst_get(int inst){
   // printf("get inst! \n");
 }
 
+char inst_invalid = 0;
+void inst_invalid_get(char invalid){
+  inst_invalid = invalid;
+  // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
+  // printf("inst:0x%08x\n",inst);
+  // printf("get inst! \n");
+}
+
+char inst_finish = 0;
+void finish_get(char finish){
+  inst_finish = finish;
+  // printf("s.isa.inst.val:0x%08x\n",s.isa.inst.val);
+  // printf("inst:0x%08x\n",inst);
+  // printf("get inst! \n");
+}
+
+
 #ifndef CONFIG_ISA_loongarch32r
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
@@ -286,8 +303,8 @@ void per_inst_cycle(){
   do {
     per_clk_cycle();
     // printf("unfinshed!\n");
-  }while(dut->finish == 0);
-  // printf("finished dut.pc = [0x%08x]!\n",dut->pc);
+  }while(inst_finish == 0);
+  // printf("finished dut.pc = [0x%08x]!\n",cpu.pc);
 }
 
 
@@ -297,16 +314,16 @@ static void exec_once()
 {
   per_inst_cycle();
   // inst invalid check
-  if(dut->invalid == 1){
-    invalid_inst(dut->pc);
+  if(inst_invalid != 0){
+    invalid_inst(cpu.pc);
   }
 
   // ebreak check
   if(ifbreak){
     printf("\nebreak!\n");
-    // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",dut->pc,dut->inst);
-    // set_npc_state(NPC_STOP, dut->pc, 0);ifbreak = false;
-    NPCTRAP(dut->pc, 0);
+    // printf("ebreak: pc = 0x%08x inst = 0x%08x\n",cpu.pc,dut->inst);
+    // set_npc_state(NPC_STOP, cpu.pc, 0);ifbreak = false;
+    NPCTRAP(cpu.pc, 0);
   }
 
   #if (defined CONFIG_TRACE) || (defined CONFIG_TRACE)

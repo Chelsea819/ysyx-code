@@ -43,12 +43,12 @@ static int skip_dut_nr_inst = 0;
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
   tail->is_skip_ref_bool = true;
-  tail->is_skip_ref_pc = dut->pc;
-  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x dut->pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,dut->pc);
+  tail->is_skip_ref_pc = cpu.pc;
+  // printf("tail->is_kskip_ref_pc = 0x%08x cpu.pc = 0x%08x cpu.pc = 0x%08x\n",tail->is_skip_ref_pc,cpu.pc,cpu.pc);
 
   tail = tail->next;
   // is_skip_ref = true;
-  // is_skip_ref_pc = dut->pc;
+  // is_skip_ref_pc = cpu.pc;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.

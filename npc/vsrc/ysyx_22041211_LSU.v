@@ -38,6 +38,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	output	reg	[ADDR_LEN - 1:0]		addr_r_addr_o,
 	output		                		addr_r_valid_o,
 	input		                		addr_r_ready_i,
+	output		[2:0]                	addr_r_size_o,
 
 	// Read data
 	input		[DATA_LEN - 1:0]		r_data_i	,
@@ -48,6 +49,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// Addr Write
 	output	reg	[ADDR_LEN - 1:0]		addr_w_addr_o,	// 写地址
 	output		                		addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
+	output		[2:0]                	addr_w_size_o,	// 主设备给出的地址和相关控制信号有效
 	input		                		addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
 
 	// Write data
@@ -121,6 +123,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg & rstn & (addr_r_valid_delay == RANDOM_DELAY); // addr valid and load inst
     assign r_ready_o = (con_state == LSU_WAIT_LSU_VALID) & (r_ready_delay == RANDOM_DELAY);
     assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (addr_w_valid_delay == RANDOM_DELAY);  // addr valid and store inst
+    assign addr_w_size_o = `AXI_ADDR_SIZE_32;  // addr valid and store inst
+	assign addr_r_size_o = `AXI_ADDR_SIZE_32;
     assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (w_data_valid_delay == RANDOM_W_DATA_DELAY);
     assign bkwd_ready_o = (con_state == LSU_WAIT_LSU_VALID) & rstn & (bkwd_ready_delay == RANDOM_DELAY);
 

@@ -29,7 +29,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     // get instruction
 	// output									ce		,
     input		[DATA_WIDTH - 1:0]			inst_i	,
-    output reg								inst_invalid_o	,
+    // output reg								inst_invalid_o	,
     output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
 	output reg	[ADDR_WIDTH - 1:0]			pc			,
 
@@ -125,6 +125,12 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (inst_i == `TYPE_I_MRET)  | 
 					 (inst_i == `TYPE_I_EBREAK));
 
+	import "DPI-C" function void inst_invalid_get(byte invalid);
+		always @(*) begin
+			// $display("pc = %x dpc = %x\n",pc,pc_next);
+			inst_invalid_get({7'b0, inst_invalid});
+		end
+
 	parameter [1:0] IFU_WAIT_ADDR_PASS = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10, IFU_WAIT_INST_LOAD = 2'b11;
 
 	// state trans
@@ -208,6 +214,6 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	end
 	assign id_inst_i = inst_i;
 
-	assign inst_invalid_o = inst_invalid;
+	// assign inst_invalid_o = inst_invalid;
 
 endmodule

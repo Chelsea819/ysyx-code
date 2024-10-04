@@ -1,7 +1,6 @@
 `include "ysyx_22041211_define.v"
-module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
+module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input								clock 		,
-	input								reset 		,
 	input								reset 		,
 
 	// IFU-AXI
@@ -21,6 +20,8 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	output		[ADDR_LEN - 1:0]		data_addr_r_addr_o,
 	output		                		data_addr_r_valid_o,
 	input		                		data_addr_r_ready_i,
+	output		[2:0]                	data_addr_r_size_o,
+
 
 
 	// Read data
@@ -33,6 +34,7 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	output		[ADDR_LEN - 1:0]		data_addr_w_addr_o,	// 写地址
 	output		                		data_addr_w_valid_o,	// 主设备给出的地址和相关控制信号有效
 	input		                		data_addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
+	output		[2:0]                	data_addr_w_size_o,
 
 	// Write data
 	output		[DATA_LEN - 1:0]		data_w_data_o	,	// 写出的数据
@@ -45,10 +47,10 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	input		                		data_bkwd_valid_i,	// 从设备给出的写回复信号是否有效
 	output		                		data_bkwd_ready_o,	// 主设备已准备好接收写回复信号
 
-	input	        [DATA_LEN - 1:0]    inst_i		,
-	output			[ADDR_LEN - 1:0]	pc			,
-	output								invalid		,
-	output								finish
+	input	        [DATA_LEN - 1:0]    inst_i		
+	// output			[ADDR_LEN - 1:0]	pc			,
+	// output								invalid		,
+	// output								finish
 );
 	// //registerFile
 	// wire								reg_re1_i		;
@@ -127,8 +129,8 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	wire								wb_memory_inst_i;
 	wire								wb_ready_o		;
 	
-	assign pc = id_pc_i;
-	assign finish = if_last_finish_i;
+	// assign pc = id_pc_i;
+	// assign finish = if_last_finish_i;
 	
 	// always @(*) begin
 	// 	$display("pc: [%h] inst: [%b] invalid: [%h] reset: [%b] clock[%b]",pc, id_inst_i, invalid, reset, clock);
@@ -161,7 +163,7 @@ ysyx_22041211_IFU#(
 	.csr_pc_i         ( if_csr_pc_i      ),
 	.inst_i           ( inst_i           ),
 	.id_inst_i        ( id_inst_i           ),
-    .inst_invalid_o   ( invalid           ),
+    // .inst_invalid_o   ( invalid           ),
     .pc               ( id_pc_i             )
 );
 
@@ -278,6 +280,7 @@ ysyx_22041211_IFU#(
 		.addr_r_addr_o     ( data_addr_r_addr_o     ),
 		.addr_r_valid_o    ( data_addr_r_valid_o    ),
 		.addr_r_ready_i    ( data_addr_r_ready_i    ),
+		.addr_r_size_o	   ( data_addr_r_size_o		),
 		.r_data_i          ( data_r_data_i          ),
 		.r_resp_i          ( data_r_resp_i          ),
 		.r_valid_i         ( data_r_valid_i         ),
@@ -285,6 +288,7 @@ ysyx_22041211_IFU#(
 		.addr_w_addr_o     ( data_addr_w_addr_o     ),
 		.addr_w_valid_o    ( data_addr_w_valid_o    ),
 		.addr_w_ready_i    ( data_addr_w_ready_i    ),
+		.addr_w_size_o	   ( data_addr_w_size_o		),
 		.w_data_o          ( data_w_data_o          ),
 		.w_strb_o          ( data_w_strb_o          ),
 		.w_valid_o         ( data_w_valid_o         ),
