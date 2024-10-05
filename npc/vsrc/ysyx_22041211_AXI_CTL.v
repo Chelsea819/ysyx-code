@@ -223,7 +223,7 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			= (next_state == AXI_CTL_BUSY_DATA) ? { data_addr_r_valid_i, `AXI_R_ID_LSU, data_addr_r_size_i,
 													data_addr_w_valid_i, `AXI_W_ID_LSU, data_addr_w_size_i,
 													data_w_valid_i} : 
-				(next_state == AXI_CTL_BUSY_INST) ? {inst_addr_r_valid_i, `AXI_R_ID_IF, `AXI_ADDR_SIZE_32,
+				(next_state == AXI_CTL_BUSY_INST) ? {inst_addr_r_valid_i, `AXI_R_ID_IF, `AXI_ADDR_SIZE_4,
 													1'b0, 4'b0, `AXI_ADDR_SIZE_1, 
 													1'b0} : 
 													0;

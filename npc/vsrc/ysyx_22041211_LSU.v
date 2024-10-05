@@ -123,8 +123,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     assign addr_r_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_to_reg & rstn & (addr_r_valid_delay == RANDOM_DELAY); // addr valid and load inst
     assign r_ready_o = (con_state == LSU_WAIT_LSU_VALID) & (r_ready_delay == RANDOM_DELAY);
     assign addr_w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (addr_w_valid_delay == RANDOM_DELAY);  // addr valid and store inst
-    assign addr_w_size_o = `AXI_ADDR_SIZE_32;  // addr valid and store inst
-	assign addr_r_size_o = `AXI_ADDR_SIZE_32;
+    assign addr_w_size_o = `AXI_ADDR_SIZE_4;  // addr valid and store inst
+	assign addr_r_size_o = `AXI_ADDR_SIZE_4;
     assign w_valid_o = (con_state == LSU_WAIT_ADDR_PASS) & mem_wen_i & rstn & (w_data_valid_delay == RANDOM_W_DATA_DELAY);
     assign bkwd_ready_o = (con_state == LSU_WAIT_LSU_VALID) & rstn & (bkwd_ready_delay == RANDOM_DELAY);
 
