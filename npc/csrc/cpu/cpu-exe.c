@@ -301,7 +301,7 @@ void per_clk_cycle(){
 }
 void per_inst_cycle(){
   printf("dut.pc = [0x%08x]!\n",cpu.pc);
-  int i = 99;
+  int i = 20;
   do {
     printf("dut.pc = [0x%08x]!\n",cpu.pc);
     per_clk_cycle(); i--;
