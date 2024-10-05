@@ -301,11 +301,12 @@ void per_clk_cycle(){
 }
 void per_inst_cycle(){
   printf("dut.pc = [0x%08x]!\n",cpu.pc);
+  int i = 99;
   do {
     printf("dut.pc = [0x%08x]!\n",cpu.pc);
-    per_clk_cycle();
+    per_clk_cycle(); i--;
     // printf("unfinshed!\n");
-  }while(inst_finish == 0);
+  }while(inst_finish == 0 || i > 0);
   // printf("finished dut.pc = [0x%08x]!\n",cpu.pc);
 }
 
