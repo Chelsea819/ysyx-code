@@ -300,7 +300,9 @@ void per_clk_cycle(){
   // printf("clk = %d\n",dut->clock);
 }
 void per_inst_cycle(){
+  printf("dut.pc = [0x%08x]!\n",cpu.pc);
   do {
+    printf("dut.pc = [0x%08x]!\n",cpu.pc);
     per_clk_cycle();
     // printf("unfinshed!\n");
   }while(inst_finish == 0);
@@ -475,7 +477,6 @@ static void exec_once()
 static void execute(uint64_t n) {
   for (; n > 0; n--)
   {
-    // if(cpu.pc != 0x0)
     exec_once();
     g_nr_guest_inst++;  //记录客户指令的计时器
     //由于rtl对reg的更改是在下一个时钟周期上升沿，而nemu对reg的更改是即时的
