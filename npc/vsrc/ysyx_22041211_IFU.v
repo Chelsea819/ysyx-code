@@ -82,7 +82,8 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg			[3:0]		addr_r_valid_delay;
 	reg			[3:0]		r_ready_delay;
 
-	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset & (addr_r_valid_delay == RANDOM_DELAY);
+	// assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset & (addr_r_valid_delay == RANDOM_DELAY);
+	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset;
 	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);
 
 	// r addr delay
