@@ -49,8 +49,8 @@ VERILATOR_INCLUDE = $(addprefix -I, $(VERILATOR_INC_PATH))
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --cc   --build -j 0  \
-				-O3 --x-assign fast --x-initial fast --assert --public $(VERILATOR_INCLUDE) --trace \
-				--timescale "1ns/1ns" --no-timing #-Wall
+				-O3 --x-assign fast --x-initial fast --assert --public $(VERILATOR_INCLUDE)  \
+				--timescale "1ns/1ns" --no-timing #-Wall --trace
 
 #-ggdb -LDFLAGS -ggdb -CFLAGS -DVL_DEBUG=1 
 # -CFLAGS -D_GLIBCXX_DEBUG

@@ -4,7 +4,7 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-
+`include "ysyx_22041211_define.v"
 module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	input									clock				,
 	input									reset				,
@@ -38,7 +38,7 @@ module ysyx_22041211_counter #(parameter ADDR_LEN = 32)(
 	
 	always @ (posedge clock) begin
 		if(reset)
-			pc <= 32'h80000000;
+			pc <= `PC_RESET_VAL;
 		else if (con_state == IFU_WAIT_FINISH && last_finish == 1'b1) 
 			pc <= pc_next;
 	end
