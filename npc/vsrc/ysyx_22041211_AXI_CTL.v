@@ -101,24 +101,18 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	reg				[1:0]		        	next_state	;
 	reg 			[1:0] 					axi_device_tmp;
 
-	// wire			[31:0]						axi_waddr;
-	// assign axi_addr_r_id_o = {2'b0, axi_device};
 	assign axi_addr_r_len_o = 0;
 	assign axi_addr_r_size_o = `AXI_ADDR_SIZE_4;
 	assign axi_addr_r_burst_o = `AXI_ADDR_BURST_FIXED;
 	
-	// assign axi_addr_w_id_o = 0;
 	assign axi_addr_w_len_o = 0;
 	assign axi_addr_w_size_o = `AXI_ADDR_SIZE_4;
 	assign axi_addr_w_burst_o = `AXI_ADDR_BURST_FIXED;
 	assign axi_w_last_o = `AXI_W_LAST_TRUE;
-	// assign axi_device = (data_addr_w_addr_i == `SERIAL_PORT && con_state == AXI_CTL_IDLE) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
 
 	always @(*) begin
 		if (con_state == AXI_CTL_IDLE) begin
-			if (data_addr_w_addr_i == `SERIAL_PORT) begin
-				axi_device = `AXI_XBAR_UART;
-			end else if (data_addr_r_addr_i == `RTC_ADDR || data_addr_r_addr_i == `RTC_ADDR + 32'b100) begin
+			if (data_addr_r_addr_i == `RTC_ADDR || data_addr_r_addr_i == `RTC_ADDR + 32'b100) begin
 				axi_device = `AXI_XBAR_CLINT;
 			end else begin
 				axi_device = `AXI_XBAR_SRAM;
@@ -227,34 +221,46 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 													1'b0, 4'b0, `AXI_ADDR_SIZE_1, 
 													1'b0} : 
 													0;
-
-	always @(posedge clock) begin
+	
+	always @(*) begin
+		axi_addr_r_addr_o	= 0;
+		axi_addr_w_addr_o	= 0;
+		axi_w_data_o		= 0;
+		axi_w_strb_o		= 0;
 		case(next_state)
-			AXI_CTL_IDLE: begin
-				if(con_state == AXI_CTL_BUSY_DATA) begin
-					data_r_data_o <= axi_r_data_i;		
-				end else if(con_state == AXI_CTL_BUSY_INST) begin
-					inst_r_data_o <= axi_r_data_i;
-				end
-			end
 			AXI_CTL_BUSY_INST: begin
 				if(con_state == AXI_CTL_IDLE) begin
-					axi_addr_r_addr_o	<= inst_addr_r_addr_i;
-					axi_addr_w_addr_o	<= 0;
-					axi_w_data_o		<= 0;
-					axi_w_strb_o		<= 0;
+					axi_addr_r_addr_o	= inst_addr_r_addr_i;
+					axi_addr_w_addr_o	= 0;
+					axi_w_data_o		= 0;
+					axi_w_strb_o		= 0;
 				end
 			end
 
 			AXI_CTL_BUSY_DATA: begin
 				if(con_state == AXI_CTL_IDLE) begin
-					axi_addr_r_addr_o	<= data_addr_r_addr_i;
-					axi_addr_w_addr_o	<= data_addr_w_addr_i;
-					axi_w_data_o		<= data_w_data_i;
-					axi_w_strb_o		<= data_w_strb_i;
+					axi_addr_r_addr_o	= data_addr_r_addr_i;
+					axi_addr_w_addr_o	= data_addr_w_addr_i;
+					axi_w_data_o		= data_w_data_i;
+					axi_w_strb_o		= data_w_strb_i;
 				end
 			end
 			default: begin 
+			end
+		endcase
+	end
+
+	always @(posedge clock) begin
+		case(next_state)
+			AXI_CTL_IDLE: begin
+				if(con_state == AXI_CTL_BUSY_DATA) begin
+					data_r_data_o = axi_r_data_i;		
+				end else if(con_state == AXI_CTL_BUSY_INST) begin
+					inst_r_data_o = axi_r_data_i;
+				end
+			end
+			default: begin
+				
 			end
 		endcase
 	end
