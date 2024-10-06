@@ -37,7 +37,7 @@ module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
 	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
 
-	assign bit_sel = ~(addr_r_addr_i - `RTC_ADDR == 0);
+	assign bit_sel = ~(addr_r_addr_i - `DEVICE_CLINT_ADDR_L == 0);
 	assign r_data = (bit_sel == 0) ?  mtime[DATA_LEN - 1:0] : mtime[63:DATA_LEN];
 
 
