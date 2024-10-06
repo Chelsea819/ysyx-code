@@ -134,35 +134,6 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 	// Xbar
     //Addr Read
 	wire		[1:0]						axi_device		;
-	wire	reg	[ADDR_LEN - 1:0]		axi_addr_r_addr_o	;
-	wire		                		axi_addr_r_valid_o	;
-	wire		                		axi_addr_r_ready_i	;
-
-	// Read data
-	wire		[DATA_LEN - 1:0]		axi_r_data_i		;
-	wire		[1:0]					axi_r_resp_i		;	// 读操作是否成功，存储器处理读写事物时可能会发生错误
-	wire		                		axi_r_valid_i		;
-	wire		                		axi_r_ready_o		;
-
-	// Addr Write
-	wire	reg	[ADDR_LEN - 1:0]		axi_addr_w_addr_o	;	// 写地址
-	wire		                		axi_addr_w_valid_o	;	// 主设备给出的地址和相关控制信号有效
-	wire		                		axi_addr_w_ready_i	; // 从设备已准备好接收地址和相关的控制信号
-
-	// Write data
-	wire	reg	[DATA_LEN - 1:0]		axi_w_data_o	;	// 写出的数据
-	wire	reg	[3:0]					axi_w_strb_o	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
-	wire		                		axi_w_valid_o	;	// 主设备给出的数据和字节选通信号有效
-	wire		                		axi_w_ready_i	;	// 从设备已准备好接收数据选通信号
-
-	// Backward
-	wire		[1:0]					axi_bkwd_resp_i	;	// 写回复信号，写操作是否成功
-	wire		                		axi_bkwd_valid_i	;	// 从设备给出的写回复信号是否有效
-	wire		                		axi_bkwd_ready_o	;// 主设备已准备好接收写回复信号
-
-		// Xbar
-    //Addr Read
-	wire		[1:0]						xbar_device		;
 	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o	;
 	wire		                		xbar_addr_r_valid_o	;
 	wire		                		xbar_addr_r_ready_i	;
