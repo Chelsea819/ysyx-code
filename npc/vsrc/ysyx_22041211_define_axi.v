@@ -25,7 +25,7 @@
 `define AXI_W_LAST_TRUE 1'b1 
 `define AXI_W_LAST_FALSE 1'b0 
 
-`define AXI_R_ID_IF 4'b1
+`define AXI_R_ID_IF 4'b00
 `define AXI_R_ID_LSU 4'b10
 // `define AXI_R_ID_IF 4'b0
 
