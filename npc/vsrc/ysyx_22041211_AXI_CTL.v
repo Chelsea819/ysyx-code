@@ -259,8 +259,7 @@ module ysyx_22041211_AXI_CTL #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 					inst_r_data_o = axi_r_data_i;
 				end
 			end
-			default: begin
-				
+			default: begin	
 			end
 		endcase
 	end

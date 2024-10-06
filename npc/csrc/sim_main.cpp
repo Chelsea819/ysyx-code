@@ -31,7 +31,9 @@ VerilatedVcdC *m_trace = new VerilatedVcdC;
 #endif
 
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
-extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) {
+  *data = 0b00000000000100000000000001110011;
+}
 
 int main(int argc, char **argv, char **env) {
   Verilated::commandArgs(argc, argv);
