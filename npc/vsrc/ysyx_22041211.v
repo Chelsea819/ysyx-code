@@ -133,7 +133,7 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 	// Xbar
     //Addr Read
-	wire		[1:0]						axi_device		;
+	wire									axi_device		;
 	wire	reg	[ADDR_LEN - 1:0]		xbar_addr_r_addr_o	;
 	wire		                		xbar_addr_r_valid_o	;
 	wire		                		xbar_addr_r_ready_i	;

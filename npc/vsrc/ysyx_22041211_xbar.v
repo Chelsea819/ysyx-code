@@ -20,7 +20,7 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input		[2:0]                	axi_ctl_addr_r_size_i,	// 突发长度 设置1个beat的宽度，不可超过数据总线的宽度
 	input		[1:0]                	axi_ctl_addr_r_burst_i,	// 突发类型
 
-	input	[1:0]						axi_device,
+	input								axi_device,
 
 
 	// Read data
@@ -107,9 +107,6 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	output		                		clint_r_ready_i	
 
 );	
-
-
-	// assign axi_device = (axi_ctl_addr_w_addr_i == `SERIAL_PORT) ? `AXI_XBAR_UART : `AXI_XBAR_SRAM;
 	assign axi_addr_r_addr_o = axi_ctl_addr_r_addr_i;
 	assign axi_addr_w_addr_o = axi_ctl_addr_w_addr_i;
 	assign axi_w_data_o = axi_ctl_w_data_i;
@@ -120,12 +117,7 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			axi_ctl_r_data_o, axi_ctl_r_resp_o, axi_ctl_r_valid_o, axi_ctl_r_last_o, axi_ctl_r_id_o, 
 			axi_ctl_addr_w_ready_o, 
 			axi_ctl_w_ready_o, 
-			axi_ctl_bkwd_resp_o, axi_ctl_bkwd_valid_o, axi_ctl_bkwd_id_o } = (axi_device == `AXI_XBAR_SRAM) ? {axi_addr_r_ready_i, 
-																							axi_r_data_i, axi_r_resp_i, axi_r_valid_i, axi_r_last_i, axi_r_id_i, 
-																							axi_addr_w_ready_i, 
-																							axi_w_ready_i, 
-																							axi_bkwd_resp_i, axi_bkwd_valid_i, axi_bkwd_id_i} :
-															(axi_device == `AXI_XBAR_CLINT) ? {clint_addr_r_ready_o, clint_r_data_o, clint_r_resp_o, clint_r_valid_o, 1'b0, 4'b0,
+			axi_ctl_bkwd_resp_o, axi_ctl_bkwd_valid_o, axi_ctl_bkwd_id_o } = (axi_device == `AXI_XBAR_CLINT) ? {clint_addr_r_ready_o, clint_r_data_o, clint_r_resp_o, clint_r_valid_o, 1'b0, 4'b0,
 																							1'b0, 1'b0,
 																							2'b0, 1'b0, 4'b0} :
 																							{axi_addr_r_ready_i, 
@@ -139,13 +131,7 @@ module ysyx_22041211_xbar #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 			axi_r_ready_o, 
 			axi_addr_w_valid_o, axi_addr_w_id_o, axi_addr_w_len_o, axi_addr_w_size_o,  axi_addr_w_burst_o,
 			axi_w_valid_o, axi_w_last_o, 
-			axi_bkwd_ready_o											} = (axi_device == `AXI_XBAR_SRAM) ? 
-																			{axi_ctl_addr_r_valid_i, axi_ctl_addr_r_id_i, axi_ctl_addr_r_len_i, axi_ctl_addr_r_size_i, axi_ctl_addr_r_burst_i, 
-																			axi_ctl_r_ready_i, 
-																			axi_ctl_addr_w_valid_i, axi_ctl_addr_w_id_i, axi_ctl_addr_w_len_i, axi_ctl_addr_w_size_i, axi_ctl_addr_w_burst_i, 
-																			axi_ctl_w_valid_i, axi_ctl_w_last_i, 
-																			axi_ctl_bkwd_ready_i} : 
-																			{axi_ctl_addr_r_valid_i, axi_ctl_addr_r_id_i, axi_ctl_addr_r_len_i, axi_ctl_addr_r_size_i, axi_ctl_addr_r_burst_i, 
+			axi_bkwd_ready_o											} = {axi_ctl_addr_r_valid_i, axi_ctl_addr_r_id_i, axi_ctl_addr_r_len_i, axi_ctl_addr_r_size_i, axi_ctl_addr_r_burst_i, 
 																			axi_ctl_r_ready_i, 
 																			axi_ctl_addr_w_valid_i, axi_ctl_addr_w_id_i, axi_ctl_addr_w_len_i, axi_ctl_addr_w_size_i, axi_ctl_addr_w_burst_i, 
 																			axi_ctl_w_valid_i, axi_ctl_w_last_i, 
