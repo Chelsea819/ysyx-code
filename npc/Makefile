@@ -101,7 +101,7 @@ $(BIN): $(SRCS) $(VSRCS)
 
 $(shell mkdir -p $(BUILD_DIR))
 
-IMG ?= $(IMAGE).bin
+IMG ?= char-test.bin
 
 run:$(BIN)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
