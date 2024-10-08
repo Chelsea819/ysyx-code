@@ -119,6 +119,19 @@ void init_mem(){
 	return ;
 }
 
+extern "C" void mrom_read(int32_t addr, int32_t *data) {
+  if (likely(in_pmem(addr))) {
+    *data = pmem_read(addr, 4);
+#ifdef CONFIG_MTRACE
+    Log("mrom_read ---  [addr: 0x%08x rdata: 0x%08x]", addr, 
+        data);
+#endif
+    return;
+  }
+  out_of_bound(addr);
+  return;
+}
+
 vaddr_t paddr_read(paddr_t addr,int len) {
   
 	if (likely(in_pmem(addr))) {

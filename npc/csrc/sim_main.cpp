@@ -39,9 +39,7 @@ static const uint32_t img[] = {
 };
 
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
-extern "C" void mrom_read(int32_t addr, int32_t *data) {
-  *data = img[(addr - 0x20000000) / 4];
-}
+
 
 int main(int argc, char **argv, char **env) {
   Verilated::commandArgs(argc, argv);
