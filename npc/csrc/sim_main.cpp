@@ -41,7 +41,7 @@ static const uint32_t img[] = {
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 
 void reset_cycle() {
-  int n = 12;
+  int n = 10;
   dut->reset = 1;
   while (n-- > 0) {
     dut->clock = 1;
