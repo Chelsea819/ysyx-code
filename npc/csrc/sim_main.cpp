@@ -40,6 +40,24 @@ static const uint32_t img[] = {
 
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 
+void reset_cycle() {
+  int n = 12;
+  dut->reset = 1;
+  while (n-- > 0) {
+    dut->clock = 1;
+    dut->eval();
+#ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+#endif
+    dut->clock = 0;
+    dut->eval();
+#ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+#endif
+  }
+}
 
 int main(int argc, char **argv, char **env) {
   Verilated::commandArgs(argc, argv);
@@ -55,14 +73,15 @@ int main(int argc, char **argv, char **env) {
   dut->trace(m_trace, 5);
   m_trace->open("waveform.vcd");
 #endif
-  dut->reset = 1;
-  dut->eval();
-  dut->clock = 0;
-  dut->eval();
-#ifdef CONFIG_WAVE
-  m_trace->dump(sim_time);
-  sim_time++;
-#endif
+  reset_cycle();
+  //   dut->reset = 1;
+  //   dut->eval();
+  //   dut->clock = 0;
+  //   dut->eval();
+  // #ifdef CONFIG_WAVE
+  //   m_trace->dump(sim_time);
+  //   sim_time++;
+  // #endif
   dut->clock = 1;
   dut->eval();
   dut->reset = 0;
