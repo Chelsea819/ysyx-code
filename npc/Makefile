@@ -101,6 +101,8 @@ $(BIN): $(SRCS) $(VSRCS)
 
 $(shell mkdir -p $(BUILD_DIR))
 
+IMG ?= $(IMAGE).bin
+
 run:$(BIN)
 	$(call git_commit, "sim RTL") #DO NOT REMOVE THIS LINE!!!
 	$(EXE)  $(ARGS) $(IMG)
