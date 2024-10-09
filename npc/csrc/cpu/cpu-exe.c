@@ -300,7 +300,7 @@ void per_clk_cycle(){
   // printf("clk = %d\n",dut->clock);
 }
 void per_inst_cycle(){
-  printf("dut.pc = [0x%08x]!\n",cpu.pc);
+  // printf("dut.pc = [0x%08x]!\n",cpu.pc);
   int i = 20;
   do {
     // printf("dut.pc = [0x%08x]!\n",cpu.pc);
