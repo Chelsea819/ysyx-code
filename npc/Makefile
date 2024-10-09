@@ -104,6 +104,7 @@ $(shell mkdir -p $(BUILD_DIR))
 IMG ?= char-test.bin
 
 # riscv64-linux-gnu-gcc -fno-pic -march=rv32e_zicsr -mabi=ilp32e -mcmodel=medany -mstrict-align  -c char-test.c -o char-test.o
+# ld 
 # riscv64-linux-gnu-objcopy -S --set-section-flags .bss=alloc,contents -O binary char-test.o char-test.bin
 # riscv64-linux-gnu-objdump -d char-test.o
 
