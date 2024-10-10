@@ -190,8 +190,10 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 
 // 为ITRACE提供指令
     import "DPI-C" function void inst_get(int inst);
-    always @(*)
+    always @(*) begin
         inst_get(inst);
+		$display("io_master_awaddr = %x",io_master_awaddr);
+	end
 
 
 	ysyx_22041211_cpu#(
