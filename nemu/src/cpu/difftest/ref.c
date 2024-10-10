@@ -40,7 +40,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
   } else {
     printf("DIFFTEST_TO_REF ref->pc = 0x%08x cpu = %p\n",ref->pc, &(ref->pc));
     memcpy(dut, ref, DIFFTEST_REG_SIZE);
-    printf("DIFFTEST_TO_REF ref->pc = 0x%08x cpu = %p\n",ref->pc, &(ref->pc));
+    printf("DIFFTEST_TO_REF ref->pc = 0x%08x cpu = %p\n",((CPU_state *)dut)->pc, &(((CPU_state *)dut)->pc));
   }
 }
 
