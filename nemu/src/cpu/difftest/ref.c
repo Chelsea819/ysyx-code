@@ -36,6 +36,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
   if (direction == DIFFTEST_TO_REF) {
     memcpy(ref, dut, DIFFTEST_REG_SIZE);
     if(!initial) {ref->pc = 0x20000000; initial = true;}
+    printf("ref->pc = 0x%08x\n",ref->pc);
   } else {
     memcpy(dut, ref, DIFFTEST_REG_SIZE);
   }
