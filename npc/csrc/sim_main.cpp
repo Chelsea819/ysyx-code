@@ -30,7 +30,37 @@ extern WP *head;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
 #endif
 
+static const uint32_t img[] = {
+    0x00000297, // auipc t0,0
+    // 0x00028823, // sb  zero,16(t0)
+    0x0102c503, // lbu a0,16(t0)
+    0x00100073, // ebreak (used as nemu_trap)
+    0xdeadbeef, // some data
+};
+
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+
+void reset_cycle() {
+  int n = 10;
+  dut->reset = 1;
+  while (n-- > 0) {
+    dut->clock = 1;
+    dut->eval();
+#ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+#endif
+    dut->clock = 0;
+    dut->eval();
+#ifdef CONFIG_WAVE
+    m_trace->dump(sim_time);
+    sim_time++;
+#endif
+  }
+}
+
 int main(int argc, char **argv, char **env) {
+  Verilated::commandArgs(argc, argv);
 #ifdef CONFIG_WAVE
   Verilated::traceEverOn(
       true); //设置 Verilated 追踪模式为开启,这将使得仿真期间生成波形跟踪文件
@@ -43,17 +73,18 @@ int main(int argc, char **argv, char **env) {
   dut->trace(m_trace, 5);
   m_trace->open("waveform.vcd");
 #endif
-  dut->rst = 1;
+  reset_cycle();
+  //   dut->reset = 1;
+  //   dut->eval();
+  //   dut->clock = 0;
+  //   dut->eval();
+  // #ifdef CONFIG_WAVE
+  //   m_trace->dump(sim_time);
+  //   sim_time++;
+  // #endif
+  dut->clock = 1;
   dut->eval();
-  dut->clk = 0;
-  dut->eval();
-#ifdef CONFIG_WAVE
-  m_trace->dump(sim_time);
-  sim_time++;
-#endif
-  dut->clk = 1;
-  dut->eval();
-  dut->rst = 0;
+  dut->reset = 0;
   dut->eval();
 #ifdef CONFIG_WAVE
   m_trace->dump(sim_time);

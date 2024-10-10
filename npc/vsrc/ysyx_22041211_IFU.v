@@ -8,8 +8,8 @@
 `include "ysyx_22041211_define_delay.v"
 
 module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
-	input									clk				,
-	input									rst				,
+	input									clock				,
+	input									reset				,
 
     // hand signal
 	// input									ready			,
@@ -29,7 +29,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     // get instruction
 	// output									ce		,
     input		[DATA_WIDTH - 1:0]			inst_i	,
-    output reg								inst_invalid_o	,
+    // output reg								inst_invalid_o	,
     output reg	[DATA_WIDTH - 1:0]			id_inst_i	,
 	output reg	[ADDR_WIDTH - 1:0]			pc			,
 
@@ -59,14 +59,14 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		wire			[3:0]		        	delay_num;
 
 		ysyx_22041211_LFSR u_LFSR(
-			.clk          ( clk          ),
-			.rstn         ( ~rst         ),
+			.clock          ( clock          ),
+			.rstn         ( ~reset         ),
 			.initial_var  ( 4'b1  		 ),
 			.result       ( delay_num    )
 		);
 		
-		always @(posedge clk ) begin
-			if (rst) 
+		always @(posedge clock ) begin
+			if (reset) 
 				RANDOM_DELAY <= 4'b1;
 			else if((con_state == IFU_WAIT_FINISH && next_state == IFU_WAIT_ADDR_PASS) || (con_state == IFU_WAIT_ADDR_PASS && next_state == IFU_WAIT_INST_LOAD))
 				RANDOM_DELAY <= delay_num;
@@ -82,11 +82,12 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	reg			[3:0]		addr_r_valid_delay;
 	reg			[3:0]		r_ready_delay;
 
-	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst & (addr_r_valid_delay == RANDOM_DELAY);
+	// assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset & (addr_r_valid_delay == RANDOM_DELAY);
+	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset;
 	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD) & (r_ready_delay == RANDOM_DELAY);
 
 	// r addr delay
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if (next_state == IFU_WAIT_ADDR_PASS && (addr_r_valid_delay != RANDOM_DELAY || addr_r_valid_delay == 0))
 			addr_r_valid_delay <= addr_r_valid_delay + 1;
 		else if(next_state == IFU_WAIT_ADDR_PASS && addr_r_valid_delay == RANDOM_DELAY)
@@ -95,7 +96,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 			addr_r_valid_delay <= 4'b0;
 	end
 
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if (next_state == IFU_WAIT_INST_LOAD && ((r_ready_delay != RANDOM_DELAY || r_ready_delay == 0)))
 			r_ready_delay <= r_ready_delay + 1;
 		else if(next_state == IFU_WAIT_INST_LOAD && r_ready_delay == RANDOM_DELAY)
@@ -105,7 +106,7 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 	end
 // no delay
 `else
-	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~rst;
+	assign addr_r_valid_o = (con_state == IFU_WAIT_ADDR_PASS) & ~reset;
 	assign r_ready_o = (con_state == IFU_WAIT_INST_LOAD);
 `endif
 	// assign ce = r_inst_en;
@@ -125,11 +126,17 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 					 (inst_i == `TYPE_I_MRET)  | 
 					 (inst_i == `TYPE_I_EBREAK));
 
+	import "DPI-C" function void inst_invalid_get(byte invalid);
+		always @(*) begin
+			// $display("pc = %x dpc = %x\n",pc,pc_next);
+			inst_invalid_get({7'b0, inst_invalid});
+		end
+
 	parameter [1:0] IFU_WAIT_ADDR_PASS = 2'b00, IFU_WAIT_READY = 2'b01, IFU_WAIT_FINISH = 2'b10, IFU_WAIT_INST_LOAD = 2'b11;
 
 	// state trans
-	always @(posedge clk ) begin
-		if(rst)
+	always @(posedge clock ) begin
+		if(reset)
 			con_state <= IFU_WAIT_ADDR_PASS;
 		else 
 			con_state <= next_state;
@@ -175,8 +182,8 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
     ysyx_22041211_counter#(
         .ADDR_LEN         ( 32 )
     )u_ysyx_22041211_counter(
-        .clk              ( clk              ),
-        .rst              ( rst              ),
+        .clock              ( clock              ),
+        .reset              ( reset              ),
         .branch_request_i ( branch_request_i ),
         .branch_target_i  ( branch_target_i  ),
         .branch_flag_i    ( branch_flag_i    ),
@@ -194,20 +201,21 @@ module ysyx_22041211_IFU #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32)(
 		.DATA_LEN ( 32 )
 	)u_ysyx_22041211_pcPlus(
 		.pc_old ( pc ),
-		.rst    ( rst    ),
+		.reset    ( reset    ),
 		.pc_new ( pc_plus_4  )
 	);
 
-	always @(*) begin
-		if(rst)
-			addr_r_addr_o = 0;
-		else if(addr_r_valid_o)
-			addr_r_addr_o = pc;
-		else 
-			addr_r_addr_o = 0;
-	end
+	// always @(*) begin
+	// 	if(reset)
+	// 		addr_r_addr_o = 0;
+	// 	else if(addr_r_valid_o)
+	// 		addr_r_addr_o = pc;
+	// 	else 
+	// 		addr_r_addr_o = 0;
+	// end
+	assign addr_r_addr_o = pc;
 	assign id_inst_i = inst_i;
 
-	assign inst_invalid_o = inst_invalid;
+	// assign inst_invalid_o = inst_invalid;
 
 endmodule

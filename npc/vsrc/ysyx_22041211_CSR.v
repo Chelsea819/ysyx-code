@@ -6,8 +6,8 @@
  ************************************************************************/
 `include "ysyx_22041211_define.v"
 module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
-	input								clk		,
-	input								rst		,
+	input								clock		,
+	input								reset		,
 	input	    [11:0]					csr_addr,	// 要读的csr
 	input		[DATA_WIDTH - 1:0]		wdata	,	// 要写入csr的数据	
 	input		[2:0]					csr_type_i,
@@ -29,8 +29,8 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 	// 				  (csr_type_i == `CSR_MRET)		? csr[`CSR_MEPC_IDX] :
 	// 				  32'b0 ;
 	
-	always @(posedge clk) begin
-		if(rst)
+	always @(posedge clock) begin
+		if(reset)
 			csr_pc_o <= 32'b0;
 		else if (csr_type_i == `CSR_ECALL) 
 			csr_pc_o <= csr[`CSR_MTVEC_IDX];
@@ -45,8 +45,8 @@ module ysyx_22041211_CSR #(parameter DATA_WIDTH = 32)(
 	// 	$display("MTVEC = [%x] csr_idx = [%b]  wdata = [%b] csr_pc_o = [%x] csr_type_i = [%b]",csr[`CSR_MTVEC_IDX],csr_idx,wdata, csr_pc_o, csr_type_i);
 	// end
 
-	always @(posedge clk) begin
-		if(rst)
+	always @(posedge clock) begin
+		if(reset)
 			csr[`CSR_MSTATUS_IDX] <= 32'h1800;
 		else if (^csr_type_i == 1'b1) 
 			csr[csr_idx] <= wdata;

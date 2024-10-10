@@ -4,12 +4,12 @@
 	> Mail: 1938166340@qq.com 
 	> Created Time: 2023年08月05日 星期六 22时12分23秒
  ************************************************************************/
-// clk rst waddr wdata wen wmask
+// clock reset waddr wdata wen wmask
 `include "ysyx_22041211_define.v"
 `include "ysyx_22041211_define_delay.v"
 module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	input								rstn		,
-    input		                		clk			,
+    input		                		clock			,
 
 	//Addr Read
 	input		[ADDR_LEN - 1:0]		addr_r_addr_i,
@@ -37,12 +37,12 @@ module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	assign r_resp_o = {2{~(con_state == WAIT_DATA_GET) | ~rstn}};
 	assign mem_ren = (con_state == WAIT_DATA_GET) && rstn;
 
-	assign bit_sel = ~(addr_r_addr_i - `RTC_ADDR == 0);
+	assign bit_sel = ~(addr_r_addr_i - `DEVICE_CLINT_ADDR_L == 0);
 	assign r_data = (bit_sel == 0) ?  mtime[DATA_LEN - 1:0] : mtime[63:DATA_LEN];
 
 
 
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if(rstn)
 			mtime <= mtime + 64'b1;
 		else
@@ -57,13 +57,13 @@ module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 		wire			[3:0]		        	delay_num;
 
 		ysyx_22041211_LFSR u_LFSR(
-			.clk          ( clk          ),
+			.clock          ( clock          ),
 			.rstn         ( rstn         ),
 			.initial_var  ( 4'b1  		 ),
 			.result       ( delay_num    )
 		);
 		
-		always @(posedge clk ) begin
+		always @(posedge clock ) begin
 			if (~rstn) 
 				RANDOM_DELAY <= 4'b1;
 			else if((con_state == WAIT_ADDR && next_state == WAIT_DATA_GET) || (con_state == WAIT_ADDR && next_state == WAIT_DATA_WRITE))
@@ -81,7 +81,7 @@ module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 	assign r_valid_o = (con_state == WAIT_DATA_GET) && rstn && (r_valid_delay == RANDOM_DELAY);
 
   // r addr delay
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if (next_state == WAIT_DATA_GET && (r_valid_delay != RANDOM_DELAY || r_valid_delay == 0))
 			r_valid_delay <= r_valid_delay + 1;
 		else if(next_state == WAIT_DATA_GET && r_valid_delay == RANDOM_DELAY)
@@ -97,7 +97,7 @@ module ysyx_22041211_CLINT #(parameter ADDR_LEN = 32, DATA_LEN = 32)(
 
 
 	// state trans
-	always @(posedge clk ) begin
+	always @(posedge clock ) begin
 		if(rstn)
 			con_state <= next_state;
 		else 
