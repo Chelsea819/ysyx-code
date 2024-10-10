@@ -38,7 +38,9 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
     if(!initial) {ref->pc = 0x20000000; initial = true;}
     printf("ref->pc = 0x%08x cpu = %p\n",ref->pc, &(ref->pc));
   } else {
+    printf("DIFFTEST_TO_REF ref->pc = 0x%08x cpu = %p\n",ref->pc, &(ref->pc));
     memcpy(dut, ref, DIFFTEST_REG_SIZE);
+    printf("DIFFTEST_TO_REF ref->pc = 0x%08x cpu = %p\n",ref->pc, &(ref->pc));
   }
 }
 
