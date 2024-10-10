@@ -22,6 +22,7 @@
 #define CONFIG_ISA_riscv 1
 #define CONFIG_CC_LTO 1
 #define CONFIG_TRACE_END 10000
+#define CONFIG_CC_ASAN 1
 #define CONFIG_MTRACE_COND "default"
 #define CONFIG_HAS_TIMER 1
 #define CONFIG_MBASE 0x20000000
