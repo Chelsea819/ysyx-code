@@ -18,6 +18,9 @@
 
 #include <common.h>
 
+#define SRAM_SIZE  4*1024
+#define SRAM_LEFT  0x0f000000
+#define SRAM_RIGHT  0x0f000000 + SRAM_SIZE
 #define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
@@ -30,6 +33,11 @@ paddr_t host_to_guest(uint8_t *haddr);
 //判断 addr 是否在 内存区域中
 static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
+}
+
+//判断 addr 是否在 内存区域中
+static inline bool in_sram(paddr_t addr) {
+  return addr - SRAM_LEFT < SRAM_SIZE;
 }
 
 word_t paddr_read(paddr_t addr, int len);
