@@ -53,7 +53,7 @@
 
 extern char _pmem_start;
 // 8KB = 8 * 1024B
-#define PMEM_SIZE (8 * 1024)
+#define PMEM_SIZE (4 * 1024)
 #define PMEM_END ((uintptr_t)&_pmem_start + PMEM_SIZE)
 #define NPC_PADDR_SPACE                                                        \
   RANGE(&_pmem_start, PMEM_END), RANGE(FB_ADDR, FB_ADDR + 0x200000),           \

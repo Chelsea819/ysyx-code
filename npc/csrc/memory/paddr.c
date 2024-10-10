@@ -123,8 +123,8 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
   if (likely(in_pmem(addr))) {
     *data = pmem_read(addr, 4);
 #ifdef CONFIG_MTRACE
-    Log("mrom_read ---  [addr: 0x%08x rdata: 0x%08x]", addr, 
-        data);
+    // Log("mrom_read ---  [addr: 0x%08x rdata: 0x%08x]", addr, 
+    //     data);
 #endif
     return;
   }
@@ -137,7 +137,7 @@ vaddr_t paddr_read(paddr_t addr,int len) {
 	if (likely(in_pmem(addr))) {
     word_t rdata = pmem_read(addr,len);
     #ifdef CONFIG_MTRACE
-      Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
+      // Log("paddr_read ---  [addr: 0x%08x len: %d rdata: 0x%08x]",addr,len,rdata);
     #endif
     return rdata;
   }
@@ -150,7 +150,7 @@ vaddr_t paddr_read(paddr_t addr,int len) {
 
 void paddr_write(vaddr_t addr, vaddr_t len, word_t data) {
   #ifdef CONFIG_MTRACE
-  Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
+  // Log("paddr_write --- [addr: 0x%08x len: %d data: 0x%08x]",addr,len,data);
   #endif
   if (likely(in_pmem(addr))) { return pmem_write(addr, len, data);}
   // printf("write device\n");
