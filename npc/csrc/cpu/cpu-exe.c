@@ -174,6 +174,20 @@ void ifebreak_func(int inst){
 	if(inst == 1048691) {ifbreak = true; } 
 }
 
+void resp_check(char resp){
+  switch (resp) {
+    case 0b00: break;
+    case 0b01:
+      Log("[resp_check]-----[code:01]------[EXOKAY, exclusive access success]"); break;
+    case 0b10:
+      Assert(0, "[resp_check]-----[code:10]------[SLVERR, slave error]");
+    case 0b11:
+      Assert(0, "[resp_check]-----[code:11]------[DECERR, decode error]");
+    default:
+      Assert(0, "[resp_check]-----[code:%u]------[ERROR CODE]",(uint32_t)resp);
+  }
+}
+
 static void trace_and_difftest(){
   
 #ifdef CONFIG_ITRACE_COND
