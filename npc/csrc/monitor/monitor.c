@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <cstdio>
 #include <isa.h>
 #include <memory/paddr.h>
 #include <common.h>
@@ -167,6 +168,7 @@ void init_npc_monitor(int argc,char *argv[]){
     long img_size = load_img();
 #ifdef CONFIG_DIFFTEST
     /* Initialize differential testing. */
+    printf("222\n");
     init_difftest(diff_so_file, img_size, difftest_port);
 #endif
 
