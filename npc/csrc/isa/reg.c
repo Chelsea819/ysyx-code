@@ -33,7 +33,7 @@ const char *regs[] = {
 #endif
 
 void isa_reg_display() {
-  if(cpu.pc == 0x80000000) return;
+  if(cpu.pc == 0x20000000) return;
   for(int i = 0; i < REG_NUM; i++){
     printf("\033[104m %d %s: \033[0m \t0x%08x\n",i,reg_name(i),R(i));
   }
