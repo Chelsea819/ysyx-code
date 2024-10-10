@@ -25,9 +25,9 @@ SECTIONS {
     *(.scommon)
   }
   _heap_start = 0x0f000000;
-  . = _heap_start + 0x1000;
+  . = _heap_start + 0x10;
   _stack_top = ALIGN(0x1000);
-  . = _stack_top + 0x1000;
+  . = _heap_start + 0x;
   _stack_pointer = .;
   end = .;
   _end = .;
