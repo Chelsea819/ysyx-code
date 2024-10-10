@@ -18,7 +18,7 @@
 
 #include <common.h>
 
-#define SRAM_SIZE  4*1024
+#define SRAM_SIZE  8*1024
 #define SRAM_LEFT  0x0f000000
 #define SRAM_RIGHT  0x0f000000 + SRAM_SIZE
 #define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
