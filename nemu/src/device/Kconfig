@@ -31,6 +31,22 @@ config SERIAL_INPUT_FIFO
   default n
 endif # HAS_SERIAL
 
+menuconfig HAS_SRAM
+  bool "Enable sram."
+  default y
+
+if HAS_SRAM
+config SRAM_PORT
+  depends on HAS_PORT_IO
+  hex "Port address of the sram controller"
+  default 0x0f000000
+
+config SRAM_MMIO
+  hex "MMIO address of the sram controller"
+  default 0xa00003f8
+
+endif # HAS_SRAM
+
 menuconfig HAS_TIMER
   bool "Enable timer"
   default y
