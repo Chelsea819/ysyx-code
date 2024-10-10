@@ -203,9 +203,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 // ref 0x8004 0x8008 0x800c 0x800f
 // dut 0x8004 0x8008 0x800c 0x800f
   ref_difftest_exec(1);
-  printf("1111111\n");
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-  printf("DIFFTEST_TO_REF ref_r->pc = 0x%08x cpu = %p\n",ref_r.pc, &(ref_r.pc));
   // uint8_t ref_mem[4096] = {0};
   // ref_difftest_memcpy(0x8009df00, ref_mem, 256, DIFFTEST_TO_DUT);
   // check_mem(ref_mem, pc, 256,0x8009df00 );
