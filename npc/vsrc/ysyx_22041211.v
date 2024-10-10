@@ -192,7 +192,7 @@ module ysyx_22041211 #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
     import "DPI-C" function void inst_get(int inst);
     always @(*) begin
         inst_get(inst);
-		$display("io_master_awaddr = %x",io_master_awaddr);
+		// $display("io_master_awaddr = %x",io_master_awaddr);
 	end
 
 
