@@ -159,16 +159,16 @@ static void checkregs(CPU_state *ref, vaddr_t npc) {
   }
 }
 
-static void check_mem(void *buf, vaddr_t pc, int len, paddr_t addr) {
-  paddr_t* dut = (paddr_t*)(guest_to_host(addr));
-  int ret = memcmp(dut, buf, len);
-  if (ret != 0) {
-    for (int i = 0;i < len;i ++){
-      printf("\033[105m 0x%08x: \033[0m \t0x%08x-----ref: \t0x%08x\n",addr + i,vaddr_read(addr + i,4), ((uint32_t *)buf)[i]);
-    }
-  }
-  Assert(ret == 0, "mem difference!");
-}
+// static void check_mem(void *buf, vaddr_t pc, int len, paddr_t addr) {
+//   paddr_t* dut = (paddr_t*)(guest_to_host(addr));
+//   int ret = memcmp(dut, buf, len);
+//   if (ret != 0) {
+//     for (int i = 0;i < len;i ++){
+//       printf("\033[105m 0x%08x: \033[0m \t0x%08x-----ref: \t0x%08x\n",addr + i,vaddr_read(addr + i,4), ((uint32_t *)buf)[i]);
+//     }
+//   }
+//   Assert(ret == 0, "mem difference!");
+// }
 
 //进行逐条指令执行后的状态对比
 void difftest_step(vaddr_t pc, vaddr_t npc) {

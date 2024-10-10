@@ -342,7 +342,9 @@ void sdb_mainloop()
   WP *head = head;
   while(head != NULL){
     free(head->target);
-    head->target = NULL;
+    if (head->target != NULL) {
+      head->target = NULL;
+    }
     head = head->next;
   }
   // iringbuf *head_i = get_head_iringbuf();
