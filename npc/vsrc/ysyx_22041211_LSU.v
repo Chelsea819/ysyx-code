@@ -53,7 +53,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	input		                		addr_w_ready_i, // 从设备已准备好接收地址和相关的控制信号
 
 	// Write data
-	output	reg	[DATA_LEN - 1:0]		w_data_o	,	// 写出的数据
+	output		[DATA_LEN - 1:0]		w_data_o	,	// 写出的数据
 	output		[3:0]					w_strb_o	,	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
 	output		                		w_valid_o	,	// 主设备给出的数据和字节选通信号有效
 	input		                		w_ready_i	,	// 从设备已准备好接收数据选通信号
@@ -69,6 +69,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // reg  [7:0]  mem_rmask;
     reg        mem_to_reg;
 	reg	[3:0]					w_strb	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
+	reg	[DATA_LEN - 1:0]		w_data	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
 
 // delay test
 `ifdef DELAY_TEST
@@ -189,13 +190,13 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		if(~rstn) begin
 			addr_r_addr_o = 0;
             addr_w_addr_o = 0;
-            w_data_o = 0;
+            w_data = 0;
             w_strb = 0;
         // end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
         end else if(con_state == LSU_WAIT_ADDR_PASS) begin
             addr_r_addr_o = alu_result_i;
             addr_w_addr_o = alu_result_i;
-            w_data_o = mem_wdata_i;
+            w_data = mem_wdata_i;
             w_strb = (store_type_i == `STORE_SB_8)? 4'b1 :
                     (store_type_i == `STORE_SH_16) ? 4'b10 :
                     (store_type_i == `STORE_SW_32) ? 4'b100 : 
@@ -203,15 +204,15 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		end else begin 
 			addr_r_addr_o = 0;
             addr_w_addr_o = 0;
-            w_data_o = 0;
+            w_data = 0;
             w_strb = 0;
 		end
 	end
 
-	assign w_strb_o = (addr_w_addr_o[1:0] == 2'b00 ) ? w_strb :
-					(addr_w_addr_o[1:0] == 2'b01 ) ? {w_strb[2:0], 1'b0} :
-					(addr_w_addr_o[1:0] == 2'b10 ) ? {w_strb[1:0], 2'b0} :
-					(addr_w_addr_o[1:0] == 2'b11 ) ? {w_strb[0], 3'b0} : 0;
+	assign {w_strb_o, w_data_o} = (addr_w_addr_o[1:0] == 2'b00 ) ? {w_strb, w_data} :
+					(addr_w_addr_o[1:0] == 2'b01 ) ? {{w_strb[2:0], 1'b0}, {w_data[23:0], 8'b0}} :
+					(addr_w_addr_o[1:0] == 2'b10 ) ? {{w_strb[1:0], 2'b0}, {w_data[15:0], 16'b0}} :
+					(addr_w_addr_o[1:0] == 2'b11 ) ? {{w_strb[0], 3'b0}, {w_data[7:0], 24'b0}} : 0;
 
     assign wdata_o = wdata;
 
