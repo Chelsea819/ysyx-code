@@ -66,6 +66,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     output     [DATA_LEN - 1:0]		    wdata_o
 );	
     wire [31:0] mem_rdata;
+	wire	 [DATA_LEN - 1:0]    mem_rdata_unaligned	;
+	reg 	[1:0] 				 addr_unaligned	;
     // reg  [7:0]  mem_rmask;
     reg        mem_to_reg;
 	reg	[3:0]					w_strb	;	// wmask 	数据的字节选通，数据中每8bit对应这里的1bit
@@ -287,13 +289,13 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 	// 	$display("load_type_i = [%b] mem_to_reg: [%d] rmask: [%d] mem_raddr: [%x] con_state: [%d] next_state: [%d]",load_type_i, mem_to_reg,mem_rmask, mem_raddr, con_state, next_state);
 	// end
 
-    // always @(posedge clock) begin
-    //     if(next_state == LSU_WAIT_WB_READY) begin				
-    //         mem_wen_o <= mem_wen_i;
-    //     end else begin
-    //         mem_wen_o <= 0;
-    //     end
-	// end
+    always @(posedge clock) begin
+        if(next_state == LSU_WAIT_LSU_VALID & con_state == LSU_WAIT_ADDR_PASS) begin				
+            addr_unaligned <= alu_result_i[1:0];
+        end else begin
+            addr_unaligned <= 0;
+        end
+	end
 
     always @(*) begin
         if(con_state != LSU_WAIT_IFU_VALID) begin				
@@ -306,11 +308,16 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // assign mem_ren_o = mem_to_reg;
     
     // load
-    assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_rare_i[7]}}, mem_rdata_rare_i[7:0]} : 
-                    (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_rare_i[15]}}, mem_rdata_rare_i[15:0]}: 
-                    (load_type_i == `LOAD_LBU_8) ? {{24{1'b0}}, mem_rdata_rare_i[7:0]}: 
-                    (load_type_i == `LOAD_LHU_16) ? {{16{1'b0}}, mem_rdata_rare_i[15:0]}: 
-                    mem_rdata_rare_i;
+	assign mem_rdata_unaligned = (addr_unaligned[1:0] == 2'b00 ) ? {mem_rdata_rare_i} :
+								(addr_unaligned[1:0] == 2'b01 ) ? {8'b0, {mem_rdata_rare_i[31:8]}} :
+								(addr_unaligned[1:0] == 2'b10 ) ? {16'b0, {mem_rdata_rare_i[31:16]}} :
+								(addr_unaligned[1:0] == 2'b11 ) ? {24'b0, {mem_rdata_rare_i[31:24]}} : 0;
+								
+    assign mem_rdata = (load_type_i == `LOAD_LB_8)  ? {{24{mem_rdata_unaligned[7]}}, mem_rdata_unaligned[7:0]} : 
+                    (load_type_i == `LOAD_LH_16) ? {{16{mem_rdata_unaligned[15]}}, mem_rdata_unaligned[15:0]}: 
+                    (load_type_i == `LOAD_LBU_8) ? {{24{1'b0}}, mem_rdata_unaligned[7:0]}: 
+                    (load_type_i == `LOAD_LHU_16) ? {{16{1'b0}}, mem_rdata_unaligned[15:0]}: 
+                    mem_rdata_unaligned;
 
     assign wd_o = wd_i;
     assign wreg_o = wreg_i;
