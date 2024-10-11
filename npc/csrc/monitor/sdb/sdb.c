@@ -188,11 +188,11 @@ static int cmd_xref(char *args){
   vaddr_t addr = convert_16(arg2);
 
   uint32_t ref_mem[len] = {0};
-  ref_difftest_memcpy(addr, ref_mem, len * 4, DIFFTEST_TO_DUT);
+  ref_difftest_memcpy(addr, ref_mem, len / 4, DIFFTEST_TO_DUT);
 
   printf("addr = %08x\n",addr);
 
-  for (int i = 0;i < len;i ++){
+  for (int i = 0;i < len;i += 4){
     printf("\033[105m 0x%08x: \033[0m \t0x%08x\n",addr + i, ref_mem[i]);
   }
   return 0; 
