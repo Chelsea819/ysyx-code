@@ -180,10 +180,22 @@ void resp_check(char resp){
     case 0b01:
       Log("[resp_check]-----[code:01]------[EXOKAY, exclusive access success]"); break;
     case 0b10:
+      dut->final();
+      #ifdef CONFIG_WAVE
+      m_trace->close();	//关闭波形跟踪文件
+      #endif
       Assert(0, "[resp_check]-----[code:10]------[SLVERR, slave error]");
     case 0b11:
+      dut->final();
+      #ifdef CONFIG_WAVE
+      m_trace->close();	//关闭波形跟踪文件
+      #endif
       Assert(0, "[resp_check]-----[code:11]------[DECERR, decode error]");
     default:
+      dut->final();
+      #ifdef CONFIG_WAVE
+      m_trace->close();	//关闭波形跟踪文件
+      #endif
       Assert(0, "[resp_check]-----[code:%u]------[ERROR CODE]",(uint32_t)resp);
   }
 }
