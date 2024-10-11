@@ -292,8 +292,6 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     always @(posedge clock) begin
         if(next_state == LSU_WAIT_LSU_VALID & con_state == LSU_WAIT_ADDR_PASS) begin				
             addr_unaligned <= alu_result_i[1:0];
-        end else begin
-            addr_unaligned <= 0;
         end
 	end
 
