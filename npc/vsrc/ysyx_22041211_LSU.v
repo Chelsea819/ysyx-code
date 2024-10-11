@@ -211,6 +211,12 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
 		end
 	end
 
+	// import "DPI-C" function void dtrace_func(int addr);
+    // always @(*)
+	// 	dtrace_func(addr_w_addr_o);
+
+
+
 	assign {w_strb_o, w_data_o} = (addr_w_addr_o[1:0] == 2'b00 ) ? {w_strb, w_data} :
 					(addr_w_addr_o[1:0] == 2'b01 ) ? {{w_strb[2:0], 1'b0}, {w_data[23:0], 8'b0}} :
 					(addr_w_addr_o[1:0] == 2'b10 ) ? {{w_strb[1:0], 2'b0}, {w_data[15:0], 16'b0}} :
