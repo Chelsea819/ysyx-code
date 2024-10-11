@@ -23,9 +23,22 @@ bool initial;
 // `direction`指定拷贝的方向, `DIFFTEST_TO_DUT`表示往DUT拷贝, `DIFFTEST_TO_REF`表示往REF拷贝
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   if(direction == DIFFTEST_TO_REF){
-    memcpy(guest_to_host(addr) ,(const paddr_t*)buf ,n);
+    if (in_pmem(addr)) {
+      memcpy(guest_to_host(addr) ,(const paddr_t*)buf ,n);
+    }else if (in_sram(addr)) {
+      memcpy(guest_to_sram(addr) ,(const paddr_t*)buf ,n);
+    }else {
+      Assert(0, "Out of bound!");
+    }
   } else {
-    memcpy((paddr_t*)buf ,(const paddr_t*)(guest_to_host(addr)) ,n);
+    if (in_pmem(addr)) {
+      memcpy((paddr_t*)buf ,(const paddr_t*)(guest_to_host(addr)) ,n);
+    }else if (in_sram(addr)) {
+      memcpy((paddr_t*)buf ,(const paddr_t*)(guest_to_sram(addr)) ,n);
+    }else {
+      Assert(0, "Out of bound!");
+    }
+  
   }
 }
 
