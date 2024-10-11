@@ -200,8 +200,8 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
             addr_w_addr_o = alu_result_i;
             w_data = mem_wdata_i;
             w_strb = (store_type_i == `STORE_SB_8)? 4'b1 :
-                    (store_type_i == `STORE_SH_16) ? 4'b10 :
-                    (store_type_i == `STORE_SW_32) ? 4'b100 : 
+                    (store_type_i == `STORE_SH_16) ? 4'b11 :
+                    (store_type_i == `STORE_SW_32) ? 4'b1111 : 
                     0;
 		end else begin 
 			addr_r_addr_o = 0;
