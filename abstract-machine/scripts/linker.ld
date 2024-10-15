@@ -1,29 +1,49 @@
 ENTRY(_start)
 PHDRS { text PT_LOAD; data PT_LOAD; }
 
+MEMORY {
+  mrom : ORIGIN = 0x20000000, LENGTH = 4K
+  sram : ORIGIN = 0x0f000000, LENGTH = 8K
+}
+
+REGION_ALIAS("REGION_TEXT", mrom);
+REGION_ALIAS("REGION_RODATA", mrom);
+REGION_ALIAS("REGION_DATA", sram);
+REGION_ALIAS("REGION_BSS", sram);
+
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
   . = _pmem_start + _entry_offset;
+  . = ORIGIN(mrom);
   .text : {
     *(entry)
     *(.text*)
-  } : text
+  } > REGION_TEXT : text 
   etext = .;
   _etext = .;
+
   .rodata : {
     *(.rodata*)
-  }
-  .data : {
+    rodata_end = .;
+  } > REGION_RODATA 
+
+  .data : AT (rodata_end) {
+    _data_start = .;
     *(.data)
-  } : data
+    data_end = .;
+  } > REGION_DATA  : data 
+  _data_size = SIZEOF(.data);
+  _data_load_start = LOADADDR(.data);
   edata = .;
   _data = .;
-  .bss : {
-	_bss_start = .;
+
+  .bss : AT (data_end) {
+    _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  }
+  } > REGION_BSS 
+
     _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
 
