@@ -6,10 +6,10 @@ MEMORY {
   sram : ORIGIN = 0x0f000000, LENGTH = 8K
 }
 
-REGION_ALIAS("REGION_TEXT", mrom);
+/* REGION_ALIAS("REGION_TEXT", mrom);
 REGION_ALIAS("REGION_RODATA", mrom);
 REGION_ALIAS("REGION_DATA", sram);
-REGION_ALIAS("REGION_BSS", mrom);
+REGION_ALIAS("REGION_BSS", mrom); */
 
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
@@ -27,14 +27,13 @@ SECTIONS {
     rodata_end = .;
   }
 
-  .data :
-  AT ( rodata_end ) {
+  .data :{
     _data_start = .;
     *(.data)
-  } > REGION_DATA : data 
+    edata = .;
+  } > sram AT> mrom : data 
   _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
-  edata = .;
   _data = .;
 
   . = rodata_end + _data_size;
