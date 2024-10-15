@@ -18,14 +18,14 @@ SECTIONS {
   .text : {
     *(entry)
     *(.text*)
-  } : text 
+  } > REGION_TEXT : text 
   etext = .;
   _etext = .;
 
   .rodata : {
     *(.rodata*)
     rodata_end = .;
-  }
+  } > REGION_RODATA
 
   .data : AT (rodata_end) {
     _data_start = .;
@@ -41,7 +41,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  }
+  } > REGION_BSS
 
     _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
