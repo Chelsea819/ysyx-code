@@ -18,14 +18,14 @@ SECTIONS {
   .text : {
     *(entry)
     *(.text*)
-  } > REGION_TEXT AT> mrom : text 
+  } > mrom AT> mrom  : text 
   etext = .;
   _etext = .;
 
   .rodata : {
     *(.rodata*)
     rodata_end = .;
-  }
+  } > mrom AT> mrom 
 
   .data :{
     _data_start = .;
@@ -41,7 +41,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  }
+  } > mrom AT> mrom
   _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
 
