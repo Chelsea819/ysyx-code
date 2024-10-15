@@ -37,7 +37,6 @@ SECTIONS {
   _data = .;
 
   .bss : {
-    _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
