@@ -9,13 +9,13 @@ MEMORY {
 REGION_ALIAS("REGION_TEXT", mrom);
 REGION_ALIAS("REGION_RODATA", mrom);
 REGION_ALIAS("REGION_DATA", sram);
-REGION_ALIAS("REGION_BSS", mrom);
+REGION_ALIAS("REGION_BSS", sram);
 
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
   /* . = _pmem_start + _entry_offset; */
   . = ORIGIN(mrom);
-  .text : {
+  .text : { 
     *(entry)
     *(.text*)
   } > REGION_TEXT : text 
@@ -29,12 +29,12 @@ SECTIONS {
 
   .data : {
     _data_start = .;
-    *(.data*)
+    *(.data)
   } > REGION_DATA AT> mrom : data 
-  _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
   _data = .;
+  _data_size = SIZEOF(.data);
 
   .bss : {
     _bss_start = .;
