@@ -37,6 +37,7 @@ SECTIONS {
   edata = .;
   _data = .;
 
+  . = rodata_end + _data_size;
   .bss : {
     *(.bss*)
     *(.sbss*)
