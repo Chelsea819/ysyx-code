@@ -13,7 +13,7 @@ REGION_ALIAS("REGION_BSS", sram);
 
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
-  . = _pmem_start + _entry_offset;
+  /* . = _pmem_start + _entry_offset; */
   . = ORIGIN(mrom);
   .text : {
     *(entry)
@@ -32,7 +32,7 @@ SECTIONS {
     *(.data)
     _data_end = .;
   } > REGION_DATA AT> mrom : data 
-  _data_size = _data_end - _data_start;
+  _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
   _data = .;
