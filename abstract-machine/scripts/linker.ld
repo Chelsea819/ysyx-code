@@ -18,20 +18,19 @@ SECTIONS {
   .text : {
     *(entry)
     *(.text*)
-  } > REGION_TEXT : text 
+  } : text 
   etext = .;
   _etext = .;
 
   .rodata : {
     *(.rodata*)
     rodata_end = .;
-  } > REGION_RODATA 
+  }
 
-  .data : {
+  .data : AT (rodata_end) {
     _data_start = .;
     *(.data)
-    _data_end = .;
-  } > REGION_DATA AT> mrom : data 
+  } > REGION_DATA : data 
   _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
@@ -42,7 +41,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > REGION_BSS AT> mrom
+  }
 
     _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
