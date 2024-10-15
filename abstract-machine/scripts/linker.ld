@@ -25,12 +25,13 @@ SECTIONS {
   .rodata : {
     *(.rodata*)
     rodata_end = .;
-  } > REGION_RODATA AT> mrom
+  }
 
-  .data : {
+  .data :
+  AT ( rodata_end ) {
     _data_start = .;
     *(.data)
-  } > REGION_DATA AT> mrom : data 
+  } > REGION_DATA : data 
   _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
@@ -40,9 +41,8 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > REGION_BSS AT> mrom
-
-    _heap_start = 0x0f000000;
+  }
+  _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
 
   _stack_top = ALIGN(0x1000);
