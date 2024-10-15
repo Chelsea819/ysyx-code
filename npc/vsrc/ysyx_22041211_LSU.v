@@ -196,7 +196,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
             w_strb = 0;
         // end else if(con_state == LSU_WAIT_ADDR_PASS && next_state == LSU_WAIT_LSU_VALID) begin
         end else if(con_state == LSU_WAIT_ADDR_PASS) begin
-            addr_r_addr_o = alu_result_i;
+            addr_r_addr_o = {alu_result_i[31:2], 2'b0};
             addr_w_addr_o = alu_result_i;
             w_data = mem_wdata_i;
             w_strb = (store_type_i == `STORE_SB_8)? `AXI_W_STRB_8 :
