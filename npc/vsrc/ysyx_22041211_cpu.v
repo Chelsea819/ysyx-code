@@ -141,13 +141,13 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 			if (data_addr_w_addr_o >= `DEVICE_CLINT_ADDR_L && data_addr_w_addr_o <= `DEVICE_CLINT_ADDR_H) begin
 				$display("[DTRACE]------[CLINT: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
 			end else if (data_addr_w_addr_o >= `DEVICE_SRAM_ADDR_L && data_addr_w_addr_o <= `DEVICE_SRAM_ADDR_H) begin
-				$display("[DTRACE]------[SRAM: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
+				$display("[DTRACE]------[SRAM: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_SRAM_ADDR_L, `DEVICE_SRAM_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
 			end else if (data_addr_w_addr_o >= `DEVICE_UART16550_ADDR_L && data_addr_w_addr_o <= `DEVICE_UART16550_ADDR_H) begin
-				$display("[DTRACE]------[UART16550: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
+				$display("[DTRACE]------[UART16550: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_UART16550_ADDR_L, `DEVICE_UART16550_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
 			end else if (data_addr_w_addr_o >= `DEVICE_SPI_ADDR_L && data_addr_w_addr_o <= `DEVICE_SPI_ADDR_H) begin
-				$display("[DTRACE]------[SPI: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
+				$display("[DTRACE]------[SPI: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_SPI_ADDR_L, `DEVICE_SPI_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
 			end else if (data_addr_w_addr_o >= `DEVICE_MROM_ADDR_L && data_addr_w_addr_o <= `DEVICE_MROM_ADDR_H) begin
-				$display("[DTRACE]------[MROM: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
+				$display("[DTRACE]------[MROM: %x ~ %x]------[w_addr: %x]------[w_data: %x]---[PC: %x]", `DEVICE_MROM_ADDR_L, `DEVICE_MROM_ADDR_H, data_addr_w_addr_o, data_w_data_o, id_pc_i);
 			end else begin
 				
 			end
@@ -160,13 +160,13 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 			if (data_addr_r_addr_o >= `DEVICE_CLINT_ADDR_L && data_addr_r_addr_o <= `DEVICE_CLINT_ADDR_H) begin
 				$display("[DTRACE-READ]------[CLINT: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_r_addr_o, id_pc_i);
 			end else if (data_addr_r_addr_o >= `DEVICE_SRAM_ADDR_L && data_addr_r_addr_o <= `DEVICE_SRAM_ADDR_H) begin
-				$display("[DTRACE-READ]------[SRAM: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_r_addr_o, id_pc_i);
+				$display("[DTRACE-READ]------[SRAM: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_SRAM_ADDR_L, `DEVICE_SRAM_ADDR_H, data_addr_r_addr_o, id_pc_i);
 			end else if (data_addr_r_addr_o >= `DEVICE_UART16550_ADDR_L && data_addr_r_addr_o <= `DEVICE_UART16550_ADDR_H) begin
-				$display("[DTRACE-READ]------[UART16550: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_r_addr_o, id_pc_i);
+				$display("[DTRACE-READ]------[UART16550: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_UART16550_ADDR_L, `DEVICE_UART16550_ADDR_H, data_addr_r_addr_o, id_pc_i);
 			end else if (data_addr_r_addr_o >= `DEVICE_SPI_ADDR_L && data_addr_r_addr_o <= `DEVICE_SPI_ADDR_H) begin
-				$display("[DTRACE-READ]------[SPI: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_r_addr_o, id_pc_i);
+				$display("[DTRACE-READ]------[SPI: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_SPI_ADDR_L, `DEVICE_SPI_ADDR_H, data_addr_r_addr_o, id_pc_i);
 			end else if (data_addr_r_addr_o >= `DEVICE_MROM_ADDR_L && data_addr_r_addr_o <= `DEVICE_MROM_ADDR_H) begin
-				$display("[DTRACE-READ]------[MROM: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_CLINT_ADDR_L, `DEVICE_CLINT_ADDR_H, data_addr_r_addr_o, id_pc_i);
+				$display("[DTRACE-READ]------[MROM: %x ~ %x]------[r_addr: %x]---[PC: %x]", `DEVICE_MROM_ADDR_L, `DEVICE_MROM_ADDR_H, data_addr_r_addr_o, id_pc_i);
 			end else begin
 				
 			end
