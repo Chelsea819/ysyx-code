@@ -9,7 +9,7 @@ MEMORY {
 REGION_ALIAS("REGION_TEXT", mrom);
 REGION_ALIAS("REGION_RODATA", mrom);
 REGION_ALIAS("REGION_DATA", sram);
-REGION_ALIAS("REGION_BSS", sram);
+REGION_ALIAS("REGION_BSS", mrom);
 
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
