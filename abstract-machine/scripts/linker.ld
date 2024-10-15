@@ -27,22 +27,22 @@ SECTIONS {
     rodata_end = .;
   } > REGION_RODATA 
 
-  .data : AT (rodata_end) {
+  .data : {
     _data_start = .;
     *(.data)
     data_end = .;
-  } > REGION_DATA  : data 
+  } > REGION_DATA AT> mrom : data 
   _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
   _data = .;
 
-  .bss : AT (data_end) {
+  .bss : {
     _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > REGION_BSS 
+  } > REGION_BSS AT> mrom
 
     _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
