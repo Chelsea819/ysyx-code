@@ -9,7 +9,7 @@ MEMORY {
 REGION_ALIAS("REGION_TEXT", mrom);
 REGION_ALIAS("REGION_RODATA", mrom);
 REGION_ALIAS("REGION_DATA", sram);
-REGION_ALIAS("REGION_BSS", mrom);
+REGION_ALIAS("REGION_BSS", sram);
 
 SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
@@ -41,7 +41,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > REGION_BSS
+  } > REGION_DATA
 
     _heap_start = 0x0f000000;
   . = _heap_start + 0x10;
