@@ -154,6 +154,7 @@ module ysyx_22041211_cpu #(parameter DATA_LEN = 32,ADDR_LEN = 32) (
 		end else begin		
 		end
 	end
+	
 	always @(*) begin
 		if (data_addr_r_valid_o & data_addr_r_ready_i) begin
 			if (data_addr_r_addr_o >= `DEVICE_CLINT_ADDR_L && data_addr_r_addr_o <= `DEVICE_CLINT_ADDR_H) begin
