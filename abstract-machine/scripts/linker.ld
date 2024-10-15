@@ -27,10 +27,10 @@ SECTIONS {
     rodata_end = .;
   } > REGION_RODATA
 
-  .data : AT (rodata_end) {
+  .data : {
     _data_start = .;
     *(.data)
-  } > REGION_DATA : data 
+  } > REGION_DATA AT> rodata_end : data 
   _data_size = SIZEOF(.data);
   _data_load_start = LOADADDR(.data);
   edata = .;
