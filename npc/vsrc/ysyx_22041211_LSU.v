@@ -330,7 +330,7 @@ module ysyx_22041211_LSU #(parameter DATA_LEN = 32,ADDR_LEN = 32)(
     // assign mem_ren_o = mem_to_reg;
     
     // load
-	assign mem_rdata_unaligned = (addr_unaligned[1:0] == 2'b00 ) ? {mem_rdata_rare_i} :
+	assign mem_rdata_unaligned = (addr_unaligned[1:0] == 2'b00  || aligned_store_reg == 1'b0) ? {mem_rdata_rare_i} :
 								(addr_unaligned[1:0] == 2'b01 ) ? {8'b0, {mem_rdata_rare_i[31:8]}} :
 								(addr_unaligned[1:0] == 2'b10 ) ? {16'b0, {mem_rdata_rare_i[31:16]}} :
 								(addr_unaligned[1:0] == 2'b11 ) ? {24'b0, {mem_rdata_rare_i[31:24]}} : 0;
